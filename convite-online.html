@@ -1,0 +1,2600 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ConteComigo — Convites Online que Celebram de Verdade</title>
+  <meta name="description" content="Crie convites digitais incríveis com confirmação de presença e lista de presentes. Aniversário, casamento, chá de bebê e muito mais." />
+
+  <!-- Google Fonts: Fraunces (display) + Nunito (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,700;1,9..144,900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ══════════════════════════════════════════
+       RESET & TOKENS
+    ══════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #FFF8F0;
+      --bg2:       #FFF0E6;
+      --cream:     #FFE8D6;
+      --pink:      #FF3D6B;
+      --pink-dark: #CC1F4E;
+      --yellow:    #FFD93D;
+      --yellow-dk: #E6B800;
+      --white:     #1A0A00;
+      --gray:      #7A5C4A;
+      --border:    rgba(26,10,0,0.09);
+
+      --font-display: 'Fraunces', Georgia, serif;
+      --font-body:    'Nunito', system-ui, sans-serif;
+
+      --text-xs:   clamp(0.7rem,  1vw,   0.8rem);
+      --text-sm:   clamp(0.85rem, 1.2vw, 0.95rem);
+      --text-base: clamp(1rem,    1.5vw, 1.125rem);
+      --text-lg:   clamp(1.125rem,2vw,   1.35rem);
+      --text-xl:   clamp(1.35rem, 2.5vw, 1.7rem);
+      --text-2xl:  clamp(1.7rem,  3.5vw, 2.25rem);
+      --text-3xl:  clamp(2.25rem, 5vw,   3.5rem);
+      --text-hero: clamp(3.5rem,  8vw,   7.5rem);
+
+      --radius: 20px;
+      --radius-lg: 32px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg);
+      color: var(--white);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; height: auto; display: block; }
+    ul { list-style: none; }
+
+    /* ══════════════════════════════════════════
+       PAGE FADE IN
+    ══════════════════════════════════════════ */
+    @keyframes pageFadeIn { from { opacity: 0 } to { opacity: 1 } }
+    body { animation: pageFadeIn 0.6s ease both; }
+
+    /* ══════════════════════════════════════════
+       CONFETTI ANIMATION
+    ══════════════════════════════════════════ */
+    .confetti-container {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      opacity: 0;
+      animation: confettiFall linear infinite;
+    }
+
+    @keyframes confettiFall {
+      0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* ══════════════════════════════════════════
+       SCROLL REVEAL
+    ══════════════════════════════════════════ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal:nth-child(2) { transition-delay: 0.1s; }
+    .reveal:nth-child(3) { transition-delay: 0.2s; }
+    .reveal:nth-child(4) { transition-delay: 0.3s; }
+    .reveal:nth-child(5) { transition-delay: 0.4s; }
+
+    /* ══════════════════════════════════════════
+       NAVBAR
+    ══════════════════════════════════════════ */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(255,248,240,.87);
+      border-bottom: 1px solid var(--border);
+      transition: all 0.3s var(--ease);
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      font-style: italic;
+      background: linear-gradient(135deg, var(--pink), var(--yellow));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: rgba(26,10,0,.70);
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0;
+      width: 0; height: 2px;
+      background: var(--pink);
+      transition: width 0.3s var(--ease);
+      border-radius: 99px;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-cta {
+      background: var(--pink);
+      color: var(--white) !important;
+      padding: 0.5rem 1.2rem;
+      border-radius: 99px;
+      font-weight: 700 !important;
+      transition: background 0.2s, transform 0.2s !important;
+    }
+    .nav-cta::after { display: none !important; }
+    .nav-cta:hover { background: var(--pink-dark) !important; transform: scale(1.04) !important; }
+
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 24px; height: 2px;
+      background: var(--white);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    /* ══════════════════════════════════════════
+       HERO
+    ══════════════════════════════════════════ */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 7rem 1.5rem 4rem;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,61,107,0.18) 0%, transparent 60%),
+                  radial-gradient(ellipse 60% 40% at 80% 80%, rgba(255,217,61,0.1) 0%, transparent 50%),
+                  var(--bg);
+    }
+
+    .hero-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      animation: blobPulse 8s ease-in-out infinite;
+    }
+    .hero-blob-1 {
+      width: 500px; height: 500px;
+      background: rgba(255,61,107,0.12);
+      top: -100px; left: -100px;
+    }
+    .hero-blob-2 {
+      width: 400px; height: 400px;
+      background: rgba(255,217,61,0.08);
+      bottom: -50px; right: -50px;
+      animation-delay: 4s;
+    }
+
+    @keyframes blobPulse {
+      0%, 100% { transform: scale(1) translate(0,0); }
+      50% { transform: scale(1.2) translate(20px, -20px); }
+    }
+
+    .hero-content { position: relative; z-index: 2; max-width: 900px; }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(255,61,107,0.15);
+      border: 1px solid rgba(255,61,107,0.3);
+      color: var(--pink);
+      padding: 0.4rem 1rem;
+      border-radius: 99px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.8s var(--ease) 0.1s both;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: var(--text-hero);
+      font-weight: 900;
+      font-style: italic;
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.8s var(--ease) 0.2s both;
+    }
+
+    .hero-title .accent {
+      background: linear-gradient(135deg, var(--pink) 0%, var(--yellow) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: var(--text-lg);
+      color: rgba(26,10,0,0.65);
+      max-width: 600px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.6;
+      animation: fadeUp 0.8s var(--ease) 0.35s both;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeUp 0.8s var(--ease) 0.5s both;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--pink);
+      color: var(--white);
+      padding: 1rem 2rem;
+      border-radius: 99px;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 8px 32px rgba(255,61,107,0.4);
+    }
+    .btn-primary:hover {
+      background: var(--pink-dark);
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 16px 40px rgba(255,61,107,0.5);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: transparent;
+      color: var(--white);
+      padding: 1rem 2rem;
+      border-radius: 99px;
+      font-size: 1rem;
+      font-weight: 700;
+      border: 1px solid rgba(26,10,0,0.2);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, transform 0.2s;
+    }
+    .btn-secondary:hover {
+      border-color: rgba(26,10,0,0.5);
+      background: rgba(26,10,0,0.05);
+      transform: translateY(-2px);
+    }
+
+    .hero-stats {
+      margin-top: 4rem;
+      display: flex;
+      gap: 3rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeUp 0.8s var(--ease) 0.65s both;
+    }
+
+    .hero-stat {
+      text-align: center;
+    }
+
+    .hero-stat-num {
+      font-family: var(--font-display);
+      font-size: var(--text-2xl);
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--yellow), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+
+    .hero-stat-label {
+      font-size: 0.8rem;
+      color: rgba(26,10,0,0.5);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-top: 0.25rem;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(32px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ══════════════════════════════════════════
+       MARQUEE — SCROLLING CATEGORIES
+    ══════════════════════════════════════════ */
+    .marquee-section {
+      padding: 2rem 0;
+      overflow: hidden;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+    }
+
+    .marquee-track {
+      display: flex;
+      gap: 2rem;
+      width: max-content;
+      animation: marqueeScroll 20s linear infinite;
+    }
+
+    .marquee-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(26,10,0,0.4);
+      white-space: nowrap;
+      padding: 0.5rem 1.5rem;
+    }
+
+    .marquee-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--pink);
+      flex-shrink: 0;
+    }
+
+    @keyframes marqueeScroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ══════════════════════════════════════════
+       FEATURES SECTION
+    ══════════════════════════════════════════ */
+    .section { padding: 6rem 1.5rem; }
+    .section-inner { max-width: 1200px; margin: 0 auto; }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--pink);
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: var(--text-3xl);
+      font-weight: 900;
+      font-style: italic;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+
+    .section-sub {
+      font-size: var(--text-base);
+      color: rgba(26,10,0,0.5);
+      max-width: 560px;
+      line-height: 1.7;
+      margin-bottom: 3.5rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: rgba(26,10,0,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      transition: transform 0.3s var(--ease), box-shadow 0.3s, border-color 0.3s;
+      cursor: default;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-8px) scale(1.01);
+      box-shadow: 0 24px 60px rgba(255,61,107,0.12);
+      border-color: rgba(255,61,107,0.3);
+    }
+
+    .feature-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1.25rem;
+      background: rgba(255,61,107,0.12);
+    }
+
+    .feature-icon.yellow { background: rgba(255,217,61,0.12); }
+    .feature-icon.green  { background: rgba(52,211,153,0.12); }
+    .feature-icon.blue   { background: rgba(96,165,250,0.12); }
+    .feature-icon.purple { background: rgba(167,139,250,0.12); }
+    .feature-icon.orange { background: rgba(251,146,60,0.12); }
+
+    .feature-title {
+      font-size: var(--text-lg);
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+
+    .feature-desc {
+      font-size: var(--text-sm);
+      color: rgba(26,10,0,0.55);
+      line-height: 1.65;
+    }
+
+    /* ══════════════════════════════════════════
+       TEMPLATES GALLERY
+    ══════════════════════════════════════════ */
+    .templates-section {
+      padding: 6rem 1.5rem;
+      background: var(--bg2);
+    }
+
+    .templates-tabs {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+
+    .tab-btn {
+      padding: 0.5rem 1.2rem;
+      border-radius: 99px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: rgba(26,10,0,0.5);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover, .tab-btn.active {
+      background: var(--pink);
+      border-color: var(--pink);
+      color: var(--white);
+    }
+
+    .templates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .template-card {
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: transform 0.3s var(--ease), box-shadow 0.3s, border-color 0.3s;
+      box-shadow: 0 4px 16px rgba(26,10,0,0.06);
+    }
+
+    .template-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 24px 60px rgba(255,61,107,0.15);
+      border-color: rgba(255,61,107,0.2);
+    }
+
+    .template-img-wrap {
+      position: relative;
+      aspect-ratio: 4/3;
+      overflow: hidden;
+    }
+
+    .template-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s var(--ease);
+    }
+
+    .template-card:hover .template-img-wrap img { transform: scale(1.06); }
+
+    .template-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(26,10,0,0.72) 0%, rgba(26,10,0,0.1) 60%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      display: flex;
+      align-items: flex-end;
+      padding: 1.25rem;
+    }
+
+    .template-card:hover .template-overlay { opacity: 1; }
+
+    .template-overlay-content {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .template-overlay-emoji {
+      font-size: 2rem;
+      line-height: 1;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+    }
+
+    .template-use-btn {
+      background: #fff;
+      color: var(--pink);
+      border: none;
+      border-radius: 99px;
+      padding: 0.55rem 1.4rem;
+      font-size: 0.85rem;
+      font-weight: 800;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s, color 0.2s;
+      font-family: var(--font-body);
+    }
+
+    .template-use-btn:hover { background: var(--yellow); color: rgba(26,10,0,0.85); }
+
+    .template-info {
+      padding: 0.9rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .template-info-left { flex: 1; min-width: 0; }
+
+    .template-name {
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 0.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+
+    .template-emoji-sm {
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    .template-category {
+      font-size: 0.72rem;
+      color: rgba(26,10,0,0.4);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .template-badge {
+      display: inline-block;
+      background: var(--yellow);
+      color: rgba(26,10,0,0.82);
+      font-size: 0.6rem;
+      font-weight: 800;
+      padding: 0.12rem 0.45rem;
+      border-radius: 99px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+
+    .tab-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--pink);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 800;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 99px;
+      padding: 0 5px;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
+    /* ══════════════════════════════════════════
+       HOW IT WORKS
+    ══════════════════════════════════════════ */
+    .steps-section {
+      padding: 6rem 1.5rem;
+      background: var(--cream);
+      color: rgba(26,10,0,0.88);
+    }
+
+    .steps-section .section-title { color: rgba(26,10,0,0.88); }
+    .steps-section .section-label { color: var(--pink-dark); }
+    .steps-section .section-sub   { color: rgba(26,10,0,0.55); }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      counter-reset: steps;
+    }
+
+    .step-card {
+      position: relative;
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 2rem 1.75rem;
+      border: 1px solid rgba(26,10,0,0.08);
+      box-shadow: 0 8px 32px rgba(26,10,0,0.07);
+      transition: transform 0.3s var(--ease), box-shadow 0.3s;
+    }
+
+    .step-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 50px rgba(255,61,107,0.12);
+    }
+
+    .step-num {
+      font-family: var(--font-display);
+      font-size: 3.5rem;
+      font-weight: 900;
+      font-style: italic;
+      line-height: 1;
+      color: rgba(255,61,107,0.12);
+      margin-bottom: 0.5rem;
+      position: absolute;
+      top: 1rem; right: 1.25rem;
+    }
+
+    .step-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .step-title {
+      font-size: var(--text-lg);
+      font-weight: 800;
+      color: rgba(26,10,0,0.88);
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+
+    .step-desc {
+      font-size: var(--text-sm);
+      color: rgba(26,10,0,0.55);
+      line-height: 1.65;
+    }
+
+    /* ══════════════════════════════════════════
+       RSVP DEMO SECTION
+    ══════════════════════════════════════════ */
+    .rsvp-section {
+      padding: 6rem 1.5rem;
+      background: var(--bg);
+    }
+
+    .rsvp-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .rsvp-visual {
+      position: relative;
+    }
+
+    .invite-card-demo {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      border: 1px solid rgba(255,61,107,0.15);
+      box-shadow: 0 40px 100px rgba(255,61,107,0.12);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .invite-card-demo::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(ellipse at center, rgba(255,61,107,0.04) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .invite-demo-emoji {
+      font-size: 3rem;
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    .invite-demo-title {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 900;
+      font-style: italic;
+      color: var(--pink);
+      margin-bottom: 0.5rem;
+      line-height: 1.1;
+    }
+
+    .invite-demo-name {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: rgba(26,10,0,0.75);
+      margin-bottom: 1.5rem;
+    }
+
+    .invite-demo-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .invite-demo-detail {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      color: rgba(26,10,0,0.65);
+      justify-content: center;
+    }
+
+    .invite-demo-detail span:first-child {
+      font-size: 1rem;
+    }
+
+    .invite-demo-divider {
+      border: none;
+      border-top: 1px solid rgba(26,10,0,0.08);
+      margin: 1.25rem 0;
+    }
+
+    /* RSVP Form */
+    .rsvp-form-box {
+      background: rgba(26,10,0,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+    }
+
+    .rsvp-form-title {
+      font-family: var(--font-display);
+      font-size: var(--text-2xl);
+      font-weight: 900;
+      font-style: italic;
+      margin-bottom: 0.5rem;
+      line-height: 1.1;
+    }
+
+    .rsvp-form-sub {
+      font-size: 0.9rem;
+      color: rgba(26,10,0,0.5);
+      margin-bottom: 1.75rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(26,10,0,0.5);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      background: rgba(26,10,0,0.06);
+      border: 1px solid rgba(26,10,0,0.1);
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: rgba(26,10,0,0.25);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--pink);
+      background: rgba(255,61,107,0.06);
+    }
+
+    .form-group select option { background: #FFFFFF; }
+
+    .form-group textarea { resize: vertical; min-height: 80px; }
+
+    .attend-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .attend-option {
+      position: relative;
+    }
+
+    .attend-option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .attend-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.75rem;
+      border-radius: 12px;
+      border: 1px solid rgba(26,10,0,0.1);
+      background: rgba(26,10,0,0.04);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 700;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .attend-option input:checked + .attend-label {
+      border-color: var(--pink);
+      background: rgba(255,61,107,0.12);
+      color: var(--pink);
+    }
+
+    .form-submit {
+      width: 100%;
+      padding: 1rem;
+      background: var(--pink);
+      color: var(--white);
+      border: none;
+      border-radius: 12px;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 8px 24px rgba(255,61,107,0.35);
+    }
+
+    .form-submit:hover {
+      background: var(--pink-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(255,61,107,0.45);
+    }
+
+    .form-success {
+      display: none;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .form-success.show { display: block; }
+    .form-success-emoji { font-size: 3rem; margin-bottom: 1rem; }
+    .form-success-msg { font-size: 1.1rem; font-weight: 700; }
+
+    /* ══════════════════════════════════════════
+       GIFT LIST SECTION
+    ══════════════════════════════════════════ */
+    .gifts-section {
+      padding: 6rem 1.5rem;
+      background: var(--bg2);
+    }
+
+    .gifts-demo {
+      background: rgba(26,10,0,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-top: 3rem;
+    }
+
+    .gifts-demo-header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .gifts-demo-title {
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      font-style: italic;
+    }
+
+    .gifts-add-btn {
+      background: var(--yellow);
+      color: rgba(26,10,0,0.82);
+      border: none;
+      border-radius: 99px;
+      padding: 0.5rem 1.25rem;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .gifts-add-btn:hover {
+      background: var(--yellow-dk);
+      transform: scale(1.05);
+    }
+
+    .gifts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.5rem;
+      padding: 1.5rem 2rem;
+    }
+
+    .gift-card {
+      background: rgba(26,10,0,0.04);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform 0.3s var(--ease), box-shadow 0.3s;
+    }
+
+    .gift-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(26,10,0,0.18);
+    }
+
+    .gift-img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      background: rgba(26,10,0,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+    }
+
+    .gift-info { padding: 1rem; }
+
+    .gift-name {
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 0.35rem;
+      line-height: 1.3;
+    }
+
+    .gift-price {
+      font-size: 0.8rem;
+      color: var(--yellow);
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    .gift-status {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .gift-status.available { color: #34d399; }
+    .gift-status.reserved  { color: rgba(26,10,0,0.3); }
+
+    .gift-btn {
+      width: 100%;
+      padding: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--pink);
+      background: transparent;
+      color: var(--pink);
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .gift-btn:hover {
+      background: var(--pink);
+      color: var(--white);
+    }
+
+    .gift-btn:disabled {
+      border-color: rgba(26,10,0,0.15);
+      color: rgba(26,10,0,0.25);
+      cursor: not-allowed;
+    }
+
+    /* ══════════════════════════════════════════
+       TESTIMONIALS
+    ══════════════════════════════════════════ */
+    .testimonials-section {
+      padding: 6rem 1.5rem;
+      background: var(--bg);
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .testimonial-card {
+      background: rgba(26,10,0,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      transition: transform 0.3s var(--ease);
+    }
+
+    .testimonial-card:hover { transform: translateY(-4px); }
+
+    .testimonial-stars {
+      color: var(--yellow);
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .testimonial-text {
+      font-size: 0.95rem;
+      color: rgba(26,10,0,.65);
+      line-height: 1.7;
+      margin-bottom: 1.25rem;
+      font-style: italic;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .testimonial-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--border);
+    }
+
+    .testimonial-avatar-placeholder {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: rgba(255,61,107,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .testimonial-name {
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .testimonial-event {
+      font-size: 0.75rem;
+      color: rgba(26,10,0,0.4);
+    }
+
+    /* ══════════════════════════════════════════
+       PRICING
+    ══════════════════════════════════════════ */
+    .pricing-section {
+      padding: 6rem 1.5rem;
+      background: var(--cream);
+      color: rgba(26,10,0,0.88);
+    }
+    .pricing-section .section-title { color: rgba(26,10,0,0.88); }
+    .pricing-section .section-label { color: var(--pink-dark); }
+    .pricing-section .section-sub   { color: rgba(26,10,0,0.55); }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    .pricing-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      border: 1px solid rgba(26,10,0,0.08);
+      box-shadow: 0 8px 32px rgba(26,10,0,0.07);
+      transition: transform 0.3s var(--ease), box-shadow 0.3s;
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(255,61,107,0.12);
+    }
+
+    .pricing-card.featured {
+      background: linear-gradient(145deg, #FF3D6B 0%, #ff7043 100%);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 20px 60px rgba(255,61,107,0.35);
+      transform: scale(1.04);
+    }
+
+    .pricing-card.featured:hover { transform: scale(1.04) translateY(-4px); }
+
+    .pricing-tag {
+      display: inline-block;
+      background: var(--yellow);
+      color: rgba(26,10,0,0.82);
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 0.25rem 0.75rem;
+      border-radius: 99px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+    }
+
+    .pricing-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: rgba(26,10,0,0.55);
+      margin-bottom: 0.5rem;
+    }
+
+    .pricing-card.featured .pricing-name { color: rgba(255,255,255,0.75); }
+
+    .pricing-price {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      font-weight: 900;
+      font-style: italic;
+      color: rgba(26,10,0,0.88);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .pricing-card.featured .pricing-price { color: #fff; }
+
+    .pricing-price sup {
+      font-size: 1.2rem;
+      vertical-align: top;
+      margin-top: 0.75rem;
+      display: inline-block;
+    }
+
+    .pricing-period {
+      font-size: 0.85rem;
+      color: rgba(26,10,0,0.4);
+      margin-bottom: 1.5rem;
+    }
+
+    .pricing-card.featured .pricing-period { color: rgba(255,255,255,0.65); }
+
+    .pricing-divider {
+      border: none;
+      border-top: 1px solid rgba(0,0,0,0.08);
+      margin: 1.25rem 0;
+    }
+
+    .pricing-card.featured .pricing-divider { border-color: rgba(255,255,255,0.2); }
+
+    .pricing-features {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .pricing-feature {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      color: rgba(26,10,0,0.65);
+    }
+
+    .pricing-card.featured .pricing-feature { color: rgba(255,255,255,0.92); }
+
+    .pricing-feature-icon {
+      color: #34d399;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .pricing-feature-icon.off {
+      color: rgba(26,10,0,0.25);
+    }
+
+    .pricing-card.featured .pricing-feature-icon.off {
+      color: rgba(255,255,255,0.3);
+    }
+
+    .pricing-btn {
+      width: 100%;
+      padding: 0.85rem;
+      border-radius: 12px;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .pricing-btn-outline {
+      background: transparent;
+      border: 1.5px solid rgba(26,10,0,0.25);
+      color: rgba(26,10,0,0.75);
+    }
+
+    .pricing-btn-outline:hover {
+      background: rgba(26,10,0,0.05);
+      border-color: rgba(26,10,0,0.4);
+      color: rgba(26,10,0,0.88);
+    }
+
+    .pricing-btn-primary {
+      background: #fff;
+      border: none;
+      color: var(--pink);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+
+    .pricing-btn-primary:hover {
+      background: rgba(255,255,255,0.9);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+    }
+
+    /* ══════════════════════════════════════════
+       FAQ
+    ══════════════════════════════════════════ */
+    .faq-section {
+      padding: 6rem 1.5rem;
+      background: var(--bg);
+    }
+
+    .faq-list {
+      max-width: 720px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .faq-item {
+      background: rgba(26,10,0,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .faq-question {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 1.5rem;
+      background: none;
+      border: none;
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: left;
+      gap: 1rem;
+      transition: background 0.2s;
+    }
+
+    .faq-question:hover { background: rgba(26,10,0,0.03); }
+
+    .faq-icon {
+      font-size: 1.2rem;
+      color: var(--pink);
+      flex-shrink: 0;
+      transition: transform 0.3s var(--ease);
+    }
+
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s var(--ease), padding 0.3s;
+      padding: 0 1.5rem;
+    }
+
+    .faq-item.open .faq-answer {
+      max-height: 300px;
+      padding: 0 1.5rem 1.25rem;
+    }
+
+    .faq-answer p {
+      font-size: 0.9rem;
+      color: rgba(26,10,0,0.55);
+      line-height: 1.7;
+    }
+
+    /* ══════════════════════════════════════════
+       CTA FINAL
+    ══════════════════════════════════════════ */
+    .cta-final {
+      padding: 6rem 1.5rem;
+      background: var(--bg2);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-final-inner {
+      position: relative;
+      z-index: 2;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .cta-final-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 70% at 50% 50%, rgba(255,61,107,0.12) 0%, transparent 70%);
+    }
+
+    .cta-final-emoji {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+
+    .cta-final-title {
+      font-family: var(--font-display);
+      font-size: var(--text-3xl);
+      font-weight: 900;
+      font-style: italic;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+
+    .cta-final-title .accent {
+      background: linear-gradient(135deg, var(--pink), var(--yellow));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .cta-final-sub {
+      font-size: var(--text-base);
+      color: rgba(26,10,0,0.5);
+      margin-bottom: 2.5rem;
+      line-height: 1.6;
+    }
+
+    /* ══════════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════════ */
+    .footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 3rem 1.5rem 2rem;
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem;
+    }
+
+    .footer-brand {}
+
+    .footer-logo {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      font-style: italic;
+      background: linear-gradient(135deg, var(--pink), var(--yellow));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.75rem;
+    }
+
+    .footer-tagline {
+      font-size: 0.85rem;
+      color: rgba(26,10,0,0.4);
+      line-height: 1.6;
+      max-width: 220px;
+    }
+
+    .footer-col-title {
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(26,10,0,0.3);
+      margin-bottom: 1rem;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .footer-links a {
+      font-size: 0.9rem;
+      color: rgba(26,10,0,0.5);
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--white); }
+
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 2.5rem auto 0;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-copy {
+      font-size: 0.8rem;
+      color: rgba(26,10,0,0.25);
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .footer-social-link {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: rgba(26,10,0,0.05);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    }
+
+    .footer-social-link:hover {
+      background: rgba(255,61,107,0.15);
+      border-color: rgba(255,61,107,0.3);
+      transform: translateY(-2px);
+    }
+
+    /* ══════════════════════════════════════════
+       MOBILE NAV OPEN
+    ══════════════════════════════════════════ */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(255,248,240,.97);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    .mobile-menu.open { display: flex; }
+
+    .mobile-menu a {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: rgba(26,10,0,.80);
+      transition: color 0.2s;
+    }
+
+    .mobile-menu a:hover { color: var(--pink); }
+
+    .mobile-close {
+      position: absolute;
+      top: 1.5rem; right: 1.5rem;
+      background: none;
+      border: none;
+      color: var(--white);
+      font-size: 1.75rem;
+      cursor: pointer;
+    }
+
+    /* ══════════════════════════════════════════
+       GIFT MODAL
+    ══════════════════════════════════════════ */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(26,10,0,0.50);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal-box {
+      background: #FFFFFF;
+      border: 1px solid rgba(26,10,0,0.1);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      width: 100%;
+      max-width: 440px;
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem; right: 1rem;
+      background: none;
+      border: none;
+      color: rgba(26,10,0,0.4);
+      font-size: 1.25rem;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .modal-close:hover { color: var(--white); }
+
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      font-style: italic;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-sub {
+      font-size: 0.85rem;
+      color: rgba(26,10,0,0.5);
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-submit {
+      width: 100%;
+      padding: 0.9rem;
+      background: var(--yellow);
+      color: rgba(26,10,0,0.82);
+      border: none;
+      border-radius: 12px;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 0.75rem;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .modal-submit:hover {
+      background: var(--yellow-dk);
+      transform: translateY(-2px);
+    }
+
+    /* ══════════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .rsvp-layout { grid-template-columns: 1fr; }
+      .invite-card-demo { max-width: 480px; margin: 0 auto; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      .hero { padding: 5rem 1.25rem 3rem; }
+      .hero-stats { gap: 2rem; }
+      .attend-options { grid-template-columns: 1fr 1fr; }
+      .footer-inner { grid-template-columns: 1fr; gap: 2rem; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+      .gifts-grid { grid-template-columns: repeat(2, 1fr); padding: 1rem; }
+      .gifts-demo-header { padding: 1rem; }
+    }
+
+    /* ══════════════════════════════════════════
+       SCROLL PROGRESS
+    ══════════════════════════════════════════ */
+    .scroll-progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--pink), var(--yellow));
+      z-index: 2000;
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    /* GLOW PULSE */
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 0 8px 32px rgba(255,61,107,0.4); }
+      50% { box-shadow: 0 8px 48px rgba(255,61,107,0.7); }
+    }
+
+    .btn-primary { animation: glowPulse 3s ease-in-out infinite; }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- Scroll Progress -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="modal-close mobile-close" onclick="closeMobileMenu()">✕</button>
+    <a href="#funcionalidades" onclick="closeMobileMenu()">Funcionalidades</a>
+    <a href="#templates" onclick="closeMobileMenu()">Templates</a>
+    <a href="#precos" onclick="closeMobileMenu()">Preços</a>
+    <a href="login.html" onclick="closeMobileMenu()">Entrar</a>
+    <a href="editor.html" class="btn-primary" style="border-radius:99px;padding:0.75rem 2rem;" onclick="closeMobileMenu()">✨ Criar Convite</a>
+  </div>
+
+  <!-- Gift Reserve Modal -->
+  <div class="modal-overlay" id="giftModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeGiftModal()">✕</button>
+      <div class="modal-title">Reservar Presente 🎁</div>
+      <div class="modal-sub">Preencha seus dados para reservar este item para os anfitriões.</div>
+      <div class="form-group">
+        <label>Seu nome</label>
+        <input type="text" placeholder="Ex: Ana Silva" id="giftName" />
+      </div>
+      <div class="form-group">
+        <label>Seu WhatsApp</label>
+        <input type="tel" placeholder="(11) 99999-9999" id="giftPhone" />
+      </div>
+      <div class="form-group">
+        <label>Mensagem (opcional)</label>
+        <textarea placeholder="Uma mensagem carinhosa para os anfitriões..." id="giftMessage"></textarea>
+      </div>
+      <button class="modal-submit" onclick="confirmGiftReservation()">✅ Confirmar reserva</button>
+    </div>
+  </div>
+
+  <!-- ══ NAVBAR ══ -->
+  <nav class="nav" id="navbar">
+    <div class="nav-logo" onclick="location.href='convite-online.html'" style="cursor:pointer">ConteComigo</div>
+    <ul class="nav-links">
+      <li><a href="#funcionalidades">Funcionalidades</a></li>
+      <li><a href="#templates">Templates</a></li>
+      <li><a href="#precos">Preços</a></li>
+      <li><a href="login.html">Entrar</a></li>
+      <li><a href="editor.html" class="nav-cta">✨ Criar Convite Grátis</a></li>
+    </ul>
+    <button class="nav-hamburger" onclick="openMobileMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- ══ HERO ══ -->
+  <section class="hero" id="inicio">
+    <div class="hero-bg"></div>
+    <div class="hero-blob hero-blob-1"></div>
+    <div class="hero-blob hero-blob-2"></div>
+
+    <!-- Confetti -->
+    <div class="confetti-container" id="confettiContainer"></div>
+
+    <div class="hero-content">
+      <div class="hero-badge">
+        🎉 A plataforma de convites mais divertida do Brasil
+      </div>
+
+      <h1 class="hero-title">
+        Convites que<br>
+        <span class="accent">celebram</span><br>
+        de verdade.
+      </h1>
+
+      <p class="hero-sub">
+        Crie convites digitais incríveis com confirmação de presença, lista de presentes e muito estilo. Do chá de bebê ao casamento dos sonhos — em minutos.
+      </p>
+
+      <div class="hero-actions">
+        <a href="editor.html" class="btn-primary magnetic">
+          ✨ Criar meu convite grátis
+        </a>
+        <a href="#rsvp" class="btn-secondary">
+          Ver demo ↓
+        </a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num" data-count="127000">0</div>
+          <div class="hero-stat-label">Convites criados</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num" data-count="98">0</div>
+          <div class="hero-stat-label">% satisfação</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num" data-count="35">0</div>
+          <div class="hero-stat-label">Categorias</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ MARQUEE ══ -->
+  <div class="marquee-section">
+    <div class="marquee-track">
+      <div class="marquee-item"><span class="marquee-dot"></span> Aniversário</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Casamento</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Chá de Bebê</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Formatura</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Noivado</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Chá Revelação</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Bodas</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Debutante</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Batizado</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Festa Junina</div>
+      <!-- Repeat for seamless loop -->
+      <div class="marquee-item"><span class="marquee-dot"></span> Aniversário</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Casamento</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Chá de Bebê</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Formatura</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Noivado</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Chá Revelação</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Bodas</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Debutante</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Batizado</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Festa Junina</div>
+    </div>
+  </div>
+
+  <!-- ══ FEATURES ══ -->
+  <section class="section" id="funcionalidades">
+    <div class="section-inner">
+      <div class="section-label reveal">⚡ Por que usar</div>
+      <h2 class="section-title reveal">Tudo que você precisa<br>em um só lugar.</h2>
+      <p class="section-sub reveal">Do convite à festa — gerenciamos tudo para você focar no que importa: comemorar.</p>
+
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <div class="feature-icon">🎨</div>
+          <div class="feature-title">Templates lindos & personalizáveis</div>
+          <div class="feature-desc">Mais de 200 modelos criados por designers profissionais. Personalize cores, fontes e textos em segundos.</div>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon yellow">✅</div>
+          <div class="feature-title">Confirmação de presença (RSVP)</div>
+          <div class="feature-desc">Seus convidados confirmam com um clique. Você acompanha a lista em tempo real direto no painel.</div>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon green">🎁</div>
+          <div class="feature-title">Lista de presentes integrada</div>
+          <div class="feature-desc">Crie sua lista de presentes com links para lojas ou items personalizados. Convidados reservam sem confusão.</div>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon blue">📱</div>
+          <div class="feature-title">Compartilha pelo WhatsApp</div>
+          <div class="feature-desc">Um link mágico pronto para enviar no WhatsApp, Instagram ou onde quiser. Funciona em qualquer celular.</div>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon purple">📊</div>
+          <div class="feature-title">Painel de controle inteligente</div>
+          <div class="feature-desc">Veja quem confirmou, quem não respondeu e gerencie tudo em um dashboard simples e visual.</div>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon orange">⏱️</div>
+          <div class="feature-title">Contador regressivo</div>
+          <div class="feature-desc">Gere aquela ansiedade boa! Contador animado no convite mostrando o tempo até a festa começar.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ TEMPLATES ══ -->
+  <section class="templates-section" id="templates">
+    <div class="section-inner">
+      <div class="section-label reveal" style="color:var(--pink)">🖼️ Galeria</div>
+      <h2 class="section-title reveal">Escolha o template<br>perfeito para o seu evento.</h2>
+      <p class="section-sub reveal">Mais de 200 modelos para todos os momentos especiais da sua vida.</p>
+
+      <div class="templates-tabs reveal">
+        <button class="tab-btn active" onclick="filterTemplates('todos', this)">Todos <span class="tab-count" id="cnt-todos"></span></button>
+        <button class="tab-btn" onclick="filterTemplates('aniversario', this)">🎂 Aniversário</button>
+        <button class="tab-btn" onclick="filterTemplates('casamento', this)">💍 Casamento</button>
+        <button class="tab-btn" onclick="filterTemplates('cha', this)">👶 Chá de Bebê</button>
+        <button class="tab-btn" onclick="filterTemplates('formatura', this)">🎓 Formatura</button>
+        <button class="tab-btn" onclick="filterTemplates('outros', this)">✨ Outros</button>
+      </div>
+
+      <div class="templates-grid" id="templatesGrid">
+        <!-- Templates are generated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ HOW IT WORKS ══ -->
+  <section class="steps-section">
+    <div class="section-inner">
+      <div class="section-label reveal">🗺️ Como funciona</div>
+      <h2 class="section-title reveal">Pronto em<br>4 passos simples.</h2>
+      <p class="section-sub reveal">Sem complicação. Sem precisar de técnico. Você faz sozinho, com muito estilo.</p>
+
+      <div class="steps-grid">
+        <div class="step-card reveal">
+          <div class="step-num">01</div>
+          <div class="step-icon">🎨</div>
+          <div class="step-title">Escolha o template</div>
+          <div class="step-desc">Navegue pelos nossos modelos e escolha o que mais combina com o seu evento e personalidade.</div>
+        </div>
+        <div class="step-card reveal">
+          <div class="step-num">02</div>
+          <div class="step-icon">✏️</div>
+          <div class="step-title">Personalize</div>
+          <div class="step-desc">Adicione os detalhes do evento, fotos, mensagem especial e configure o formulário de confirmação.</div>
+        </div>
+        <div class="step-card reveal">
+          <div class="step-num">03</div>
+          <div class="step-icon">🔗</div>
+          <div class="step-title">Compartilhe o link</div>
+          <div class="step-desc">Receba um link personalizado para enviar pelo WhatsApp, Stories, e-mail ou onde preferir.</div>
+        </div>
+        <div class="step-card reveal">
+          <div class="step-num">04</div>
+          <div class="step-icon">🎉</div>
+          <div class="step-title">Acompanhe tudo</div>
+          <div class="step-desc">Veja as confirmações chegando em tempo real e gerencie a sua lista de convidados facilmente.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ RSVP DEMO ══ -->
+  <section class="rsvp-section" id="rsvp">
+    <div class="section-inner">
+      <div class="rsvp-layout">
+        <!-- Demo invite card -->
+        <div class="rsvp-visual reveal">
+          <div class="invite-card-demo">
+            <span class="invite-demo-emoji">🎂</span>
+            <div class="invite-demo-title">Você está convidado!</div>
+            <div class="invite-demo-name">Festa de Aniversário da Sofia</div>
+            <hr class="invite-demo-divider" />
+            <div class="invite-demo-details">
+              <div class="invite-demo-detail">
+                <span>📅</span> <span>Sábado, 14 de junho de 2025</span>
+              </div>
+              <div class="invite-demo-detail">
+                <span>⏰</span> <span>A partir das 18h00</span>
+              </div>
+              <div class="invite-demo-detail">
+                <span>📍</span> <span>Salão Felicidade, São Paulo – SP</span>
+              </div>
+              <div class="invite-demo-detail">
+                <span>👗</span> <span>Traje: Esporte Fino</span>
+              </div>
+            </div>
+            <hr class="invite-demo-divider" />
+            <!-- Mini countdown -->
+            <div style="text-align:center;margin-top:.5rem">
+              <div style="font-size:0.7rem;color:rgba(26,10,0,0.4);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.5rem">Faltam</div>
+              <div id="countdown" style="font-family:var(--font-display);font-size:1.5rem;font-weight:900;font-style:italic;color:var(--yellow);letter-spacing:-.01em">--d --h --m</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RSVP Form -->
+        <div class="reveal">
+          <div class="section-label" style="color:var(--pink)">✉️ Confirmação de Presença</div>
+          <h2 class="section-title" style="margin-bottom:2rem">Confirme sua<br>presença aqui.</h2>
+
+          <div class="rsvp-form-box">
+            <div class="rsvp-form-title">Vai comparecer? 🥳</div>
+            <div class="rsvp-form-sub">Responda até 07 de junho para confirmar seu lugar.</div>
+
+            <div id="rsvpForm">
+              <div class="form-group">
+                <label>Seu nome completo</label>
+                <input type="text" id="guestName" placeholder="Ex: Maria Santos" />
+              </div>
+              <div class="form-group">
+                <label>WhatsApp</label>
+                <input type="tel" id="guestPhone" placeholder="(11) 99999-9999" />
+              </div>
+              <div class="form-group">
+                <label>Quantas pessoas virão com você?</label>
+                <select id="guestCount">
+                  <option value="1">Só eu (1 pessoa)</option>
+                  <option value="2">Eu + 1 (2 pessoas)</option>
+                  <option value="3">Eu + 2 (3 pessoas)</option>
+                  <option value="4">Eu + 3 (4 pessoas)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Você vai comparecer?</label>
+                <div class="attend-options">
+                  <div class="attend-option">
+                    <input type="radio" name="attend" id="attendYes" value="yes" checked />
+                    <label class="attend-label" for="attendYes">✅ Sim, vou!</label>
+                  </div>
+                  <div class="attend-option">
+                    <input type="radio" name="attend" id="attendNo" value="no" />
+                    <label class="attend-label" for="attendNo">❌ Não posso</label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Mensagem para os anfitriões (opcional)</label>
+                <textarea id="guestMessage" placeholder="Uma mensagem carinhosa... 💕"></textarea>
+              </div>
+              <button class="form-submit" onclick="submitRSVP()">🎉 Confirmar presença</button>
+            </div>
+
+            <div class="form-success" id="rsvpSuccess">
+              <div class="form-success-emoji">🥳</div>
+              <div class="form-success-msg">Presença confirmada!<br><small style="font-weight:400;color:rgba(26,10,0,0.5);font-size:0.85rem">Você receberá uma confirmação no seu WhatsApp em breve.</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ GIFT LIST ══ -->
+  <section class="gifts-section" id="presentes">
+    <div class="section-inner">
+      <div class="section-label reveal" style="color:var(--yellow)">🎁 Lista de Presentes</div>
+      <h2 class="section-title reveal">Presenteie com<br>o que eles realmente querem.</h2>
+      <p class="section-sub reveal">Sem duplicados, sem surpresa ruim. Os convidados reservam o presente direto no convite.</p>
+
+      <div class="gifts-demo reveal">
+        <div class="gifts-demo-header">
+          <div class="gifts-demo-title">🎂 Lista da Sofia</div>
+          <button class="gifts-add-btn">+ Adicionar presente</button>
+        </div>
+        <div class="gifts-grid" id="giftsGrid">
+          <!-- Generated by JS -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ TESTIMONIALS ══ -->
+  <section class="testimonials-section">
+    <div class="section-inner">
+      <div class="section-label reveal">💬 Depoimentos</div>
+      <h2 class="section-title reveal">Quem usou, amou.</h2>
+      <p class="section-sub reveal" style="margin-bottom:3rem">Mais de 50 mil festas felizes e contando.</p>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card reveal">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">"Usei para o aniversário de 1 ano do meu filho e fiquei IMPRESSIONADA com o resultado. O convite ficou lindo e a lista de confirmação foi incrivelmente fácil de gerenciar!"</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar-placeholder">👩</div>
+            <div>
+              <div class="testimonial-name">Juliana Moraes</div>
+              <div class="testimonial-event">Aniversário de 1 ano</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">"Criamos o convite do nosso casamento em menos de 30 minutos. A lista de presentes salvou nossas vidas — zero confusão entre os convidados sobre o que já tinha sido comprado."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar-placeholder">👰</div>
+            <div>
+              <div class="testimonial-name">Camila & Rafael</div>
+              <div class="testimonial-event">Casamento</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">"A plataforma mais intuitiva que já usei. Criei o convite do chá revelação e em 2h já tinha 80% das confirmações no WhatsApp. Recomendo de olhos fechados!"</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar-placeholder">🤰</div>
+            <div>
+              <div class="testimonial-name">Fernanda Lima</div>
+              <div class="testimonial-event">Chá Revelação</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ PRICING ══ -->
+  <section class="pricing-section" id="precos">
+    <div class="section-inner">
+      <div class="section-label reveal">💎 Planos</div>
+      <h2 class="section-title reveal">Simples assim:<br>sem letras miúdas.</h2>
+      <p class="section-sub reveal" style="margin-bottom:3rem">Comece grátis. Evolua quando quiser.</p>
+
+      <div class="pricing-grid">
+        <!-- Free -->
+        <div class="pricing-card reveal">
+          <div class="pricing-name">GRATUITO</div>
+          <div class="pricing-price"><sup>R$</sup>0</div>
+          <div class="pricing-period">para sempre</div>
+          <hr class="pricing-divider" />
+          <div class="pricing-features">
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> 1 convite ativo</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Até 50 convidados</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Confirmação de presença</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> 5 templates gratuitos</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon off">✗</span> Lista de presentes</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon off">✗</span> Sem marca d'água</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon off">✗</span> Domínio personalizado</div>
+          </div>
+          <button class="pricing-btn pricing-btn-outline">Começar grátis</button>
+        </div>
+
+        <!-- Pro -->
+        <div class="pricing-card featured reveal">
+          <div class="pricing-tag">⭐ Mais popular</div>
+          <div class="pricing-name">PRO</div>
+          <div class="pricing-price"><sup>R$</sup>19</div>
+          <div class="pricing-period">por evento</div>
+          <hr class="pricing-divider" />
+          <div class="pricing-features">
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Convites ilimitados</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Convidados ilimitados</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Todos os templates</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Lista de presentes completa</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Sem marca d'água</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Contador regressivo</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Exportar lista de convidados</div>
+          </div>
+          <button class="pricing-btn pricing-btn-primary">Assinar Pro →</button>
+        </div>
+
+        <!-- Premium -->
+        <div class="pricing-card reveal">
+          <div class="pricing-name">PREMIUM</div>
+          <div class="pricing-price"><sup>R$</sup>49</div>
+          <div class="pricing-period">por mês</div>
+          <hr class="pricing-divider" />
+          <div class="pricing-features">
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Tudo do Pro</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Domínio personalizado</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Notificações automáticas</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Suporte prioritário</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Múltiplos eventos</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Análises detalhadas</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> API para integrações</div>
+          </div>
+          <button class="pricing-btn pricing-btn-outline">Assinar Premium</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FAQ ══ -->
+  <section class="faq-section">
+    <div class="section-inner" style="text-align:center">
+      <div class="section-label reveal" style="justify-content:center">❓ Dúvidas frequentes</div>
+      <h2 class="section-title reveal" style="margin-bottom:3rem">Perguntas? <em style="font-style:italic">Temos respostas.</em></h2>
+
+      <div class="faq-list">
+        <div class="faq-item reveal">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            O convite é realmente gratuito? <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer"><p>Sim! O plano gratuito permite criar 1 convite ativo com até 50 convidados e confirmação de presença, sem precisar de cartão de crédito. Quando quiser mais recursos, é só fazer upgrade.</p></div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            Como funciona a confirmação de presença? <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer"><p>Cada convite tem um link único. Quando o convidado abre e clica em "Confirmar presença", ele preenche um formulário simples. Você recebe uma notificação e a lista é atualizada em tempo real no seu painel.</p></div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            Posso adicionar links de lojas na lista de presentes? <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer"><p>Com certeza! Você pode adicionar items com links para qualquer loja online (Amazon, Americanas, Magazine Luiza, etc.), colocar uma foto, preço estimado e descrição. Os convidados reservam o item direto no convite.</p></div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            O convite funciona em qualquer celular? <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer"><p>Sim! Todos os convites são totalmente responsivos e funcionam em qualquer dispositivo — iPhone, Android, tablet ou computador. Sem precisar instalar nenhum aplicativo.</p></div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            Posso editar o convite depois de publicar? <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer"><p>Sim! Você pode editar qualquer informação do convite a qualquer momento — data, horário, local, imagens. As alterações ficam disponíveis imediatamente para quem acessar o link.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ CTA FINAL ══ -->
+  <section class="cta-final">
+    <div class="cta-final-bg"></div>
+    <div class="cta-final-inner">
+      <span class="cta-final-emoji">🎊</span>
+      <h2 class="cta-final-title reveal">
+        Sua festa começa<br>
+        com o <span class="accent">convite perfeito.</span>
+      </h2>
+      <p class="cta-final-sub reveal">
+        Milhares de pessoas já criaram convites incríveis aqui.<br>
+        A próxima festa incrível pode ser a sua.
+      </p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap" class="reveal">
+        <a href="editor.html" class="btn-primary">🎉 Criar meu convite agora — É grátis!</a>
+      </div>
+      <p style="margin-top:1.25rem;font-size:0.8rem;color:rgba(26,10,0,0.3)" class="reveal">Sem cartão de crédito. Pronto em 5 minutos.</p>
+    </div>
+  </section>
+
+  <!-- ══ FOOTER ══ -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo">ConteComigo</div>
+        <p class="footer-tagline">A plataforma de convites digitais mais divertida e completa do Brasil. 🎉</p>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Produto</div>
+        <ul class="footer-links">
+          <li><a href="#funcionalidades">Funcionalidades</a></li>
+          <li><a href="#templates">Templates</a></li>
+          <li><a href="#precos">Preços</a></li>
+          <li><a href="#">Novidades</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Suporte</div>
+        <ul class="footer-links">
+          <li><a href="#">Central de Ajuda</a></li>
+          <li><a href="#">Tutoriais</a></li>
+          <li><a href="#">Contato</a></li>
+          <li><a href="#">Status</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Legal</div>
+        <ul class="footer-links">
+          <li><a href="#">Termos de Uso</a></li>
+          <li><a href="#">Privacidade</a></li>
+          <li><a href="#">Cookies</a></li>
+          <li><a href="#">LGPD</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025 <strong>ConteComigo</strong>. Feito com 🎉 no Brasil.</div>
+      <div class="footer-social">
+        <a href="#" class="footer-social-link" title="Instagram">📸</a>
+        <a href="#" class="footer-social-link" title="WhatsApp">💬</a>
+        <a href="#" class="footer-social-link" title="TikTok">🎵</a>
+        <a href="#" class="footer-social-link" title="YouTube">▶️</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ══════════════════════════════
+    //  CONFETTI GENERATOR
+    // ══════════════════════════════
+    const confettiColors = ['#FF3D6B','#FFD93D','#60A5FA','#34D399','#A78BFA','#FB923C','#F9F5EF'];
+    const confettiShapes = ['square','circle','rect'];
+    const container = document.getElementById('confettiContainer');
+
+    function createConfetti() {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      const color = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+      const shape = confettiShapes[Math.floor(Math.random() * confettiShapes.length)];
+      const size = Math.random() * 10 + 5;
+      const left = Math.random() * 100;
+      const duration = Math.random() * 8 + 4;
+      const delay = Math.random() * 10;
+
+      el.style.cssText = `
+        left: ${left}%;
+        width: ${shape === 'rect' ? size * 2 : size}px;
+        height: ${shape === 'circle' ? size : size}px;
+        background: ${color};
+        border-radius: ${shape === 'circle' ? '50%' : shape === 'square' ? '2px' : '1px'};
+        animation-duration: ${duration}s;
+        animation-delay: -${delay}s;
+        opacity: ${Math.random() * 0.6 + 0.2};
+      `;
+      container.appendChild(el);
+    }
+
+    for (let i = 0; i < 60; i++) createConfetti();
+
+    // ══════════════════════════════
+    //  SCROLL REVEAL
+    // ══════════════════════════════
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(el => {
+        if (el.isIntersecting) {
+          el.target.classList.add('visible');
+          revealObserver.unobserve(el.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // ══════════════════════════════
+    //  SCROLL PROGRESS BAR
+    // ══════════════════════════════
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      document.getElementById('scrollProgress').style.width = (scrollTop / docHeight * 100) + '%';
+    }, { passive: true });
+
+    // ══════════════════════════════
+    //  COUNTER ANIMATION
+    // ══════════════════════════════
+    function animateCounter(el, target, duration = 1800, suffix = '') {
+      let start = null;
+      const step = (ts) => {
+        if (!start) start = ts;
+        const progress = Math.min((ts - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const val = Math.floor(eased * target);
+        el.textContent = val.toLocaleString('pt-BR') + suffix;
+        if (progress < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }
+
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(({ target, isIntersecting }) => {
+        if (isIntersecting) {
+          const raw = parseInt(target.dataset.count);
+          const suffix = target.dataset.count === '98' ? '%' : target.dataset.count === '35' ? '+' : '';
+          animateCounter(target, raw, 1800, suffix);
+          counterObserver.unobserve(target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('[data-count]').forEach(el => counterObserver.observe(el));
+
+    // ══════════════════════════════
+    //  COUNTDOWN TIMER
+    // ══════════════════════════════
+    const eventDate = new Date('2025-06-14T18:00:00');
+    function updateCountdown() {
+      const now = new Date();
+      const diff = eventDate - now;
+      if (diff <= 0) { document.getElementById('countdown').textContent = '🎉 Chegou o dia!'; return; }
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      document.getElementById('countdown').textContent = `${d}d ${h}h ${m}m`;
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 60000);
+
+    // ══════════════════════════════
+    //  TEMPLATES DATA + GRID
+    // ══════════════════════════════
+    const templates = [
+      // ── ANIVERSÁRIO ──
+      { name: 'Festa Tropical',      category: 'aniversario', badge: 'POPULAR', emoji: '🌺', photo: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&q=85' },
+      { name: 'Neon Retrô',          category: 'aniversario', badge: null,       emoji: '🪩', photo: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=85' },
+      { name: 'Mágica & Encantada',  category: 'aniversario', badge: 'NOVO',     emoji: '✨', photo: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=85' },
+      { name: 'Festa na Piscina',    category: 'aniversario', badge: null,       emoji: '🏊', photo: 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=600&q=85' },
+      { name: 'Boteco & Pagode',     category: 'aniversario', badge: 'NOVO',     emoji: '🍺', photo: 'https://images.unsplash.com/photo-1506377585622-bedcbb5a9d56?w=600&q=85' },
+      { name: 'Princesa Encantada',  category: 'aniversario', badge: null,       emoji: '👑', photo: 'https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=600&q=85' },
+      { name: 'Safari Kids',         category: 'aniversario', badge: 'NOVO',     emoji: '🦁', photo: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=600&q=85' },
+      // ── CASAMENTO ──
+      { name: 'Noite Estrelada',     category: 'casamento',   badge: 'POPULAR', emoji: '🌙', photo: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=85' },
+      { name: 'Jardim Romântico',    category: 'casamento',   badge: null,       emoji: '🌸', photo: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&q=85' },
+      { name: 'Boho Chic',           category: 'casamento',   badge: null,       emoji: '🌿', photo: 'https://images.unsplash.com/photo-1537633552985-df8429e8048b?w=600&q=85' },
+      { name: 'Minimalista Luxo',    category: 'casamento',   badge: null,       emoji: '🤍', photo: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=600&q=85' },
+      { name: 'Praia & Pôr do Sol',  category: 'casamento',   badge: 'NOVO',     emoji: '🌅', photo: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=85' },
+      // ── CHÁ ──
+      { name: 'Chuva de Amor',       category: 'cha',         badge: null,       emoji: '💛', photo: 'https://images.unsplash.com/photo-1617957718614-8c23f060b04a?w=600&q=85' },
+      { name: 'É Menina!',           category: 'cha',         badge: 'POPULAR', emoji: '🌷', photo: 'https://images.unsplash.com/photo-1544427920-c49ccfb85579?w=600&q=85' },
+      { name: 'É Menino!',           category: 'cha',         badge: null,       emoji: '🚀', photo: 'https://images.unsplash.com/photo-1489872108820-aff4df83d507?w=600&q=85' },
+      // ── FORMATURA ──
+      { name: 'Conquista',           category: 'formatura',   badge: 'POPULAR', emoji: '🎓', photo: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&q=85' },
+      { name: 'Colação de Grau',     category: 'formatura',   badge: null,       emoji: '📜', photo: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&q=85' },
+      // ── OUTROS ──
+      { name: 'Festa Junina',        category: 'outros',      badge: null,       emoji: '🌽', photo: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&q=85' },
+      { name: 'Réveillon',           category: 'outros',      badge: 'NOVO',     emoji: '🥂', photo: 'https://images.unsplash.com/photo-1467810563316-b5476525c0f9?w=600&q=85' },
+      { name: 'Churrasco & Friends', category: 'outros',      badge: null,       emoji: '🔥', photo: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&q=85' },
+      { name: 'Aventura Outdoor',    category: 'outros',      badge: null,       emoji: '⛺', photo: 'https://images.unsplash.com/photo-1532274402911-5a369e4c4bb5?w=600&q=85' },
+    ];
+
+    function renderTemplates(filter = 'todos') {
+      const catLabels = { aniversario: 'Aniversário', casamento: 'Casamento', cha: 'Chá de Bebê', formatura: 'Formatura', outros: 'Outros' };
+      const grid = document.getElementById('templatesGrid');
+      const filtered = filter === 'todos' ? templates : templates.filter(t => t.category === filter);
+      grid.innerHTML = filtered.map(t => `
+        <div class="template-card reveal">
+          <div class="template-img-wrap">
+            <img src="${t.photo}" alt="${t.name}" loading="lazy" />
+            <div class="template-overlay">
+              <div class="template-overlay-content">
+                <span class="template-overlay-emoji">${t.emoji || '🎉'}</span>
+                <button class="template-use-btn" onclick="selectTemplate('${t.name}', '${t.photo}')">Usar este template →</button>
+              </div>
+            </div>
+          </div>
+          <div class="template-info">
+            <div class="template-info-left">
+              <div class="template-name">
+                <span class="template-emoji-sm">${t.emoji || '🎉'}</span>
+                ${t.name}
+              </div>
+              <div class="template-category">${catLabels[t.category] || t.category}</div>
+            </div>
+            ${t.badge ? `<span class="template-badge">${t.badge}</span>` : ''}
+          </div>
+        </div>
+      `).join('');
+
+      // Update total count badge
+      const cntEl = document.getElementById('cnt-todos');
+      if (cntEl) cntEl.textContent = templates.length;
+
+      // Re-observe new elements for scroll reveal
+      grid.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+    }
+
+    renderTemplates();
+
+    function filterTemplates(cat, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderTemplates(cat);
+    }
+
+    // ══════════════════════════════
+    //  GIFTS DATA + GRID
+    // ══════════════════════════════
+    const gifts = [
+      { name: 'Kit de Chá Gourmet', price: 'R$ 89,90', emoji: '☕', reserved: false, id: 1 },
+      { name: 'Livro de Receitas', price: 'R$ 65,00', emoji: '📚', reserved: true, id: 2 },
+      { name: 'Porta-Retratos Premium', price: 'R$ 120,00', emoji: '🖼️', reserved: false, id: 3 },
+      { name: 'Caixa de Chocolates', price: 'R$ 75,00', emoji: '🍫', reserved: false, id: 4 },
+      { name: 'Perfume Importado', price: 'R$ 250,00', emoji: '🌸', reserved: true, id: 5 },
+      { name: 'Jogo de Panelas', price: 'R$ 380,00', emoji: '🍳', reserved: false, id: 6 },
+    ];
+
+    let selectedGiftId = null;
+
+    function renderGifts() {
+      const grid = document.getElementById('giftsGrid');
+      grid.innerHTML = gifts.map(g => `
+        <div class="gift-card">
+          <div class="gift-img">${g.emoji}</div>
+          <div class="gift-info">
+            <div class="gift-name">${g.name}</div>
+            <div class="gift-price">${g.price}</div>
+            <div class="gift-status ${g.reserved ? 'reserved' : 'available'}">
+              ${g.reserved ? '🔒 Reservado' : '✅ Disponível'}
+            </div>
+            <button class="gift-btn" ${g.reserved ? 'disabled' : ''} onclick="openGiftModal(${g.id})">
+              ${g.reserved ? 'Já reservado' : 'Quero dar este presente'}
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    renderGifts();
+
+    function openGiftModal(id) {
+      selectedGiftId = id;
+      document.getElementById('giftModal').classList.add('open');
+    }
+
+    function closeGiftModal() {
+      document.getElementById('giftModal').classList.remove('open');
+      selectedGiftId = null;
+    }
+
+    function confirmGiftReservation() {
+      const name = document.getElementById('giftName').value.trim();
+      const phone = document.getElementById('giftPhone').value.trim();
+      if (!name || !phone) { alert('Por favor, preencha seu nome e WhatsApp! 😊'); return; }
+
+      const gift = gifts.find(g => g.id === selectedGiftId);
+      if (gift) gift.reserved = true;
+      renderGifts();
+      closeGiftModal();
+
+      // Reset fields
+      document.getElementById('giftName').value = '';
+      document.getElementById('giftPhone').value = '';
+      document.getElementById('giftMessage').value = '';
+
+      alert(`🎁 Presente reservado com sucesso!\n\n"${gift?.name}" foi reservado por ${name}.\nObrigado pela delicadeza! 🥰`);
+    }
+
+    // Close modal on backdrop click
+    document.getElementById('giftModal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('giftModal')) closeGiftModal();
+    });
+
+    // ══════════════════════════════
+    //  RSVP FORM
+    // ══════════════════════════════
+    function submitRSVP() {
+      const name = document.getElementById('guestName').value.trim();
+      const phone = document.getElementById('guestPhone').value.trim();
+      if (!name || !phone) { alert('Por favor, preencha seu nome e WhatsApp! 😊'); return; }
+
+      document.getElementById('rsvpForm').style.display = 'none';
+      document.getElementById('rsvpSuccess').classList.add('show');
+    }
+
+    // ══════════════════════════════
+    //  FAQ ACCORDION
+    // ══════════════════════════════
+    function toggleFAQ(btn) {
+      const item = btn.parentElement;
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    }
+
+    // ══════════════════════════════
+    //  MOBILE MENU
+    // ══════════════════════════════
+    function openMobileMenu() {
+      document.getElementById('mobileMenu').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileMenu() {
+      document.getElementById('mobileMenu').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+
+    // ══════════════════════════════
+    //  MAGNETIC CURSOR EFFECT
+    // ══════════════════════════════
+    document.querySelectorAll('.magnetic').forEach(el => {
+      el.addEventListener('mousemove', (e) => {
+        const rect = el.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        el.style.transform = `translate(${x * 0.25}px, ${y * 0.25}px)`;
+      });
+      el.addEventListener('mouseleave', () => {
+        el.style.transform = '';
+        el.style.transition = 'transform 0.5s cubic-bezier(0.16,1,0.3,1)';
+      });
+    });
+
+    // ══════════════════════════════
+    //  SELECT TEMPLATE → editor
+    // ══════════════════════════════
+    function selectTemplate(name, photo) {
+      localStorage.setItem('ccm_template', JSON.stringify({ name, photo }));
+      window.location.href = 'editor.html';
+    }
+
+    // ══════════════════════════════
+    //  NAVBAR SCROLL STYLE
+    // ══════════════════════════════
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('navbar');
+      if (window.scrollY > 50) {
+        nav.style.background = 'rgba(255,248,240,.97)';
+        nav.style.boxShadow = '0 2px 20px rgba(26,10,0,0.08)';
+      } else {
+        nav.style.background = 'rgba(255,248,240,.90)';
+        nav.style.boxShadow = 'none';
+      }
+    });
+
+  </script>
+</body>
+</html>

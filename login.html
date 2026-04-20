@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Entrar — ConteComigo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,700;1,9..144,900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#FFF8F0;--bg2:#FFF0E6;--card:#FFF4EC;
+      --pink:#FF3D6B;--pink-dark:#CC1F4E;
+      --yellow:#FFD93D;--yellow-dk:#E6B800;
+      --white:#1A0A00;--border:rgba(26,10,0,0.09);
+      --font-display:'Fraunces',Georgia,serif;
+      --font-body:'Nunito',system-ui,sans-serif;
+      --ease:cubic-bezier(0.16,1,0.3,1);
+    }
+    body{font-family:var(--font-body);background:var(--bg);color:var(--white);min-height:100vh;display:grid;grid-template-columns:1fr 1fr;-webkit-font-smoothing:antialiased;}
+    a{text-decoration:none;color:inherit}
+
+    /* ── LEFT PANEL ── */
+    .panel-left{
+      position:relative;overflow:hidden;
+      background:radial-gradient(ellipse 80% 80% at 30% 40%,rgba(255,61,107,0.25) 0%,transparent 60%),
+                 radial-gradient(ellipse 60% 60% at 80% 80%,rgba(255,217,61,0.12) 0%,transparent 50%),
+                 #FFF8F0;
+      display:flex;flex-direction:column;justify-content:center;padding:4rem;
+    }
+    .panel-left-content{position:relative;z-index:2}
+    .pl-logo{
+      font-family:var(--font-display);font-size:1.75rem;font-weight:700;font-style:italic;
+      background:linear-gradient(135deg,var(--pink),var(--yellow));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      margin-bottom:3rem;display:inline-block;cursor:pointer;
+    }
+    .pl-headline{
+      font-family:var(--font-display);font-size:clamp(2.5rem,4vw,4rem);
+      font-weight:900;font-style:italic;line-height:1.0;letter-spacing:-.03em;
+      margin-bottom:1.5rem;
+    }
+    .pl-headline .accent{
+      background:linear-gradient(135deg,var(--pink),var(--yellow));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .pl-sub{font-size:1rem;color:rgba(26,10,0,0.55);line-height:1.7;max-width:380px;margin-bottom:3rem;}
+    .pl-features{display:flex;flex-direction:column;gap:1rem;}
+    .pl-feature{
+      display:flex;align-items:center;gap:.75rem;
+      font-size:.9rem;color:rgba(26,10,0,.70);font-weight:600;
+    }
+    .pl-feature-icon{
+      width:36px;height:36px;border-radius:10px;
+      background:rgba(255,61,107,0.15);border:1px solid rgba(255,61,107,0.2);
+      display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;
+    }
+
+    /* floating confetti pieces */
+    .confetti-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
+    .cp{position:absolute;border-radius:2px;opacity:.15;animation:cpFloat linear infinite;}
+    @keyframes cpFloat{from{transform:translateY(110vh) rotate(0deg)}to{transform:translateY(-20px) rotate(360deg)}}
+
+    /* ── RIGHT PANEL ── */
+    .panel-right{
+      display:flex;flex-direction:column;justify-content:center;align-items:center;
+      padding:3rem 2rem;background:var(--bg2);
+    }
+    .auth-box{width:100%;max-width:420px;}
+    .auth-tabs{display:flex;gap:0;margin-bottom:2rem;background:rgba(26,10,0,.04);border-radius:12px;padding:4px;}
+    .auth-tab{
+      flex:1;padding:.6rem 1rem;border:none;background:transparent;color:rgba(26,10,0,.5);
+      font-family:var(--font-body);font-size:.9rem;font-weight:700;cursor:pointer;border-radius:9px;
+      transition:all .2s;
+    }
+    .auth-tab.active{background:var(--pink);color:var(--white);}
+    .auth-title{font-family:var(--font-display);font-size:1.8rem;font-weight:900;font-style:italic;margin-bottom:.35rem;}
+    .auth-sub{font-size:.85rem;color:rgba(26,10,0,.45);margin-bottom:1.75rem;line-height:1.5;}
+
+    .form-group{margin-bottom:1.1rem;}
+    .form-group label{display:block;font-size:.75rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:rgba(26,10,0,.4);margin-bottom:.4rem;}
+    .form-group input{
+      width:100%;background:rgba(26,10,0,.05);border:1px solid rgba(26,10,0,.1);
+      border-radius:12px;padding:.75rem 1rem;color:var(--white);
+      font-family:var(--font-body);font-size:.95rem;outline:none;
+      transition:border-color .2s,background .2s;
+    }
+    .form-group input::placeholder{color:rgba(26,10,0,.2);}
+    .form-group input:focus{border-color:var(--pink);background:rgba(255,61,107,.06);}
+    .input-error{border-color:#f87171 !important;}
+    .error-msg{font-size:.75rem;color:#f87171;margin-top:.3rem;display:none;}
+    .error-msg.show{display:block;}
+
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;}
+
+    .btn-auth{
+      width:100%;padding:.9rem;background:var(--pink);color:var(--white);
+      border:none;border-radius:12px;font-family:var(--font-body);font-size:1rem;
+      font-weight:800;cursor:pointer;transition:background .2s,transform .2s,box-shadow .2s;
+      box-shadow:0 8px 24px rgba(255,61,107,.35);margin-top:.5rem;
+    }
+    .btn-auth:hover{background:var(--pink-dark);transform:translateY(-2px);box-shadow:0 12px 32px rgba(255,61,107,.45);}
+
+    .divider{display:flex;align-items:center;gap:.75rem;margin:1.25rem 0;color:rgba(26,10,0,.25);font-size:.8rem;}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(26,10,0,.08);}
+
+    .btn-social{
+      width:100%;padding:.75rem;background:rgba(26,10,0,.04);
+      border:1px solid rgba(26,10,0,.1);border-radius:12px;
+      font-family:var(--font-body);font-size:.9rem;font-weight:700;color:rgba(26,10,0,.70);
+      cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;
+      transition:background .2s,border-color .2s,transform .2s;
+    }
+    .btn-social:hover{background:rgba(26,10,0,.08);border-color:rgba(26,10,0,.2);transform:translateY(-1px);}
+
+    .auth-footer{text-align:center;margin-top:1.5rem;font-size:.82rem;color:rgba(26,10,0,.35);}
+    .auth-footer a{color:var(--pink);font-weight:700;}
+
+    /* password toggle */
+    .input-wrap{position:relative;}
+    .input-wrap input{padding-right:2.5rem;}
+    .pw-toggle{
+      position:absolute;right:.75rem;top:50%;transform:translateY(-50%);
+      background:none;border:none;cursor:pointer;color:rgba(26,10,0,.3);
+      font-size:1.1rem;transition:color .2s;padding:0;
+    }
+    .pw-toggle:hover{color:rgba(26,10,0,.6);}
+
+    /* form panels */
+    .form-panel{display:none;}
+    .form-panel.active{display:block;}
+
+    /* success state */
+    .auth-success{display:none;text-align:center;padding:2rem 0;}
+    .auth-success.show{display:block;}
+    .success-emoji{font-size:3.5rem;margin-bottom:1rem;}
+    .success-msg{font-size:1.1rem;font-weight:700;margin-bottom:.5rem;}
+    .success-sub{font-size:.85rem;color:rgba(26,10,0,.45);}
+
+    /* mobile */
+    @media(max-width:768px){
+      body{grid-template-columns:1fr;}
+      .panel-left{display:none;}
+      .panel-right{padding:2rem 1.25rem;min-height:100vh;}
+      .auth-box{max-width:100%;}
+    }
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+    .auth-box{animation:fadeUp .6s cubic-bezier(0.16,1,0.3,1) both;}
+
+    /* strength meter */
+    .strength-bar{height:4px;border-radius:99px;background:rgba(26,10,0,.08);margin-top:.5rem;overflow:hidden;}
+    .strength-fill{height:100%;width:0;border-radius:99px;transition:width .3s,background .3s;}
+  </style>
+</head>
+<body>
+
+<!-- LEFT PANEL -->
+<div class="panel-left">
+  <div class="confetti-bg" id="confettiBg"></div>
+  <div class="panel-left-content">
+    <div class="pl-logo" onclick="location.href='convite-online.html'">ConteComigo</div>
+    <h1 class="pl-headline">Celebrar<br>começa <span class="accent">aqui.</span></h1>
+    <p class="pl-sub">Crie convites que emocionam, gerencie convidados com facilidade e faça cada festa ser inesquecível.</p>
+    <div class="pl-features">
+      <div class="pl-feature"><div class="pl-feature-icon">🎨</div>+200 templates profissionais</div>
+      <div class="pl-feature"><div class="pl-feature-icon">✅</div>Confirmação de presença em tempo real</div>
+      <div class="pl-feature"><div class="pl-feature-icon">🎁</div>Lista de presentes integrada</div>
+      <div class="pl-feature"><div class="pl-feature-icon">📱</div>Compartilha direto no WhatsApp</div>
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="panel-right">
+  <div class="auth-box">
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Entrar</button>
+      <button class="auth-tab" id="tabCadastro" onclick="switchTab('cadastro')">Criar conta</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="form-panel active" id="panelLogin">
+      <div class="auth-title">Bem-vindo de volta! 👋</div>
+      <div class="auth-sub">Entre na sua conta para gerenciar seus convites.</div>
+
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="email" id="loginEmail" placeholder="seu@email.com"/>
+        <div class="error-msg" id="loginEmailErr">E-mail inválido</div>
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <div class="input-wrap">
+          <input type="password" id="loginPw" placeholder="••••••••"/>
+          <button class="pw-toggle" onclick="togglePw('loginPw',this)" tabindex="-1">👁</button>
+        </div>
+        <div class="error-msg" id="loginPwErr">Senha incorreta</div>
+      </div>
+
+      <div style="text-align:right;margin-bottom:1rem">
+        <a href="#" style="font-size:.8rem;color:var(--pink);font-weight:700">Esqueci minha senha</a>
+      </div>
+
+      <button class="btn-auth" onclick="doLogin()">Entrar na minha conta →</button>
+
+      <div class="divider">ou continue com</div>
+      <button class="btn-social" onclick="socialLogin('Google')">🔵 Entrar com Google</button>
+
+      <div class="auth-footer">Não tem conta? <a href="#" onclick="switchTab('cadastro');return false">Criar agora — é grátis</a></div>
+    </div>
+
+    <!-- CADASTRO -->
+    <div class="form-panel" id="panelCadastro">
+      <div class="auth-title">Vamos celebrar! 🎉</div>
+      <div class="auth-sub">Crie sua conta gratuita em segundos.</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome</label>
+          <input type="text" id="cadNome" placeholder="Ana"/>
+          <div class="error-msg" id="cadNomeErr">Campo obrigatório</div>
+        </div>
+        <div class="form-group">
+          <label>Sobrenome</label>
+          <input type="text" id="cadSobrenome" placeholder="Silva"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="email" id="cadEmail" placeholder="ana@email.com"/>
+        <div class="error-msg" id="cadEmailErr">E-mail inválido</div>
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <div class="input-wrap">
+          <input type="password" id="cadPw" placeholder="mínimo 8 caracteres" oninput="checkStrength(this.value)"/>
+          <button class="pw-toggle" onclick="togglePw('cadPw',this)" tabindex="-1">👁</button>
+        </div>
+        <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+        <div class="error-msg" id="cadPwErr">Mínimo 8 caracteres</div>
+      </div>
+      <div class="form-group">
+        <label>WhatsApp (opcional)</label>
+        <input type="tel" id="cadPhone" placeholder="(11) 99999-9999"/>
+      </div>
+
+      <button class="btn-auth" onclick="doCadastro()">Criar minha conta grátis 🎉</button>
+
+      <div class="divider">ou continue com</div>
+      <button class="btn-social" onclick="socialLogin('Google')">🔵 Cadastrar com Google</button>
+
+      <div class="auth-footer" style="font-size:.75rem;margin-top:1rem">
+        Ao criar uma conta você concorda com os <a href="#">Termos de Uso</a> e <a href="#">Política de Privacidade</a>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="auth-success" id="authSuccess">
+      <div class="success-emoji" id="successEmoji">🎉</div>
+      <div class="success-msg" id="successMsg">Bem-vindo ao ConteComigo!</div>
+      <div class="success-sub" id="successSub">Redirecionando para o seu painel...</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ── confetti bg ──
+  const cb = document.getElementById('confettiBg');
+  const cols = ['#FF3D6B','#FFD93D','#60A5FA','#34D399','#A78BFA'];
+  for(let i=0;i<30;i++){
+    const el=document.createElement('div');el.className='cp';
+    const s=Math.random()*8+4;
+    el.style.cssText=`left:${Math.random()*100}%;bottom:0;width:${s}px;height:${s}px;background:${cols[i%cols.length]};animation-duration:${Math.random()*12+8}s;animation-delay:-${Math.random()*12}s;`;
+    cb.appendChild(el);
+  }
+
+  // ── tab switch ──
+  function switchTab(t){
+    document.getElementById('panelLogin').classList.toggle('active',t==='login');
+    document.getElementById('panelCadastro').classList.toggle('active',t==='cadastro');
+    document.getElementById('tabLogin').classList.toggle('active',t==='login');
+    document.getElementById('tabCadastro').classList.toggle('active',t==='cadastro');
+  }
+
+  // ── password toggle ──
+  function togglePw(id,btn){
+    const inp=document.getElementById(id);
+    inp.type=inp.type==='password'?'text':'password';
+    btn.textContent=inp.type==='password'?'👁':'🙈';
+  }
+
+  // ── password strength ──
+  function checkStrength(v){
+    const f=document.getElementById('strengthFill');
+    let score=0;
+    if(v.length>=8)score++;if(v.length>=12)score++;
+    if(/[A-Z]/.test(v))score++;if(/[0-9]/.test(v))score++;if(/[^A-Za-z0-9]/.test(v))score++;
+    const pct=Math.min(score/4*100,100);
+    const col=score<=1?'#f87171':score<=2?'#fb923c':score<=3?'#fbbf24':'#34d399';
+    f.style.width=pct+'%';f.style.background=col;
+  }
+
+  // ── validation helpers ──
+  function showErr(id,msg=''){const el=document.getElementById(id);if(msg)el.textContent=msg;el.classList.add('show');return false;}
+  function hideErr(id){document.getElementById(id).classList.remove('show');}
+  function isEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);}
+
+  // ── login ──
+  function doLogin(){
+    const email=document.getElementById('loginEmail').value.trim();
+    const pw=document.getElementById('loginPw').value;
+    let ok=true;
+    hideErr('loginEmailErr');hideErr('loginPwErr');
+    if(!isEmail(email)){showErr('loginEmailErr','E-mail inválido');document.getElementById('loginEmail').classList.add('input-error');ok=false;}
+    else document.getElementById('loginEmail').classList.remove('input-error');
+    if(pw.length<6){showErr('loginPwErr','Senha muito curta');document.getElementById('loginPw').classList.add('input-error');ok=false;}
+    else document.getElementById('loginPw').classList.remove('input-error');
+    if(!ok)return;
+
+    // check stored users
+    const users=JSON.parse(localStorage.getItem('ccm_users')||'[]');
+    const user=users.find(u=>u.email===email);
+    if(!user||user.pw!==btoa(pw)){showErr('loginPwErr','E-mail ou senha incorretos');return;}
+
+    loginSuccess(user);
+  }
+
+  // ── cadastro ──
+  function doCadastro(){
+    const nome=document.getElementById('cadNome').value.trim();
+    const sob=document.getElementById('cadSobrenome').value.trim();
+    const email=document.getElementById('cadEmail').value.trim();
+    const pw=document.getElementById('cadPw').value;
+    const phone=document.getElementById('cadPhone').value.trim();
+    let ok=true;
+    ['cadNomeErr','cadEmailErr','cadPwErr'].forEach(hideErr);
+
+    if(!nome){showErr('cadNomeErr');ok=false;}
+    if(!isEmail(email)){showErr('cadEmailErr','E-mail inválido');ok=false;}
+    if(pw.length<8){showErr('cadPwErr');ok=false;}
+    if(!ok)return;
+
+    const users=JSON.parse(localStorage.getItem('ccm_users')||'[]');
+    if(users.find(u=>u.email===email)){showErr('cadEmailErr','Este e-mail já está cadastrado');return;}
+
+    const user={id:'u_'+Date.now(),nome,sobrenome:sob,email,pw:btoa(pw),phone,createdAt:new Date().toISOString()};
+    users.push(user);
+    localStorage.setItem('ccm_users',JSON.stringify(users));
+    loginSuccess(user,true);
+  }
+
+  function socialLogin(provider){
+    // Simulate social auth — create/find demo user
+    const user={id:'u_social',nome:'Usuário',sobrenome:'Demo',email:'demo@contecomeigo.com.br',provider};
+    loginSuccess(user,false);
+  }
+
+  function loginSuccess(user,isNew=false){
+    localStorage.setItem('ccm_session',JSON.stringify({...user,loggedAt:new Date().toISOString()}));
+    document.querySelectorAll('.form-panel').forEach(p=>p.style.display='none');
+    const s=document.getElementById('authSuccess');
+    document.getElementById('successEmoji').textContent=isNew?'🥳':'👋';
+    document.getElementById('successMsg').textContent=isNew?`Olá, ${user.nome}! Conta criada com sucesso!`:`Bem-vindo de volta, ${user.nome}!`;
+    document.getElementById('successSub').textContent='Redirecionando para o seu painel...';
+    s.classList.add('show');
+    document.getElementById('authSuccess').style.display='block';
+    setTimeout(()=>location.href='dashboard.html',1800);
+  }
+
+  // check if already logged in
+  const session=JSON.parse(localStorage.getItem('ccm_session')||'null');
+  if(session) location.href='dashboard.html';
+</script>
+</body>
+</html>

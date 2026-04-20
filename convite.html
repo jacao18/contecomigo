@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Convite — ConteComigo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,700;1,9..144,900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#FFF8F0;
+      --pink:#FF3D6B;--pink-dark:#CC1F4E;
+      --yellow:#FFD93D;
+      --accent:#FFD93D;
+      --inv-bg:linear-gradient(135deg,#1a0a1e,#2d0a3a);
+      --white:#1A0A00;--border:rgba(26,10,0,0.09);
+      --font-display:'Fraunces',Georgia,serif;
+      --font-body:'Nunito',system-ui,sans-serif;
+      --ease:cubic-bezier(0.16,1,0.3,1);
+    }
+    body{font-family:var(--font-body);background:var(--bg);color:var(--white);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+    a{text-decoration:none;color:inherit;}
+
+    /* ── FLOATING NAV ── */
+    .nav{
+      position:fixed;top:0;left:0;right:0;z-index:100;
+      padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;
+      background:rgba(255,248,240,.90);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);
+    }
+    .nav-logo{font-family:var(--font-display);font-size:1.1rem;font-weight:700;font-style:italic;background:linear-gradient(135deg,var(--pink),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:pointer;}
+    .nav-links{display:flex;gap:.75rem;align-items:center;}
+    .nav-link-pill{padding:.4rem .9rem;border:1px solid var(--border);border-radius:99px;font-size:.8rem;font-weight:700;color:rgba(26,10,0,.6);cursor:pointer;transition:all .2s;}
+    .nav-link-pill:hover{border-color:rgba(26,10,0,.3);color:var(--white);}
+    .nav-link-pill.pink{background:var(--pink);border-color:var(--pink);color:var(--white);}
+    .nav-link-pill.pink:hover{background:var(--pink-dark);}
+
+    /* ── CONFETTI ── */
+    .confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+    .cp{position:absolute;border-radius:2px;opacity:.12;animation:cpFall linear infinite;}
+    @keyframes cpFall{from{transform:translateY(-30px) rotate(0deg)}to{transform:translateY(110vh) rotate(540deg)}}
+
+    /* ── HERO ── */
+    .invite-hero{
+      min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      text-align:center;padding:6rem 1.5rem 3rem;position:relative;overflow:hidden;
+      background:var(--inv-bg);
+    }
+    .invite-hero-img{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.15;}
+    .invite-hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,var(--bg) 100%);}
+    .hero-content{position:relative;z-index:2;max-width:680px;}
+
+    .invite-event-badge{
+      display:inline-flex;align-items:center;gap:.35rem;
+      background:rgba(26,10,0,.08);border:1px solid rgba(26,10,0,.12);
+      padding:.35rem .9rem;border-radius:99px;font-size:.75rem;font-weight:700;
+      letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.25rem;
+      animation:fadeUp .7s var(--ease) .1s both;
+    }
+
+    .invite-emoji{font-size:4rem;margin-bottom:.75rem;display:block;animation:bounceIn .8s var(--ease) .2s both;}
+    @keyframes bounceIn{from{opacity:0;transform:scale(.5)}60%{transform:scale(1.1)}to{opacity:1;transform:scale(1)}}
+
+    .invite-title{
+      font-family:var(--font-display);font-size:clamp(2.2rem,7vw,5rem);
+      font-weight:900;font-style:italic;line-height:1;letter-spacing:-.03em;
+      color:var(--accent);margin-bottom:.5rem;animation:fadeUp .7s var(--ease) .3s both;
+    }
+    .invite-name{
+      font-family:var(--font-display);font-size:clamp(1.3rem,3.5vw,2rem);
+      font-weight:700;color:var(--white);margin-bottom:2rem;animation:fadeUp .7s var(--ease) .4s both;
+    }
+
+    .invite-details-grid{
+      display:flex;flex-direction:column;gap:.65rem;margin-bottom:2.5rem;
+      animation:fadeUp .7s var(--ease) .5s both;
+    }
+    .inv-det{
+      display:flex;align-items:center;gap:.6rem;font-size:1rem;
+      color:rgba(255,248,240,.90);justify-content:center;
+    }
+    .inv-det-icon{font-size:1.1rem;}
+
+    .invite-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation:fadeUp .7s var(--ease) .65s both;}
+    .btn-rsvp{
+      padding:1rem 2.25rem;background:var(--accent);color:var(--bg);
+      border:none;border-radius:99px;font-family:var(--font-body);font-size:1rem;font-weight:800;
+      cursor:pointer;transition:all .2s;box-shadow:0 8px 32px rgba(255,217,61,.3);
+    }
+    .btn-rsvp:hover{filter:brightness(1.1);transform:translateY(-3px);box-shadow:0 16px 40px rgba(255,217,61,.4);}
+    .btn-presents{
+      padding:1rem 2rem;background:transparent;color:var(--white);
+      border:1px solid rgba(26,10,0,.2);border-radius:99px;font-family:var(--font-body);
+      font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;
+    }
+    .btn-presents:hover{background:rgba(26,10,0,.06);border-color:rgba(26,10,0,.4);transform:translateY(-2px);}
+
+    /* countdown */
+    .countdown-bar{
+      margin-top:2.5rem;display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;
+      animation:fadeUp .7s var(--ease) .8s both;
+    }
+    .cd-unit{text-align:center;}
+    .cd-num{
+      font-family:var(--font-display);font-size:3rem;font-weight:900;font-style:italic;
+      line-height:1;color:var(--accent);min-width:70px;display:block;
+    }
+    .cd-label{font-size:.6rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(26,10,0,.3);margin-top:.2rem;}
+    .cd-sep{font-family:var(--font-display);font-size:2.5rem;font-weight:900;color:rgba(26,10,0,.15);line-height:3rem;}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+
+    /* ── MESSAGE SECTION ── */
+    .section{padding:4rem 1.5rem;max-width:680px;margin:0 auto;}
+    .section-label{font-size:.7rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(26,10,0,.3);margin-bottom:.75rem;text-align:center;}
+    .section-title{font-family:var(--font-display);font-size:clamp(1.6rem,4vw,2.5rem);font-weight:900;font-style:italic;text-align:center;margin-bottom:1.25rem;line-height:1.1;}
+
+    .msg-card{
+      background:rgba(26,10,0,.04);border:1px solid var(--border);border-radius:20px;
+      padding:1.75rem 2rem;font-size:1.05rem;line-height:1.8;color:rgba(26,10,0,.75);
+      font-style:italic;text-align:center;position:relative;
+    }
+    .msg-card::before{content:'"';font-family:var(--font-display);font-size:5rem;color:rgba(26,10,0,.05);position:absolute;top:-.5rem;left:1rem;line-height:1;}
+
+    /* ── RSVP FORM ── */
+    .rsvp-section{
+      background:rgba(26,10,0,.02);border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+    }
+    .rsvp-inner{padding:4rem 1.5rem;max-width:560px;margin:0 auto;text-align:center;}
+
+    .form-box{
+      background:rgba(26,10,0,.03);border:1px solid var(--border);border-radius:24px;
+      padding:2rem;text-align:left;margin-top:2rem;
+    }
+    .form-group{margin-bottom:1.1rem;}
+    .form-group label{display:block;font-size:.72rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:rgba(26,10,0,.35);margin-bottom:.4rem;}
+    .form-group input,.form-group select,.form-group textarea{
+      width:100%;background:rgba(26,10,0,.05);border:1px solid rgba(26,10,0,.1);
+      border-radius:12px;padding:.7rem 1rem;color:var(--white);
+      font-family:var(--font-body);font-size:.95rem;outline:none;
+      transition:border-color .2s,background .2s;
+    }
+    .form-group input::placeholder,.form-group textarea::placeholder{color:rgba(26,10,0,.2);}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent);background:rgba(255,217,61,.05);}
+    .form-group select option{background:#FFFFFF;}
+    .form-group textarea{resize:vertical;min-height:80px;}
+
+    .attend-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.1rem;}
+    .attend-opt{position:relative;}
+    .attend-opt input{position:absolute;opacity:0;pointer-events:none;}
+    .attend-lbl{
+      display:flex;align-items:center;justify-content:center;gap:.4rem;
+      padding:.85rem;border-radius:12px;border:1px solid rgba(26,10,0,.1);
+      background:rgba(26,10,0,.03);cursor:pointer;font-size:.9rem;font-weight:700;
+      transition:all .2s;
+    }
+    .attend-opt input:checked + .attend-lbl{border-color:var(--accent);background:rgba(255,217,61,.1);color:var(--accent);}
+
+    .btn-confirm{
+      width:100%;padding:1rem;background:var(--accent);color:var(--bg);
+      border:none;border-radius:12px;font-family:var(--font-body);font-size:1rem;font-weight:800;
+      cursor:pointer;transition:all .2s;margin-top:.5rem;
+      box-shadow:0 8px 24px rgba(255,217,61,.25);
+    }
+    .btn-confirm:hover{filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 14px 32px rgba(255,217,61,.35);}
+
+    .success-box{
+      text-align:center;padding:2.5rem 1.5rem;display:none;
+      animation:fadeUp .5s var(--ease) both;
+    }
+    .success-box.show{display:block;}
+    .success-emoji-big{font-size:4rem;margin-bottom:.75rem;display:block;}
+    .success-msg{font-family:var(--font-display);font-size:1.5rem;font-weight:900;font-style:italic;margin-bottom:.5rem;}
+    .success-sub{font-size:.9rem;color:rgba(26,10,0,.5);}
+
+    /* ── GIFTS ── */
+    .gifts-section{padding:4rem 1.5rem;max-width:760px;margin:0 auto;}
+    .gifts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1.1rem;margin-top:2rem;}
+    .gift-card{
+      background:rgba(26,10,0,.04);border:1px solid var(--border);border-radius:16px;
+      overflow:hidden;transition:transform .3s var(--ease),box-shadow .3s,border-color .3s;
+    }
+    .gift-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(26,10,0,0.18);border-color:rgba(26,10,0,.12);}
+    .gift-emoji-box{
+      height:100px;display:flex;align-items:center;justify-content:center;font-size:3rem;
+      background:rgba(26,10,0,.03);
+    }
+    .gift-info{padding:1rem;}
+    .gift-name{font-weight:700;font-size:.9rem;margin-bottom:.25rem;line-height:1.3;}
+    .gift-price{font-size:.8rem;color:var(--yellow);font-weight:700;margin-bottom:.6rem;}
+    .gift-link{font-size:.72rem;color:rgba(96,165,250,.8);margin-bottom:.75rem;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .gift-status-badge{
+      display:inline-flex;align-items:center;gap:.3rem;font-size:.72rem;font-weight:700;padding:.2rem .6rem;border-radius:99px;margin-bottom:.5rem;
+    }
+    .gsb-avail{background:rgba(52,211,153,.1);color:#34d399;border:1px solid rgba(52,211,153,.2);}
+    .gsb-reserved{background:rgba(26,10,0,.05);color:rgba(26,10,0,.3);border:1px solid rgba(26,10,0,.06);}
+    .btn-reserve{
+      width:100%;padding:.55rem;border-radius:8px;border:1px solid var(--accent);
+      background:transparent;color:var(--accent);font-family:var(--font-body);
+      font-size:.82rem;font-weight:800;cursor:pointer;transition:all .2s;
+    }
+    .btn-reserve:hover{background:var(--accent);color:var(--bg);}
+    .btn-reserve:disabled{border-color:rgba(26,10,0,.1);color:rgba(26,10,0,.2);cursor:not-allowed;}
+
+    /* ── GIFT MODAL ── */
+    .modal-overlay{
+      display:none;position:fixed;inset:0;background:rgba(26,10,0,0.55);z-index:500;
+      align-items:center;justify-content:center;padding:1.5rem;
+    }
+    .modal-overlay.open{display:flex;}
+    .modal-box{
+      background:#FFFFFF;border:1px solid rgba(26,10,0,.1);border-radius:24px;
+      padding:2rem;width:100%;max-width:420px;position:relative;
+      animation:fadeUp .4s var(--ease) both;
+    }
+    .modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(26,10,0,.35);font-size:1.25rem;cursor:pointer;transition:color .2s;}
+    .modal-close:hover{color:var(--white);}
+    .modal-title{font-family:var(--font-display);font-size:1.4rem;font-weight:700;font-style:italic;margin-bottom:.4rem;}
+    .modal-sub{font-size:.85rem;color:rgba(26,10,0,.45);margin-bottom:1.5rem;}
+    .modal-item-preview{
+      display:flex;align-items:center;gap:.75rem;background:rgba(26,10,0,.04);
+      border:1px solid var(--border);border-radius:12px;padding:.75rem 1rem;margin-bottom:1.25rem;
+    }
+    .modal-item-emoji{font-size:1.75rem;}
+    .modal-item-name{font-weight:700;font-size:.9rem;}
+    .modal-item-price{font-size:.78rem;color:var(--yellow);font-weight:700;}
+    .btn-modal-submit{
+      width:100%;padding:.9rem;background:var(--accent);color:var(--bg);border:none;
+      border-radius:12px;font-family:var(--font-body);font-size:.95rem;font-weight:800;
+      cursor:pointer;margin-top:.5rem;transition:all .2s;
+    }
+    .btn-modal-submit:hover{filter:brightness(1.1);transform:translateY(-2px);}
+
+    /* ── FOOTER ── */
+    .invite-footer{
+      border-top:1px solid var(--border);padding:2rem 1.5rem;text-align:center;
+      font-size:.8rem;color:rgba(26,10,0,.25);
+    }
+    .invite-footer a{color:var(--pink);font-weight:700;}
+    .invite-footer-logo{
+      font-family:var(--font-display);font-size:1.1rem;font-weight:700;font-style:italic;
+      background:linear-gradient(135deg,var(--pink),var(--yellow));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      margin-bottom:.5rem;display:inline-block;
+    }
+
+    /* share fab */
+    .fab{
+      position:fixed;bottom:1.5rem;right:1.5rem;z-index:200;
+      width:52px;height:52px;border-radius:50%;background:#25D366;border:none;
+      font-size:1.5rem;cursor:pointer;box-shadow:0 8px 24px rgba(37,211,102,.35);
+      display:flex;align-items:center;justify-content:center;
+      transition:transform .2s,box-shadow .2s;
+    }
+    .fab:hover{transform:scale(1.1);box-shadow:0 12px 32px rgba(37,211,102,.5);}
+
+    /* reveal */
+    .reveal{opacity:0;transform:translateY(32px);transition:opacity .7s var(--ease),transform .7s var(--ease);}
+    .reveal.visible{opacity:1;transform:none;}
+
+    /* already answered banner */
+    .answered-banner{
+      background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);border-radius:16px;
+      padding:1.25rem;text-align:center;margin-bottom:1.5rem;
+    }
+    .answered-banner-title{font-weight:800;color:#34d399;margin-bottom:.25rem;}
+    .answered-banner-sub{font-size:.85rem;color:rgba(26,10,0,.5);}
+
+    @media(max-width:600px){
+      .countdown-bar{gap:1rem;}
+      .cd-num{font-size:2.2rem;min-width:50px;}
+      .gifts-grid{grid-template-columns:1fr 1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- Confetti -->
+<div class="confetti-wrap" id="confettiWrap"></div>
+
+<!-- Gift Reserve Modal -->
+<div class="modal-overlay" id="giftModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">Reservar presente 🎁</div>
+    <div class="modal-sub">Preencha seus dados para avisar os anfitriões.</div>
+    <div class="modal-item-preview" id="modalItemPreview"></div>
+    <div class="form-group">
+      <label>Seu nome</label>
+      <input type="text" id="giftReserveName" placeholder="Ex: Maria Oliveira"/>
+    </div>
+    <div class="form-group">
+      <label>Seu WhatsApp</label>
+      <input type="tel" id="giftReservePhone" placeholder="(11) 99999-9999"/>
+    </div>
+    <div class="form-group">
+      <label>Mensagem (opcional)</label>
+      <textarea id="giftReserveMsg" placeholder="Uma mensagem carinhosa... 💕"></textarea>
+    </div>
+    <button class="btn-modal-submit" onclick="confirmReservation()">✅ Confirmar reserva</button>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo" onclick="location.href='convite-online.html'">ConteComigo</div>
+  <div class="nav-links">
+    <div class="nav-link-pill" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
+    <div class="nav-link-pill" onclick="document.getElementById('giftsSection').scrollIntoView({behavior:'smooth'})">🎁 Presentes</div>
+    <div class="nav-link-pill pink" onclick="shareWhatsApp()">💬 Compartilhar</div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="invite-hero" id="heroSection">
+  <div class="invite-hero-img" id="heroImg"></div>
+  <div class="invite-hero-overlay"></div>
+  <div class="hero-content">
+    <div class="invite-event-badge" id="eventBadge">🎉 Você está convidado!</div>
+    <span class="invite-emoji" id="invEmoji">🎂</span>
+    <div class="invite-title" id="invTitle">Você está convidado!</div>
+    <div class="invite-name" id="invName">Nome do homenageado</div>
+    <div class="invite-details-grid" id="invDetails">
+      <div class="inv-det"><span class="inv-det-icon">📅</span><span id="invDate">—</span></div>
+      <div class="inv-det"><span class="inv-det-icon">⏰</span><span id="invTime">—</span></div>
+      <div class="inv-det"><span class="inv-det-icon">📍</span><span id="invLocal">—</span></div>
+    </div>
+    <div class="invite-actions">
+      <button class="btn-rsvp" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</button>
+      <button class="btn-presents" onclick="document.getElementById('giftsSection').scrollIntoView({behavior:'smooth'})">🎁 Ver lista de presentes</button>
+    </div>
+    <div class="countdown-bar" id="countdownBar">
+      <div class="cd-unit"><span class="cd-num" id="cdD">—</span><div class="cd-label">Dias</div></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit"><span class="cd-num" id="cdH">—</span><div class="cd-label">Horas</div></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit"><span class="cd-num" id="cdM">—</span><div class="cd-label">Min</div></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit"><span class="cd-num" id="cdS">—</span><div class="cd-label">Seg</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- MESSAGE -->
+<section class="section reveal" id="msgSection" style="display:none">
+  <div class="section-label">💌 Mensagem especial</div>
+  <div class="msg-card" id="msgCard"></div>
+</section>
+
+<!-- RSVP -->
+<section class="rsvp-section" id="rsvpSection">
+  <div class="rsvp-inner">
+    <div class="section-label reveal">✉️ Confirmação de presença</div>
+    <div class="section-title reveal">Você vai <em>comparecer?</em></div>
+
+    <div id="alreadyAnswered" class="answered-banner" style="display:none">
+      <div class="answered-banner-title" id="answeredTitle">✅ Presença confirmada!</div>
+      <div class="answered-banner-sub" id="answeredSub">Você já respondeu a este convite. Obrigado!</div>
+      <button class="btn-rsvp" style="margin-top:1rem;padding:.65rem 1.5rem;font-size:.85rem" onclick="resetRSVP()">Alterar resposta</button>
+    </div>
+
+    <div class="form-box reveal" id="rsvpBox">
+      <div class="form-group">
+        <label>Seu nome completo</label>
+        <input type="text" id="rName" placeholder="Ex: Maria Silva"/>
+      </div>
+      <div class="form-group">
+        <label>WhatsApp</label>
+        <input type="tel" id="rPhone" placeholder="(11) 99999-9999"/>
+      </div>
+      <div class="form-group">
+        <label>Quantas pessoas virão com você?</label>
+        <select id="rGuests">
+          <option value="1">Só eu (1 pessoa)</option>
+          <option value="2">Eu + 1 (2 pessoas)</option>
+          <option value="3">Eu + 2 (3 pessoas)</option>
+          <option value="4">Eu + 3 (4 pessoas)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Vai comparecer?</label>
+        <div class="attend-grid">
+          <div class="attend-opt"><input type="radio" name="rAttend" id="rYes" value="yes" checked/><label class="attend-lbl" for="rYes">✅ Sim, vou!</label></div>
+          <div class="attend-opt"><input type="radio" name="rAttend" id="rNo" value="no"/><label class="attend-lbl" for="rNo">❌ Não posso</label></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Mensagem para os anfitriões (opcional)</label>
+        <textarea id="rMsg" placeholder="Uma mensagem carinhosa... 💕"></textarea>
+      </div>
+      <button class="btn-confirm" onclick="submitRSVP()">🎉 Confirmar agora!</button>
+    </div>
+
+    <div class="success-box" id="rsvpSuccess">
+      <span class="success-emoji-big">🥳</span>
+      <div class="success-msg">Presença confirmada!</div>
+      <div class="success-sub" id="rsvpSuccessSub">Obrigado! Os anfitriões foram notificados.</div>
+    </div>
+  </div>
+</section>
+
+<!-- GIFTS -->
+<section style="padding:4rem 1.5rem" id="giftsSection">
+  <div style="max-width:760px;margin:0 auto">
+    <div class="section-label reveal" style="text-align:center">🎁 Lista de presentes</div>
+    <div class="section-title reveal" style="text-align:center">Presenteie com o que<br><em>realmente importa.</em></div>
+    <div class="gifts-grid reveal" id="giftsGrid"></div>
+    <div style="text-align:center;margin-top:2rem;font-size:.82rem;color:rgba(26,10,0,.3)" class="reveal">
+      Ao reservar um presente, os anfitriões saberão que você vai trazer esse item.
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="invite-footer">
+  <div class="invite-footer-logo" onclick="location.href='convite-online.html'">ConteComigo</div>
+  <div style="margin-bottom:.5rem">Convite criado com ❤️ no <a href="convite-online.html">ConteComigo</a></div>
+  <div>Crie o seu convite grátis em minutos!</div>
+</footer>
+
+<!-- WhatsApp FAB -->
+<button class="fab" onclick="shareWhatsApp()" title="Compartilhar no WhatsApp">💬</button>
+
+<script>
+// ══════════════════════════
+//  LOAD INVITE DATA
+// ══════════════════════════
+const invite = JSON.parse(localStorage.getItem('ccm_current_invite')||'null');
+
+// Demo fallback
+const data = invite || {
+  tipo:'🎂',titulo:'Festa de Aniversário da Sofia',nome:'Sofia Mendes',
+  data:'2025-06-14',hora:'18:00',local:'Salão Felicidade, São Paulo – SP',
+  dress:'Esporte Fino',msg:'Venha celebrar comigo esse dia especial! Sua presença é o meu maior presente. 🎉',
+  accent:'#FFD93D',bg:'linear-gradient(135deg,#1a0a1e,#2d0a3a)',
+  tpl:'tropical',tplImg:'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&q=80',
+  gifts:[
+    {id:1,name:'Kit de Chá Gourmet',price:'R$ 89,90',emoji:'☕',link:'',reserved:false},
+    {id:2,name:'Livro de Receitas',price:'R$ 65,00',emoji:'📚',link:'https://amazon.com.br',reserved:true,reservedBy:'Ana Paula'},
+    {id:3,name:'Porta-Retratos Premium',price:'R$ 120,00',emoji:'🖼️',link:'',reserved:false},
+    {id:4,name:'Caixa de Chocolates',price:'R$ 75,00',emoji:'🍫',link:'',reserved:false},
+    {id:5,name:'Perfume Importado',price:'R$ 250,00',emoji:'🌸',link:'',reserved:true,reservedBy:'Carlos'},
+    {id:6,name:'Jogo de Panelas',price:'R$ 380,00',emoji:'🍳',link:'',reserved:false},
+  ],
+  slug:'festa-sofia',status:'published',guests:[]
+};
+
+// Apply accent color
+document.documentElement.style.setProperty('--accent',data.accent||'#FFD93D');
+document.documentElement.style.setProperty('--inv-bg',data.bg||'linear-gradient(135deg,#1a0a1e,#2d0a3a)');
+
+// ── Populate hero ──
+document.getElementById('heroImg').style.backgroundImage=`url('${data.tplImg||'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=1200&q=80'}')`;
+document.getElementById('eventBadge').textContent=(data.tipo||'🎉')+' Você está convidado!';
+document.getElementById('invEmoji').textContent=data.tipo||'🎉';
+document.getElementById('invTitle').textContent=data.titulo||'Você está convidado!';
+document.getElementById('invName').textContent=data.nome||'—';
+document.title=`${data.titulo||'Convite'} — ConteComigo`;
+
+const date=data.data?new Date(data.data+'T12:00:00'):null;
+document.getElementById('invDate').textContent=date?date.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}):'—';
+document.getElementById('invTime').textContent=data.hora?`A partir das ${data.hora}`:'—';
+document.getElementById('invLocal').textContent=data.local||'—';
+
+// dress code
+if(data.dress){
+  const det=document.getElementById('invDetails');
+  const d=document.createElement('div');d.className='inv-det';
+  d.innerHTML=`<span class="inv-det-icon">👗</span><span>${data.dress}</span>`;
+  det.appendChild(d);
+}
+
+// message
+if(data.msg){
+  document.getElementById('msgSection').style.display='block';
+  document.getElementById('msgCard').textContent=data.msg;
+}
+
+// ── Countdown ──
+function updateCountdown(){
+  if(!date){['cdD','cdH','cdM','cdS'].forEach(id=>document.getElementById(id).textContent='—');return;}
+  const diff=date-new Date();
+  if(diff<=0){document.getElementById('countdownBar').innerHTML='<div style="font-family:var(--font-display);font-size:2rem;font-weight:900;font-style:italic;color:var(--accent)">🎉 Chegou o dia!</div>';return;}
+  const d=Math.floor(diff/86400000);
+  const h=Math.floor((diff%86400000)/3600000);
+  const m=Math.floor((diff%3600000)/60000);
+  const s=Math.floor((diff%60000)/1000);
+  document.getElementById('cdD').textContent=String(d).padStart(2,'0');
+  document.getElementById('cdH').textContent=String(h).padStart(2,'0');
+  document.getElementById('cdM').textContent=String(m).padStart(2,'0');
+  document.getElementById('cdS').textContent=String(s).padStart(2,'0');
+}
+updateCountdown();setInterval(updateCountdown,1000);
+
+// ── Confetti ──
+const cw=document.getElementById('confettiWrap');
+const cols=['#FF3D6B',data.accent||'#FFD93D','#60A5FA','#34D399','#A78BFA'];
+for(let i=0;i<50;i++){
+  const el=document.createElement('div');el.className='cp';
+  const sz=Math.random()*10+5;
+  el.style.cssText=`left:${Math.random()*100}%;top:0;width:${sz}px;height:${sz}px;background:${cols[i%cols.length]};animation-duration:${Math.random()*12+6}s;animation-delay:-${Math.random()*12}s;`;
+  cw.appendChild(el);
+}
+
+// ── Gifts ──
+let giftState=[...data.gifts];
+let selectedGiftId=null;
+
+function renderGifts(){
+  document.getElementById('giftsGrid').innerHTML=giftState.length?giftState.map(g=>`
+    <div class="gift-card">
+      <div class="gift-emoji-box">${g.emoji||'🎁'}</div>
+      <div class="gift-info">
+        <div class="gift-name">${g.name}</div>
+        <div class="gift-price">${g.price||''}</div>
+        ${g.link?`<a class="gift-link" href="${g.link}" target="_blank">🛒 Ver na loja</a>`:''}
+        <div class="gift-status-badge ${g.reserved?'gsb-reserved':'gsb-avail'}">${g.reserved?`🔒 Reservado por ${g.reservedBy||'alguém'}`:'✅ Disponível'}</div>
+        <button class="btn-reserve" onclick="openGiftModal(${g.id})" ${g.reserved?'disabled':''}>
+          ${g.reserved?'Já reservado':'Quero dar este presente 🎁'}
+        </button>
+      </div>
+    </div>
+  `).join(''):`<div style="text-align:center;color:rgba(26,10,0,.25);padding:2rem;grid-column:1/-1">Nenhum presente cadastrado ainda.</div>`;
+}
+renderGifts();
+
+function openGiftModal(id){
+  selectedGiftId=id;
+  const g=giftState.find(g=>g.id===id);
+  document.getElementById('modalItemPreview').innerHTML=`
+    <div class="modal-item-emoji">${g.emoji||'🎁'}</div>
+    <div><div class="modal-item-name">${g.name}</div><div class="modal-item-price">${g.price||''}</div></div>
+  `;
+  document.getElementById('giftModal').classList.add('open');
+}
+function closeModal(){
+  document.getElementById('giftModal').classList.remove('open');
+  selectedGiftId=null;
+}
+document.getElementById('giftModal').addEventListener('click',e=>{if(e.target===document.getElementById('giftModal'))closeModal();});
+
+function confirmReservation(){
+  const name=document.getElementById('giftReserveName').value.trim();
+  const phone=document.getElementById('giftReservePhone').value.trim();
+  if(!name||!phone){alert('Por favor, preencha seu nome e WhatsApp! 😊');return;}
+  const g=giftState.find(g=>g.id===selectedGiftId);
+  if(g){g.reserved=true;g.reservedBy=name;}
+  // Save back to invite
+  const inv=JSON.parse(localStorage.getItem('ccm_current_invite')||'{}');
+  if(inv){inv.gifts=giftState;localStorage.setItem('ccm_current_invite',JSON.stringify(inv));}
+  closeModal();renderGifts();
+  showConfetti();
+  ['giftReserveName','giftReservePhone','giftReserveMsg'].forEach(id=>document.getElementById(id).value='');
+}
+
+// ── RSVP ──
+const rsvpKey='ccm_rsvp_'+( data.slug||'default');
+const savedRSVP=JSON.parse(localStorage.getItem(rsvpKey)||'null');
+if(savedRSVP){showAlreadyAnswered(savedRSVP);}
+
+function submitRSVP(){
+  const name=document.getElementById('rName').value.trim();
+  const phone=document.getElementById('rPhone').value.trim();
+  if(!name||!phone){alert('Por favor, preencha nome e WhatsApp! 😊');return;}
+  const guests=document.getElementById('rGuests').value;
+  const attend=document.querySelector('input[name="rAttend"]:checked')?.value||'yes';
+  const msg=document.getElementById('rMsg').value.trim();
+  const entry={id:Date.now(),name,phone,guests:parseInt(guests),attend,msg,at:new Date().toISOString()};
+
+  // save to RSVP key
+  localStorage.setItem(rsvpKey,JSON.stringify(entry));
+
+  // save to invite.guests
+  const inv=JSON.parse(localStorage.getItem('ccm_current_invite')||'{}');
+  if(inv){if(!inv.guests)inv.guests=[];inv.guests.push(entry);localStorage.setItem('ccm_current_invite',JSON.stringify(inv));}
+
+  document.getElementById('rsvpBox').style.display='none';
+  const suc=document.getElementById('rsvpSuccess');
+  suc.querySelector('.success-emoji-big').textContent=attend==='yes'?'🥳':'😢';
+  document.getElementById('rsvpSuccessSub').textContent=attend==='yes'?`Arrasando, ${name}! Os anfitriões foram notificados.`:`Que pena, ${name}! Você fará muita falta. 💙`;
+  suc.classList.add('show');
+  if(attend==='yes')showConfetti();
+}
+
+function showAlreadyAnswered(r){
+  document.getElementById('rsvpBox').style.display='none';
+  const b=document.getElementById('alreadyAnswered');
+  b.style.display='block';
+  b.querySelector('.answered-banner-title').textContent=r.attend==='yes'?'✅ Você confirmou presença!':'❌ Você informou que não pode ir.';
+  b.querySelector('.answered-banner-sub').textContent=`Obrigado, ${r.name}! Clique abaixo se quiser alterar sua resposta.`;
+}
+
+function resetRSVP(){
+  localStorage.removeItem(rsvpKey);
+  document.getElementById('alreadyAnswered').style.display='none';
+  document.getElementById('rsvpBox').style.display='block';
+  document.getElementById('rsvpSuccess').classList.remove('show');
+}
+
+// ── Share ──
+function shareWhatsApp(){
+  const title=data.titulo||'Convite especial';
+  const slug=data.slug||'convite';
+  const text=`🎉 ${title}\n\nVocê está convidado! Confirme sua presença e veja a lista de presentes:\ncontecomeigo.com/${slug}`;
+  window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
+}
+
+// ── Confetti burst ──
+function showConfetti(){
+  for(let i=0;i<30;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div');
+      el.style.cssText=`position:fixed;top:50%;left:${20+Math.random()*60}%;width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;background:${cols[Math.floor(Math.random()*cols.length)]};border-radius:${Math.random()>.5?'50%':'2px'};pointer-events:none;z-index:999;animation:cpFall ${1+Math.random()*2}s ease-out forwards;`;
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),3000);
+    },i*40);
+  }
+}
+
+// ── Scroll reveal ──
+const ro=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target);}});},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+</script>
+</body>
+</html>
