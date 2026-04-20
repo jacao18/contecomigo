@@ -10,10 +10,10 @@
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
-      --bg:#FFF8F0;--bg2:#FFF0E6;--panel:#FFFFFF;--card:#FFF4EC;
+      --bg:#FFF8F0;--bg2:#FFF0E6;--panel:#FFFFFF;
       --pink:#FF3D6B;--pink-dark:#CC1F4E;
       --yellow:#FFD93D;--yellow-dk:#E6B800;
-      --green:#16A34A;--blue:#2563EB;--purple:#7C3AED;
+      --green:#16A34A;--blue:#2563EB;
       --white:#1A0A00;--border:rgba(26,10,0,0.09);
       --font-display:'Fraunces',Georgia,serif;
       --font-body:'Nunito',system-ui,sans-serif;
@@ -22,111 +22,55 @@
     body{font-family:var(--font-body);background:var(--bg);color:var(--white);min-height:100vh;display:grid;grid-template-columns:240px 1fr;-webkit-font-smoothing:antialiased;}
     a{text-decoration:none;color:inherit;}
 
-    /* ── SIDEBAR NAV ── */
-    .sidenav{
-      background:var(--bg2);border-right:1px solid var(--border);
-      display:flex;flex-direction:column;min-height:100vh;position:sticky;top:0;
-    }
-    .sidenav-logo{
-      padding:1.5rem;border-bottom:1px solid var(--border);
-      font-family:var(--font-display);font-size:1.3rem;font-weight:700;font-style:italic;
-      background:linear-gradient(135deg,var(--pink),var(--yellow));
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-      cursor:pointer;
-    }
-    .sidenav-user{
-      padding:1rem 1.25rem;border-bottom:1px solid var(--border);
-      display:flex;align-items:center;gap:.75rem;
-    }
-    .sidenav-avatar{
-      width:36px;height:36px;border-radius:50%;
-      background:linear-gradient(135deg,var(--pink),var(--yellow));
-      display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:800;flex-shrink:0;
-    }
+    .sidenav{background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;min-height:100vh;position:sticky;top:0;}
+    .sidenav-logo{padding:1.5rem;border-bottom:1px solid var(--border);font-family:var(--font-display);font-size:1.3rem;font-weight:700;font-style:italic;background:linear-gradient(135deg,var(--pink),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:pointer;}
+    .sidenav-user{padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem;}
+    .sidenav-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--yellow));display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:800;flex-shrink:0;color:#fff;}
     .sidenav-name{font-size:.85rem;font-weight:700;line-height:1.2;}
     .sidenav-email{font-size:.7rem;color:rgba(26,10,0,.35);}
-
     .sidenav-section{padding:.75rem 1rem .25rem;font-size:.65rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(26,10,0,.2);}
-    .sidenav-item{
-      display:flex;align-items:center;gap:.65rem;padding:.65rem 1.25rem;
-      font-size:.88rem;font-weight:700;color:rgba(26,10,0,.5);cursor:pointer;
-      border-left:3px solid transparent;transition:all .2s;border-radius:0 8px 8px 0;margin:0 .5rem 0 0;
-    }
+    .sidenav-item{display:flex;align-items:center;gap:.65rem;padding:.65rem 1.25rem;font-size:.88rem;font-weight:700;color:rgba(26,10,0,.5);cursor:pointer;border-left:3px solid transparent;transition:all .2s;border-radius:0 8px 8px 0;margin:0 .5rem 0 0;}
     .sidenav-item:hover{color:var(--white);background:rgba(26,10,0,.04);}
     .sidenav-item.active{color:var(--white);background:rgba(255,61,107,.08);border-left-color:var(--pink);}
     .sidenav-icon{font-size:1rem;width:20px;text-align:center;}
-    .sidenav-badge{margin-left:auto;background:var(--pink);color:var(--white);font-size:.65rem;font-weight:800;padding:.1rem .4rem;border-radius:99px;}
-
+    .sidenav-badge{margin-left:auto;background:var(--pink);color:#fff;font-size:.65rem;font-weight:800;padding:.1rem .4rem;border-radius:99px;}
     .sidenav-bottom{margin-top:auto;padding:1.25rem;border-top:1px solid var(--border);}
-    .btn-new-invite{
-      width:100%;padding:.75rem;background:var(--pink);color:var(--white);border:none;border-radius:10px;
-      font-family:var(--font-body);font-size:.85rem;font-weight:800;cursor:pointer;
-      display:flex;align-items:center;justify-content:center;gap:.5rem;
-      transition:background .2s,transform .2s;box-shadow:0 6px 20px rgba(255,61,107,.3);
-    }
+    .btn-new-invite{width:100%;padding:.75rem;background:var(--pink);color:#fff;border:none;border-radius:10px;font-family:var(--font-body);font-size:.85rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;transition:background .2s,transform .2s;box-shadow:0 6px 20px rgba(255,61,107,.3);}
     .btn-new-invite:hover{background:var(--pink-dark);transform:translateY(-1px);}
 
-    /* ── MAIN ── */
     .main{display:flex;flex-direction:column;min-height:100vh;}
-
-    .topbar{
-      height:60px;border-bottom:1px solid var(--border);
-      display:flex;align-items:center;justify-content:space-between;
-      padding:0 2rem;flex-shrink:0;position:sticky;top:0;
-      background:rgba(255,248,240,.93);backdrop-filter:blur(12px);z-index:10;
-    }
+    .topbar{height:60px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;flex-shrink:0;position:sticky;top:0;background:rgba(255,248,240,.93);backdrop-filter:blur(12px);z-index:10;}
     .topbar-title{font-size:1.1rem;font-weight:800;}
     .topbar-right{display:flex;align-items:center;gap:1rem;}
-    .icon-btn{
-      width:36px;height:36px;border-radius:50%;background:rgba(26,10,0,.05);border:1px solid var(--border);
-      display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.9rem;
-      transition:background .2s;
-    }
+    .icon-btn{width:36px;height:36px;border-radius:50%;background:rgba(26,10,0,.05);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.9rem;transition:background .2s;}
     .icon-btn:hover{background:rgba(26,10,0,.1);}
-
     .content{padding:2rem;flex:1;}
 
-    /* ── STATS CARDS ── */
     .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;margin-bottom:2rem;}
-    .stat-card{
-      background:var(--panel);border:1px solid var(--border);border-radius:16px;
-      padding:1.25rem;transition:transform .3s var(--ease),box-shadow .3s;
-    }
-    .stat-card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(26,10,0,0.18);}
+    .stat-card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:1.25rem;transition:transform .3s var(--ease),box-shadow .3s;animation:fadeUp .5s var(--ease) both;}
+    .stat-card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(26,10,0,0.12);}
+    .stat-card:nth-child(2){animation-delay:.08s;}.stat-card:nth-child(3){animation-delay:.16s;}.stat-card:nth-child(4){animation-delay:.24s;}
     .stat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;}
     .stat-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
-    .stat-icon.pink{background:rgba(255,61,107,.12);}
-    .stat-icon.green{background:rgba(52,211,153,.12);}
-    .stat-icon.yellow{background:rgba(255,217,61,.12);}
-    .stat-icon.blue{background:rgba(96,165,250,.12);}
+    .stat-icon.pink{background:rgba(255,61,107,.12);}.stat-icon.green{background:rgba(52,211,153,.12);}.stat-icon.yellow{background:rgba(255,217,61,.12);}.stat-icon.blue{background:rgba(96,165,250,.12);}
     .stat-trend{font-size:.72rem;font-weight:700;padding:.2rem .5rem;border-radius:99px;}
-    .stat-trend.up{background:rgba(52,211,153,.15);color:var(--green);}
-    .stat-trend.neutral{background:rgba(26,10,0,.05);color:rgba(26,10,0,.4);}
+    .stat-trend.up{background:rgba(52,211,153,.15);color:var(--green);}.stat-trend.neutral{background:rgba(26,10,0,.05);color:rgba(26,10,0,.4);}
     .stat-num{font-family:var(--font-display);font-size:2rem;font-weight:900;font-style:italic;line-height:1;margin-bottom:.2rem;}
     .stat-label{font-size:.78rem;color:rgba(26,10,0,.4);font-weight:600;}
 
-    /* ── SECTION HEADER ── */
     .section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;}
     .section-hdr h2{font-size:1rem;font-weight:800;}
-    .section-hdr-actions{display:flex;gap:.5rem;}
     .btn-xs{padding:.35rem .85rem;border-radius:8px;font-family:var(--font-body);font-size:.78rem;font-weight:700;cursor:pointer;border:none;transition:all .2s;}
     .btn-xs-outline{background:transparent;border:1px solid var(--border);color:rgba(26,10,0,.5);}
     .btn-xs-outline:hover{border-color:rgba(26,10,0,.3);color:var(--white);}
-    .btn-xs-pink{background:var(--pink);color:var(--white);}
+    .btn-xs-pink{background:var(--pink);color:#fff;}
     .btn-xs-pink:hover{background:var(--pink-dark);}
 
-    /* ── INVITE CARD ── */
     .invite-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem;margin-bottom:2rem;}
-    .invite-card{
-      background:var(--panel);border:1px solid var(--border);border-radius:16px;overflow:hidden;
-      transition:transform .3s var(--ease),box-shadow .3s,border-color .3s;cursor:pointer;
-    }
-    .invite-card:hover{transform:translateY(-4px);box-shadow:0 20px 50px rgba(26,10,0,0.25);border-color:rgba(255,61,107,.2);}
+    .invite-card{background:var(--panel);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:transform .3s var(--ease),box-shadow .3s;cursor:pointer;}
+    .invite-card:hover{transform:translateY(-4px);box-shadow:0 20px 50px rgba(26,10,0,0.14);}
     .invite-card-img{height:140px;background-size:cover;background-position:center;position:relative;}
-    .invite-card-status{
-      position:absolute;top:.75rem;right:.75rem;
-      padding:.2rem .65rem;border-radius:99px;font-size:.65rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
-    }
+    .invite-card-status{position:absolute;top:.75rem;right:.75rem;padding:.2rem .65rem;border-radius:99px;font-size:.65rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;}
     .status-published{background:rgba(52,211,153,.2);color:var(--green);border:1px solid rgba(52,211,153,.3);}
     .status-draft{background:rgba(26,10,0,.1);color:rgba(26,10,0,.5);border:1px solid rgba(26,10,0,.1);}
     .invite-card-body{padding:1rem;}
@@ -134,121 +78,70 @@
     .invite-card-event{font-size:.75rem;color:rgba(26,10,0,.4);margin-bottom:.85rem;}
     .invite-card-stats{display:flex;gap:1rem;}
     .ic-stat{display:flex;align-items:center;gap:.3rem;font-size:.78rem;color:rgba(26,10,0,.5);font-weight:600;}
-    .invite-card-actions{
-      padding:.75rem 1rem;border-top:1px solid var(--border);
-      display:flex;gap:.5rem;
-    }
+    .invite-card-actions{padding:.75rem 1rem;border-top:1px solid var(--border);display:flex;gap:.5rem;}
 
-    /* ── GUESTS TABLE ── */
     .guests-panel{background:var(--panel);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:2rem;}
-    .guests-header{
-      padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);
-      display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;
-    }
-    .guests-search{
-      display:flex;align-items:center;gap:.5rem;
-      background:rgba(26,10,0,.05);border:1px solid var(--border);border-radius:8px;
-      padding:.4rem .75rem;
-    }
+    .guests-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;}
+    .guests-search{display:flex;align-items:center;gap:.5rem;background:rgba(26,10,0,.05);border:1px solid var(--border);border-radius:8px;padding:.4rem .75rem;}
     .guests-search input{background:none;border:none;outline:none;color:var(--white);font-size:.85rem;width:180px;font-family:var(--font-body);}
     .guests-search input::placeholder{color:rgba(26,10,0,.25);}
-    .filter-pills{display:flex;gap:.4rem;}
-    .filter-pill{
-      padding:.3rem .75rem;border-radius:99px;font-size:.72rem;font-weight:700;cursor:pointer;
-      border:1px solid var(--border);background:transparent;color:rgba(26,10,0,.4);transition:all .2s;
-    }
+    .filter-pills{display:flex;gap:.4rem;flex-wrap:wrap;}
+    .filter-pill{padding:.3rem .75rem;border-radius:99px;font-size:.72rem;font-weight:700;cursor:pointer;border:1px solid var(--border);background:transparent;color:rgba(26,10,0,.4);transition:all .2s;}
     .filter-pill:hover,.filter-pill.active{border-color:var(--pink);color:var(--pink);}
     table{width:100%;border-collapse:collapse;}
     th{padding:.75rem 1.5rem;font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:rgba(26,10,0,.3);text-align:left;border-bottom:1px solid var(--border);}
     td{padding:.85rem 1.5rem;font-size:.85rem;border-bottom:1px solid rgba(26,10,0,.04);}
     tr:last-child td{border-bottom:none;}
     tr:hover td{background:rgba(26,10,0,.02);}
-    .guest-name{font-weight:700;}
-    .guest-phone{color:rgba(26,10,0,.4);font-size:.78rem;}
+    .guest-name{font-weight:700;}.guest-phone{color:rgba(26,10,0,.4);font-size:.78rem;}
     .badge{display:inline-flex;align-items:center;gap:.25rem;padding:.2rem .6rem;border-radius:99px;font-size:.7rem;font-weight:700;}
     .badge-yes{background:rgba(52,211,153,.12);color:var(--green);border:1px solid rgba(52,211,153,.2);}
     .badge-no{background:rgba(248,113,113,.12);color:#f87171;border:1px solid rgba(248,113,113,.2);}
     .badge-pending{background:rgba(26,10,0,.06);color:rgba(26,10,0,.4);border:1px solid rgba(26,10,0,.08);}
-    .empty-guests{padding:3rem;text-align:center;color:rgba(26,10,0,.25);}
-    .empty-guests-emoji{font-size:2.5rem;margin-bottom:.75rem;}
+    .empty-state{padding:3rem;text-align:center;color:rgba(26,10,0,.25);}
+    .empty-state-emoji{font-size:2.5rem;margin-bottom:.75rem;}
 
-    /* ── GIFTS SECTION ── */
     .gifts-grid-dash{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:2rem;}
-    .gift-card-dash{
-      background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:1rem;
-      transition:transform .2s;
-    }
+    .gift-card-dash{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:1rem;transition:transform .2s;}
     .gift-card-dash:hover{transform:translateY(-2px);}
     .gift-emoji-dash{font-size:1.75rem;margin-bottom:.5rem;}
     .gift-name-dash{font-size:.85rem;font-weight:700;margin-bottom:.2rem;}
-    .gift-price-dash{font-size:.75rem;color:var(--yellow);font-weight:700;margin-bottom:.6rem;}
+    .gift-price-dash{font-size:.75rem;color:var(--yellow-dk);font-weight:700;margin-bottom:.6rem;}
     .gift-reserver{font-size:.72rem;color:rgba(26,10,0,.4);}
 
-    /* ── SHARE BOX ── */
-    .share-box{
-      background:linear-gradient(135deg,rgba(255,61,107,.08),rgba(255,217,61,.06));
-      border:1px solid rgba(255,61,107,.15);border-radius:16px;padding:1.5rem;margin-bottom:2rem;
-    }
+    .share-box{background:linear-gradient(135deg,rgba(255,61,107,.08),rgba(255,217,61,.06));border:1px solid rgba(255,61,107,.15);border-radius:16px;padding:1.5rem;margin-bottom:2rem;}
     .share-box-title{font-family:var(--font-display);font-size:1.2rem;font-weight:700;font-style:italic;margin-bottom:.35rem;}
     .share-box-sub{font-size:.85rem;color:rgba(26,10,0,.5);margin-bottom:1rem;}
     .share-link-row{display:flex;gap:.5rem;align-items:center;}
-    .share-link-input{
-      flex:1;background:rgba(26,10,0,.06);border:1px solid rgba(26,10,0,.1);
-      border-radius:10px;padding:.6rem 1rem;color:var(--white);font-size:.85rem;
-      outline:none;font-family:var(--font-body);
-    }
+    .share-link-input{flex:1;background:rgba(26,10,0,.06);border:1px solid rgba(26,10,0,.1);border-radius:10px;padding:.6rem 1rem;color:var(--white);font-size:.85rem;outline:none;font-family:var(--font-body);}
     .share-btns{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem;}
-    .share-btn{
-      display:flex;align-items:center;gap:.4rem;padding:.5rem 1rem;border-radius:8px;
-      font-family:var(--font-body);font-size:.82rem;font-weight:700;cursor:pointer;border:none;transition:all .2s;
-    }
-    .share-wpp{background:#25D366;color:var(--white);}
-    .share-wpp:hover{background:#1da851;}
-    .share-copy{background:rgba(26,10,0,.08);color:var(--white);border:1px solid var(--border);}
-    .share-copy:hover{background:rgba(26,10,0,.15);}
-    .share-view{background:rgba(96,165,250,.15);color:var(--blue);border:1px solid rgba(96,165,250,.2);}
-    .share-view:hover{background:rgba(96,165,250,.25);}
+    .share-btn{display:flex;align-items:center;gap:.4rem;padding:.5rem 1rem;border-radius:8px;font-family:var(--font-body);font-size:.82rem;font-weight:700;cursor:pointer;border:none;transition:all .2s;}
+    .share-wpp{background:#25D366;color:#fff;}.share-wpp:hover{background:#1da851;}
+    .share-copy{background:rgba(26,10,0,.08);color:var(--white);border:1px solid var(--border);}.share-copy:hover{background:rgba(26,10,0,.15);}
+    .share-view{background:rgba(96,165,250,.15);color:var(--blue);border:1px solid rgba(96,165,250,.2);}.share-view:hover{background:rgba(96,165,250,.25);}
 
-    /* ── DONUT CHART ── */
     .rsvp-chart-wrap{display:flex;align-items:center;gap:1.5rem;margin-bottom:2rem;}
     .donut-wrap{position:relative;width:120px;height:120px;flex-shrink:0;}
     .donut-svg{width:100%;height:100%;transform:rotate(-90deg);}
-    .donut-center{
-      position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-      text-align:center;
-    }
+    .donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
     .donut-num{font-family:var(--font-display);font-size:1.5rem;font-weight:900;font-style:italic;line-height:1;}
     .donut-label{font-size:.6rem;color:rgba(26,10,0,.35);font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
     .rsvp-legend{display:flex;flex-direction:column;gap:.6rem;}
     .legend-item{display:flex;align-items:center;gap:.5rem;font-size:.82rem;font-weight:600;}
     .legend-dot{width:8px;height:8px;border-radius:50%;}
 
-    /* TOAST */
-    .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:#1e1e1e;border:1px solid rgba(26,10,0,.1);border-radius:12px;padding:.75rem 1.5rem;font-size:.85rem;font-weight:700;display:flex;align-items:center;gap:.5rem;box-shadow:0 16px 40px rgba(26,10,0,0.25);transition:transform .3s var(--ease);z-index:100;}
+    .loading{display:flex;align-items:center;justify-content:center;padding:4rem;gap:.75rem;color:rgba(26,10,0,.4);font-weight:600;}
+
+    .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:#1e1e1e;color:#fff;border-radius:12px;padding:.75rem 1.5rem;font-size:.85rem;font-weight:700;display:flex;align-items:center;gap:.5rem;box-shadow:0 16px 40px rgba(26,10,0,0.25);transition:transform .3s var(--ease);z-index:100;}
     .toast.show{transform:translateX(-50%) translateY(0);}
 
-    /* mobile */
-    @media(max-width:900px){
-      body{grid-template-columns:1fr;}
-      .sidenav{display:none;}
-      .stats-grid{grid-template-columns:repeat(2,1fr);}
-    }
-    @media(max-width:600px){
-      .stats-grid{grid-template-columns:1fr 1fr;}
-      .content{padding:1rem;}
-    }
-
-    /* animations */
+    @media(max-width:900px){body{grid-template-columns:1fr;}.sidenav{display:none;}.stats-grid{grid-template-columns:repeat(2,1fr);}}
+    @media(max-width:600px){.stats-grid{grid-template-columns:1fr 1fr;}.content{padding:1rem;}}
     @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
-    .stat-card{animation:fadeUp .5s var(--ease) both;}
-    .stat-card:nth-child(2){animation-delay:.08s;}
-    .stat-card:nth-child(3){animation-delay:.16s;}
-    .stat-card:nth-child(4){animation-delay:.24s;}
   </style>
 </head>
 <body>
 
-<!-- SIDE NAV -->
 <nav class="sidenav">
   <div class="sidenav-logo" onclick="location.href='convite-online.html'">ConteComigo</div>
   <div class="sidenav-user">
@@ -260,14 +153,14 @@
   </div>
 
   <div class="sidenav-section">Principal</div>
-  <div class="sidenav-item active" onclick="showSection('overview')"><span class="sidenav-icon">🏠</span>Visão Geral</div>
-  <div class="sidenav-item" onclick="showSection('guests')"><span class="sidenav-icon">👥</span>Convidados<span class="sidenav-badge" id="guestBadge">0</span></div>
-  <div class="sidenav-item" onclick="showSection('gifts')"><span class="sidenav-icon">🎁</span>Presentes</div>
+  <div class="sidenav-item active" onclick="showSection('overview',this)"><span class="sidenav-icon">🏠</span>Visão Geral</div>
+  <div class="sidenav-item" onclick="showSection('guests',this)"><span class="sidenav-icon">👥</span>Convidados<span class="sidenav-badge" id="guestBadge">0</span></div>
+  <div class="sidenav-item" onclick="showSection('gifts',this)"><span class="sidenav-icon">🎁</span>Presentes</div>
 
   <div class="sidenav-section">Convite</div>
-  <div class="sidenav-item" onclick="location.href='editor.html'"><span class="sidenav-icon">✏️</span>Editar convite</div>
+  <div class="sidenav-item" onclick="goEditor()"><span class="sidenav-icon">✏️</span>Editar convite</div>
   <div class="sidenav-item" onclick="openPublicInvite()"><span class="sidenav-icon">👁</span>Ver como convidado</div>
-  <div class="sidenav-item" onclick="showSection('share')"><span class="sidenav-icon">🔗</span>Compartilhar</div>
+  <div class="sidenav-item" onclick="showSection('share',this)"><span class="sidenav-icon">🔗</span>Compartilhar</div>
 
   <div class="sidenav-section">Conta</div>
   <div class="sidenav-item" onclick="location.href='convite-online.html'"><span class="sidenav-icon">🏡</span>Página inicial</div>
@@ -278,157 +171,135 @@
   </div>
 </nav>
 
-<!-- MAIN -->
 <div class="main">
   <div class="topbar">
     <div class="topbar-title" id="pageTitle">Visão Geral</div>
     <div class="topbar-right">
-      <div class="icon-btn" onclick="location.href='editor.html'" title="Editar convite">✏️</div>
+      <div class="icon-btn" onclick="goEditor()" title="Editar convite">✏️</div>
       <div class="icon-btn" onclick="openPublicInvite()" title="Ver convite">👁</div>
       <div class="icon-btn" onclick="doLogout()" title="Sair">🚪</div>
     </div>
   </div>
-
   <div class="content" id="mainContent">
-    <!-- Rendered by JS -->
+    <div class="loading">⏳ Carregando seu painel...</div>
   </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ══════════════════════════
-//  LOAD STATE
-// ══════════════════════════
-const session = JSON.parse(localStorage.getItem('ccm_session')||'null');
-const invite = JSON.parse(localStorage.getItem('ccm_current_invite')||'null');
+const SUPA_URL = 'https://wevmgnzmkdecdcnouhjq.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indldm1nbnpta2RlY2Rjbm91aGpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTI5MTYsImV4cCI6MjA5MjI4ODkxNn0.R7IF4vEF_D5fvB18ZRl8mJwXOsEpW-q2hSdsRRs9nM4';
+const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
 
-// Redirect if not logged in
-if(!session){ location.href='login.html'; }
+let currentUser = null;
+let invites = [];
+let activeInvite = null;
+let guests = [];
+let gifts = [];
+let activeSection = 'overview';
 
-// User info
-if(session){
-  const initials=(session.nome||'U')[0].toUpperCase();
-  document.getElementById('userAvatar').textContent=initials;
-  document.getElementById('userName').textContent=(session.nome||'')+(session.sobrenome?' '+session.sobrenome:'');
-  document.getElementById('userEmail').textContent=session.email||'';
+async function init(){
+  const { data:{ session } } = await sb.auth.getSession();
+  if(!session){ location.href='login.html'; return; }
+  currentUser = session.user;
+
+  // User UI
+  const name = session.user.user_metadata?.name || session.user.email.split('@')[0];
+  document.getElementById('userAvatar').textContent = name[0].toUpperCase();
+  document.getElementById('userName').textContent = name;
+  document.getElementById('userEmail').textContent = session.user.email;
+
+  await loadData();
+  render();
+
+  // Subscribe to realtime guest updates
+  if(activeInvite){
+    sb.channel('guests-'+activeInvite.id)
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'guests',filter:'invite_id=eq.'+activeInvite.id},
+        payload=>{ guests.unshift(payload.new); document.getElementById('guestBadge').textContent=guests.length; if(activeSection==='overview'||activeSection==='guests') render(); showToast('🎉 Novo convidado: '+payload.new.name); })
+      .subscribe();
+  }
 }
 
-// Demo guests if no invite has guests yet
-function getDemoGuests(){
-  const inv=JSON.parse(localStorage.getItem('ccm_current_invite')||'null');
-  if(inv&&inv.guests&&inv.guests.length>0) return inv.guests;
-  // seed demo data
-  return [
-    {id:1,name:'Maria Oliveira',phone:'(11) 99123-4567',guests:2,attend:'yes',msg:'Mal posso esperar! 🎉',at:new Date(Date.now()-3600000*5).toISOString()},
-    {id:2,name:'Carlos Mendes',phone:'(21) 98765-4321',guests:1,attend:'yes',msg:'',at:new Date(Date.now()-3600000*3).toISOString()},
-    {id:3,name:'Juliana Costa',phone:'(11) 97654-3210',guests:3,attend:'yes',msg:'Vai ser incrível!',at:new Date(Date.now()-3600000*2).toISOString()},
-    {id:4,name:'Roberto Lima',phone:'(31) 96543-2109',guests:1,attend:'no',msg:'Não consegui ir 😢',at:new Date(Date.now()-3600000).toISOString()},
-    {id:5,name:'Ana Paula',phone:'(11) 95432-1098',guests:2,attend:'yes',msg:'',at:new Date(Date.now()-1800000).toISOString()},
-    {id:6,name:'Fernanda Souza',phone:'(41) 94321-0987',guests:1,attend:'pending',msg:'',at:new Date(Date.now()-900000).toISOString()},
-  ];
+async function loadData(){
+  // Load all invites
+  const {data:invData} = await sb.from('invites').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false});
+  invites = invData || [];
+
+  // Use most recent published invite, or first invite
+  activeInvite = invites.find(i=>i.published) || invites[0] || null;
+
+  // Check if a specific slug was set from editor
+  const currentSlug = localStorage.getItem('ccm_current_slug');
+  if(currentSlug){
+    const found = invites.find(i=>i.slug===currentSlug);
+    if(found) activeInvite = found;
+  }
+
+  if(activeInvite){
+    // Load guests
+    const {data:gData} = await sb.from('guests').select('*').eq('invite_id',activeInvite.id).order('created_at',{ascending:false});
+    guests = gData || [];
+    document.getElementById('guestBadge').textContent = guests.length;
+
+    // Load gifts
+    const {data:gfData} = await sb.from('gifts').select('*').eq('invite_id',activeInvite.id).order('created_at',{ascending:true});
+    gifts = gfData || [];
+  }
 }
 
-function getDemoGifts(){
-  const inv=JSON.parse(localStorage.getItem('ccm_current_invite')||'null');
-  const baseGifts=[
-    {id:1,name:'Kit de Chá Gourmet',price:'R$ 89,90',emoji:'☕',reserved:true,reservedBy:'Maria Oliveira'},
-    {id:2,name:'Livro de Receitas',price:'R$ 65,00',emoji:'📚',reserved:false,reservedBy:''},
-    {id:3,name:'Porta-Retratos Premium',price:'R$ 120,00',emoji:'🖼️',reserved:true,reservedBy:'Carlos Mendes'},
-    {id:4,name:'Caixa de Chocolates',price:'R$ 75,00',emoji:'🍫',reserved:false,reservedBy:''},
-    {id:5,name:'Perfume Importado',price:'R$ 250,00',emoji:'🌸',reserved:true,reservedBy:'Juliana Costa'},
-    {id:6,name:'Jogo de Panelas',price:'R$ 380,00',emoji:'🍳',reserved:false,reservedBy:''},
-  ];
-  if(inv&&inv.gifts&&inv.gifts.length>0) return inv.gifts.map((g,i)=>({...g,...(baseGifts[i]||{}),name:g.name,price:g.price,emoji:g.emoji}));
-  return baseGifts;
-}
-
-const guests=getDemoGuests();
-const gifts=getDemoGifts();
-const yes=guests.filter(g=>g.attend==='yes');
-const no=guests.filter(g=>g.attend==='no');
-const pending=guests.filter(g=>g.attend==='pending');
-const totalPeople=yes.reduce((s,g)=>s+(parseInt(g.guests)||1),0);
-const reservedGifts=gifts.filter(g=>g.reserved).length;
-
-document.getElementById('guestBadge').textContent=guests.length;
-
-// Invite info
-const invTitle = invite?.titulo || 'Meu Convite';
-const invSlug = invite?.slug || 'meu-convite';
-const invImg = invite?.tplImg || 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400&q=70';
-const shareLink = `contecomeigo.com/${invSlug}`;
-
-// ══════════════════════════
-//  SECTIONS
-// ══════════════════════════
-let activeSection='overview';
-function showSection(s){
-  activeSection=s;
+function showSection(s, el){
+  activeSection = s;
   const titles={overview:'Visão Geral',guests:'Convidados',gifts:'Presentes',share:'Compartilhar'};
-  document.getElementById('pageTitle').textContent=titles[s]||s;
-  document.querySelectorAll('.sidenav-item').forEach(el=>el.classList.remove('active'));
-  event.currentTarget?.classList.add('active');
+  document.getElementById('pageTitle').textContent = titles[s]||s;
+  document.querySelectorAll('.sidenav-item').forEach(i=>i.classList.remove('active'));
+  if(el) el.classList.add('active');
   render();
 }
 
 function render(){
-  const c=document.getElementById('mainContent');
-  if(activeSection==='overview') c.innerHTML=renderOverview();
-  else if(activeSection==='guests') c.innerHTML=renderGuests(guests);
-  else if(activeSection==='gifts') c.innerHTML=renderGifts();
-  else if(activeSection==='share') c.innerHTML=renderShare();
-  bindGuestFilter();
+  const c = document.getElementById('mainContent');
+  if(activeSection==='overview') c.innerHTML = renderOverview();
+  else if(activeSection==='guests') c.innerHTML = renderGuestsSection();
+  else if(activeSection==='gifts') c.innerHTML = renderGiftsSection();
+  else if(activeSection==='share') c.innerHTML = renderShare();
 }
 
-// ══════════════════════════
-//  OVERVIEW
-// ══════════════════════════
+// ── OVERVIEW ──
 function renderOverview(){
+  const yes=guests.filter(g=>g.attending==='yes');
+  const no=guests.filter(g=>g.attending==='no');
+  const pending=guests.filter(g=>g.attending==='maybe'||!g.attending);
+  const totalPeople=yes.reduce((s,g)=>s+(parseInt(g.plus_ones)||0)+1,0);
+  const reservedGifts=gifts.filter(g=>g.reserved).length;
   const pct=guests.length?Math.round(yes.length/guests.length*100):0;
-  const r=54;const circ=2*Math.PI*r;
-  const dash=circ*(pct/100);
+  const r=54,circ=2*Math.PI*r,dash=circ*(pct/100);
+
+  const invTitle = activeInvite?.title || 'Nenhum convite publicado';
+  const invImg = activeInvite?.photo_url || 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400&q=70';
+  const invDate = activeInvite?.event_date ? new Date(activeInvite.event_date+'T12:00').toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'}) : 'Data não definida';
 
   return `
     <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-top"><div class="stat-icon pink">📨</div><div class="stat-trend up">+${guests.length} hoje</div></div>
-        <div class="stat-num">${guests.length}</div>
-        <div class="stat-label">Convidados enviados</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-top"><div class="stat-icon green">✅</div><div class="stat-trend up">+${yes.length}</div></div>
-        <div class="stat-num">${yes.length}</div>
-        <div class="stat-label">Confirmados</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-top"><div class="stat-icon yellow">👥</div><div class="stat-trend neutral">pessoas</div></div>
-        <div class="stat-num">${totalPeople}</div>
-        <div class="stat-label">Pessoas confirmadas</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-top"><div class="stat-icon blue">🎁</div><div class="stat-trend up">${reservedGifts} reserv.</div></div>
-        <div class="stat-num">${reservedGifts}/${gifts.length}</div>
-        <div class="stat-label">Presentes reservados</div>
-      </div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon pink">📨</div><div class="stat-trend neutral">${invites.length} convito(s)</div></div><div class="stat-num">${guests.length}</div><div class="stat-label">Confirmações recebidas</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon green">✅</div><div class="stat-trend up">+${yes.length}</div></div><div class="stat-num">${yes.length}</div><div class="stat-label">Confirmados</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon yellow">👥</div><div class="stat-trend neutral">pessoas</div></div><div class="stat-num">${totalPeople}</div><div class="stat-label">Pessoas confirmadas</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon blue">🎁</div><div class="stat-trend up">${reservedGifts} reserv.</div></div><div class="stat-num">${reservedGifts}/${gifts.length}</div><div class="stat-label">Presentes reservados</div></div>
     </div>
 
+    ${activeInvite ? `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem">
-      <!-- donut chart -->
       <div style="background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:1.5rem">
         <div style="font-size:.9rem;font-weight:800;margin-bottom:1.25rem">Status das confirmações</div>
         <div class="rsvp-chart-wrap">
           <div class="donut-wrap">
             <svg class="donut-svg" viewBox="0 0 120 120">
               <circle cx="60" cy="60" r="${r}" fill="none" stroke="rgba(26,10,0,.05)" stroke-width="10"/>
-              <circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--green)" stroke-width="10"
-                stroke-dasharray="${dash} ${circ}" stroke-linecap="round"/>
+              <circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--green)" stroke-width="10" stroke-dasharray="${dash} ${circ}" stroke-linecap="round"/>
             </svg>
-            <div class="donut-center">
-              <div class="donut-num">${pct}%</div>
-              <div class="donut-label">confirm.</div>
-            </div>
+            <div class="donut-center"><div class="donut-num">${pct}%</div><div class="donut-label">confirm.</div></div>
           </div>
           <div class="rsvp-legend">
             <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Confirmados: ${yes.length}</div>
@@ -437,146 +308,113 @@ function renderOverview(){
           </div>
         </div>
       </div>
-
-      <!-- invite card -->
       <div style="background:var(--panel);border:1px solid var(--border);border-radius:16px;overflow:hidden">
         <div style="height:120px;background-image:url('${invImg}');background-size:cover;background-position:center;position:relative">
-          <div style="position:absolute;top:.6rem;right:.6rem" class="badge badge-${invite?.status==='published'?'yes':'no'}">${invite?.status==='published'?'✅ Publicado':'📝 Rascunho'}</div>
+          <span style="position:absolute;top:.6rem;right:.6rem" class="badge badge-${activeInvite.published?'yes':'pending'}">${activeInvite.published?'✅ Publicado':'📝 Rascunho'}</span>
         </div>
         <div style="padding:1rem">
           <div style="font-weight:800;margin-bottom:.25rem">${invTitle}</div>
-          <div style="font-size:.75rem;color:rgba(26,10,0,.4);margin-bottom:1rem">${invite?.data?new Date(invite.data+'T12:00').toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'}):'Data não definida'}</div>
+          <div style="font-size:.75rem;color:rgba(26,10,0,.4);margin-bottom:1rem">${invDate}</div>
           <div style="display:flex;gap:.5rem">
-            <button class="btn-xs btn-xs-pink" onclick="location.href='editor.html'">✏️ Editar</button>
+            <button class="btn-xs btn-xs-pink" onclick="goEditor()">✏️ Editar</button>
             <button class="btn-xs btn-xs-outline" onclick="openPublicInvite()">👁 Ver</button>
           </div>
         </div>
       </div>
-    </div>
+    </div>` : `<div class="empty-state"><div class="empty-state-emoji">🎉</div><div style="font-weight:700;margin-bottom:.5rem">Nenhum convite publicado ainda</div><button class="btn-xs btn-xs-pink" onclick="location.href='editor.html'" style="margin-top:1rem;padding:.5rem 1.25rem">✨ Criar meu primeiro convite</button></div>`}
 
-    <!-- Recent guests -->
-    <div class="section-hdr">
-      <h2>📋 Últimas confirmações</h2>
-      <button class="btn-xs btn-xs-outline" onclick="showSection('guests')">Ver todos →</button>
-    </div>
+    <div class="section-hdr"><h2>📋 Últimas confirmações</h2><button class="btn-xs btn-xs-outline" onclick="showSection('guests')">Ver todos →</button></div>
     ${renderGuestsTable(guests.slice(0,5))}
-
     ${renderShare()}
   `;
 }
 
-// ══════════════════════════
-//  GUESTS TABLE
-// ══════════════════════════
-function renderGuests(list){
+// ── GUESTS ──
+function renderGuestsSection(){
+  const yes=guests.filter(g=>g.attending==='yes');
+  const no=guests.filter(g=>g.attending==='no');
+  const pending=guests.filter(g=>g.attending==='maybe'||!g.attending);
   return `
     <div class="section-hdr">
       <h2>👥 Lista de convidados</h2>
-      <div class="section-hdr-actions">
+      <div style="display:flex;gap:.5rem">
         <button class="btn-xs btn-xs-outline" onclick="exportCSV()">⬇️ Exportar CSV</button>
+        <button class="btn-xs btn-xs-outline" onclick="loadData().then(render)">🔄 Atualizar</button>
       </div>
     </div>
     <div class="guests-panel">
       <div class="guests-header">
-        <div class="guests-search">
-          🔍 <input type="text" id="guestSearch" placeholder="Buscar convidado..." oninput="filterGuests(this.value)"/>
-        </div>
+        <div class="guests-search">🔍 <input type="text" id="guestSearch" placeholder="Buscar convidado..." oninput="filterGuests(this.value)"/></div>
         <div class="filter-pills">
           <button class="filter-pill active" onclick="filterByStatus('all',this)">Todos (${guests.length})</button>
-          <button class="filter-pill" onclick="filterByStatus('yes',this)">✅ Confirmados (${yes.length})</button>
-          <button class="filter-pill" onclick="filterByStatus('no',this)">❌ Recusados (${no.length})</button>
-          <button class="filter-pill" onclick="filterByStatus('pending',this)">⏳ Pendentes (${pending.length})</button>
+          <button class="filter-pill" onclick="filterByStatus('yes',this)">✅ Sim (${yes.length})</button>
+          <button class="filter-pill" onclick="filterByStatus('no',this)">❌ Não (${no.length})</button>
+          <button class="filter-pill" onclick="filterByStatus('maybe',this)">⏳ Pendente (${pending.length})</button>
         </div>
       </div>
-      <div id="guestsTableWrap">
-        ${renderGuestsTable(list)}
-      </div>
-    </div>
-  `;
+      <div id="guestsTableWrap">${renderGuestsTable(guests)}</div>
+    </div>`;
 }
 
 function renderGuestsTable(list){
-  if(!list.length) return `<div class="empty-guests"><div class="empty-guests-emoji">👀</div><div>Nenhum convidado confirmou ainda</div><div style="font-size:.8rem;margin-top:.4rem;color:rgba(26,10,0,.25)">Compartilhe o convite para receber confirmações</div></div>`;
-  return `<table>
-    <thead><tr>
-      <th>Nome</th><th>WhatsApp</th><th>Acompanhantes</th><th>Status</th><th>Mensagem</th><th>Quando</th>
-    </tr></thead>
-    <tbody>${list.map(g=>`
-      <tr>
-        <td><div class="guest-name">${g.name}</div></td>
-        <td><div class="guest-phone">${g.phone||'—'}</div></td>
-        <td style="text-align:center">${g.guests||1}</td>
-        <td><span class="badge badge-${g.attend==='yes'?'yes':g.attend==='no'?'no':'pending'}">${g.attend==='yes'?'✅ Sim':g.attend==='no'?'❌ Não':'⏳ Pendente'}</span></td>
-        <td style="font-size:.78rem;color:rgba(26,10,0,.45);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.msg||'—'}</td>
-        <td style="font-size:.75rem;color:rgba(26,10,0,.3)">${timeAgo(g.at)}</td>
-      </tr>
-    `).join('')}</tbody>
-  </table>`;
+  if(!list.length) return `<div class="empty-state"><div class="empty-state-emoji">👀</div><div>Nenhum convidado confirmou ainda</div><div style="font-size:.8rem;margin-top:.4rem">Compartilhe o convite para receber confirmações</div></div>`;
+  return `<table><thead><tr><th>Nome</th><th>WhatsApp</th><th>Acomp.</th><th>Status</th><th>Mensagem</th><th>Quando</th></tr></thead>
+    <tbody>${list.map(g=>`<tr>
+      <td><div class="guest-name">${g.name}</div></td>
+      <td><div class="guest-phone">${g.phone||'—'}</div></td>
+      <td style="text-align:center">${(g.plus_ones||0)+1}</td>
+      <td><span class="badge badge-${g.attending==='yes'?'yes':g.attending==='no'?'no':'pending'}">${g.attending==='yes'?'✅ Sim':g.attending==='no'?'❌ Não':'⏳ Pendente'}</span></td>
+      <td style="font-size:.78rem;color:rgba(26,10,0,.45);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.message||'—'}</td>
+      <td style="font-size:.75rem;color:rgba(26,10,0,.3)">${timeAgo(g.created_at)}</td>
+    </tr>`).join('')}</tbody></table>`;
 }
 
-// ══════════════════════════
-//  GIFTS
-// ══════════════════════════
-function renderGifts(){
+// ── GIFTS ──
+function renderGiftsSection(){
+  const reservedGifts=gifts.filter(g=>g.reserved).length;
   return `
-    <div class="section-hdr">
-      <h2>🎁 Lista de presentes</h2>
-      <div class="section-hdr-actions">
-        <button class="btn-xs btn-xs-pink" onclick="location.href='editor.html?step=3'">+ Gerenciar</button>
-      </div>
-    </div>
-    <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:2rem">
+    <div class="section-hdr"><h2>🎁 Lista de presentes</h2><button class="btn-xs btn-xs-pink" onclick="goEditor()">+ Gerenciar</button></div>
+    <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
       <div class="stat-card"><div class="stat-top"><div class="stat-icon green">✅</div></div><div class="stat-num">${reservedGifts}</div><div class="stat-label">Reservados</div></div>
       <div class="stat-card"><div class="stat-top"><div class="stat-icon blue">🎁</div></div><div class="stat-num">${gifts.length-reservedGifts}</div><div class="stat-label">Disponíveis</div></div>
       <div class="stat-card"><div class="stat-top"><div class="stat-icon yellow">💰</div></div><div class="stat-num">${gifts.length}</div><div class="stat-label">Total de itens</div></div>
     </div>
-    <div class="gifts-grid-dash">
-      ${gifts.map(g=>`
-        <div class="gift-card-dash">
-          <div class="gift-emoji-dash">${g.emoji||'🎁'}</div>
-          <div class="gift-name-dash">${g.name}</div>
-          <div class="gift-price-dash">${g.price||'—'}</div>
-          <span class="badge ${g.reserved?'badge-yes':'badge-pending'}" style="margin-bottom:.4rem">${g.reserved?'✅ Reservado':'⏳ Disponível'}</span>
-          ${g.reserved&&g.reservedBy?`<div class="gift-reserver">por ${g.reservedBy}</div>`:''}
-        </div>
-      `).join('')}
-    </div>
-  `;
+    ${gifts.length ? `<div class="gifts-grid-dash">${gifts.map(g=>`
+      <div class="gift-card-dash">
+        <div class="gift-emoji-dash">${g.emoji||'🎁'}</div>
+        <div class="gift-name-dash">${g.name}</div>
+        <div class="gift-price-dash">${g.price||'—'}</div>
+        <span class="badge ${g.reserved?'badge-yes':'badge-pending'}" style="margin-bottom:.4rem">${g.reserved?'✅ Reservado':'⏳ Disponível'}</span>
+        ${g.reserved&&g.reserved_by?`<div class="gift-reserver">por ${g.reserved_by}</div>`:''}
+      </div>`).join('')}</div>` : `<div class="empty-state"><div class="empty-state-emoji">🎁</div><div>Nenhum presente adicionado</div><button class="btn-xs btn-xs-pink" onclick="goEditor()" style="margin-top:1rem;padding:.5rem 1.25rem">Adicionar presentes</button></div>`}`;
 }
 
-// ══════════════════════════
-//  SHARE
-// ══════════════════════════
+// ── SHARE ──
 function renderShare(){
+  const slug = activeInvite?.slug || '';
+  const shareLink = slug ? `${location.origin}/convite.html?slug=${slug}` : location.origin+'/convite.html';
+  const invTitle = activeInvite?.title || 'meu evento';
   return `
     <div class="share-box">
       <div class="share-box-title">🔗 Compartilhe seu convite</div>
       <div class="share-box-sub">Copie o link e envie para os seus convidados pelo WhatsApp, Instagram ou como preferir.</div>
       <div class="share-link-row">
         <input class="share-link-input" id="shareLinkInput" value="${shareLink}" readonly onclick="this.select()"/>
-        <button class="btn-xs btn-xs-pink" onclick="copyLink()">📋 Copiar</button>
+        <button class="btn-xs btn-xs-pink" onclick="copyLink('${shareLink}')">📋 Copiar</button>
       </div>
       <div class="share-btns">
-        <button class="share-btn share-wpp" onclick="shareWhatsApp()">💬 WhatsApp</button>
-        <button class="share-btn share-copy" onclick="copyLink()">📋 Copiar link</button>
+        <button class="share-btn share-wpp" onclick="shareWhatsApp('${shareLink}','${invTitle}')">💬 WhatsApp</button>
+        <button class="share-btn share-copy" onclick="copyLink('${shareLink}')">📋 Copiar link</button>
         <button class="share-btn share-view" onclick="openPublicInvite()">👁 Ver convite</button>
       </div>
-    </div>
-  `;
+    </div>`;
 }
 
-// ══════════════════════════
-//  FILTER / SEARCH
-// ══════════════════════════
-let statusFilter='all';
-function bindGuestFilter(){
-  // nothing needed — filter fns reference guests directly
-}
+// ── FILTER ──
 function filterByStatus(s,btn){
-  statusFilter=s;
   document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active'));
   btn.classList.add('active');
-  const list=s==='all'?guests:guests.filter(g=>g.attend===s);
+  const list=s==='all'?guests:guests.filter(g=>g.attending===s||(s==='maybe'&&!g.attending));
   document.getElementById('guestsTableWrap').innerHTML=renderGuestsTable(list);
 }
 function filterGuests(q){
@@ -584,58 +422,46 @@ function filterGuests(q){
   document.getElementById('guestsTableWrap').innerHTML=renderGuestsTable(list);
 }
 
-// ══════════════════════════
-//  ACTIONS
-// ══════════════════════════
-function copyLink(){
-  navigator.clipboard.writeText(shareLink).then(()=>showToast('✅ Link copiado!'));
-}
-function shareWhatsApp(){
-  const msg=`🎉 Você está convidado para ${invTitle}!\n\nConfirme sua presença e veja a lista de presentes:\n${shareLink}`;
+// ── ACTIONS ──
+function copyLink(link){navigator.clipboard.writeText(link).then(()=>showToast('✅ Link copiado!'));}
+function shareWhatsApp(link,title){
+  const msg=`🎉 Você está convidado para ${title}!\n\nConfirme sua presença e veja a lista de presentes:\n${link}`;
   window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
 }
 function openPublicInvite(){
-  window.open('convite.html','_blank');
+  const slug = activeInvite?.slug;
+  window.open('convite.html'+(slug?'?slug='+slug:''),'_blank');
 }
-function doLogout(){
-  localStorage.removeItem('ccm_session');
+function goEditor(){
+  if(activeInvite) localStorage.setItem('ccm_edit_invite', activeInvite.id);
+  location.href='editor.html';
+}
+async function doLogout(){
+  await sb.auth.signOut();
   location.href='convite-online.html';
 }
 function exportCSV(){
-  const header='Nome,WhatsApp,Acompanhantes,Status,Mensagem';
-  const rows=guests.map(g=>`"${g.name}","${g.phone||''}",${g.guests||1},"${g.attend}","${g.msg||''}"`);
+  if(!guests.length){showToast('Nenhum convidado para exportar');return;}
+  const header='Nome,WhatsApp,Acompanhantes,Status,Mensagem,Data';
+  const rows=guests.map(g=>`"${g.name}","${g.phone||''}",${(g.plus_ones||0)+1},"${g.attending}","${g.message||''}","${g.created_at||''}"`);
   const csv=[header,...rows].join('\n');
   const a=document.createElement('a');
   a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
   a.download='convidados.csv';a.click();
   showToast('⬇️ CSV exportado!');
 }
-
-// ══════════════════════════
-//  TOAST
-// ══════════════════════════
 function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
   clearTimeout(window._tt);window._tt=setTimeout(()=>t.classList.remove('show'),2800);
 }
-
-// ══════════════════════════
-//  TIME AGO
-// ══════════════════════════
 function timeAgo(iso){
   if(!iso)return'—';
   const s=Math.floor((Date.now()-new Date(iso))/1000);
-  if(s<60)return'agora mesmo';
-  if(s<3600)return Math.floor(s/60)+'min atrás';
-  if(s<86400)return Math.floor(s/3600)+'h atrás';
-  return Math.floor(s/86400)+'d atrás';
+  if(s<60)return'agora mesmo';if(s<3600)return Math.floor(s/60)+'min atrás';
+  if(s<86400)return Math.floor(s/3600)+'h atrás';return Math.floor(s/86400)+'d atrás';
 }
 
-// ══════════════════════════
-//  INIT
-// ══════════════════════════
-render();
+init();
 </script>
 </body>
 </html>

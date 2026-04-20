@@ -33,8 +33,31 @@
     .nav-links{display:flex;gap:.75rem;align-items:center;}
     .nav-link-pill{padding:.4rem .9rem;border:1px solid var(--border);border-radius:99px;font-size:.8rem;font-weight:700;color:rgba(26,10,0,.6);cursor:pointer;transition:all .2s;}
     .nav-link-pill:hover{border-color:rgba(26,10,0,.3);color:var(--white);}
-    .nav-link-pill.pink{background:var(--pink);border-color:var(--pink);color:var(--white);}
+    .nav-link-pill.pink{background:var(--pink);border-color:var(--pink);color:#fff;}
     .nav-link-pill.pink:hover{background:var(--pink-dark);}
+
+    /* ── LOADING SCREEN ── */
+    .loading-screen{
+      position:fixed;inset:0;background:var(--bg);z-index:9999;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;
+      transition:opacity .5s ease;
+    }
+    .loading-screen.hidden{opacity:0;pointer-events:none;}
+    .loading-logo{font-family:var(--font-display);font-size:2rem;font-weight:900;font-style:italic;background:linear-gradient(135deg,var(--pink),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .loading-spinner{width:36px;height:36px;border:3px solid rgba(26,10,0,.1);border-top-color:var(--pink);border-radius:50%;animation:spin .8s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .loading-text{font-size:.85rem;color:rgba(26,10,0,.35);font-weight:600;}
+
+    /* ── ERROR SCREEN ── */
+    .error-screen{
+      display:none;position:fixed;inset:0;background:var(--bg);z-index:9998;
+      align-items:center;justify-content:center;text-align:center;padding:2rem;
+    }
+    .error-screen.show{display:flex;}
+    .error-emoji{font-size:4rem;margin-bottom:1rem;display:block;}
+    .error-title{font-family:var(--font-display);font-size:2rem;font-weight:900;font-style:italic;margin-bottom:.5rem;}
+    .error-sub{color:rgba(26,10,0,.45);margin-bottom:1.5rem;}
+    .btn-home{padding:.8rem 2rem;background:var(--pink);color:#fff;border:none;border-radius:99px;font-family:var(--font-body);font-size:.95rem;font-weight:800;cursor:pointer;}
 
     /* ── CONFETTI ── */
     .confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
@@ -69,7 +92,7 @@
     }
     .invite-name{
       font-family:var(--font-display);font-size:clamp(1.3rem,3.5vw,2rem);
-      font-weight:700;color:var(--white);margin-bottom:2rem;animation:fadeUp .7s var(--ease) .4s both;
+      font-weight:700;color:rgba(255,248,240,.9);margin-bottom:2rem;animation:fadeUp .7s var(--ease) .4s both;
     }
 
     .invite-details-grid{
@@ -90,11 +113,11 @@
     }
     .btn-rsvp:hover{filter:brightness(1.1);transform:translateY(-3px);box-shadow:0 16px 40px rgba(255,217,61,.4);}
     .btn-presents{
-      padding:1rem 2rem;background:transparent;color:var(--white);
-      border:1px solid rgba(26,10,0,.2);border-radius:99px;font-family:var(--font-body);
+      padding:1rem 2rem;background:transparent;color:rgba(255,248,240,.9);
+      border:1px solid rgba(255,248,240,.3);border-radius:99px;font-family:var(--font-body);
       font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;
     }
-    .btn-presents:hover{background:rgba(26,10,0,.06);border-color:rgba(26,10,0,.4);transform:translateY(-2px);}
+    .btn-presents:hover{background:rgba(255,248,240,.1);border-color:rgba(255,248,240,.6);transform:translateY(-2px);}
 
     /* countdown */
     .countdown-bar{
@@ -106,8 +129,8 @@
       font-family:var(--font-display);font-size:3rem;font-weight:900;font-style:italic;
       line-height:1;color:var(--accent);min-width:70px;display:block;
     }
-    .cd-label{font-size:.6rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(26,10,0,.3);margin-top:.2rem;}
-    .cd-sep{font-family:var(--font-display);font-size:2.5rem;font-weight:900;color:rgba(26,10,0,.15);line-height:3rem;}
+    .cd-label{font-size:.6rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,248,240,.4);margin-top:.2rem;}
+    .cd-sep{font-family:var(--font-display);font-size:2.5rem;font-weight:900;color:rgba(255,248,240,.2);line-height:3rem;}
 
     @keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
 
@@ -163,7 +186,8 @@
       cursor:pointer;transition:all .2s;margin-top:.5rem;
       box-shadow:0 8px 24px rgba(255,217,61,.25);
     }
-    .btn-confirm:hover{filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 14px 32px rgba(255,217,61,.35);}
+    .btn-confirm:hover:not(:disabled){filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 14px 32px rgba(255,217,61,.35);}
+    .btn-confirm:disabled{opacity:.6;cursor:not-allowed;}
 
     .success-box{
       text-align:center;padding:2.5rem 1.5rem;display:none;
@@ -200,7 +224,7 @@
       background:transparent;color:var(--accent);font-family:var(--font-body);
       font-size:.82rem;font-weight:800;cursor:pointer;transition:all .2s;
     }
-    .btn-reserve:hover{background:var(--accent);color:var(--bg);}
+    .btn-reserve:hover:not(:disabled){background:var(--accent);color:var(--bg);}
     .btn-reserve:disabled{border-color:rgba(26,10,0,.1);color:rgba(26,10,0,.2);cursor:not-allowed;}
 
     /* ── GIFT MODAL ── */
@@ -230,7 +254,16 @@
       border-radius:12px;font-family:var(--font-body);font-size:.95rem;font-weight:800;
       cursor:pointer;margin-top:.5rem;transition:all .2s;
     }
-    .btn-modal-submit:hover{filter:brightness(1.1);transform:translateY(-2px);}
+    .btn-modal-submit:hover:not(:disabled){filter:brightness(1.1);transform:translateY(-2px);}
+    .btn-modal-submit:disabled{opacity:.6;cursor:not-allowed;}
+
+    /* ── ALREADY ANSWERED BANNER ── */
+    .answered-banner{
+      background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);border-radius:16px;
+      padding:1.25rem;text-align:center;margin-bottom:1.5rem;
+    }
+    .answered-banner-title{font-weight:800;color:#34d399;margin-bottom:.25rem;}
+    .answered-banner-sub{font-size:.85rem;color:rgba(26,10,0,.5);}
 
     /* ── FOOTER ── */
     .invite-footer{
@@ -259,13 +292,14 @@
     .reveal{opacity:0;transform:translateY(32px);transition:opacity .7s var(--ease),transform .7s var(--ease);}
     .reveal.visible{opacity:1;transform:none;}
 
-    /* already answered banner */
-    .answered-banner{
-      background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);border-radius:16px;
-      padding:1.25rem;text-align:center;margin-bottom:1.5rem;
+    /* toast */
+    .toast{
+      position:fixed;top:1rem;left:50%;transform:translateX(-50%) translateY(-100px);
+      background:#1A0A00;color:#fff;padding:.75rem 1.5rem;border-radius:99px;
+      font-size:.85rem;font-weight:700;z-index:9999;transition:transform .4s var(--ease);
+      white-space:nowrap;
     }
-    .answered-banner-title{font-weight:800;color:#34d399;margin-bottom:.25rem;}
-    .answered-banner-sub{font-size:.85rem;color:rgba(26,10,0,.5);}
+    .toast.show{transform:translateX(-50%) translateY(0);}
 
     @media(max-width:600px){
       .countdown-bar{gap:1rem;}
@@ -276,8 +310,28 @@
 </head>
 <body>
 
+<!-- Loading screen -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-logo">ConteComigo</div>
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Carregando convite...</div>
+</div>
+
+<!-- Error screen -->
+<div class="error-screen" id="errorScreen">
+  <div>
+    <span class="error-emoji">😕</span>
+    <div class="error-title">Convite não encontrado</div>
+    <div class="error-sub">Este link pode ter expirado ou o convite foi removido.</div>
+    <button class="btn-home" onclick="location.href='convite-online.html'">Criar meu convite grátis 🎉</button>
+  </div>
+</div>
+
 <!-- Confetti -->
 <div class="confetti-wrap" id="confettiWrap"></div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
 
 <!-- Gift Reserve Modal -->
 <div class="modal-overlay" id="giftModal">
@@ -294,11 +348,7 @@
       <label>Seu WhatsApp</label>
       <input type="tel" id="giftReservePhone" placeholder="(11) 99999-9999"/>
     </div>
-    <div class="form-group">
-      <label>Mensagem (opcional)</label>
-      <textarea id="giftReserveMsg" placeholder="Uma mensagem carinhosa... 💕"></textarea>
-    </div>
-    <button class="btn-modal-submit" onclick="confirmReservation()">✅ Confirmar reserva</button>
+    <button class="btn-modal-submit" id="btnModalSubmit" onclick="confirmReservation()">✅ Confirmar reserva</button>
   </div>
 </div>
 
@@ -306,7 +356,7 @@
 <nav class="nav">
   <div class="nav-logo" onclick="location.href='convite-online.html'">ConteComigo</div>
   <div class="nav-links">
-    <div class="nav-link-pill" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
+    <div class="nav-link-pill" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar</div>
     <div class="nav-link-pill" onclick="document.getElementById('giftsSection').scrollIntoView({behavior:'smooth'})">🎁 Presentes</div>
     <div class="nav-link-pill pink" onclick="shareWhatsApp()">💬 Compartilhar</div>
   </div>
@@ -370,12 +420,13 @@
         <input type="tel" id="rPhone" placeholder="(11) 99999-9999"/>
       </div>
       <div class="form-group">
-        <label>Quantas pessoas virão com você?</label>
+        <label>Acompanhantes (além de você)</label>
         <select id="rGuests">
-          <option value="1">Só eu (1 pessoa)</option>
-          <option value="2">Eu + 1 (2 pessoas)</option>
-          <option value="3">Eu + 2 (3 pessoas)</option>
-          <option value="4">Eu + 3 (4 pessoas)</option>
+          <option value="0">Só eu</option>
+          <option value="1">+ 1 pessoa</option>
+          <option value="2">+ 2 pessoas</option>
+          <option value="3">+ 3 pessoas</option>
+          <option value="4">+ 4 pessoas</option>
         </select>
       </div>
       <div class="form-group">
@@ -389,12 +440,12 @@
         <label>Mensagem para os anfitriões (opcional)</label>
         <textarea id="rMsg" placeholder="Uma mensagem carinhosa... 💕"></textarea>
       </div>
-      <button class="btn-confirm" onclick="submitRSVP()">🎉 Confirmar agora!</button>
+      <button class="btn-confirm" id="btnConfirm" onclick="submitRSVP()">🎉 Confirmar agora!</button>
     </div>
 
     <div class="success-box" id="rsvpSuccess">
-      <span class="success-emoji-big">🥳</span>
-      <div class="success-msg">Presença confirmada!</div>
+      <span class="success-emoji-big" id="successEmoji">🥳</span>
+      <div class="success-msg" id="successMsg">Presença confirmada!</div>
       <div class="success-sub" id="rsvpSuccessSub">Obrigado! Os anfitriões foram notificados.</div>
     </div>
   </div>
@@ -422,205 +473,400 @@
 <!-- WhatsApp FAB -->
 <button class="fab" onclick="shareWhatsApp()" title="Compartilhar no WhatsApp">💬</button>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ══════════════════════════
-//  LOAD INVITE DATA
-// ══════════════════════════
-const invite = JSON.parse(localStorage.getItem('ccm_current_invite')||'null');
+// ══════════════════════════════════════════
+//  SUPABASE CONFIG
+// ══════════════════════════════════════════
+const SUPA_URL = 'https://wevmgnzmkdecdcnouhjq.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indldm1nbnpta2RlY2Rjbm91aGpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTI5MTYsImV4cCI6MjA5MjI4ODkxNn0.R7IF4vEF_D5fvB18ZRl8mJwXOsEpW-q2hSdsRRs9nM4';
+const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
 
-// Demo fallback
-const data = invite || {
-  tipo:'🎂',titulo:'Festa de Aniversário da Sofia',nome:'Sofia Mendes',
-  data:'2025-06-14',hora:'18:00',local:'Salão Felicidade, São Paulo – SP',
-  dress:'Esporte Fino',msg:'Venha celebrar comigo esse dia especial! Sua presença é o meu maior presente. 🎉',
-  accent:'#FFD93D',bg:'linear-gradient(135deg,#1a0a1e,#2d0a3a)',
-  tpl:'tropical',tplImg:'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&q=80',
-  gifts:[
-    {id:1,name:'Kit de Chá Gourmet',price:'R$ 89,90',emoji:'☕',link:'',reserved:false},
-    {id:2,name:'Livro de Receitas',price:'R$ 65,00',emoji:'📚',link:'https://amazon.com.br',reserved:true,reservedBy:'Ana Paula'},
-    {id:3,name:'Porta-Retratos Premium',price:'R$ 120,00',emoji:'🖼️',link:'',reserved:false},
-    {id:4,name:'Caixa de Chocolates',price:'R$ 75,00',emoji:'🍫',link:'',reserved:false},
-    {id:5,name:'Perfume Importado',price:'R$ 250,00',emoji:'🌸',link:'',reserved:true,reservedBy:'Carlos'},
-    {id:6,name:'Jogo de Panelas',price:'R$ 380,00',emoji:'🍳',link:'',reserved:false},
-  ],
-  slug:'festa-sofia',status:'published',guests:[]
-};
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let invite = null;
+let gifts = [];
+let selectedGiftId = null;
+const cols = ['#FF3D6B','#FFD93D','#60A5FA','#34D399','#A78BFA'];
 
-// Apply accent color
-document.documentElement.style.setProperty('--accent',data.accent||'#FFD93D');
-document.documentElement.style.setProperty('--inv-bg',data.bg||'linear-gradient(135deg,#1a0a1e,#2d0a3a)');
-
-// ── Populate hero ──
-document.getElementById('heroImg').style.backgroundImage=`url('${data.tplImg||'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=1200&q=80'}')`;
-document.getElementById('eventBadge').textContent=(data.tipo||'🎉')+' Você está convidado!';
-document.getElementById('invEmoji').textContent=data.tipo||'🎉';
-document.getElementById('invTitle').textContent=data.titulo||'Você está convidado!';
-document.getElementById('invName').textContent=data.nome||'—';
-document.title=`${data.titulo||'Convite'} — ConteComigo`;
-
-const date=data.data?new Date(data.data+'T12:00:00'):null;
-document.getElementById('invDate').textContent=date?date.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}):'—';
-document.getElementById('invTime').textContent=data.hora?`A partir das ${data.hora}`:'—';
-document.getElementById('invLocal').textContent=data.local||'—';
-
-// dress code
-if(data.dress){
-  const det=document.getElementById('invDetails');
-  const d=document.createElement('div');d.className='inv-det';
-  d.innerHTML=`<span class="inv-det-icon">👗</span><span>${data.dress}</span>`;
-  det.appendChild(d);
+// ══════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════
+function showToast(msg, dur = 3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), dur);
 }
 
-// message
-if(data.msg){
-  document.getElementById('msgSection').style.display='block';
-  document.getElementById('msgCard').textContent=data.msg;
+function hideLoading() {
+  const s = document.getElementById('loadingScreen');
+  s.classList.add('hidden');
+  setTimeout(() => s.remove(), 600);
 }
 
-// ── Countdown ──
-function updateCountdown(){
-  if(!date){['cdD','cdH','cdM','cdS'].forEach(id=>document.getElementById(id).textContent='—');return;}
-  const diff=date-new Date();
-  if(diff<=0){document.getElementById('countdownBar').innerHTML='<div style="font-family:var(--font-display);font-size:2rem;font-weight:900;font-style:italic;color:var(--accent)">🎉 Chegou o dia!</div>';return;}
-  const d=Math.floor(diff/86400000);
-  const h=Math.floor((diff%86400000)/3600000);
-  const m=Math.floor((diff%3600000)/60000);
-  const s=Math.floor((diff%60000)/1000);
-  document.getElementById('cdD').textContent=String(d).padStart(2,'0');
-  document.getElementById('cdH').textContent=String(h).padStart(2,'0');
-  document.getElementById('cdM').textContent=String(m).padStart(2,'0');
-  document.getElementById('cdS').textContent=String(s).padStart(2,'0');
-}
-updateCountdown();setInterval(updateCountdown,1000);
-
-// ── Confetti ──
-const cw=document.getElementById('confettiWrap');
-const cols=['#FF3D6B',data.accent||'#FFD93D','#60A5FA','#34D399','#A78BFA'];
-for(let i=0;i<50;i++){
-  const el=document.createElement('div');el.className='cp';
-  const sz=Math.random()*10+5;
-  el.style.cssText=`left:${Math.random()*100}%;top:0;width:${sz}px;height:${sz}px;background:${cols[i%cols.length]};animation-duration:${Math.random()*12+6}s;animation-delay:-${Math.random()*12}s;`;
-  cw.appendChild(el);
+function showError() {
+  hideLoading();
+  document.getElementById('errorScreen').classList.add('show');
 }
 
-// ── Gifts ──
-let giftState=[...data.gifts];
-let selectedGiftId=null;
+// ══════════════════════════════════════════
+//  LOAD INVITE
+// ══════════════════════════════════════════
+async function init() {
+  const params = new URLSearchParams(location.search);
+  const slug = params.get('slug');
 
-function renderGifts(){
-  document.getElementById('giftsGrid').innerHTML=giftState.length?giftState.map(g=>`
+  if (!slug) { showError(); return; }
+
+  // Fetch invite
+  const { data: inv, error: invErr } = await sb
+    .from('invites')
+    .select('*')
+    .eq('slug', slug)
+    .eq('published', true)
+    .single();
+
+  if (invErr || !inv) { showError(); return; }
+  invite = inv;
+
+  // Fetch gifts
+  const { data: giftData } = await sb
+    .from('gifts')
+    .select('*')
+    .eq('invite_id', invite.id)
+    .order('created_at');
+
+  gifts = giftData || [];
+
+  // Apply theme
+  document.documentElement.style.setProperty('--accent', invite.accent || '#FFD93D');
+  document.documentElement.style.setProperty('--inv-bg', invite.bg_gradient || 'linear-gradient(135deg,#1a0a1e,#2d0a3a)');
+
+  // Populate hero
+  if (invite.photo_url) {
+    document.getElementById('heroImg').style.backgroundImage = `url('${invite.photo_url}')`;
+  }
+
+  const eventType = invite.event_type || invite.template || 'Evento';
+  document.getElementById('eventBadge').textContent = `🎉 Você está convidado!`;
+  document.getElementById('invEmoji').textContent = getEventEmoji(invite.event_type);
+  document.getElementById('invTitle').textContent = invite.title || 'Você está convidado!';
+  document.getElementById('invName').textContent = invite.event_name || '';
+  document.title = `${invite.title || 'Convite'} — ConteComigo`;
+
+  // Date
+  if (invite.event_date) {
+    const date = new Date(invite.event_date + 'T12:00:00');
+    document.getElementById('invDate').textContent = date.toLocaleDateString('pt-BR', {
+      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+    });
+    startCountdown(date);
+  }
+  if (invite.event_time) {
+    document.getElementById('invTime').textContent = `A partir das ${invite.event_time}`;
+  }
+  if (invite.location) {
+    document.getElementById('invLocal').textContent = invite.location;
+  }
+
+  // Dress code
+  if (invite.dress_code) {
+    const det = document.getElementById('invDetails');
+    const d = document.createElement('div'); d.className = 'inv-det';
+    d.innerHTML = `<span class="inv-det-icon">👗</span><span>${invite.dress_code}</span>`;
+    det.appendChild(d);
+  }
+
+  // RSVP deadline
+  if (invite.rsvp_deadline) {
+    const det = document.getElementById('invDetails');
+    const deadline = new Date(invite.rsvp_deadline + 'T12:00:00');
+    const d = document.createElement('div'); d.className = 'inv-det';
+    d.innerHTML = `<span class="inv-det-icon">📋</span><span>Confirme até ${deadline.toLocaleDateString('pt-BR', {day:'numeric',month:'long'})}</span>`;
+    det.appendChild(d);
+  }
+
+  // Message
+  if (invite.message) {
+    document.getElementById('msgSection').style.display = 'block';
+    document.getElementById('msgCard').textContent = invite.message;
+  }
+
+  // Confetti
+  const cw = document.getElementById('confettiWrap');
+  for (let i = 0; i < 50; i++) {
+    const el = document.createElement('div'); el.className = 'cp';
+    const sz = Math.random() * 10 + 5;
+    el.style.cssText = `left:${Math.random()*100}%;top:0;width:${sz}px;height:${sz}px;background:${cols[i % cols.length]};animation-duration:${Math.random()*12+6}s;animation-delay:-${Math.random()*12}s;`;
+    cw.appendChild(el);
+  }
+
+  // Render gifts
+  renderGifts();
+
+  // Check previous RSVP (stored locally by phone)
+  const rsvpKey = 'ccm_rsvp_' + invite.id;
+  const savedPhone = localStorage.getItem(rsvpKey);
+  if (savedPhone) {
+    // Try to find this guest in DB
+    const { data: existing } = await sb
+      .from('guests')
+      .select('*')
+      .eq('invite_id', invite.id)
+      .eq('phone', savedPhone)
+      .maybeSingle();
+    if (existing) {
+      showAlreadyAnswered(existing);
+    } else {
+      localStorage.removeItem(rsvpKey);
+    }
+  }
+
+  hideLoading();
+
+  // Scroll reveal
+  const ro = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); ro.unobserve(e.target); } });
+  }, { threshold: .12 });
+  document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+}
+
+function getEventEmoji(type) {
+  const map = {
+    'aniversario': '🎂', 'birthday': '🎂',
+    'casamento': '💍', 'wedding': '💍',
+    'formatura': '🎓', 'graduation': '🎓',
+    'chá': '☕', 'cha': '☕',
+    'batizado': '👶',
+    'corporativo': '🏢',
+    'festa': '🎉', 'party': '🎉',
+  };
+  if (!type) return '🎉';
+  const lower = type.toLowerCase();
+  for (const [key, emoji] of Object.entries(map)) {
+    if (lower.includes(key)) return emoji;
+  }
+  return '🎉';
+}
+
+// ══════════════════════════════════════════
+//  COUNTDOWN
+// ══════════════════════════════════════════
+function startCountdown(date) {
+  function update() {
+    const diff = date - new Date();
+    if (diff <= 0) {
+      document.getElementById('countdownBar').innerHTML =
+        '<div style="font-family:var(--font-display);font-size:2rem;font-weight:900;font-style:italic;color:var(--accent)">🎉 Chegou o dia!</div>';
+      return;
+    }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    document.getElementById('cdD').textContent = String(d).padStart(2, '0');
+    document.getElementById('cdH').textContent = String(h).padStart(2, '0');
+    document.getElementById('cdM').textContent = String(m).padStart(2, '0');
+    document.getElementById('cdS').textContent = String(s).padStart(2, '0');
+  }
+  update();
+  setInterval(update, 1000);
+}
+
+// ══════════════════════════════════════════
+//  GIFTS
+// ══════════════════════════════════════════
+function renderGifts() {
+  const grid = document.getElementById('giftsGrid');
+  if (!gifts.length) {
+    grid.innerHTML = '<div style="text-align:center;color:rgba(26,10,0,.25);padding:2rem;grid-column:1/-1">Nenhum presente cadastrado ainda.</div>';
+    return;
+  }
+  grid.innerHTML = gifts.map(g => `
     <div class="gift-card">
-      <div class="gift-emoji-box">${g.emoji||'🎁'}</div>
+      <div class="gift-emoji-box">${g.emoji || '🎁'}</div>
       <div class="gift-info">
         <div class="gift-name">${g.name}</div>
-        <div class="gift-price">${g.price||''}</div>
-        ${g.link?`<a class="gift-link" href="${g.link}" target="_blank">🛒 Ver na loja</a>`:''}
-        <div class="gift-status-badge ${g.reserved?'gsb-reserved':'gsb-avail'}">${g.reserved?`🔒 Reservado por ${g.reservedBy||'alguém'}`:'✅ Disponível'}</div>
-        <button class="btn-reserve" onclick="openGiftModal(${g.id})" ${g.reserved?'disabled':''}>
-          ${g.reserved?'Já reservado':'Quero dar este presente 🎁'}
+        ${g.price ? `<div class="gift-price">${g.price}</div>` : ''}
+        ${g.link ? `<a class="gift-link" href="${g.link}" target="_blank" rel="noopener">🛒 Ver na loja</a>` : ''}
+        <div class="gift-status-badge ${g.reserved ? 'gsb-reserved' : 'gsb-avail'}">
+          ${g.reserved ? `🔒 Reservado por ${g.reserved_by || 'alguém'}` : '✅ Disponível'}
+        </div>
+        <button class="btn-reserve" onclick="openGiftModal('${g.id}')" ${g.reserved ? 'disabled' : ''}>
+          ${g.reserved ? 'Já reservado' : 'Quero dar este presente 🎁'}
         </button>
       </div>
     </div>
-  `).join(''):`<div style="text-align:center;color:rgba(26,10,0,.25);padding:2rem;grid-column:1/-1">Nenhum presente cadastrado ainda.</div>`;
+  `).join('');
 }
-renderGifts();
 
-function openGiftModal(id){
-  selectedGiftId=id;
-  const g=giftState.find(g=>g.id===id);
-  document.getElementById('modalItemPreview').innerHTML=`
-    <div class="modal-item-emoji">${g.emoji||'🎁'}</div>
-    <div><div class="modal-item-name">${g.name}</div><div class="modal-item-price">${g.price||''}</div></div>
+function openGiftModal(id) {
+  selectedGiftId = id;
+  const g = gifts.find(x => x.id === id);
+  document.getElementById('modalItemPreview').innerHTML = `
+    <div class="modal-item-emoji">${g.emoji || '🎁'}</div>
+    <div>
+      <div class="modal-item-name">${g.name}</div>
+      ${g.price ? `<div class="modal-item-price">${g.price}</div>` : ''}
+    </div>
   `;
+  document.getElementById('giftReserveName').value = '';
+  document.getElementById('giftReservePhone').value = '';
+  document.getElementById('btnModalSubmit').disabled = false;
+  document.getElementById('btnModalSubmit').textContent = '✅ Confirmar reserva';
   document.getElementById('giftModal').classList.add('open');
 }
-function closeModal(){
+
+function closeModal() {
   document.getElementById('giftModal').classList.remove('open');
-  selectedGiftId=null;
+  selectedGiftId = null;
 }
-document.getElementById('giftModal').addEventListener('click',e=>{if(e.target===document.getElementById('giftModal'))closeModal();});
 
-function confirmReservation(){
-  const name=document.getElementById('giftReserveName').value.trim();
-  const phone=document.getElementById('giftReservePhone').value.trim();
-  if(!name||!phone){alert('Por favor, preencha seu nome e WhatsApp! 😊');return;}
-  const g=giftState.find(g=>g.id===selectedGiftId);
-  if(g){g.reserved=true;g.reservedBy=name;}
-  // Save back to invite
-  const inv=JSON.parse(localStorage.getItem('ccm_current_invite')||'{}');
-  if(inv){inv.gifts=giftState;localStorage.setItem('ccm_current_invite',JSON.stringify(inv));}
-  closeModal();renderGifts();
+document.getElementById('giftModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('giftModal')) closeModal();
+});
+
+async function confirmReservation() {
+  const name = document.getElementById('giftReserveName').value.trim();
+  const phone = document.getElementById('giftReservePhone').value.trim();
+  if (!name || !phone) { showToast('😊 Preencha seu nome e WhatsApp!'); return; }
+
+  const btn = document.getElementById('btnModalSubmit');
+  btn.disabled = true;
+  btn.textContent = 'Reservando...';
+
+  const { error } = await sb
+    .from('gifts')
+    .update({ reserved: true, reserved_by: name, reserved_phone: phone })
+    .eq('id', selectedGiftId);
+
+  if (error) {
+    showToast('❌ Erro ao reservar. Tente novamente.');
+    btn.disabled = false;
+    btn.textContent = '✅ Confirmar reserva';
+    return;
+  }
+
+  // Update local state
+  const g = gifts.find(x => x.id === selectedGiftId);
+  if (g) { g.reserved = true; g.reserved_by = name; g.reserved_phone = phone; }
+
+  closeModal();
+  renderGifts();
+  showToast('🎁 Presente reservado com sucesso!');
   showConfetti();
-  ['giftReserveName','giftReservePhone','giftReserveMsg'].forEach(id=>document.getElementById(id).value='');
 }
 
-// ── RSVP ──
-const rsvpKey='ccm_rsvp_'+( data.slug||'default');
-const savedRSVP=JSON.parse(localStorage.getItem(rsvpKey)||'null');
-if(savedRSVP){showAlreadyAnswered(savedRSVP);}
+// ══════════════════════════════════════════
+//  RSVP
+// ══════════════════════════════════════════
+async function submitRSVP() {
+  const name = document.getElementById('rName').value.trim();
+  const phone = document.getElementById('rPhone').value.trim();
+  if (!name || !phone) { showToast('😊 Preencha nome e WhatsApp!'); return; }
 
-function submitRSVP(){
-  const name=document.getElementById('rName').value.trim();
-  const phone=document.getElementById('rPhone').value.trim();
-  if(!name||!phone){alert('Por favor, preencha nome e WhatsApp! 😊');return;}
-  const guests=document.getElementById('rGuests').value;
-  const attend=document.querySelector('input[name="rAttend"]:checked')?.value||'yes';
-  const msg=document.getElementById('rMsg').value.trim();
-  const entry={id:Date.now(),name,phone,guests:parseInt(guests),attend,msg,at:new Date().toISOString()};
+  const plus_ones = parseInt(document.getElementById('rGuests').value) || 0;
+  const attending = document.querySelector('input[name="rAttend"]:checked')?.value || 'yes';
+  const message = document.getElementById('rMsg').value.trim();
 
-  // save to RSVP key
-  localStorage.setItem(rsvpKey,JSON.stringify(entry));
+  const btn = document.getElementById('btnConfirm');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
 
-  // save to invite.guests
-  const inv=JSON.parse(localStorage.getItem('ccm_current_invite')||'{}');
-  if(inv){if(!inv.guests)inv.guests=[];inv.guests.push(entry);localStorage.setItem('ccm_current_invite',JSON.stringify(inv));}
+  // Check for existing RSVP by phone
+  const { data: existing } = await sb
+    .from('guests')
+    .select('id')
+    .eq('invite_id', invite.id)
+    .eq('phone', phone)
+    .maybeSingle();
 
-  document.getElementById('rsvpBox').style.display='none';
-  const suc=document.getElementById('rsvpSuccess');
-  suc.querySelector('.success-emoji-big').textContent=attend==='yes'?'🥳':'😢';
-  document.getElementById('rsvpSuccessSub').textContent=attend==='yes'?`Arrasando, ${name}! Os anfitriões foram notificados.`:`Que pena, ${name}! Você fará muita falta. 💙`;
+  let error;
+  if (existing) {
+    // Update existing
+    ({ error } = await sb
+      .from('guests')
+      .update({ name, attending, plus_ones, message })
+      .eq('id', existing.id));
+  } else {
+    // Insert new
+    ({ error } = await sb
+      .from('guests')
+      .insert({ invite_id: invite.id, name, phone, attending, plus_ones, message }));
+  }
+
+  if (error) {
+    showToast('❌ Erro ao confirmar. Tente novamente.');
+    btn.disabled = false;
+    btn.textContent = '🎉 Confirmar agora!';
+    return;
+  }
+
+  // Save phone locally so we can detect "already answered" on next visit
+  localStorage.setItem('ccm_rsvp_' + invite.id, phone);
+
+  // Show success
+  document.getElementById('rsvpBox').style.display = 'none';
+  const suc = document.getElementById('rsvpSuccess');
+  document.getElementById('successEmoji').textContent = attending === 'yes' ? '🥳' : '😢';
+  document.getElementById('successMsg').textContent = attending === 'yes' ? 'Presença confirmada!' : 'Resposta registrada!';
+  document.getElementById('rsvpSuccessSub').textContent = attending === 'yes'
+    ? `Arrasando, ${name}! Os anfitriões foram notificados. 🎉`
+    : `Que pena, ${name}! Você fará muita falta. 💙`;
   suc.classList.add('show');
-  if(attend==='yes')showConfetti();
+  if (attending === 'yes') showConfetti();
 }
 
-function showAlreadyAnswered(r){
-  document.getElementById('rsvpBox').style.display='none';
-  const b=document.getElementById('alreadyAnswered');
-  b.style.display='block';
-  b.querySelector('.answered-banner-title').textContent=r.attend==='yes'?'✅ Você confirmou presença!':'❌ Você informou que não pode ir.';
-  b.querySelector('.answered-banner-sub').textContent=`Obrigado, ${r.name}! Clique abaixo se quiser alterar sua resposta.`;
+function showAlreadyAnswered(guest) {
+  document.getElementById('rsvpBox').style.display = 'none';
+  const b = document.getElementById('alreadyAnswered');
+  b.style.display = 'block';
+  b.querySelector('.answered-banner-title').textContent =
+    guest.attending === 'yes' ? '✅ Você confirmou presença!' : '❌ Você informou que não pode ir.';
+  b.querySelector('.answered-banner-sub').textContent =
+    `Obrigado, ${guest.name}! Clique abaixo se quiser alterar sua resposta.`;
 }
 
-function resetRSVP(){
-  localStorage.removeItem(rsvpKey);
-  document.getElementById('alreadyAnswered').style.display='none';
-  document.getElementById('rsvpBox').style.display='block';
+function resetRSVP() {
+  if (invite) localStorage.removeItem('ccm_rsvp_' + invite.id);
+  document.getElementById('alreadyAnswered').style.display = 'none';
+  document.getElementById('rsvpBox').style.display = 'block';
   document.getElementById('rsvpSuccess').classList.remove('show');
+  const btn = document.getElementById('btnConfirm');
+  btn.disabled = false;
+  btn.textContent = '🎉 Confirmar agora!';
 }
 
-// ── Share ──
-function shareWhatsApp(){
-  const title=data.titulo||'Convite especial';
-  const slug=data.slug||'convite';
-  const text=`🎉 ${title}\n\nVocê está convidado! Confirme sua presença e veja a lista de presentes:\ncontecomeigo.com/${slug}`;
-  window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
+// ══════════════════════════════════════════
+//  SHARE
+// ══════════════════════════════════════════
+function shareWhatsApp() {
+  const title = invite ? (invite.title || 'Convite especial') : 'Convite especial';
+  const url = location.href;
+  const text = `🎉 ${title}\n\nVocê está convidado! Confirme sua presença:\n${url}`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
 }
 
-// ── Confetti burst ──
-function showConfetti(){
-  for(let i=0;i<30;i++){
-    setTimeout(()=>{
-      const el=document.createElement('div');
-      el.style.cssText=`position:fixed;top:50%;left:${20+Math.random()*60}%;width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;background:${cols[Math.floor(Math.random()*cols.length)]};border-radius:${Math.random()>.5?'50%':'2px'};pointer-events:none;z-index:999;animation:cpFall ${1+Math.random()*2}s ease-out forwards;`;
+// ══════════════════════════════════════════
+//  CONFETTI BURST
+// ══════════════════════════════════════════
+function showConfetti() {
+  for (let i = 0; i < 30; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.style.cssText = `position:fixed;top:50%;left:${20 + Math.random() * 60}%;width:${6 + Math.random() * 8}px;height:${6 + Math.random() * 8}px;background:${cols[Math.floor(Math.random() * cols.length)]};border-radius:${Math.random() > .5 ? '50%' : '2px'};pointer-events:none;z-index:999;animation:cpFall ${1 + Math.random() * 2}s ease-out forwards;`;
       document.body.appendChild(el);
-      setTimeout(()=>el.remove(),3000);
-    },i*40);
+      setTimeout(() => el.remove(), 3000);
+    }, i * 40);
   }
 }
 
-// ── Scroll reveal ──
-const ro=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target);}});},{threshold:.12});
-document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+// ══════════════════════════════════════════
+//  START
+// ══════════════════════════════════════════
+init();
 </script>
 </body>
 </html>
