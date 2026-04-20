@@ -301,10 +301,114 @@
     }
     .toast.show{transform:translateX(-50%) translateY(0);}
 
+    /* ── MUSIC PLAYER ── */
+    .music-player{
+      position:fixed;bottom:5.5rem;right:1.5rem;z-index:200;
+      display:flex;align-items:center;gap:.6rem;
+      background:rgba(26,10,0,.92);backdrop-filter:blur(12px);
+      border:1px solid rgba(255,255,255,.1);border-radius:99px;
+      padding:.55rem 1rem .55rem .65rem;
+      box-shadow:0 8px 24px rgba(26,10,0,.4);
+      transition:all .3s var(--ease);
+    }
+    .music-play-btn{
+      width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;font-size:.9rem;
+      background:var(--accent);color:var(--bg);flex-shrink:0;transition:transform .2s;
+    }
+    .music-play-btn:hover{transform:scale(1.1);}
+    .music-info{display:flex;flex-direction:column;gap:.1rem;}
+    .music-title{font-size:.72rem;font-weight:700;color:#fff;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .music-sub{font-size:.62rem;color:rgba(255,255,255,.4);}
+    .music-wave{display:flex;align-items:center;gap:2px;height:16px;}
+    .music-wave span{width:3px;background:var(--accent);border-radius:2px;animation:wave 1.2s ease-in-out infinite;}
+    .music-wave span:nth-child(2){animation-delay:.15s;}
+    .music-wave span:nth-child(3){animation-delay:.3s;}
+    .music-wave span:nth-child(4){animation-delay:.45s;}
+    @keyframes wave{0%,100%{height:4px}50%{height:14px}}
+    .music-wave.paused span{animation:none;height:4px;}
+
+    /* ── GALLERY ── */
+    .gallery-section{padding:4rem 1.5rem;max-width:900px;margin:0 auto;}
+    .gallery-grid{
+      display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+      gap:.75rem;margin-top:2rem;
+    }
+    .gallery-img{
+      aspect-ratio:1;border-radius:16px;overflow:hidden;cursor:pointer;
+      transition:transform .3s var(--ease),box-shadow .3s;
+    }
+    .gallery-img:hover{transform:scale(1.04);box-shadow:0 16px 40px rgba(26,10,0,.25);}
+    .gallery-img img{width:100%;height:100%;object-fit:cover;}
+
+    /* Lightbox */
+    .lightbox{display:none;position:fixed;inset:0;background:rgba(26,10,0,.92);z-index:600;align-items:center;justify-content:center;padding:1.5rem;}
+    .lightbox.open{display:flex;}
+    .lightbox img{max-width:90vw;max-height:90vh;border-radius:12px;box-shadow:0 32px 80px rgba(0,0,0,.6);}
+    .lb-close{position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,.1);border:none;color:#fff;font-size:1.5rem;cursor:pointer;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;}
+    .lb-close:hover{background:rgba(255,255,255,.2);}
+
+    /* ── PIX CARD ── */
+    .pix-card{
+      background:rgba(26,10,0,.04);border:1.5px dashed rgba(26,10,0,.15);border-radius:20px;
+      padding:1.5rem;text-align:center;margin-top:1.5rem;
+    }
+    .pix-logo{font-size:2rem;margin-bottom:.4rem;}
+    .pix-title{font-weight:800;font-size:1rem;margin-bottom:.25rem;}
+    .pix-sub{font-size:.82rem;color:rgba(26,10,0,.45);margin-bottom:1rem;}
+    .pix-key-display{
+      display:flex;align-items:center;gap:.5rem;background:rgba(26,10,0,.06);
+      border:1px solid rgba(26,10,0,.1);border-radius:12px;padding:.65rem 1rem;
+      font-family:monospace;font-size:.85rem;font-weight:700;margin-bottom:.75rem;
+      word-break:break-all;
+    }
+    .btn-copy-pix{
+      padding:.65rem 1.5rem;background:var(--accent);color:var(--bg);
+      border:none;border-radius:12px;font-family:var(--font-body);font-size:.9rem;font-weight:800;
+      cursor:pointer;transition:all .2s;
+    }
+    .btn-copy-pix:hover{filter:brightness(1.1);transform:translateY(-2px);}
+
+    /* ── WISHES WALL ── */
+    .wishes-section{
+      background:rgba(26,10,0,.02);border-top:1px solid var(--border);
+      padding:4rem 1.5rem;
+    }
+    .wishes-inner{max-width:680px;margin:0 auto;}
+    .wishes-grid{display:flex;flex-direction:column;gap:.85rem;margin-top:2rem;}
+    .wish-card{
+      background:#fff;border:1px solid var(--border);border-radius:16px;
+      padding:1rem 1.25rem;display:flex;gap:.85rem;align-items:flex-start;
+      animation:fadeUp .4s var(--ease) both;
+    }
+    .wish-avatar{
+      width:38px;height:38px;border-radius:50%;background:var(--accent);
+      display:flex;align-items:center;justify-content:center;font-size:1rem;
+      flex-shrink:0;color:var(--bg);font-weight:800;
+    }
+    .wish-name{font-size:.82rem;font-weight:800;margin-bottom:.2rem;}
+    .wish-msg{font-size:.9rem;color:rgba(26,10,0,.7);line-height:1.6;}
+    .wish-time{font-size:.68rem;color:rgba(26,10,0,.25);margin-top:.3rem;}
+
+    .wish-form-box{
+      background:rgba(26,10,0,.03);border:1px solid var(--border);border-radius:20px;
+      padding:1.5rem;margin-top:2rem;
+    }
+    .wish-form-title{font-weight:800;margin-bottom:1rem;}
+    .btn-wish-submit{
+      width:100%;padding:.85rem;background:var(--pink);color:#fff;border:none;
+      border-radius:12px;font-family:var(--font-body);font-size:.9rem;font-weight:800;
+      cursor:pointer;margin-top:.5rem;transition:all .2s;
+    }
+    .btn-wish-submit:hover:not(:disabled){filter:brightness(1.1);transform:translateY(-2px);}
+    .btn-wish-submit:disabled{opacity:.6;cursor:not-allowed;}
+
     @media(max-width:600px){
       .countdown-bar{gap:1rem;}
       .cd-num{font-size:2.2rem;min-width:50px;}
       .gifts-grid{grid-template-columns:1fr 1fr;}
+      .gallery-grid{grid-template-columns:1fr 1fr;}
+      .music-player{bottom:5rem;right:.75rem;}
     }
   </style>
 </head>
@@ -457,8 +561,50 @@
     <div class="section-label reveal" style="text-align:center">🎁 Lista de presentes</div>
     <div class="section-title reveal" style="text-align:center">Presenteie com o que<br><em>realmente importa.</em></div>
     <div class="gifts-grid reveal" id="giftsGrid"></div>
+    <!-- PIX card — shown if invite has pix_key -->
+    <div class="pix-card reveal" id="pixCard" style="display:none">
+      <div class="pix-logo">💸</div>
+      <div class="pix-title">Presente em dinheiro via PIX</div>
+      <div class="pix-sub">Prefere contribuir com um valor? Use a chave PIX abaixo.</div>
+      <div class="pix-key-display">
+        <span style="flex:1" id="pixKeyText"></span>
+      </div>
+      <button class="btn-copy-pix" onclick="copyPix()">📋 Copiar chave PIX</button>
+    </div>
     <div style="text-align:center;margin-top:2rem;font-size:.82rem;color:rgba(26,10,0,.3)" class="reveal">
       Ao reservar um presente, os anfitriões saberão que você vai trazer esse item.
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY (shown only if invite has gallery_urls) -->
+<section class="gallery-section reveal" id="gallerySection" style="display:none">
+  <div class="section-label" style="text-align:center">📸 Galeria de fotos</div>
+  <div class="section-title" style="text-align:center">Memórias que<br><em>vão durar.</em></div>
+  <div class="gallery-grid" id="galleryGrid"></div>
+</section>
+
+<!-- WISHES WALL -->
+<section class="wishes-section" id="wishesSection" style="display:none">
+  <div class="wishes-inner">
+    <div class="section-label reveal" style="text-align:center">💌 Mural de desejos</div>
+    <div class="section-title reveal" style="text-align:center">Deixe uma mensagem<br><em>de carinho.</em></div>
+    <div class="wishes-grid reveal" id="wishesGrid"></div>
+    <div class="wish-form-box reveal" id="wishFormBox">
+      <div class="wish-form-title">✍️ Escreva seus desejos</div>
+      <div class="form-group">
+        <label>Seu nome</label>
+        <input type="text" id="wishName" placeholder="Ex: Ana Clara"/>
+      </div>
+      <div class="form-group">
+        <label>Sua mensagem</label>
+        <textarea id="wishMsg" placeholder="Uma mensagem cheia de carinho para o aniversariante... 💕" style="min-height:80px"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Emoji (opcional)</label>
+        <input type="text" id="wishEmoji" placeholder="💕" style="max-width:80px"/>
+      </div>
+      <button class="btn-wish-submit" id="btnWish" onclick="submitWish()">💌 Enviar mensagem</button>
     </div>
   </div>
 </section>
@@ -472,6 +618,25 @@
 
 <!-- WhatsApp FAB -->
 <button class="fab" onclick="shareWhatsApp()" title="Compartilhar no WhatsApp">💬</button>
+
+<!-- Music Player (shown only if invite has music_url) -->
+<div class="music-player" id="musicPlayer" style="display:none">
+  <button class="music-play-btn" id="musicPlayBtn" onclick="toggleMusic()">▶</button>
+  <div class="music-info">
+    <div class="music-title" id="musicTitle">Música do evento</div>
+    <div class="music-sub">Toque suave 🎵</div>
+  </div>
+  <div class="music-wave paused" id="musicWave">
+    <span></span><span></span><span></span><span></span>
+  </div>
+</div>
+<iframe id="ytPlayer" style="display:none" width="0" height="0" frameborder="0" allow="autoplay"></iframe>
+
+<!-- Lightbox for gallery -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lb-close" onclick="closeLightbox()">✕</button>
+  <img id="lightboxImg" src="" alt="Foto"/>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -605,6 +770,27 @@ async function init() {
 
   // Render gifts
   renderGifts();
+
+  // PIX
+  if (invite.pix_key) {
+    document.getElementById('pixKeyText').textContent = invite.pix_key;
+    document.getElementById('pixCard').style.display = 'block';
+  }
+
+  // Gallery
+  if (invite.gallery_urls && invite.gallery_urls.length) {
+    setupGallery(invite.gallery_urls);
+  }
+
+  // Wishes wall
+  if (invite.wishes_enabled !== false) {
+    setupWishes();
+  }
+
+  // Music player
+  if (invite.music_url) {
+    setupMusic(invite.music_url);
+  }
 
   // Check previous RSVP (stored locally by phone)
   const rsvpKey = 'ccm_rsvp_' + invite.id;
@@ -861,6 +1047,161 @@ function showConfetti() {
       setTimeout(() => el.remove(), 3000);
     }, i * 40);
   }
+}
+
+// ══════════════════════════════════════════
+//  GALLERY
+// ══════════════════════════════════════════
+function setupGallery(urls) {
+  const section = document.getElementById('gallerySection');
+  const grid = document.getElementById('galleryGrid');
+  section.style.display = 'block';
+  grid.innerHTML = urls.map(url => `
+    <div class="gallery-img" onclick="openLightbox('${url}')">
+      <img src="${url}" alt="Foto do evento" loading="lazy" onerror="this.closest('.gallery-img').style.display='none'"/>
+    </div>
+  `).join('');
+}
+
+function openLightbox(url) {
+  document.getElementById('lightboxImg').src = url;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ══════════════════════════════════════════
+//  PIX
+// ══════════════════════════════════════════
+function copyPix() {
+  const key = document.getElementById('pixKeyText').textContent;
+  navigator.clipboard.writeText(key).then(() => {
+    showToast('✅ Chave PIX copiada!');
+  }).catch(() => {
+    showToast('📋 ' + key);
+  });
+}
+
+// ══════════════════════════════════════════
+//  MUSIC PLAYER
+// ══════════════════════════════════════════
+let musicPlaying = false;
+let ytReady = false;
+
+function getYouTubeId(url) {
+  const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^&?/\s]{11})/);
+  return match ? match[1] : null;
+}
+
+function setupMusic(url) {
+  const ytId = getYouTubeId(url);
+  if (!ytId) return;
+
+  const player = document.getElementById('musicPlayer');
+  const iframe = document.getElementById('ytPlayer');
+
+  // Set up autoplay iframe (muted initially to respect browser policies)
+  iframe.src = `https://www.youtube.com/embed/${ytId}?autoplay=0&controls=0&loop=1&playlist=${ytId}&enablejsapi=1`;
+  player.style.display = 'flex';
+  document.getElementById('musicTitle').textContent = 'Música do evento';
+}
+
+function toggleMusic() {
+  const iframe = document.getElementById('ytPlayer');
+  const btn = document.getElementById('musicPlayBtn');
+  const wave = document.getElementById('musicWave');
+  const src = iframe.src;
+
+  if (!musicPlaying) {
+    // Enable autoplay
+    iframe.src = src.replace('autoplay=0', 'autoplay=1');
+    btn.textContent = '⏸';
+    wave.classList.remove('paused');
+    musicPlaying = true;
+  } else {
+    // Stop by reloading without autoplay
+    iframe.src = src.replace('autoplay=1', 'autoplay=0');
+    btn.textContent = '▶';
+    wave.classList.add('paused');
+    musicPlaying = false;
+  }
+}
+
+// ══════════════════════════════════════════
+//  WISHES WALL
+// ══════════════════════════════════════════
+async function setupWishes() {
+  document.getElementById('wishesSection').style.display = 'block';
+  await loadWishes();
+}
+
+async function loadWishes() {
+  if (!invite) return;
+  const { data } = await sb
+    .from('wishes')
+    .select('*')
+    .eq('invite_id', invite.id)
+    .order('created_at', { ascending: false });
+
+  renderWishes(data || []);
+}
+
+function renderWishes(wishes) {
+  const grid = document.getElementById('wishesGrid');
+  if (!wishes.length) {
+    grid.innerHTML = '<div style="text-align:center;color:rgba(26,10,0,.3);padding:1rem;font-size:.85rem">Seja o primeiro a deixar uma mensagem! 💕</div>';
+    return;
+  }
+  grid.innerHTML = wishes.map(w => {
+    const initials = w.name.split(' ').map(n => n[0]).slice(0,2).join('').toUpperCase();
+    const time = new Date(w.created_at).toLocaleDateString('pt-BR', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+    return `
+      <div class="wish-card">
+        <div class="wish-avatar">${w.emoji || initials}</div>
+        <div style="flex:1">
+          <div class="wish-name">${w.name}</div>
+          <div class="wish-msg">${w.message}</div>
+          <div class="wish-time">${time}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function submitWish() {
+  const name = document.getElementById('wishName').value.trim();
+  const message = document.getElementById('wishMsg').value.trim();
+  const emoji = document.getElementById('wishEmoji').value.trim() || '💕';
+  if (!name || !message) { showToast('😊 Preencha nome e mensagem!'); return; }
+
+  const btn = document.getElementById('btnWish');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+
+  const { error } = await sb.from('wishes').insert({
+    invite_id: invite.id,
+    name, message, emoji
+  });
+
+  if (error) {
+    showToast('❌ Erro ao enviar. Tente novamente.');
+    btn.disabled = false;
+    btn.textContent = '💌 Enviar mensagem';
+    return;
+  }
+
+  document.getElementById('wishName').value = '';
+  document.getElementById('wishMsg').value = '';
+  document.getElementById('wishEmoji').value = '';
+  btn.disabled = false;
+  btn.textContent = '💌 Enviar mensagem';
+  showToast('💌 Mensagem enviada!');
+  showConfetti();
+  await loadWishes();
 }
 
 // ══════════════════════════════════════════

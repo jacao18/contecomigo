@@ -144,8 +144,9 @@
     <div class="sidebar-steps">
       <div class="sidebar-step active" id="step1tab" onclick="goStep(1)">1. Evento</div>
       <div class="sidebar-step" id="step2tab" onclick="goStep(2)">2. Estilo</div>
-      <div class="sidebar-step" id="step3tab" onclick="goStep(3)">3. Presentes</div>
-      <div class="sidebar-step" id="step4tab" onclick="goStep(4)">4. Publicar</div>
+      <div class="sidebar-step" id="step3tab" onclick="goStep(3)">3. Extras</div>
+      <div class="sidebar-step" id="step4tab" onclick="goStep(4)">4. Presentes</div>
+      <div class="sidebar-step" id="step5tab" onclick="goStep(5)">5. Publicar</div>
     </div>
 
     <!-- STEP 1 -->
@@ -205,7 +206,7 @@
       </div>
     </div>
 
-    <!-- STEP 2 -->
+    <!-- STEP 2: ESTILO -->
     <div class="step-panel" id="step2">
       <div class="step-title">Estilo do convite</div>
       <div class="step-sub">Escolha cores, template e personalize a aparência.</div>
@@ -246,14 +247,65 @@
       </div>
       <div class="step-nav">
         <button class="btn-sm btn-outline-sm" style="padding:.65rem" onclick="goStep(1)">← Voltar</button>
-        <button class="btn-sm btn-pink-sm" style="padding:.65rem" onclick="goStep(3)">Próximo: Presentes →</button>
+        <button class="btn-sm btn-pink-sm" style="padding:.65rem" onclick="goStep(3)">Próximo: Extras →</button>
       </div>
     </div>
 
-    <!-- STEP 3 -->
+    <!-- STEP 3: EXTRAS -->
     <div class="step-panel" id="step3">
-      <div class="step-title">Lista de presentes</div>
-      <div class="step-sub">Adicione os presentes que você deseja receber.</div>
+      <div class="step-title">Funcionalidades extras ✨</div>
+      <div class="step-sub">Adicione música, galeria de fotos, PIX e outras opções ao convite.</div>
+
+      <div class="field">
+        <label>🎵 Música de fundo</label>
+        <input type="url" id="fMusic" placeholder="URL do YouTube (ex: https://youtube.com/watch?v=...)" oninput="collectState()"/>
+        <div style="font-size:.72rem;color:rgba(26,10,0,.3);margin-top:.3rem">Cole o link de qualquer vídeo/música do YouTube. Aparecerá como player flutuante no convite.</div>
+      </div>
+
+      <div class="field">
+        <label>📸 Fotos da galeria</label>
+        <textarea id="fGallery" placeholder="Cole uma URL de foto por linha. Ex:&#10;https://exemplo.com/foto1.jpg&#10;https://exemplo.com/foto2.jpg" style="min-height:90px" oninput="collectState()"></textarea>
+        <div style="font-size:.72rem;color:rgba(26,10,0,.3);margin-top:.3rem">Uma URL por linha. Use links diretos de imagem (Unsplash, Google Drive público, etc.)</div>
+      </div>
+
+      <div class="field">
+        <label>💸 Chave PIX (para presentes em dinheiro)</label>
+        <input type="text" id="fPix" placeholder="CPF, e-mail, telefone ou chave aleatória" oninput="collectState()"/>
+        <div style="font-size:.72rem;color:rgba(26,10,0,.3);margin-top:.3rem">Os convidados poderão copiar sua chave PIX direto do convite.</div>
+      </div>
+
+      <div class="field">
+        <label>💌 Mural de mensagens / desejos</label>
+        <div style="display:flex;align-items:center;gap:.75rem;background:rgba(26,10,0,.04);border:1px solid var(--border);border-radius:10px;padding:.75rem 1rem">
+          <input type="checkbox" id="fWishes" style="width:18px;height:18px;accent-color:var(--pink);cursor:pointer;flex-shrink:0" onchange="collectState()" checked/>
+          <div>
+            <div style="font-size:.85rem;font-weight:700">Ativar mural de desejos</div>
+            <div style="font-size:.72rem;color:rgba(26,10,0,.4)">Convidados podem deixar mensagens carinhosas no convite.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>🔒 Lista de convidados fechada</label>
+        <div style="display:flex;align-items:center;gap:.75rem;background:rgba(26,10,0,.04);border:1px solid var(--border);border-radius:10px;padding:.75rem 1rem">
+          <input type="checkbox" id="fClosed" style="width:18px;height:18px;accent-color:var(--pink);cursor:pointer;flex-shrink:0" onchange="collectState()"/>
+          <div>
+            <div style="font-size:.85rem;font-weight:700">Lista fechada</div>
+            <div style="font-size:.72rem;color:rgba(26,10,0,.4)">Somente convidados com WhatsApp cadastrado podem confirmar presença.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-nav" style="margin-top:1.5rem">
+        <button class="btn-sm btn-outline-sm" style="padding:.65rem" onclick="goStep(2)">← Voltar</button>
+        <button class="btn-sm btn-pink-sm" style="padding:.65rem" onclick="goStep(4)">Próximo: Presentes →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: PRESENTES -->
+    <div class="step-panel" id="step4">
+      <div class="step-title">Lista de presentes 🎁</div>
+      <div class="step-sub">Adicione os presentes que você deseja receber. Convidados podem reservar cada item.</div>
       <div class="gift-list-edit" id="giftListEdit"></div>
       <div style="margin-top:.75rem;display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
         <input type="text" id="newGiftName" placeholder="Nome do presente" style="background:rgba(26,10,0,.05);border:1px solid rgba(26,10,0,.1);border-radius:10px;padding:.65rem .9rem;color:var(--white);font-size:.9rem;outline:none;"/>
@@ -265,13 +317,13 @@
         <button class="add-gift-btn" onclick="addGift()">+ Adicionar</button>
       </div>
       <div class="step-nav" style="margin-top:1.5rem">
-        <button class="btn-sm btn-outline-sm" style="padding:.65rem" onclick="goStep(2)">← Voltar</button>
-        <button class="btn-sm btn-pink-sm" style="padding:.65rem" onclick="goStep(4)">Próximo: Publicar →</button>
+        <button class="btn-sm btn-outline-sm" style="padding:.65rem" onclick="goStep(3)">← Voltar</button>
+        <button class="btn-sm btn-pink-sm" style="padding:.65rem" onclick="goStep(5)">Próximo: Publicar →</button>
       </div>
     </div>
 
-    <!-- STEP 4 -->
-    <div class="step-panel" id="step4">
+    <!-- STEP 5: PUBLICAR -->
+    <div class="step-panel" id="step5">
       <div class="step-title">Publicar convite 🚀</div>
       <div class="step-sub">Revise e publique seu convite.</div>
       <div id="step4summary" style="background:rgba(26,10,0,.04);border:1px solid var(--border);border-radius:12px;padding:1rem;margin-bottom:1.25rem;font-size:.85rem;"></div>
@@ -340,7 +392,9 @@ const tplImgs = {
 const state = {
   tipo:'🎂', titulo:'', nome:'', data:'', hora:'', local:'', dress:'', msg:'',
   prazo:'', accent:'#FFD93D', bg:'linear-gradient(135deg,#1a0a1e,#2d0a3a)',
-  tpl:'tropical', gifts:[], slug:'', visib:'public'
+  tpl:'tropical', gifts:[], slug:'', visib:'public',
+  // v2 extras
+  music_url:'', gallery_urls:[], pix_key:'', wishes_enabled:true, closed_list:false
 };
 
 // ── AUTH CHECK ──
@@ -364,7 +418,7 @@ async function init(){
   } else {
     // Load local draft as fallback
     const draft = JSON.parse(localStorage.getItem('ccm_draft')||'null');
-    if(draft){ Object.assign(state,draft); fillForm(); renderGiftList(); }
+    if(draft){ Object.assign(state,draft); fillForm(); renderGiftList(); fillExtras(); }
   }
 
   renderGiftList();
@@ -380,13 +434,17 @@ async function loadInvite(id){
     data: inv.event_date||'', hora: inv.event_time||'', local: inv.location||'',
     dress: inv.dress_code||'', msg: inv.message||'', prazo: inv.rsvp_deadline||'',
     accent: inv.accent||'#FFD93D', bg: inv.bg_gradient||state.bg,
-    tpl: inv.template||'tropical', slug: inv.slug||'', visib: inv.visibility||'public'
+    tpl: inv.template||'tropical', slug: inv.slug||'', visib: inv.visibility||'public',
+    music_url: inv.music_url||'', gallery_urls: inv.gallery_urls||[],
+    pix_key: inv.pix_key||'', wishes_enabled: inv.wishes_enabled!==false,
+    closed_list: inv.closed_list||false
   });
   // Load gifts
   const {data:gifts} = await sb.from('gifts').select('*').eq('invite_id',id);
   state.gifts = (gifts||[]).map(g=>({id:g.id,name:g.name,price:g.price,emoji:g.emoji,link:g.link,reserved:g.reserved}));
   fillForm();
   renderGiftList();
+  fillExtras();
   document.getElementById('topbarTitle').textContent = 'Editar convite';
 }
 
@@ -395,24 +453,38 @@ function fillForm(){
   Object.entries(map).forEach(([id,k])=>{const el=document.getElementById(id);if(el&&state[k])el.value=state[k];});
 }
 
+function fillExtras(){
+  const mu=document.getElementById('fMusic'); if(mu) mu.value=state.music_url||'';
+  const gal=document.getElementById('fGallery'); if(gal) gal.value=(state.gallery_urls||[]).join('\n');
+  const pix=document.getElementById('fPix'); if(pix) pix.value=state.pix_key||'';
+  const wish=document.getElementById('fWishes'); if(wish) wish.checked=state.wishes_enabled!==false;
+  const closed=document.getElementById('fClosed'); if(closed) closed.checked=!!state.closed_list;
+}
+
 // ── STEPS ──
 let currentStep=1;
 function goStep(n){
   collectState();
   currentStep=n;
-  for(let i=1;i<=4;i++){
-    document.getElementById('step'+i).classList.toggle('active',i===n);
+  for(let i=1;i<=5;i++){
+    const panel=document.getElementById('step'+i);
     const tab=document.getElementById('step'+i+'tab');
-    tab.classList.toggle('active',i===n);
-    tab.classList.toggle('done',i<n);
+    if(panel) panel.classList.toggle('active',i===n);
+    if(tab){ tab.classList.toggle('active',i===n); tab.classList.toggle('done',i<n); }
   }
-  if(n===4) renderStep4Summary();
+  if(n===5) renderStep4Summary();
   updatePreview();
 }
 
 function collectState(){
   const map={fTipo:'tipo',fTitulo:'titulo',fNome:'nome',fData:'data',fHora:'hora',fLocal:'local',fDress:'dress',fMsg:'msg',fPrazo:'prazo',fSlug:'slug',fVisib:'visib'};
   Object.entries(map).forEach(([id,k])=>{const el=document.getElementById(id);if(el)state[k]=el.value;});
+  // Extras
+  const mu=document.getElementById('fMusic'); if(mu) state.music_url=mu.value.trim();
+  const gal=document.getElementById('fGallery'); if(gal) state.gallery_urls=gal.value.split('\n').map(s=>s.trim()).filter(Boolean);
+  const pix=document.getElementById('fPix'); if(pix) state.pix_key=pix.value.trim();
+  const wish=document.getElementById('fWishes'); if(wish) state.wishes_enabled=wish.checked;
+  const closed=document.getElementById('fClosed'); if(closed) state.closed_list=closed.checked;
 }
 
 // ── PREVIEW ──
@@ -488,17 +560,21 @@ function updateSlugPreview(){
   state.slug=v;
 }
 
-// ── STEP 4 SUMMARY ──
+// ── STEP 5 SUMMARY ──
 function renderStep4Summary(){
   collectState();
   const el=document.getElementById('step4summary');
   const ok=(k)=>state[k]?'<span style="color:#34d399">✓</span>':'<span style="color:#f87171">✗</span>';
-  el.innerHTML=`<div style="display:flex;flex-direction:column;gap:.4rem">
+  el.innerHTML=`<div style="display:flex;flex-direction:column;gap:.4rem;font-size:.82rem">
     <div>${ok('titulo')} Título: <strong>${state.titulo||'Não preenchido'}</strong></div>
     <div>${ok('nome')} Homenageado: <strong>${state.nome||'Não preenchido'}</strong></div>
     <div>${ok('data')} Data: <strong>${state.data||'Não preenchida'}</strong></div>
     <div>${ok('local')} Local: <strong>${state.local||'Não preenchido'}</strong></div>
     <div>🎁 Presentes: <strong>${state.gifts.length} item(s)</strong></div>
+    <div>🎵 Música: <strong>${state.music_url?'✓ Configurada':'Não adicionada'}</strong></div>
+    <div>📸 Galeria: <strong>${state.gallery_urls.length} foto(s)</strong></div>
+    <div>💸 PIX: <strong>${state.pix_key||'Não configurado'}</strong></div>
+    <div>💌 Mural: <strong>${state.wishes_enabled?'Ativado':'Desativado'}</strong></div>
   </div>`;
   if(!state.slug && state.nome){
     const slug=state.nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
@@ -551,6 +627,12 @@ async function publishInvite(){
     photo_url: tplImgs[state.tpl]||null,
     visibility: state.visib,
     published: true,
+    // v2 extras
+    music_url: state.music_url || null,
+    gallery_urls: state.gallery_urls.length ? state.gallery_urls : null,
+    pix_key: state.pix_key || null,
+    wishes_enabled: state.wishes_enabled,
+    closed_list: state.closed_list,
   };
 
   let inviteId = editingInviteId;
