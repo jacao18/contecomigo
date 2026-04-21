@@ -1731,26 +1731,7 @@
   </div>
 
   <!-- Gift Reserve Modal -->
-  <div class="modal-overlay" id="giftModal">
-    <div class="modal-box">
-      <button class="modal-close" onclick="closeGiftModal()">✕</button>
-      <div class="modal-title">Reservar Presente 🎁</div>
-      <div class="modal-sub">Preencha seus dados para reservar este item para os anfitriões.</div>
-      <div class="form-group">
-        <label>Seu nome</label>
-        <input type="text" placeholder="Ex: Ana Silva" id="giftName" />
-      </div>
-      <div class="form-group">
-        <label>Seu WhatsApp</label>
-        <input type="tel" placeholder="(11) 99999-9999" id="giftPhone" />
-      </div>
-      <div class="form-group">
-        <label>Mensagem (opcional)</label>
-        <textarea placeholder="Uma mensagem carinhosa para os anfitriões..." id="giftMessage"></textarea>
-      </div>
-      <button class="modal-submit" onclick="confirmGiftReservation()">✅ Confirmar reserva</button>
-    </div>
-  </div>
+  <!-- gift modal removed (demo moved to demo.html) -->
 
   <!-- ══ NAVBAR ══ -->
   <nav class="nav" id="navbar">
@@ -1795,8 +1776,8 @@
         <a href="editor.html" class="btn-primary magnetic">
           ✨ Criar meu convite grátis
         </a>
-        <a href="#rsvp" class="btn-secondary">
-          Ver demo ↓
+        <a href="demo.html" class="btn-secondary">
+          ✨ Ver demo interativo
         </a>
       </div>
 
@@ -1948,7 +1929,7 @@
   <section class="rsvp-section" id="rsvp">
     <div class="section-inner">
       <div class="rsvp-layout">
-        <!-- Demo invite card -->
+        <!-- Demo invite card (VISUAL ONLY) -->
         <div class="rsvp-visual reveal">
           <div class="invite-card-demo">
             <span class="invite-demo-emoji">🎂</span>
@@ -1956,80 +1937,47 @@
             <div class="invite-demo-name">Festa de Aniversário da Sofia</div>
             <hr class="invite-demo-divider" />
             <div class="invite-demo-details">
-              <div class="invite-demo-detail">
-                <span>📅</span> <span>Sábado, 14 de junho de 2025</span>
-              </div>
-              <div class="invite-demo-detail">
-                <span>⏰</span> <span>A partir das 18h00</span>
-              </div>
-              <div class="invite-demo-detail">
-                <span>📍</span> <span>Salão Felicidade, São Paulo – SP</span>
-              </div>
-              <div class="invite-demo-detail">
-                <span>👗</span> <span>Traje: Esporte Fino</span>
-              </div>
+              <div class="invite-demo-detail"><span>📅</span> <span>Sábado, 14 de junho de 2025</span></div>
+              <div class="invite-demo-detail"><span>⏰</span> <span>A partir das 18h00</span></div>
+              <div class="invite-demo-detail"><span>📍</span> <span>Salão Felicidade, São Paulo – SP</span></div>
+              <div class="invite-demo-detail"><span>👗</span> <span>Traje: Esporte Fino</span></div>
             </div>
             <hr class="invite-demo-divider" />
-            <!-- Mini countdown -->
             <div style="text-align:center;margin-top:.5rem">
               <div style="font-size:0.7rem;color:rgba(26,10,0,0.4);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.5rem">Faltam</div>
-              <div id="countdown" style="font-family:var(--font-display);font-size:1.5rem;font-weight:900;font-style:italic;color:var(--yellow);letter-spacing:-.01em">--d --h --m</div>
+              <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:900;font-style:italic;color:var(--yellow);letter-spacing:-.01em">47d 12h 30m</div>
             </div>
           </div>
         </div>
 
-        <!-- RSVP Form -->
-        <div class="reveal">
+        <!-- CTA lado direito (não é mais form funcional) -->
+        <div class="reveal" style="display:flex;flex-direction:column;justify-content:center">
           <div class="section-label" style="color:var(--pink)">✉️ Confirmação de Presença</div>
-          <h2 class="section-title" style="margin-bottom:2rem">Confirme sua<br>presença aqui.</h2>
+          <h2 class="section-title" style="margin-bottom:1.5rem">Tudo num<br>único link.</h2>
+          <p style="color:rgba(26,10,0,.55);line-height:1.7;margin-bottom:2rem;font-size:1rem">Seus convidados confirmam presença, reservam presentes e deixam mensagens — tudo sem baixar nenhum app.</p>
 
-          <div class="rsvp-form-box">
+          <!-- Preview estático do form -->
+          <div class="rsvp-form-box" style="pointer-events:none;user-select:none;opacity:.85">
             <div class="rsvp-form-title">Vai comparecer? 🥳</div>
             <div class="rsvp-form-sub">Responda até 07 de junho para confirmar seu lugar.</div>
-
-            <div id="rsvpForm">
-              <div class="form-group">
-                <label>Seu nome completo</label>
-                <input type="text" id="guestName" placeholder="Ex: Maria Santos" />
-              </div>
-              <div class="form-group">
-                <label>WhatsApp</label>
-                <input type="tel" id="guestPhone" placeholder="(11) 99999-9999" />
-              </div>
-              <div class="form-group">
-                <label>Quantas pessoas virão com você?</label>
-                <select id="guestCount">
-                  <option value="1">Só eu (1 pessoa)</option>
-                  <option value="2">Eu + 1 (2 pessoas)</option>
-                  <option value="3">Eu + 2 (3 pessoas)</option>
-                  <option value="4">Eu + 3 (4 pessoas)</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>Você vai comparecer?</label>
-                <div class="attend-options">
-                  <div class="attend-option">
-                    <input type="radio" name="attend" id="attendYes" value="yes" checked />
-                    <label class="attend-label" for="attendYes">✅ Sim, vou!</label>
-                  </div>
-                  <div class="attend-option">
-                    <input type="radio" name="attend" id="attendNo" value="no" />
-                    <label class="attend-label" for="attendNo">❌ Não posso</label>
-                  </div>
-                </div>
-              </div>
-              <div class="form-group">
-                <label>Mensagem para os anfitriões (opcional)</label>
-                <textarea id="guestMessage" placeholder="Uma mensagem carinhosa... 💕"></textarea>
-              </div>
-              <button class="form-submit" onclick="submitRSVP()">🎉 Confirmar presença</button>
+            <div class="form-group" style="margin-bottom:.75rem">
+              <label>Seu nome completo</label>
+              <div style="background:rgba(26,10,0,.05);border:1px solid rgba(26,10,0,.1);border-radius:12px;padding:.65rem 1rem;color:rgba(26,10,0,.3);font-size:.9rem">Maria Santos</div>
             </div>
-
-            <div class="form-success" id="rsvpSuccess">
-              <div class="form-success-emoji">🥳</div>
-              <div class="form-success-msg">Presença confirmada!<br><small style="font-weight:400;color:rgba(26,10,0,0.5);font-size:0.85rem">Você receberá uma confirmação no seu WhatsApp em breve.</small></div>
+            <div class="form-group" style="margin-bottom:.75rem">
+              <label>WhatsApp</label>
+              <div style="background:rgba(26,10,0,.05);border:1px solid rgba(26,10,0,.1);border-radius:12px;padding:.65rem 1rem;color:rgba(26,10,0,.3);font-size:.9rem">(11) 99999-9999</div>
             </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem">
+              <div style="background:rgba(52,211,153,.1);border:2px solid #34d399;border-radius:12px;padding:.7rem;text-align:center;font-size:.9rem;font-weight:700;color:#34d399">✅ Sim, vou!</div>
+              <div style="background:rgba(26,10,0,.04);border:1px solid rgba(26,10,0,.1);border-radius:12px;padding:.7rem;text-align:center;font-size:.9rem;font-weight:700;color:rgba(26,10,0,.25)">❌ Não posso</div>
+            </div>
+            <div style="background:rgba(255,61,107,1);color:#fff;border-radius:12px;padding:.85rem;text-align:center;font-weight:800;font-size:.95rem">🎉 Confirmar presença</div>
           </div>
+
+          <a href="demo.html" style="display:inline-flex;align-items:center;justify-content:center;gap:.5rem;margin-top:1.25rem;padding:.9rem 2rem;background:var(--yellow);color:rgba(26,10,0,.85);border-radius:99px;font-weight:800;font-size:1rem;text-decoration:none;box-shadow:0 8px 24px rgba(255,217,61,.3);transition:all .2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+            ✨ Experimentar o demo interativo →
+          </a>
         </div>
       </div>
     </div>
@@ -2042,14 +1990,47 @@
       <h2 class="section-title reveal">Presenteie com<br>o que eles realmente querem.</h2>
       <p class="section-sub reveal">Sem duplicados, sem surpresa ruim. Os convidados reservam o presente direto no convite.</p>
 
+      <!-- Preview VISUAL ESTÁTICO da lista -->
       <div class="gifts-demo reveal">
         <div class="gifts-demo-header">
           <div class="gifts-demo-title">🎂 Lista da Sofia</div>
-          <button class="gifts-add-btn">+ Adicionar presente</button>
+          <a href="demo.html" class="gifts-add-btn" style="text-decoration:none">✨ Experimentar demo</a>
         </div>
-        <div class="gifts-grid" id="giftsGrid">
-          <!-- Generated by JS -->
+        <div class="gifts-grid" style="pointer-events:none;user-select:none">
+          <div class="gift-card">
+            <div class="gift-img" style="background:rgba(26,10,0,.04);display:flex;align-items:center;justify-content:center;font-size:2.5rem">☕</div>
+            <div class="gift-info">
+              <div class="gift-name">Kit de Chá Gourmet</div>
+              <div class="gift-price">R$ 89,90</div>
+              <div class="gift-status available">✅ Disponível</div>
+              <button class="gift-btn" style="opacity:.5">Quero dar este presente</button>
+            </div>
+          </div>
+          <div class="gift-card">
+            <div class="gift-img" style="background:rgba(26,10,0,.04);display:flex;align-items:center;justify-content:center;font-size:2.5rem">📚</div>
+            <div class="gift-info">
+              <div class="gift-name">Livro de Receitas</div>
+              <div class="gift-price">R$ 65,00</div>
+              <div class="gift-status reserved">🔒 Reservado por Ana</div>
+              <button class="gift-btn" disabled style="opacity:.35">Já reservado</button>
+            </div>
+          </div>
+          <div class="gift-card">
+            <div class="gift-img" style="background:rgba(26,10,0,.04);display:flex;align-items:center;justify-content:center;font-size:2.5rem">🍫</div>
+            <div class="gift-info">
+              <div class="gift-name">Caixa de Chocolates</div>
+              <div class="gift-price">R$ 75,00</div>
+              <div class="gift-status available">✅ Disponível</div>
+              <button class="gift-btn" style="opacity:.5">Quero dar este presente</button>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <div style="text-align:center;margin-top:2rem">
+        <a href="demo.html" style="display:inline-flex;align-items:center;gap:.5rem;padding:.85rem 2rem;background:var(--yellow);color:rgba(26,10,0,.85);border-radius:99px;font-weight:800;font-size:.95rem;text-decoration:none;box-shadow:0 8px 24px rgba(255,217,61,.25)">
+          ✨ Ver demo completo e interativo →
+        </a>
       </div>
     </div>
   </section>
@@ -2451,86 +2432,6 @@
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       renderTemplates(cat);
-    }
-
-    // ══════════════════════════════
-    //  GIFTS DATA + GRID
-    // ══════════════════════════════
-    const gifts = [
-      { name: 'Kit de Chá Gourmet', price: 'R$ 89,90', emoji: '☕', reserved: false, id: 1 },
-      { name: 'Livro de Receitas', price: 'R$ 65,00', emoji: '📚', reserved: true, id: 2 },
-      { name: 'Porta-Retratos Premium', price: 'R$ 120,00', emoji: '🖼️', reserved: false, id: 3 },
-      { name: 'Caixa de Chocolates', price: 'R$ 75,00', emoji: '🍫', reserved: false, id: 4 },
-      { name: 'Perfume Importado', price: 'R$ 250,00', emoji: '🌸', reserved: true, id: 5 },
-      { name: 'Jogo de Panelas', price: 'R$ 380,00', emoji: '🍳', reserved: false, id: 6 },
-    ];
-
-    let selectedGiftId = null;
-
-    function renderGifts() {
-      const grid = document.getElementById('giftsGrid');
-      grid.innerHTML = gifts.map(g => `
-        <div class="gift-card">
-          <div class="gift-img">${g.emoji}</div>
-          <div class="gift-info">
-            <div class="gift-name">${g.name}</div>
-            <div class="gift-price">${g.price}</div>
-            <div class="gift-status ${g.reserved ? 'reserved' : 'available'}">
-              ${g.reserved ? '🔒 Reservado' : '✅ Disponível'}
-            </div>
-            <button class="gift-btn" ${g.reserved ? 'disabled' : ''} onclick="openGiftModal(${g.id})">
-              ${g.reserved ? 'Já reservado' : 'Quero dar este presente'}
-            </button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    renderGifts();
-
-    function openGiftModal(id) {
-      selectedGiftId = id;
-      document.getElementById('giftModal').classList.add('open');
-    }
-
-    function closeGiftModal() {
-      document.getElementById('giftModal').classList.remove('open');
-      selectedGiftId = null;
-    }
-
-    function confirmGiftReservation() {
-      const name = document.getElementById('giftName').value.trim();
-      const phone = document.getElementById('giftPhone').value.trim();
-      if (!name || !phone) { alert('Por favor, preencha seu nome e WhatsApp! 😊'); return; }
-
-      const gift = gifts.find(g => g.id === selectedGiftId);
-      if (gift) gift.reserved = true;
-      renderGifts();
-      closeGiftModal();
-
-      // Reset fields
-      document.getElementById('giftName').value = '';
-      document.getElementById('giftPhone').value = '';
-      document.getElementById('giftMessage').value = '';
-
-      alert(`🎁 Presente reservado com sucesso!\n\n"${gift?.name}" foi reservado por ${name}.\nObrigado pela delicadeza! 🥰`);
-    }
-
-    // Close modal on backdrop click
-    document.getElementById('giftModal').addEventListener('click', (e) => {
-      if (e.target === document.getElementById('giftModal')) closeGiftModal();
-    });
-
-    // ══════════════════════════════
-    //  RSVP FORM
-    // ══════════════════════════════
-    function submitRSVP() {
-      const name = document.getElementById('guestName').value.trim();
-      const phone = document.getElementById('guestPhone').value.trim();
-      if (!name || !phone) { alert('Por favor, preencha seu nome e WhatsApp! 😊'); return; }
-
-      document.getElementById('rsvpForm').style.display = 'none';
-      document.getElementById('rsvpSuccess').classList.add('show');
     }
 
     // ══════════════════════════════

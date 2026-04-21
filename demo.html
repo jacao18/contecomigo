@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Demo Interativo — ConteComigo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#FFF8F0;--bg2:#FFF0E6;
+      --pink:#FF3D6B;--pink-dark:#CC1F4E;
+      --yellow:#FFD93D;--yellow-dk:#E6B800;
+      --accent:#FFD93D;
+      --white:#1A0A00;--border:rgba(26,10,0,0.09);
+      --inv-bg:linear-gradient(135deg,#1a0a1e,#2d0a3a);
+      --font-display:'Fraunces',Georgia,serif;
+      --font-body:'Nunito',system-ui,sans-serif;
+      --ease:cubic-bezier(0.16,1,0.3,1);
+    }
+    body{font-family:var(--font-body);background:var(--bg);color:var(--white);min-height:100vh;-webkit-font-smoothing:antialiased;}
+    a{text-decoration:none;color:inherit;}
+
+    /* ── TOP BAR ── */
+    .topbar{
+      position:sticky;top:0;z-index:100;
+      background:rgba(255,248,240,.95);backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;
+    }
+    .topbar-left{display:flex;align-items:center;gap:.75rem;}
+    .topbar-logo{font-family:var(--font-display);font-size:1.1rem;font-weight:700;font-style:italic;background:linear-gradient(135deg,var(--pink),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .demo-badge{background:rgba(255,61,107,.1);color:var(--pink);border:1px solid rgba(255,61,107,.2);border-radius:99px;padding:.25rem .75rem;font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;}
+    .topbar-right{display:flex;align-items:center;gap:.6rem;}
+    .btn-sm{padding:.45rem 1rem;border-radius:8px;font-family:var(--font-body);font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;border:none;}
+    .btn-outline{background:transparent;border:1px solid var(--border);color:rgba(26,10,0,.6);}
+    .btn-outline:hover{border-color:rgba(26,10,0,.3);color:var(--white);}
+    .btn-pink{background:var(--pink);color:#fff;box-shadow:0 4px 12px rgba(255,61,107,.3);}
+    .btn-pink:hover{background:var(--pink-dark);transform:translateY(-1px);}
+
+    /* ── DEMO NOTICE ── */
+    .demo-notice{
+      background:linear-gradient(135deg,rgba(255,61,107,.08),rgba(255,217,61,.08));
+      border-bottom:1px solid rgba(255,61,107,.1);
+      padding:.75rem 1.5rem;text-align:center;
+      font-size:.82rem;color:rgba(26,10,0,.55);
+    }
+    .demo-notice strong{color:var(--pink);}
+
+    /* ── LAYOUT ── */
+    .demo-layout{
+      display:grid;grid-template-columns:300px 1fr;min-height:calc(100vh - 112px);
+    }
+
+    /* ── EDITOR PANEL ── */
+    .editor-panel{
+      background:#fff;border-right:1px solid var(--border);
+      overflow-y:auto;padding:1.5rem;
+    }
+    .editor-panel::-webkit-scrollbar{width:4px;}
+    .editor-panel::-webkit-scrollbar-thumb{background:rgba(26,10,0,.1);border-radius:2px;}
+
+    .panel-section{margin-bottom:1.75rem;}
+    .panel-section-title{
+      font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+      color:rgba(26,10,0,.3);margin-bottom:.9rem;
+      display:flex;align-items:center;gap:.4rem;
+    }
+    .panel-section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+    .field{margin-bottom:.85rem;}
+    .field label{display:block;font-size:.68rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:rgba(26,10,0,.35);margin-bottom:.3rem;}
+    .field input,.field select,.field textarea{
+      width:100%;background:rgba(26,10,0,.04);border:1px solid rgba(26,10,0,.08);
+      border-radius:9px;padding:.55rem .8rem;color:var(--white);
+      font-family:var(--font-body);font-size:.88rem;outline:none;
+      transition:border-color .2s;
+    }
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--pink);background:rgba(255,61,107,.03);}
+    .field textarea{resize:vertical;min-height:64px;}
+    .field select option{background:#fff;}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;}
+
+    /* color swatches */
+    .swatches{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.3rem;}
+    .swatch{width:24px;height:24px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .15s,border-color .15s;flex-shrink:0;}
+    .swatch:hover{transform:scale(1.18);}
+    .swatch.sel{border-color:var(--white);}
+
+    /* gifts editor */
+    .gift-list{display:flex;flex-direction:column;gap:.5rem;}
+    .gift-row{display:flex;align-items:center;gap:.4rem;background:rgba(26,10,0,.03);border:1px solid var(--border);border-radius:8px;padding:.45rem .6rem;}
+    .gift-row-emoji{font-size:1rem;flex-shrink:0;}
+    .gift-row-name{flex:1;font-size:.8rem;font-weight:700;}
+    .gift-row-price{font-size:.72rem;color:var(--yellow-dk);font-weight:700;}
+    .gift-row-del{background:none;border:none;color:rgba(26,10,0,.2);cursor:pointer;font-size:.85rem;transition:color .15s;padding:.1rem .2rem;}
+    .gift-row-del:hover{color:#f87171;}
+    .add-gift-grid{display:grid;grid-template-columns:40px 1fr;gap:.4rem;margin-top:.4rem;}
+    .add-gift-grid input{font-size:.82rem;}
+    .add-gift-sub{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-top:.4rem;}
+    .btn-add{width:100%;padding:.5rem;margin-top:.4rem;background:var(--yellow);color:rgba(26,10,0,.82);border:none;border-radius:8px;font-family:var(--font-body);font-size:.8rem;font-weight:800;cursor:pointer;transition:background .2s;}
+    .btn-add:hover{background:var(--yellow-dk);}
+
+    /* ── INVITE PREVIEW ── */
+    .invite-wrap{
+      background:radial-gradient(ellipse 80% 80% at 50% 40%,rgba(26,10,0,.03),transparent),var(--bg);
+      display:flex;align-items:flex-start;justify-content:center;padding:2.5rem 2rem;overflow-y:auto;
+    }
+    .invite-card{
+      width:100%;max-width:580px;background:#fff;border-radius:24px;
+      box-shadow:0 32px 80px rgba(26,10,0,.22);overflow:hidden;
+    }
+
+    /* invite hero */
+    .inv-hero{
+      min-height:320px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      text-align:center;padding:3rem 2rem 2.5rem;position:relative;overflow:hidden;
+      background:var(--inv-bg);
+    }
+    .inv-hero-img{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.18;}
+    .inv-hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(26,10,0,.2));}
+    .inv-hero-content{position:relative;z-index:1;}
+    .inv-emoji{font-size:3.5rem;margin-bottom:.5rem;display:block;}
+    .inv-title{font-family:var(--font-display);font-size:clamp(1.8rem,5vw,2.8rem);font-weight:900;font-style:italic;line-height:1.05;color:var(--accent);margin-bottom:.4rem;}
+    .inv-name{font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:rgba(255,248,240,.9);margin-bottom:1.25rem;}
+    .inv-details{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.5rem;}
+    .inv-detail{display:flex;align-items:center;gap:.5rem;font-size:.92rem;color:rgba(255,248,240,.88);justify-content:center;}
+    .inv-countdown{display:flex;gap:1.25rem;justify-content:center;margin-top:.5rem;}
+    .inv-cd-unit{text-align:center;}
+    .inv-cd-num{font-family:var(--font-display);font-size:2rem;font-weight:900;font-style:italic;color:var(--accent);line-height:1;display:block;}
+    .inv-cd-label{font-size:.55rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,248,240,.35);}
+    .inv-cd-sep{font-family:var(--font-display);font-size:1.6rem;font-weight:900;color:rgba(255,248,240,.2);line-height:2rem;}
+
+    /* invite body */
+    .inv-body{padding:2rem;}
+    .inv-section-label{font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(26,10,0,.3);margin-bottom:.6rem;}
+    .inv-section-title{font-family:var(--font-display);font-size:1.6rem;font-weight:900;font-style:italic;margin-bottom:1rem;line-height:1.1;}
+    .inv-msg{background:rgba(26,10,0,.03);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem;font-size:.95rem;line-height:1.75;color:rgba(26,10,0,.65);font-style:italic;position:relative;margin-bottom:2rem;}
+    .inv-msg::before{content:'"';font-family:var(--font-display);font-size:4rem;color:rgba(26,10,0,.04);position:absolute;top:-.25rem;left:.75rem;line-height:1;}
+
+    /* rsvp form in demo */
+    .inv-rsvp{background:rgba(26,10,0,.02);border:1px solid var(--border);border-radius:16px;padding:1.5rem;margin-bottom:2rem;}
+    .inv-rsvp-title{font-weight:800;font-size:1rem;margin-bottom:.25rem;}
+    .inv-rsvp-sub{font-size:.8rem;color:rgba(26,10,0,.4);margin-bottom:1rem;}
+    .form-group{margin-bottom:.85rem;}
+    .form-group label{display:block;font-size:.68rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:rgba(26,10,0,.35);margin-bottom:.3rem;}
+    .form-group input,.form-group select,.form-group textarea{
+      width:100%;background:rgba(26,10,0,.05);border:1px solid rgba(26,10,0,.1);
+      border-radius:10px;padding:.6rem .85rem;color:var(--white);
+      font-family:var(--font-body);font-size:.9rem;outline:none;transition:border-color .2s;
+    }
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent);}
+    .form-group textarea{resize:vertical;min-height:70px;}
+    .attend-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:.85rem;}
+    .attend-opt{position:relative;}
+    .attend-opt input{position:absolute;opacity:0;pointer-events:none;}
+    .attend-lbl{display:flex;align-items:center;justify-content:center;gap:.35rem;padding:.75rem;border-radius:10px;border:1px solid rgba(26,10,0,.1);background:rgba(26,10,0,.03);cursor:pointer;font-size:.88rem;font-weight:700;transition:all .2s;}
+    .attend-opt input:checked+.attend-lbl{border-color:var(--accent);background:rgba(255,217,61,.12);color:var(--accent);}
+    .btn-rsvp-submit{width:100%;padding:.9rem;background:var(--accent);color:var(--bg);border:none;border-radius:10px;font-family:var(--font-body);font-size:.95rem;font-weight:800;cursor:pointer;transition:all .2s;}
+    .btn-rsvp-submit:hover{filter:brightness(1.08);transform:translateY(-2px);}
+    .rsvp-success{display:none;text-align:center;padding:1.5rem;}
+    .rsvp-success.show{display:block;}
+    .rsvp-success-emoji{font-size:3rem;margin-bottom:.5rem;display:block;}
+    .rsvp-success-msg{font-family:var(--font-display);font-size:1.25rem;font-weight:900;font-style:italic;}
+
+    /* gifts in invite */
+    .inv-gifts-grid{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-top:1rem;}
+    .inv-gift-card{background:rgba(26,10,0,.03);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+    .inv-gift-emoji{height:72px;display:flex;align-items:center;justify-content:center;font-size:2.25rem;background:rgba(26,10,0,.02);}
+    .inv-gift-info{padding:.75rem;}
+    .inv-gift-name{font-size:.82rem;font-weight:700;margin-bottom:.2rem;line-height:1.3;}
+    .inv-gift-price{font-size:.74rem;color:var(--yellow-dk);font-weight:700;margin-bottom:.4rem;}
+    .inv-gift-badge{font-size:.68rem;font-weight:700;padding:.18rem .5rem;border-radius:99px;display:inline-block;margin-bottom:.4rem;}
+    .badge-avail{background:rgba(52,211,153,.1);color:#34d399;border:1px solid rgba(52,211,153,.2);}
+    .badge-rsv{background:rgba(26,10,0,.05);color:rgba(26,10,0,.3);border:1px solid rgba(26,10,0,.08);}
+    .btn-reserve-demo{width:100%;padding:.45rem;border-radius:7px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--font-body);font-size:.76rem;font-weight:800;cursor:pointer;transition:all .2s;}
+    .btn-reserve-demo:hover:not(:disabled){background:var(--accent);color:var(--bg);}
+    .btn-reserve-demo:disabled{border-color:rgba(26,10,0,.1);color:rgba(26,10,0,.2);cursor:not-allowed;}
+
+    /* reserve modal */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(26,10,0,.55);z-index:500;align-items:center;justify-content:center;padding:1.5rem;}
+    .modal-overlay.open{display:flex;}
+    .modal-box{background:#fff;border-radius:20px;padding:1.75rem;width:100%;max-width:400px;position:relative;animation:fadeUp .3s var(--ease) both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+    .modal-close{position:absolute;top:.9rem;right:.9rem;background:none;border:none;color:rgba(26,10,0,.3);font-size:1.1rem;cursor:pointer;}
+    .modal-title{font-family:var(--font-display);font-size:1.25rem;font-weight:700;font-style:italic;margin-bottom:.25rem;}
+    .modal-sub{font-size:.8rem;color:rgba(26,10,0,.4);margin-bottom:1.25rem;}
+    .modal-preview{display:flex;gap:.6rem;align-items:center;background:rgba(26,10,0,.04);border:1px solid var(--border);border-radius:10px;padding:.6rem .85rem;margin-bottom:1rem;}
+    .modal-preview-emoji{font-size:1.5rem;}
+    .btn-modal-confirm{width:100%;padding:.8rem;background:var(--accent);color:var(--bg);border:none;border-radius:10px;font-family:var(--font-body);font-size:.9rem;font-weight:800;cursor:pointer;margin-top:.4rem;transition:all .2s;}
+    .btn-modal-confirm:hover{filter:brightness(1.08);}
+
+    /* toast */
+    .toast{position:fixed;top:1rem;left:50%;transform:translateX(-50%) translateY(-80px);background:#1A0A00;color:#fff;padding:.65rem 1.4rem;border-radius:99px;font-size:.82rem;font-weight:700;z-index:9999;transition:transform .35s var(--ease);}
+    .toast.show{transform:translateX(-50%) translateY(0);}
+
+    /* guests list */
+    .guests-list{display:flex;flex-direction:column;gap:.5rem;margin-top:1rem;}
+    .guest-item{display:flex;align-items:center;gap:.6rem;background:rgba(26,10,0,.03);border:1px solid var(--border);border-radius:10px;padding:.6rem .85rem;}
+    .guest-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;color:var(--bg);flex-shrink:0;}
+    .guest-info{flex:1;}
+    .guest-name{font-size:.82rem;font-weight:700;}
+    .guest-detail{font-size:.72rem;color:rgba(26,10,0,.4);}
+    .guest-attend{font-size:.75rem;font-weight:700;padding:.18rem .6rem;border-radius:99px;}
+    .ga-yes{background:rgba(52,211,153,.1);color:#34d399;}
+    .ga-no{background:rgba(248,113,113,.1);color:#f87171;}
+
+    /* confetti */
+    @keyframes cpFall{from{transform:translateY(-20px) rotate(0deg)}to{transform:translateY(110vh) rotate(540deg)}}
+
+    @media(max-width:768px){
+      .demo-layout{grid-template-columns:1fr;}
+      .editor-panel{border-right:none;border-bottom:1px solid var(--border);}
+      .inv-gifts-grid{grid-template-columns:1fr 1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- Reserve Modal -->
+<div class="modal-overlay" id="reserveModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeReserve()">✕</button>
+    <div class="modal-title">Reservar presente 🎁</div>
+    <div class="modal-sub">Deixe seu nome para os anfitriões saberem que você trará esse item.</div>
+    <div class="modal-preview" id="modalPreview"></div>
+    <div class="form-group">
+      <label>Seu nome</label>
+      <input type="text" id="reserveName" placeholder="Ex: Maria Oliveira"/>
+    </div>
+    <button class="btn-modal-confirm" onclick="confirmReserve()">✅ Reservar presente</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="topbar-left">
+    <a href="convite-online.html" class="topbar-logo">ConteComigo</a>
+    <span class="demo-badge">✨ Demo interativo</span>
+  </div>
+  <div class="topbar-right">
+    <button class="btn-sm btn-outline" onclick="resetDemo()">🔄 Resetar</button>
+    <a href="editor.html" class="btn-sm btn-pink" style="display:inline-flex;align-items:center;gap:.35rem">🚀 Criar meu convite</a>
+  </div>
+</header>
+
+<!-- NOTICE -->
+<div class="demo-notice">
+  <strong>Demo local</strong> — tudo o que você editar fica salvo no seu navegador. Nada é enviado para o servidor. <strong>Experimente à vontade!</strong>
+</div>
+
+<div class="demo-layout">
+
+  <!-- ══ EDITOR PANEL ══ -->
+  <div class="editor-panel">
+
+    <div class="panel-section">
+      <div class="panel-section-title">🎉 Evento</div>
+      <div class="field">
+        <label>Tipo</label>
+        <select id="eTipo" onchange="save();render()">
+          <option value="🎂">🎂 Aniversário</option>
+          <option value="💍">💍 Casamento</option>
+          <option value="👶">👶 Chá de Bebê</option>
+          <option value="🎓">🎓 Formatura</option>
+          <option value="💑">💑 Noivado</option>
+          <option value="🎊">🎊 Chá Revelação</option>
+          <option value="👸">👸 Debutante</option>
+          <option value="🎉">🎉 Outro</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Título do convite</label>
+        <input type="text" id="eTitulo" placeholder="Ex: Festa de Aniversário da Sofia" oninput="save();render()"/>
+      </div>
+      <div class="field">
+        <label>Nome do homenageado</label>
+        <input type="text" id="eNome" placeholder="Ex: Sofia Mendes" oninput="save();render()"/>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Data</label>
+          <input type="date" id="eData" oninput="save();render()"/>
+        </div>
+        <div class="field">
+          <label>Horário</label>
+          <input type="time" id="eHora" oninput="save();render()"/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Local</label>
+        <input type="text" id="eLocal" placeholder="Ex: Salão Felicidade, SP" oninput="save();render()"/>
+      </div>
+      <div class="field">
+        <label>Dress code</label>
+        <input type="text" id="eDress" placeholder="Ex: Esporte Fino" oninput="save();render()"/>
+      </div>
+      <div class="field">
+        <label>Mensagem especial</label>
+        <textarea id="eMsg" placeholder="Uma mensagem carinhosa para seus convidados... 💕" oninput="save();render()"></textarea>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-section-title">🎨 Estilo</div>
+      <div class="field">
+        <label>Cor de destaque</label>
+        <div class="swatches" id="accentSwatches">
+          <div class="swatch sel" data-color="#FFD93D" style="background:#FFD93D" onclick="pickAccent(this)"></div>
+          <div class="swatch" data-color="#FF3D6B" style="background:#FF3D6B" onclick="pickAccent(this)"></div>
+          <div class="swatch" data-color="#60A5FA" style="background:#60A5FA" onclick="pickAccent(this)"></div>
+          <div class="swatch" data-color="#34D399" style="background:#34D399" onclick="pickAccent(this)"></div>
+          <div class="swatch" data-color="#A78BFA" style="background:#A78BFA" onclick="pickAccent(this)"></div>
+          <div class="swatch" data-color="#FB923C" style="background:#FB923C" onclick="pickAccent(this)"></div>
+          <div class="swatch" data-color="#F472B6" style="background:#F472B6" onclick="pickAccent(this)"></div>
+          <div class="swatch" data-color="#FFFFFF" style="background:#FFFFFF;border:1px solid rgba(26,10,0,.15)" onclick="pickAccent(this)"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Fundo do hero</label>
+        <div class="swatches" id="bgSwatches">
+          <div class="swatch sel" data-bg="linear-gradient(135deg,#1a0a1e,#2d0a3a)" style="background:linear-gradient(135deg,#1a0a1e,#2d0a3a)" onclick="pickBg(this)"></div>
+          <div class="swatch" data-bg="linear-gradient(135deg,#0a1628,#1e3a5f)" style="background:linear-gradient(135deg,#0a1628,#1e3a5f)" onclick="pickBg(this)"></div>
+          <div class="swatch" data-bg="linear-gradient(135deg,#1a2a1a,#0d3d1a)" style="background:linear-gradient(135deg,#1a2a1a,#0d3d1a)" onclick="pickBg(this)"></div>
+          <div class="swatch" data-bg="linear-gradient(135deg,#FF3D6B,#ff7043)" style="background:linear-gradient(135deg,#FF3D6B,#ff7043)" onclick="pickBg(this)"></div>
+          <div class="swatch" data-bg="linear-gradient(135deg,#1e0a2a,#3f1e2a)" style="background:linear-gradient(135deg,#1e0a2a,#3f1e2a)" onclick="pickBg(this)"></div>
+          <div class="swatch" data-bg="linear-gradient(135deg,#7c3aed,#4f46e5)" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)" onclick="pickBg(this)"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-section-title">🎁 Presentes</div>
+      <div class="gift-list" id="giftList"></div>
+      <div class="add-gift-grid" style="margin-top:.75rem">
+        <input type="text" id="gEmoji" placeholder="🎁" style="text-align:center"/>
+        <input type="text" id="gName" placeholder="Nome do presente"/>
+      </div>
+      <div class="add-gift-sub">
+        <input type="text" id="gPrice" placeholder="Preço (ex: R$ 80)"/>
+        <input type="text" id="gLink" placeholder="Link loja (opcional)"/>
+      </div>
+      <button class="btn-add" onclick="addGift()">+ Adicionar presente</button>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-section-title">👥 Confirmações</div>
+      <div style="font-size:.78rem;color:rgba(26,10,0,.35);margin-bottom:.75rem">Convidados confirmados nesta sessão de demo:</div>
+      <div class="guests-list" id="guestsList">
+        <div style="font-size:.78rem;color:rgba(26,10,0,.25);text-align:center;padding:.5rem">Nenhuma confirmação ainda.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ INVITE PREVIEW ══ -->
+  <div class="invite-wrap">
+    <div class="invite-card">
+
+      <!-- HERO -->
+      <div class="inv-hero" id="invHero">
+        <div class="inv-hero-img" id="invHeroImg"></div>
+        <div class="inv-hero-overlay"></div>
+        <div class="inv-hero-content">
+          <span class="inv-emoji" id="invEmoji">🎂</span>
+          <div class="inv-title" id="invTitle">Você está convidado!</div>
+          <div class="inv-name" id="invName">Festa de Aniversário da Sofia</div>
+          <div class="inv-details" id="invDetails">
+            <div class="inv-detail"><span>📅</span><span id="invDate">Sábado, 14 de junho de 2025</span></div>
+            <div class="inv-detail"><span>⏰</span><span id="invTime">A partir das 18h00</span></div>
+            <div class="inv-detail"><span>📍</span><span id="invLocal">Salão Felicidade, São Paulo – SP</span></div>
+          </div>
+          <div class="inv-countdown" id="invCountdown">
+            <div class="inv-cd-unit"><span class="inv-cd-num" id="cdD">--</span><div class="inv-cd-label">Dias</div></div>
+            <div class="inv-cd-sep">:</div>
+            <div class="inv-cd-unit"><span class="inv-cd-num" id="cdH">--</span><div class="inv-cd-label">Horas</div></div>
+            <div class="inv-cd-sep">:</div>
+            <div class="inv-cd-unit"><span class="inv-cd-num" id="cdM">--</span><div class="inv-cd-label">Min</div></div>
+            <div class="inv-cd-sep">:</div>
+            <div class="inv-cd-unit"><span class="inv-cd-num" id="cdS">--</span><div class="inv-cd-label">Seg</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BODY -->
+      <div class="inv-body">
+
+        <!-- Message -->
+        <div id="msgSection" style="display:none;margin-bottom:2rem">
+          <div class="inv-section-label">💌 Mensagem especial</div>
+          <div class="inv-msg" id="invMsg"></div>
+        </div>
+
+        <!-- RSVP -->
+        <div class="inv-section-label">✉️ Confirmação de presença</div>
+        <div class="inv-section-title" style="margin-bottom:1rem">Você vai <em>comparecer?</em></div>
+        <div class="inv-rsvp">
+          <div class="inv-rsvp-title">Vai comparecer? 🥳</div>
+          <div class="inv-rsvp-sub" id="rsvpDeadline">Preencha seus dados abaixo.</div>
+          <div id="rsvpForm">
+            <div class="form-group">
+              <label>Seu nome completo</label>
+              <input type="text" id="rName" placeholder="Ex: Maria Silva"/>
+            </div>
+            <div class="form-group">
+              <label>WhatsApp</label>
+              <input type="tel" id="rPhone" placeholder="(11) 99999-9999"/>
+            </div>
+            <div class="form-group">
+              <label>Acompanhantes</label>
+              <select id="rGuests">
+                <option value="0">Só eu</option>
+                <option value="1">+ 1 pessoa</option>
+                <option value="2">+ 2 pessoas</option>
+                <option value="3">+ 3 pessoas</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Vai comparecer?</label>
+              <div class="attend-grid">
+                <div class="attend-opt"><input type="radio" name="att" id="aYes" value="yes" checked/><label class="attend-lbl" for="aYes">✅ Sim, vou!</label></div>
+                <div class="attend-opt"><input type="radio" name="att" id="aNo" value="no"/><label class="attend-lbl" for="aNo">❌ Não posso</label></div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Mensagem (opcional)</label>
+              <textarea id="rMsg" placeholder="Uma mensagem carinhosa... 💕"></textarea>
+            </div>
+            <button class="btn-rsvp-submit" onclick="submitRSVP()">🎉 Confirmar presença</button>
+          </div>
+          <div class="rsvp-success" id="rsvpSuccess">
+            <span class="rsvp-success-emoji" id="rsvpEmoji">🥳</span>
+            <div class="rsvp-success-msg" id="rsvpMsg">Presença confirmada!</div>
+            <div style="font-size:.82rem;color:rgba(26,10,0,.4);margin-top:.4rem" id="rsvpSubMsg"></div>
+            <button class="btn-add" style="margin-top:1rem;max-width:200px" onclick="resetRSVP()">Alterar resposta</button>
+          </div>
+        </div>
+
+        <!-- GIFTS -->
+        <div id="giftsSection" style="display:none">
+          <div class="inv-section-label" style="margin-bottom:.5rem">🎁 Lista de presentes</div>
+          <div class="inv-section-title" style="margin-bottom:1rem">Presenteie com o que<br><em>realmente importa.</em></div>
+          <div class="inv-gifts-grid" id="invGiftsGrid"></div>
+        </div>
+
+        <!-- CTA -->
+        <div style="text-align:center;margin-top:2.5rem;padding-top:2rem;border-top:1px solid var(--border)">
+          <div style="font-size:.78rem;color:rgba(26,10,0,.35);margin-bottom:.75rem">Gostou? Crie o seu convite grátis!</div>
+          <a href="editor.html" style="display:inline-flex;align-items:center;gap:.4rem;padding:.75rem 1.75rem;background:var(--pink);color:#fff;border-radius:99px;font-weight:800;font-size:.9rem;box-shadow:0 6px 20px rgba(255,61,107,.3)">🚀 Criar meu convite →</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+const STORAGE_KEY = 'ccm_demo_v2';
+
+const DEFAULT = {
+  tipo:'🎂', titulo:'Festa de Aniversário da Sofia', nome:'Sofia Mendes',
+  data:'', hora:'18:00', local:'Salão Felicidade, São Paulo – SP',
+  dress:'Esporte Fino', msg:'Venha celebrar comigo esse dia especial com muita alegria e amor! Sua presença é o meu maior presente. 🎉',
+  accent:'#FFD93D', bg:'linear-gradient(135deg,#1a0a1e,#2d0a3a)',
+  gifts:[
+    {id:1,emoji:'☕',name:'Kit de Chá Gourmet',price:'R$ 89,90',link:'',reserved:false,reservedBy:''},
+    {id:2,emoji:'📚',name:'Livro de Receitas',price:'R$ 65,00',link:'',reserved:true,reservedBy:'Ana Paula'},
+    {id:3,emoji:'🍫',name:'Caixa de Chocolates',price:'R$ 75,00',link:'',reserved:false,reservedBy:''},
+    {id:4,emoji:'🍳',name:'Jogo de Panelas',price:'R$ 380,00',link:'',reserved:false,reservedBy:''},
+  ],
+  guests:[]
+};
+
+let state = loadState();
+let selectedGiftId = null;
+const cols = ['#FF3D6B','#FFD93D','#60A5FA','#34D399','#A78BFA'];
+
+function loadState() {
+  try {
+    const s = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    return s ? {...DEFAULT, ...s, gifts: s.gifts || DEFAULT.gifts, guests: s.guests || []} : {...DEFAULT};
+  } catch(e) { return {...DEFAULT}; }
+}
+
+function save() {
+  collectState();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function collectState() {
+  const map = {eTipo:'tipo',eTitulo:'titulo',eNome:'nome',eData:'data',eHora:'hora',eLocal:'local',eDress:'dress',eMsg:'msg'};
+  Object.entries(map).forEach(([id,k]) => {
+    const el = document.getElementById(id);
+    if(el) state[k] = el.value;
+  });
+}
+
+// ══════════════════════════════════════════
+//  FILL FORM
+// ══════════════════════════════════════════
+function fillForm() {
+  const map = {eTipo:'tipo',eTitulo:'titulo',eNome:'nome',eData:'data',eHora:'hora',eLocal:'local',eDress:'dress',eMsg:'msg'};
+  Object.entries(map).forEach(([id,k]) => {
+    const el = document.getElementById(id);
+    if(el && state[k]) el.value = state[k];
+  });
+  // swatches
+  document.querySelectorAll('#accentSwatches .swatch').forEach(s => {
+    s.classList.toggle('sel', s.dataset.color === state.accent);
+  });
+  document.querySelectorAll('#bgSwatches .swatch').forEach(s => {
+    s.classList.toggle('sel', s.dataset.bg === state.bg);
+  });
+}
+
+// ══════════════════════════════════════════
+//  RENDER INVITE PREVIEW
+// ══════════════════════════════════════════
+function render() {
+  collectState();
+
+  // Theme
+  document.documentElement.style.setProperty('--accent', state.accent);
+  document.getElementById('invHero').style.background = state.bg;
+
+  // Content
+  document.getElementById('invEmoji').textContent = state.tipo || '🎉';
+  document.getElementById('invTitle').textContent = state.titulo || 'Você está convidado!';
+  document.getElementById('invName').textContent = state.nome || 'Nome do homenageado';
+
+  // Date
+  const dt = state.data ? new Date(state.data + 'T12:00:00') : null;
+  document.getElementById('invDate').textContent = dt
+    ? dt.toLocaleDateString('pt-BR', {weekday:'long',day:'numeric',month:'long',year:'numeric'})
+    : '—';
+  document.getElementById('invTime').textContent = state.hora ? `A partir das ${state.hora}` : '—';
+  document.getElementById('invLocal').textContent = state.local || '—';
+
+  // Dress
+  const details = document.getElementById('invDetails');
+  const existing = details.querySelector('.inv-detail-dress');
+  if(existing) existing.remove();
+  if(state.dress) {
+    const d = document.createElement('div');
+    d.className = 'inv-detail inv-detail-dress';
+    d.innerHTML = `<span>👗</span><span>${state.dress}</span>`;
+    details.appendChild(d);
+  }
+
+  // Message
+  const msgSec = document.getElementById('msgSection');
+  if(state.msg) { msgSec.style.display = 'block'; document.getElementById('invMsg').textContent = state.msg; }
+  else { msgSec.style.display = 'none'; }
+
+  // Countdown
+  if(dt) startCountdown(dt);
+
+  // Gifts
+  renderGifts();
+  renderGiftList();
+  renderGuests();
+}
+
+// ══════════════════════════════════════════
+//  COUNTDOWN
+// ══════════════════════════════════════════
+let cdInterval = null;
+function startCountdown(date) {
+  if(cdInterval) clearInterval(cdInterval);
+  function tick() {
+    const diff = date - new Date();
+    if(diff <= 0) {
+      ['cdD','cdH','cdM','cdS'].forEach(id => document.getElementById(id).textContent = '00');
+      clearInterval(cdInterval);
+      return;
+    }
+    document.getElementById('cdD').textContent = String(Math.floor(diff/86400000)).padStart(2,'0');
+    document.getElementById('cdH').textContent = String(Math.floor((diff%86400000)/3600000)).padStart(2,'0');
+    document.getElementById('cdM').textContent = String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+    document.getElementById('cdS').textContent = String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+  }
+  tick();
+  cdInterval = setInterval(tick, 1000);
+}
+
+// ══════════════════════════════════════════
+//  GIFTS
+// ══════════════════════════════════════════
+function renderGifts() {
+  const grid = document.getElementById('invGiftsGrid');
+  const sec = document.getElementById('giftsSection');
+  if(!state.gifts.length) { sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+  grid.innerHTML = state.gifts.map(g => `
+    <div class="inv-gift-card">
+      <div class="inv-gift-emoji">${g.emoji||'🎁'}</div>
+      <div class="inv-gift-info">
+        <div class="inv-gift-name">${g.name}</div>
+        ${g.price ? `<div class="inv-gift-price">${g.price}</div>` : ''}
+        <div class="inv-gift-badge ${g.reserved?'badge-rsv':'badge-avail'}">
+          ${g.reserved ? `🔒 ${g.reservedBy||'Reservado'}` : '✅ Disponível'}
+        </div><br/>
+        <button class="btn-reserve-demo" onclick="openReserve(${g.id})" ${g.reserved?'disabled':''}>
+          ${g.reserved ? 'Já reservado' : 'Quero dar 🎁'}
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderGiftList() {
+  const list = document.getElementById('giftList');
+  list.innerHTML = state.gifts.length
+    ? state.gifts.map(g => `
+        <div class="gift-row">
+          <span class="gift-row-emoji">${g.emoji||'🎁'}</span>
+          <span class="gift-row-name">${g.name}</span>
+          <span class="gift-row-price">${g.price||''}</span>
+          <button class="gift-row-del" onclick="removeGift(${g.id})">✕</button>
+        </div>
+      `).join('')
+    : '<div style="font-size:.78rem;color:rgba(26,10,0,.25);text-align:center;padding:.25rem">Nenhum presente ainda</div>';
+}
+
+function addGift() {
+  const name = document.getElementById('gName').value.trim();
+  if(!name) { toast('Digite o nome do presente'); return; }
+  const emoji = document.getElementById('gEmoji').value.trim() || '🎁';
+  const price = document.getElementById('gPrice').value.trim();
+  const link = document.getElementById('gLink').value.trim();
+  state.gifts.push({id: Date.now(), emoji, name, price, link, reserved:false, reservedBy:''});
+  ['gName','gPrice','gEmoji','gLink'].forEach(id => document.getElementById(id).value = '');
+  save(); renderGifts(); renderGiftList();
+}
+
+function removeGift(id) {
+  state.gifts = state.gifts.filter(g => g.id !== id);
+  save(); renderGifts(); renderGiftList();
+}
+
+function openReserve(id) {
+  selectedGiftId = id;
+  const g = state.gifts.find(x => x.id === id);
+  document.getElementById('modalPreview').innerHTML = `
+    <div class="modal-preview-emoji">${g.emoji||'🎁'}</div>
+    <div><strong style="font-size:.88rem">${g.name}</strong>${g.price?`<div style="font-size:.75rem;color:var(--yellow-dk)">${g.price}</div>`:''}</div>
+  `;
+  document.getElementById('reserveName').value = '';
+  document.getElementById('reserveModal').classList.add('open');
+}
+
+function closeReserve() {
+  document.getElementById('reserveModal').classList.remove('open');
+  selectedGiftId = null;
+}
+
+document.getElementById('reserveModal').addEventListener('click', e => {
+  if(e.target === document.getElementById('reserveModal')) closeReserve();
+});
+
+function confirmReserve() {
+  const name = document.getElementById('reserveName').value.trim();
+  if(!name) { toast('Preencha seu nome!'); return; }
+  const g = state.gifts.find(x => x.id === selectedGiftId);
+  if(g) { g.reserved = true; g.reservedBy = name; }
+  save(); closeReserve(); renderGifts(); renderGiftList();
+  toast('🎁 Presente reservado com sucesso!');
+  showConfetti();
+}
+
+// ══════════════════════════════════════════
+//  RSVP
+// ══════════════════════════════════════════
+function submitRSVP() {
+  const name = document.getElementById('rName').value.trim();
+  const phone = document.getElementById('rPhone').value.trim();
+  if(!name || !phone) { toast('Preencha nome e WhatsApp!'); return; }
+  const guests = parseInt(document.getElementById('rGuests').value)||0;
+  const attending = document.querySelector('input[name="att"]:checked')?.value || 'yes';
+  const msg = document.getElementById('rMsg').value.trim();
+
+  state.guests.push({name, phone, attending, guests, msg, at: new Date().toISOString()});
+  save();
+
+  document.getElementById('rsvpForm').style.display = 'none';
+  const suc = document.getElementById('rsvpSuccess');
+  document.getElementById('rsvpEmoji').textContent = attending === 'yes' ? '🥳' : '😢';
+  document.getElementById('rsvpMsg').textContent = attending === 'yes' ? 'Presença confirmada!' : 'Resposta registrada!';
+  document.getElementById('rsvpSubMsg').textContent = attending === 'yes'
+    ? `Arrasando, ${name}! Os anfitriões foram notificados. 🎉`
+    : `Que pena, ${name}! Você fará muita falta. 💙`;
+  suc.classList.add('show');
+  if(attending === 'yes') showConfetti();
+  renderGuests();
+}
+
+function resetRSVP() {
+  document.getElementById('rsvpForm').style.display = 'block';
+  document.getElementById('rsvpSuccess').classList.remove('show');
+  ['rName','rPhone','rMsg'].forEach(id => document.getElementById(id).value = '');
+}
+
+function renderGuests() {
+  const list = document.getElementById('guestsList');
+  if(!state.guests.length) {
+    list.innerHTML = '<div style="font-size:.78rem;color:rgba(26,10,0,.25);text-align:center;padding:.5rem">Nenhuma confirmação ainda.</div>';
+    return;
+  }
+  list.innerHTML = state.guests.map(g => {
+    const initials = g.name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase();
+    return `
+      <div class="guest-item">
+        <div class="guest-avatar">${initials}</div>
+        <div class="guest-info">
+          <div class="guest-name">${g.name}</div>
+          <div class="guest-detail">${g.phone}${g.guests>0?` · +${g.guests} pessoa(s)`:''}</div>
+        </div>
+        <span class="guest-attend ${g.attending==='yes'?'ga-yes':'ga-no'}">${g.attending==='yes'?'✅ Vai':'❌ Não vai'}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+//  STYLE PICKERS
+// ══════════════════════════════════════════
+function pickAccent(el) {
+  document.querySelectorAll('#accentSwatches .swatch').forEach(s => s.classList.remove('sel'));
+  el.classList.add('sel');
+  state.accent = el.dataset.color;
+  save(); render();
+}
+
+function pickBg(el) {
+  document.querySelectorAll('#bgSwatches .swatch').forEach(s => s.classList.remove('sel'));
+  el.classList.add('sel');
+  state.bg = el.dataset.bg;
+  save(); render();
+}
+
+// ══════════════════════════════════════════
+//  RESET
+// ══════════════════════════════════════════
+function resetDemo() {
+  if(!confirm('Resetar o demo apaga todas as suas alterações. Confirmar?')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  state = {...DEFAULT, gifts: JSON.parse(JSON.stringify(DEFAULT.gifts)), guests: []};
+  fillForm(); render();
+  toast('🔄 Demo resetado!');
+}
+
+// ══════════════════════════════════════════
+//  TOAST + CONFETTI
+// ══════════════════════════════════════════
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._tTimer);
+  window._tTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function showConfetti() {
+  for(let i=0;i<25;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div');
+      el.style.cssText=`position:fixed;top:50%;left:${20+Math.random()*60}%;width:${5+Math.random()*7}px;height:${5+Math.random()*7}px;background:${cols[Math.floor(Math.random()*cols.length)]};border-radius:${Math.random()>.5?'50%':'2px'};pointer-events:none;z-index:9999;animation:cpFall ${1+Math.random()*1.5}s ease-out forwards;`;
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),2500);
+    },i*40);
+  }
+}
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+fillForm();
+render();
+</script>
+</body>
+</html>
