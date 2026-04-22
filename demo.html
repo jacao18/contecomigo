@@ -384,12 +384,12 @@
 const GIFTS_KEY = 'ccm_demo_gifts';
 
 const DEFAULT_GIFTS = [
-  {id:1, emoji:'☕', name:'Kit de Chá Gourmet',       price:'R$ 89,90', reserved:false, reservedBy:''},
-  {id:2, emoji:'📚', name:'Livro de Receitas',         price:'R$ 65,00', reserved:true,  reservedBy:'Ana Paula'},
-  {id:3, emoji:'🖼️', name:'Porta-Retratos Premium',   price:'R$ 120,00',reserved:false, reservedBy:''},
-  {id:4, emoji:'🍫', name:'Caixa de Chocolates',       price:'R$ 75,00', reserved:false, reservedBy:''},
-  {id:5, emoji:'🌸', name:'Perfume Importado',          price:'R$ 250,00',reserved:true,  reservedBy:'Carlos'},
-  {id:6, emoji:'🍳', name:'Jogo de Panelas',            price:'R$ 380,00',reserved:false, reservedBy:''},
+  {id:1, img:'imgs/cha-twinings.jpg',               emoji:'☕', name:'Kit de Chá Twinings Gourmet',      price:'R$ 89,90', reserved:false, reservedBy:''},
+  {id:2, img:'imgs/livro-palmirinha.jpg',            emoji:'📚', name:'50 Receitas por Palmirinha',        price:'R$ 65,00', reserved:true,  reservedBy:'Ana Paula'},
+  {id:3, img:'',                                     emoji:'🖼️', name:'Porta-Retratos Premium',            price:'R$ 120,00',reserved:false, reservedBy:''},
+  {id:4, img:'imgs/chocolates-brasil-cacau.jpg',     emoji:'🍫', name:'Chocolates Brasil Cacau Experiências',price:'R$ 75,00', reserved:false, reservedBy:''},
+  {id:5, img:'',                                     emoji:'🌸', name:'Perfume Importado',                  price:'R$ 250,00',reserved:true,  reservedBy:'Carlos'},
+  {id:6, img:'',                                     emoji:'🍳', name:'Jogo de Panelas',                    price:'R$ 380,00',reserved:false, reservedBy:''},
 ];
 
 function loadGifts() {
@@ -411,7 +411,11 @@ const cols = ['#FF3D6B','#FFD93D','#60A5FA','#34D399','#A78BFA'];
 function renderGifts() {
   document.getElementById('giftsGrid').innerHTML = gifts.map(g => `
     <div class="gift-card">
-      <div class="gift-emoji-box">${g.emoji}</div>
+      <div class="gift-emoji-box" style="${g.img ? 'padding:0;overflow:hidden' : ''}">
+        ${g.img
+          ? `<img src="${g.img}" alt="${g.name}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentNode.innerHTML='${g.emoji}';this.parentNode.style.cssText='height:100px;display:flex;align-items:center;justify-content:center;font-size:3rem'"/>`
+          : g.emoji}
+      </div>
       <div class="gift-info">
         <div class="gift-name">${g.name}</div>
         <div class="gift-price">${g.price}</div>
@@ -433,7 +437,9 @@ function openModal(id) {
   selectedGiftId = id;
   const g = gifts.find(x => x.id === id);
   document.getElementById('modalItemPreview').innerHTML = `
-    <div class="modal-item-emoji">${g.emoji}</div>
+    <div class="modal-item-emoji" style="${g.img ? 'padding:0;overflow:hidden;border-radius:8px;width:52px;height:52px;flex-shrink:0' : ''}">
+      ${g.img ? `<img src="${g.img}" style="width:100%;height:100%;object-fit:cover" onerror="this.outerHTML='${g.emoji}'"/>` : g.emoji}
+    </div>
     <div><div class="modal-item-name">${g.name}</div><div class="modal-item-price">${g.price}</div></div>
   `;
   document.getElementById('giftReserveName').value = '';

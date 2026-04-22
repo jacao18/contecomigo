@@ -38,77 +38,131 @@
     .btn-yellow-sm{background:var(--yellow);color:rgba(26,10,0,.82);box-shadow:0 4px 16px rgba(255,217,61,.2);}
     .btn-yellow-sm:hover{background:var(--yellow-dk);transform:translateY(-1px);}
 
-    .editor-layout{display:grid;grid-template-columns:340px 1fr;flex:1;overflow:hidden;}
+    .editor-layout{display:grid;grid-template-columns:360px 1fr;flex:1;overflow:hidden;}
 
     .sidebar{background:var(--panel);border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column;}
     .sidebar::-webkit-scrollbar{width:4px;}
     .sidebar::-webkit-scrollbar-thumb{background:rgba(26,10,0,.1);border-radius:2px;}
 
-    .sidebar-steps{display:flex;border-bottom:1px solid var(--border);}
-    .sidebar-step{flex:1;padding:.75rem .5rem;font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:rgba(26,10,0,.25);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;text-align:center;}
+    .sidebar-steps{display:flex;border-bottom:1px solid var(--border);overflow-x:auto;}
+    .sidebar-steps::-webkit-scrollbar{display:none;}
+    .sidebar-step{flex:1;padding:.65rem .3rem;font-size:.65rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:rgba(26,10,0,.25);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;text-align:center;white-space:nowrap;}
     .sidebar-step.active{color:var(--pink);border-bottom-color:var(--pink);}
     .sidebar-step.done{color:rgba(26,10,0,.5);}
 
-    .step-panel{display:none;padding:1.5rem;}
+    .step-panel{display:none;padding:1.25rem 1.25rem 2rem;}
     .step-panel.active{display:block;}
-    .step-title{font-size:1.1rem;font-weight:800;margin-bottom:.25rem;}
-    .step-sub{font-size:.8rem;color:rgba(26,10,0,.4);margin-bottom:1.25rem;line-height:1.5;}
+    .step-title{font-size:1.05rem;font-weight:800;margin-bottom:.2rem;}
+    .step-sub{font-size:.78rem;color:rgba(26,10,0,.4);margin-bottom:1.1rem;line-height:1.5;}
 
-    .field{margin-bottom:1.1rem;}
-    .field label{display:block;font-size:.72rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:rgba(26,10,0,.4);margin-bottom:.35rem;}
-    .field input,.field select,.field textarea{width:100%;background:rgba(26,10,0,.05);border:1px solid rgba(26,10,0,.1);border-radius:10px;padding:.65rem .9rem;color:var(--white);font-size:.9rem;outline:none;transition:border-color .2s,background .2s;}
+    .field{margin-bottom:1rem;}
+    .field label{display:block;font-size:.7rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:rgba(26,10,0,.4);margin-bottom:.3rem;}
+    .field input,.field select,.field textarea{width:100%;background:rgba(26,10,0,.05);border:1px solid rgba(26,10,0,.1);border-radius:10px;padding:.6rem .85rem;color:var(--white);font-size:.88rem;outline:none;transition:border-color .2s,background .2s;}
     .field input::placeholder,.field textarea::placeholder{color:rgba(26,10,0,.2);}
     .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--pink);background:rgba(255,61,107,.05);}
     .field select option{background:#FFFFFF;}
-    .field textarea{resize:vertical;min-height:72px;}
-    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;}
+    .field textarea{resize:vertical;min-height:68px;}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;}
+    .field-hint{font-size:.7rem;color:rgba(26,10,0,.3);margin-top:.3rem;line-height:1.4;}
 
-    .color-swatches{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.4rem;}
-    .swatch{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .15s,border-color .15s;}
+    /* ── TEMPLATE PICKER ── */
+    .cat-tabs{display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:.75rem;}
+    .cat-tab{padding:.3rem .7rem;border-radius:99px;font-size:.7rem;font-weight:800;border:1px solid var(--border);color:rgba(26,10,0,.4);cursor:pointer;transition:all .2s;}
+    .cat-tab.active{background:var(--pink);border-color:var(--pink);color:#fff;}
+    .tpl-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem;}
+    .tpl-card{border-radius:10px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color .2s,transform .2s;position:relative;}
+    .tpl-card:hover{transform:scale(1.03);}
+    .tpl-card.selected{border-color:var(--pink);}
+    .tpl-card-img{aspect-ratio:3/4;width:100%;object-fit:cover;display:block;}
+    .tpl-card-name{font-size:.67rem;font-weight:800;text-align:center;padding:.35rem .2rem .4rem;background:#fff;color:rgba(26,10,0,.55);}
+    .tpl-upload-badge{position:absolute;top:.35rem;right:.35rem;background:rgba(255,61,107,.85);color:#fff;font-size:.58rem;font-weight:800;padding:.15rem .35rem;border-radius:4px;}
+
+    /* ── STYLE STEP ── */
+    .color-swatches{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.35rem;}
+    .swatch{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .15s,border-color .15s;flex-shrink:0;}
     .swatch:hover{transform:scale(1.15);}
     .swatch.selected{border-color:var(--white);transform:scale(1.1);}
+    .bg-options{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin-top:.4rem;}
+    .bg-opt{border-radius:8px;height:40px;cursor:pointer;border:2px solid transparent;transition:border-color .2s,transform .2s;}
+    .bg-opt:hover{transform:scale(1.04);}
+    .bg-opt.selected{border-color:var(--pink);}
+    .bg-opt-transparent{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Crect width='5' height='5' fill='%23ccc'/%3E%3Crect x='5' y='5' width='5' height='5' fill='%23ccc'/%3E%3Crect x='5' width='5' height='5' fill='%23fff'/%3E%3Crect y='5' width='5' height='5' fill='%23fff'/%3E%3C/svg%3E");background-size:10px;border:2px solid var(--border);position:relative;}
+    .bg-opt-transparent.selected{border-color:var(--pink);}
+    .bg-opt-transparent::after{content:'Foto';font-size:.6rem;font-weight:800;color:rgba(26,10,0,.5);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
 
-    .template-picker{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-top:.5rem;}
-    .tpick{aspect-ratio:2/3;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color .2s,transform .2s;}
-    .tpick:hover{transform:scale(1.04);}
-    .tpick.selected{border-color:var(--pink);}
-    .tpick img{width:100%;height:100%;object-fit:cover;}
-    .tpick-label{font-size:.65rem;text-align:center;margin-top:.3rem;color:rgba(26,10,0,.5);font-weight:600;}
+    /* ── UPLOAD ── */
+    .upload-zone{border:2px dashed rgba(26,10,0,.15);border-radius:10px;padding:1rem;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:rgba(26,10,0,.02);}
+    .upload-zone:hover{border-color:var(--pink);background:rgba(255,61,107,.03);}
+    .upload-zone input[type=file]{display:none;}
+    .upload-zone-label{font-size:.8rem;color:rgba(26,10,0,.4);font-weight:700;}
+    .upload-zone-sub{font-size:.7rem;color:rgba(26,10,0,.25);margin-top:.25rem;}
+    .gallery-thumbs{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem;}
+    .gallery-thumb{width:52px;height:52px;border-radius:6px;object-fit:cover;border:1px solid var(--border);}
+    .gallery-thumb-wrap{position:relative;}
+    .gallery-thumb-del{position:absolute;top:-5px;right:-5px;width:16px;height:16px;background:var(--pink);color:#fff;border-radius:50%;font-size:.6rem;display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:1;}
 
-    .gift-list-edit{display:flex;flex-direction:column;gap:.6rem;margin-top:.75rem;}
-    .gift-item-edit{display:flex;align-items:center;gap:.5rem;background:rgba(26,10,0,.04);border:1px solid var(--border);border-radius:8px;padding:.6rem .75rem;}
-    .gift-item-edit .gift-emoji{font-size:1.1rem;}
-    .gift-item-edit .gift-name{flex:1;font-size:.82rem;font-weight:700;}
-    .gift-item-edit .gift-px{font-size:.75rem;color:var(--yellow-dk);font-weight:700;}
-    .gift-item-edit .del-btn{background:none;border:none;color:rgba(26,10,0,.25);cursor:pointer;font-size:.9rem;transition:color .2s;}
-    .gift-item-edit .del-btn:hover{color:#f87171;}
-    .add-gift-row{display:flex;gap:.5rem;margin-top:.5rem;}
-    .add-gift-row input{flex:1;}
-    .add-gift-btn{padding:.6rem .9rem;background:var(--yellow);color:rgba(26,10,0,.82);border:none;border-radius:8px;font-weight:800;cursor:pointer;font-size:.8rem;white-space:nowrap;}
+    /* ── GIFTS STEP ── */
+    .pix-bar{background:linear-gradient(135deg,rgba(255,217,61,.12),rgba(255,61,107,.08));border:1px solid rgba(255,217,61,.3);border-radius:10px;padding:.75rem 1rem;margin-bottom:1rem;}
+    .pix-bar-label{font-size:.68rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:rgba(26,10,0,.4);margin-bottom:.35rem;}
+    .pix-bar input{width:100%;background:rgba(255,255,255,.7);border:1px solid rgba(255,217,61,.4);border-radius:8px;padding:.55rem .8rem;font-size:.85rem;font-family:var(--font-body);color:var(--white);outline:none;}
+    .pix-bar input:focus{border-color:var(--yellow-dk);}
 
-    .step-nav{display:flex;gap:.5rem;margin-top:1.5rem;}
-    .step-nav button{flex:1;}
+    .gift-list-edit{display:flex;flex-direction:column;gap:.5rem;margin-bottom:.75rem;}
+    .gift-item-edit{display:flex;align-items:center;gap:.5rem;background:rgba(26,10,0,.04);border:1px solid var(--border);border-radius:8px;padding:.5rem .65rem;}
+    .gift-item-img{width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;background:rgba(26,10,0,.06);display:flex;align-items:center;justify-content:center;font-size:1.1rem;overflow:hidden;}
+    .gift-item-img img{width:100%;height:100%;object-fit:cover;}
+    .gift-item-info{flex:1;min-width:0;}
+    .gift-item-name{font-size:.82rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .gift-item-price{font-size:.72rem;color:var(--yellow-dk);font-weight:700;}
+    .gift-item-del{background:none;border:none;color:rgba(26,10,0,.25);cursor:pointer;font-size:.85rem;transition:color .2s;flex-shrink:0;padding:.2rem;}
+    .gift-item-del:hover{color:#f87171;}
 
+    .add-gift-form{background:rgba(26,10,0,.03);border:1px solid var(--border);border-radius:10px;padding:.85rem;}
+    .add-gift-form .field{margin-bottom:.6rem;}
+    .add-gift-form .field:last-child{margin-bottom:0;}
+    .gift-img-preview{width:56px;height:56px;border-radius:8px;object-fit:cover;background:rgba(26,10,0,.06);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;overflow:hidden;border:1px solid var(--border);}
+    .gift-img-preview img{width:100%;height:100%;object-fit:cover;}
+    .gift-img-row{display:flex;align-items:flex-start;gap:.65rem;margin-bottom:.65rem;}
+    .gift-img-actions{flex:1;}
+    .gift-link-fetch{display:flex;gap:.4rem;}
+    .gift-link-fetch input{flex:1;}
+    .fetch-btn{padding:.55rem .75rem;background:rgba(26,10,0,.07);border:1px solid var(--border);border-radius:8px;font-size:.75rem;font-weight:800;cursor:pointer;white-space:nowrap;transition:all .2s;}
+    .fetch-btn:hover{background:var(--pink);color:#fff;border-color:var(--pink);}
+    .add-gift-submit{width:100%;padding:.65rem;background:var(--yellow);color:rgba(26,10,0,.82);border:none;border-radius:8px;font-weight:800;font-size:.85rem;cursor:pointer;margin-top:.5rem;transition:all .2s;}
+    .add-gift-submit:hover{background:var(--yellow-dk);}
+
+    /* ── PUBLISH STEP ── */
+    .publish-summary{background:rgba(26,10,0,.04);border:1px solid var(--border);border-radius:12px;padding:.85rem;margin-bottom:1rem;font-size:.82rem;}
+    .publish-summary-row{display:flex;align-items:center;gap:.5rem;padding:.2rem 0;}
+    .publish-actions{display:flex;flex-direction:column;gap:.5rem;}
+    .publish-actions button{padding:.7rem;font-size:.88rem;}
+
+    /* ── STEP NAV ── */
+    .step-nav{display:flex;gap:.5rem;margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border);}
+    .step-nav button{flex:1;padding:.6rem;}
+
+    /* ── PREVIEW ── */
     .preview-area{background:#FFF8F0;display:flex;flex-direction:column;overflow:hidden;}
-    .preview-toolbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:.6rem 1.25rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-    .preview-label{font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(26,10,0,.3);}
+    .preview-toolbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:.55rem 1.25rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+    .preview-label{font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(26,10,0,.3);}
     .device-btns{display:flex;gap:.3rem;}
-    .dev-btn{padding:.3rem .6rem;border:1px solid var(--border);background:transparent;color:rgba(26,10,0,.4);border-radius:6px;cursor:pointer;font-size:.75rem;transition:all .2s;}
+    .dev-btn{padding:.28rem .55rem;border:1px solid var(--border);background:transparent;color:rgba(26,10,0,.4);border-radius:6px;cursor:pointer;font-size:.72rem;transition:all .2s;}
     .dev-btn.active,.dev-btn:hover{border-color:var(--pink);color:var(--pink);}
-
     .preview-frame-wrap{flex:1;display:flex;align-items:center;justify-content:center;overflow:auto;padding:2rem;background:radial-gradient(ellipse 80% 80% at 50% 50%,rgba(26,10,0,.02) 0%,transparent 70%),#FFF8F0;}
     .preview-frame{background:#FFF8F0;border-radius:16px;overflow:hidden;box-shadow:0 32px 80px rgba(26,10,0,0.40);transition:width .3s var(--ease);width:380px;min-height:640px;border:1px solid rgba(26,10,0,.06);}
     .preview-frame.desktop{width:760px;min-height:520px;}
     .preview-frame.tablet{width:540px;min-height:600px;}
-
     #invitePreview{min-height:100%;font-family:var(--font-body);color:var(--white);}
-    .inv-hero{min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2.5rem 1.5rem 2rem;position:relative;overflow:hidden;background:var(--inv-bg,linear-gradient(135deg,#1a0a1e,#2d0a3a));}
-    .inv-hero-bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.2;}
+
+    /* ── INVITE PREVIEW STYLES ── */
+    .inv-hero{min-height:320px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2.5rem 1.5rem 2rem;position:relative;overflow:hidden;}
+    .inv-hero-bg{position:absolute;inset:0;background-size:cover;background-position:center;}
+    .inv-hero-overlay{position:absolute;inset:0;}
     .inv-hero-content{position:relative;z-index:1;}
     .inv-emoji{font-size:2.5rem;margin-bottom:.5rem;}
-    .inv-title{font-family:var(--font-display);font-size:clamp(1.5rem,4vw,2.2rem);font-weight:900;font-style:italic;line-height:1.1;color:var(--inv-accent,#FFD93D);margin-bottom:.35rem;}
-    .inv-name{font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:rgba(255,248,240,.85);margin-bottom:1rem;}
-    .inv-detail{display:flex;align-items:center;gap:.4rem;font-size:.85rem;color:rgba(255,248,240,.80);justify-content:center;margin-bottom:.3rem;}
+    .inv-title{font-family:var(--font-display);font-size:clamp(1.5rem,4vw,2.2rem);font-weight:900;font-style:italic;line-height:1.1;margin-bottom:.35rem;}
+    .inv-name{font-family:var(--font-display);font-size:1.2rem;font-weight:700;margin-bottom:1rem;}
+    .inv-detail{display:flex;align-items:center;gap:.4rem;font-size:.85rem;justify-content:center;margin-bottom:.3rem;}
     .inv-body{padding:1.5rem 1.25rem;background:#FFF8F0;}
     .inv-section-title{font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(26,10,0,.35);margin-bottom:.75rem;}
     .inv-msg{font-size:.9rem;line-height:1.7;color:rgba(26,10,0,.65);background:rgba(26,10,0,.03);border:1px solid rgba(26,10,0,.06);border-radius:12px;padding:1rem;margin-bottom:1.5rem;font-style:italic;}
@@ -118,7 +172,7 @@
     .inv-rsvp-prompt{border-radius:12px;padding:1rem 1.25rem;text-align:center;font-weight:800;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:1rem;}
     .inv-gift-chip{display:inline-flex;align-items:center;gap:.35rem;background:rgba(26,10,0,.05);border:1px solid rgba(26,10,0,.08);border-radius:8px;padding:.4rem .7rem;font-size:.75rem;font-weight:700;margin:.25rem;}
 
-    .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:#1e1e1e;color:#fff;border-radius:12px;padding:.75rem 1.5rem;font-size:.85rem;font-weight:700;display:flex;align-items:center;gap:.5rem;box-shadow:0 16px 40px rgba(26,10,0,0.25);transition:transform .3s var(--ease);z-index:100;}
+    .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:#1e1e1e;color:#fff;border-radius:12px;padding:.75rem 1.5rem;font-size:.85rem;font-weight:700;display:flex;align-items:center;gap:.5rem;box-shadow:0 16px 40px rgba(26,10,0,0.25);transition:transform .3s var(--ease);z-index:1000;}
     .toast.show{transform:translateX(-50%) translateY(0);}
 
     @media(max-width:900px){body{overflow:auto;}.editor-layout{grid-template-columns:1fr;height:auto;}.preview-area{display:none;}.sidebar{overflow:visible;border-right:none;}}
@@ -133,9 +187,9 @@
     <div class="topbar-title" id="topbarTitle">Criar convite</div>
   </div>
   <div class="topbar-right">
-    <button class="btn-sm btn-outline-sm" onclick="saveDraft()">💾 Salvar rascunho</button>
+    <button class="btn-sm btn-outline-sm" onclick="saveDraft()">💾 Rascunho</button>
     <button class="btn-sm btn-outline-sm" onclick="openPreviewTab()">👁 Ver convite</button>
-    <button class="btn-sm btn-pink-sm" id="btnPublish" onclick="publishInvite()">🚀 Publicar convite</button>
+    <button class="btn-sm btn-pink-sm" id="btnPublish" onclick="publishInvite()">🚀 Publicar</button>
   </div>
 </div>
 
@@ -149,24 +203,37 @@
       <div class="sidebar-step" id="step5tab" onclick="goStep(5)">5. Publicar</div>
     </div>
 
-    <!-- STEP 1 -->
+    <!-- ══ STEP 1: EVENTO ══ -->
     <div class="step-panel active" id="step1">
       <div class="step-title">Detalhes do evento</div>
-      <div class="step-sub">Preencha as informações que aparecerão no convite.</div>
+      <div class="step-sub">Escolha um template e preencha as informações do convite.</div>
+
+      <!-- Template picker -->
       <div class="field">
-        <label>Tipo de evento</label>
-        <select id="fTipo" oninput="updatePreview()">
-          <option value="🎂">🎂 Aniversário</option>
-          <option value="💍">💍 Casamento</option>
-          <option value="👶">👶 Chá de Bebê</option>
-          <option value="🎓">🎓 Formatura</option>
-          <option value="💑">💑 Noivado</option>
-          <option value="🎊">🎊 Chá Revelação</option>
-          <option value="🌟">🌟 Bodas</option>
-          <option value="👸">👸 Debutante</option>
-          <option value="🎉">🎉 Outro</option>
-        </select>
+        <label>Template do convite</label>
+        <div class="cat-tabs" id="catTabs">
+          <div class="cat-tab active" data-cat="aniversario-adulto" onclick="selectCat(this)">🎂 Aniversário</div>
+          <div class="cat-tab" data-cat="infantil" onclick="selectCat(this)">🎈 Infantil</div>
+          <div class="cat-tab" data-cat="casamento" onclick="selectCat(this)">💍 Casamento</div>
+          <div class="cat-tab" data-cat="cha" onclick="selectCat(this)">👶 Chá / Revelação</div>
+        </div>
+        <div class="tpl-grid" id="tplGrid"></div>
       </div>
+
+      <!-- Upload de foto personalizada (aparece quando template suporta) -->
+      <div class="field" id="heroUploadField" style="display:none">
+        <label>📸 Foto de fundo personalizada</label>
+        <div class="upload-zone" onclick="document.getElementById('heroFileInput').click()">
+          <input type="file" id="heroFileInput" accept="image/*" onchange="handleHeroUpload(this)"/>
+          <div class="upload-zone-label">Clique para escolher uma foto</div>
+          <div class="upload-zone-sub">JPG, PNG, WEBP — max 5MB</div>
+        </div>
+        <div id="heroThumbWrap" style="margin-top:.5rem;display:none">
+          <img id="heroThumb" style="width:100%;height:100px;object-fit:cover;border-radius:8px;border:1px solid var(--border)"/>
+          <button onclick="removeHeroPhoto()" style="width:100%;margin-top:.3rem;padding:.35rem;background:none;border:1px solid rgba(26,10,0,.1);border-radius:6px;font-size:.75rem;cursor:pointer;color:rgba(26,10,0,.5)">✕ Remover foto</button>
+        </div>
+      </div>
+
       <div class="field">
         <label>Título do convite</label>
         <input type="text" id="fTitulo" placeholder="Ex: Festa de 30 anos da Camila" oninput="updatePreview()"/>
@@ -177,7 +244,7 @@
       </div>
       <div class="field-row">
         <div class="field">
-          <label>Data do evento</label>
+          <label>Data</label>
           <input type="date" id="fData" oninput="updatePreview()"/>
         </div>
         <div class="field">
@@ -202,81 +269,75 @@
         <input type="date" id="fPrazo" oninput="updatePreview()"/>
       </div>
       <div class="step-nav">
-        <button class="btn-sm btn-pink-sm" style="padding:.65rem" onclick="goStep(2)">Próximo: Estilo →</button>
+        <button class="btn-sm btn-pink-sm" onclick="goStep(2)">Próximo: Estilo →</button>
       </div>
     </div>
 
-    <!-- STEP 2: ESTILO -->
+    <!-- ══ STEP 2: ESTILO ══ -->
     <div class="step-panel" id="step2">
       <div class="step-title">Estilo do convite</div>
-      <div class="step-sub">Escolha cores, template e personalize a aparência.</div>
+      <div class="step-sub">Personalize cores e o plano de fundo do hero.</div>
+
       <div class="field">
         <label>Cor de destaque</label>
         <div class="color-swatches" id="colorSwatches">
-          <div class="swatch selected" data-color="#FFD93D" style="background:#FFD93D" onclick="selectColor(this)"></div>
-          <div class="swatch" data-color="#FF3D6B" style="background:#FF3D6B" onclick="selectColor(this)"></div>
-          <div class="swatch" data-color="#60A5FA" style="background:#60A5FA" onclick="selectColor(this)"></div>
-          <div class="swatch" data-color="#34D399" style="background:#34D399" onclick="selectColor(this)"></div>
-          <div class="swatch" data-color="#A78BFA" style="background:#A78BFA" onclick="selectColor(this)"></div>
-          <div class="swatch" data-color="#FB923C" style="background:#FB923C" onclick="selectColor(this)"></div>
-          <div class="swatch" data-color="#F472B6" style="background:#F472B6" onclick="selectColor(this)"></div>
-          <div class="swatch" data-color="#FFFFFF" style="background:#FFFFFF;border:1px solid rgba(26,10,0,.2)" onclick="selectColor(this)"></div>
+          <div class="swatch selected" data-color="#FFD93D" style="background:#FFD93D" onclick="selectColor(this)" title="Amarelo"></div>
+          <div class="swatch" data-color="#FF3D6B" style="background:#FF3D6B" onclick="selectColor(this)" title="Rosa"></div>
+          <div class="swatch" data-color="#60A5FA" style="background:#60A5FA" onclick="selectColor(this)" title="Azul"></div>
+          <div class="swatch" data-color="#34D399" style="background:#34D399" onclick="selectColor(this)" title="Verde"></div>
+          <div class="swatch" data-color="#A78BFA" style="background:#A78BFA" onclick="selectColor(this)" title="Lilás"></div>
+          <div class="swatch" data-color="#FB923C" style="background:#FB923C" onclick="selectColor(this)" title="Laranja"></div>
+          <div class="swatch" data-color="#F472B6" style="background:#F472B6" onclick="selectColor(this)" title="Pink"></div>
+          <div class="swatch" data-color="#FFFFFF" style="background:#FFFFFF;border:1px solid rgba(26,10,0,.2)" onclick="selectColor(this)" title="Branco"></div>
         </div>
       </div>
+
       <div class="field">
         <label>Plano de fundo do hero</label>
-        <div class="color-swatches" id="bgSwatches">
-          <div class="swatch selected" data-bg="linear-gradient(135deg,#1a0a1e,#2d0a3a)" style="background:linear-gradient(135deg,#1a0a1e,#2d0a3a)" onclick="selectBg(this)"></div>
-          <div class="swatch" data-bg="linear-gradient(135deg,#0a1628,#1e3a5f)" style="background:linear-gradient(135deg,#0a1628,#1e3a5f)" onclick="selectBg(this)"></div>
-          <div class="swatch" data-bg="linear-gradient(135deg,#1a2a1a,#0d3d1a)" style="background:linear-gradient(135deg,#1a2a1a,#0d3d1a)" onclick="selectBg(this)"></div>
-          <div class="swatch" data-bg="linear-gradient(135deg,#2a1a0a,#3d1a0d)" style="background:linear-gradient(135deg,#2a1a0a,#3d1a0d)" onclick="selectBg(this)"></div>
-          <div class="swatch" data-bg="linear-gradient(135deg,#FF3D6B,#ff7043)" style="background:linear-gradient(135deg,#FF3D6B,#ff7043)" onclick="selectBg(this)"></div>
-          <div class="swatch" data-bg="linear-gradient(135deg,#1e0a2a,#3f1e2a)" style="background:linear-gradient(135deg,#1e0a2a,#3f1e2a)" onclick="selectBg(this)"></div>
+        <div class="bg-options" id="bgOptions">
+          <div class="bg-opt selected" data-bg="dark-purple" style="background:linear-gradient(135deg,#1a0a1e,#2d0a3a)" onclick="selectBg(this)" title="Roxo escuro"></div>
+          <div class="bg-opt" data-bg="dark-blue" style="background:linear-gradient(135deg,#0a1628,#1e3a5f)" onclick="selectBg(this)" title="Azul noite"></div>
+          <div class="bg-opt" data-bg="dark-green" style="background:linear-gradient(135deg,#0d2a10,#1a4020)" onclick="selectBg(this)" title="Verde floresta"></div>
+          <div class="bg-opt" data-bg="dark-brown" style="background:linear-gradient(135deg,#2a1a0a,#3d1a0d)" onclick="selectBg(this)" title="Marrom escuro"></div>
+          <div class="bg-opt" data-bg="coral" style="background:linear-gradient(135deg,#FF3D6B,#ff7043)" onclick="selectBg(this)" title="Coral"></div>
+          <div class="bg-opt" data-bg="violet" style="background:linear-gradient(135deg,#1e0a2a,#6b21a8)" onclick="selectBg(this)" title="Violeta"></div>
+          <div class="bg-opt" data-bg="rose-gold" style="background:linear-gradient(135deg,#c0392b,#f39c12)" onclick="selectBg(this)" title="Rose gold"></div>
+          <div class="bg-opt" data-bg="mint" style="background:linear-gradient(135deg,#134e4a,#0d9488)" onclick="selectBg(this)" title="Mint"></div>
+          <div class="bg-opt bg-opt-transparent" data-bg="transparent" onclick="selectBg(this)" title="Foto do template em destaque"></div>
         </div>
+        <div class="field-hint" id="bgHint"></div>
       </div>
-      <div class="field">
-        <label>Template base</label>
-        <div class="template-picker" id="tPicker">
-          <div><div class="tpick selected" data-tpl="tropical" onclick="selectTpl(this)"><img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=200&q=70" alt="Tropical" loading="lazy"/></div><div class="tpick-label">Tropical</div></div>
-          <div><div class="tpick" data-tpl="estrelada" onclick="selectTpl(this)"><img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=200&q=70" alt="Estrelada" loading="lazy"/></div><div class="tpick-label">Estrelada</div></div>
-          <div><div class="tpick" data-tpl="jardim" onclick="selectTpl(this)"><img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=200&q=70" alt="Jardim" loading="lazy"/></div><div class="tpick-label">Jardim</div></div>
-          <div><div class="tpick" data-tpl="neon" onclick="selectTpl(this)"><img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=200&q=70" alt="Neon" loading="lazy"/></div><div class="tpick-label">Neon</div></div>
-          <div><div class="tpick" data-tpl="bebe" onclick="selectTpl(this)"><img src="https://images.unsplash.com/photo-1544427920-c49ccfb85579?w=200&q=70" alt="Bebê" loading="lazy"/></div><div class="tpick-label">Bebê</div></div>
-          <div><div class="tpick" data-tpl="elegante" onclick="selectTpl(this)"><img src="https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=200&q=70" alt="Elegante" loading="lazy"/></div><div class="tpick-label">Elegante</div></div>
-        </div>
-      </div>
+
       <div class="step-nav">
-        <button class="btn-sm btn-outline-sm" style="padding:.65rem" onclick="goStep(1)">← Voltar</button>
-        <button class="btn-sm btn-pink-sm" style="padding:.65rem" onclick="goStep(3)">Próximo: Extras →</button>
+        <button class="btn-sm btn-outline-sm" onclick="goStep(1)">← Voltar</button>
+        <button class="btn-sm btn-pink-sm" onclick="goStep(3)">Próximo: Extras →</button>
       </div>
     </div>
 
-    <!-- STEP 3: EXTRAS -->
+    <!-- ══ STEP 3: EXTRAS ══ -->
     <div class="step-panel" id="step3">
       <div class="step-title">Funcionalidades extras ✨</div>
-      <div class="step-sub">Adicione música, galeria de fotos, PIX e outras opções ao convite.</div>
+      <div class="step-sub">Adicione música, galeria de fotos e opções extras ao convite.</div>
 
       <div class="field">
         <label>🎵 Música de fundo</label>
         <input type="url" id="fMusic" placeholder="URL do YouTube (ex: https://youtube.com/watch?v=...)" oninput="collectState()"/>
-        <div style="font-size:.72rem;color:rgba(26,10,0,.3);margin-top:.3rem">Cole o link de qualquer vídeo/música do YouTube. Aparecerá como player flutuante no convite.</div>
+        <div class="field-hint">Cole o link de qualquer vídeo/música do YouTube. A música começa tocando automaticamente assim que o convidado abre o convite.</div>
       </div>
 
       <div class="field">
-        <label>📸 Fotos da galeria</label>
-        <textarea id="fGallery" placeholder="Cole uma URL de foto por linha. Ex:&#10;https://exemplo.com/foto1.jpg&#10;https://exemplo.com/foto2.jpg" style="min-height:90px" oninput="collectState()"></textarea>
-        <div style="font-size:.72rem;color:rgba(26,10,0,.3);margin-top:.3rem">Uma URL por linha. Use links diretos de imagem (Unsplash, Google Drive público, etc.)</div>
-      </div>
-
-      <div class="field">
-        <label>💸 Chave PIX (para presentes em dinheiro)</label>
-        <input type="text" id="fPix" placeholder="CPF, e-mail, telefone ou chave aleatória" oninput="collectState()"/>
-        <div style="font-size:.72rem;color:rgba(26,10,0,.3);margin-top:.3rem">Os convidados poderão copiar sua chave PIX direto do convite.</div>
+        <label>📸 Galeria de fotos</label>
+        <div class="upload-zone" onclick="document.getElementById('galleryFileInput').click()">
+          <input type="file" id="galleryFileInput" accept="image/*" multiple onchange="handleGalleryUpload(this)"/>
+          <div class="upload-zone-label">Clique para adicionar fotos</div>
+          <div class="upload-zone-sub">Selecione várias de uma vez — JPG, PNG, WEBP</div>
+        </div>
+        <div class="gallery-thumbs" id="galleryThumbs"></div>
       </div>
 
       <div class="field">
         <label>💌 Mural de mensagens / desejos</label>
-        <div style="display:flex;align-items:center;gap:.75rem;background:rgba(26,10,0,.04);border:1px solid var(--border);border-radius:10px;padding:.75rem 1rem">
+        <div style="display:flex;align-items:center;gap:.75rem;background:rgba(26,10,0,.04);border:1px solid var(--border);border-radius:10px;padding:.7rem 1rem">
           <input type="checkbox" id="fWishes" style="width:18px;height:18px;accent-color:var(--pink);cursor:pointer;flex-shrink:0" onchange="collectState()" checked/>
           <div>
             <div style="font-size:.85rem;font-weight:700">Ativar mural de desejos</div>
@@ -287,7 +348,7 @@
 
       <div class="field">
         <label>🔒 Lista de convidados fechada</label>
-        <div style="display:flex;align-items:center;gap:.75rem;background:rgba(26,10,0,.04);border:1px solid var(--border);border-radius:10px;padding:.75rem 1rem">
+        <div style="display:flex;align-items:center;gap:.75rem;background:rgba(26,10,0,.04);border:1px solid var(--border);border-radius:10px;padding:.7rem 1rem">
           <input type="checkbox" id="fClosed" style="width:18px;height:18px;accent-color:var(--pink);cursor:pointer;flex-shrink:0" onchange="collectState()"/>
           <div>
             <div style="font-size:.85rem;font-weight:700">Lista fechada</div>
@@ -296,61 +357,106 @@
         </div>
       </div>
 
-      <div class="step-nav" style="margin-top:1.5rem">
-        <button class="btn-sm btn-outline-sm" style="padding:.65rem" onclick="goStep(2)">← Voltar</button>
-        <button class="btn-sm btn-pink-sm" style="padding:.65rem" onclick="goStep(4)">Próximo: Presentes →</button>
+      <div class="step-nav">
+        <button class="btn-sm btn-outline-sm" onclick="goStep(2)">← Voltar</button>
+        <button class="btn-sm btn-pink-sm" onclick="goStep(4)">Próximo: Presentes →</button>
       </div>
     </div>
 
-    <!-- STEP 4: PRESENTES -->
+    <!-- ══ STEP 4: PRESENTES ══ -->
     <div class="step-panel" id="step4">
       <div class="step-title">Lista de presentes 🎁</div>
-      <div class="step-sub">Adicione os presentes que você deseja receber. Convidados podem reservar cada item.</div>
+      <div class="step-sub">Adicione presentes que deseja receber. Convidados podem reservar cada item.</div>
+
+      <!-- PIX no topo -->
+      <div class="pix-bar">
+        <div class="pix-bar-label">💸 Chave PIX (presentes em dinheiro)</div>
+        <input type="text" id="fPix" placeholder="CPF, e-mail, telefone ou chave aleatória" oninput="collectState()"/>
+        <div class="field-hint" style="margin-top:.3rem">Os convidados poderão copiar sua chave PIX direto do convite.</div>
+      </div>
+
+      <!-- Lista atual -->
       <div class="gift-list-edit" id="giftListEdit"></div>
-      <div style="margin-top:.75rem;display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
-        <input type="text" id="newGiftName" placeholder="Nome do presente" style="background:rgba(26,10,0,.05);border:1px solid rgba(26,10,0,.1);border-radius:10px;padding:.65rem .9rem;color:var(--white);font-size:.9rem;outline:none;"/>
-        <input type="text" id="newGiftPrice" placeholder="Preço (ex: R$ 120)" style="background:rgba(26,10,0,.05);border:1px solid rgba(26,10,0,.1);border-radius:10px;padding:.65rem .9rem;color:var(--white);font-size:.9rem;outline:none;"/>
+
+      <!-- Formulário adicionar presente -->
+      <div class="add-gift-form">
+        <div style="font-size:.75rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:rgba(26,10,0,.35);margin-bottom:.65rem">+ Adicionar presente</div>
+
+        <!-- Imagem do presente -->
+        <div class="gift-img-row">
+          <div class="gift-img-preview" id="newGiftImgPreview">🎁</div>
+          <div class="gift-img-actions">
+            <div class="field" style="margin-bottom:.4rem">
+              <label>Link da loja (opcional)</label>
+              <div class="gift-link-fetch">
+                <input type="url" id="newGiftLink" placeholder="https://..." style="background:rgba(26,10,0,.05);border:1px solid rgba(26,10,0,.1);border-radius:8px;padding:.5rem .7rem;font-size:.82rem;color:var(--white);outline:none;width:100%;font-family:var(--font-body)"/>
+                <button class="fetch-btn" onclick="fetchProductImage()">🔍</button>
+              </div>
+              <div class="field-hint">Cole o link → clique 🔍 para buscar a foto</div>
+            </div>
+            <div style="font-size:.72rem;font-weight:700;color:rgba(26,10,0,.35);margin-bottom:.3rem;text-align:center">— ou —</div>
+            <div class="upload-zone" onclick="document.getElementById('giftFileInput').click()" style="padding:.5rem">
+              <input type="file" id="giftFileInput" accept="image/*" onchange="handleGiftImageUpload(this)"/>
+              <div class="upload-zone-label" style="font-size:.75rem">📷 Upload de foto</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Nome do presente *</label>
+          <input type="text" id="newGiftName" placeholder="Ex: Kit de chá, Panelas antiaderentes..." style="background:rgba(26,10,0,.05);border:1px solid rgba(26,10,0,.1);border-radius:8px;padding:.55rem .8rem;font-size:.85rem;color:var(--white);outline:none;width:100%;font-family:var(--font-body)"/>
+        </div>
+        <div class="field">
+          <label>Preço estimado (opcional)</label>
+          <input type="text" id="newGiftPrice" placeholder="Ex: R$ 120,00" style="background:rgba(26,10,0,.05);border:1px solid rgba(26,10,0,.1);border-radius:8px;padding:.55rem .8rem;font-size:.85rem;color:var(--white);outline:none;width:100%;font-family:var(--font-body)"/>
+        </div>
+
+        <button class="add-gift-submit" onclick="addGift()">+ Adicionar à lista</button>
       </div>
-      <div class="add-gift-row" style="margin-top:.4rem">
-        <input type="text" id="newGiftEmoji" placeholder="Emoji" style="width:80px;flex:none;background:rgba(26,10,0,.05);border:1px solid rgba(26,10,0,.1);border-radius:10px;padding:.65rem .9rem;color:var(--white);font-size:.9rem;outline:none;"/>
-        <input type="text" id="newGiftLink" placeholder="Link da loja (opcional)" style="flex:1;background:rgba(26,10,0,.05);border:1px solid rgba(26,10,0,.1);border-radius:10px;padding:.65rem .9rem;color:var(--white);font-size:.9rem;outline:none;"/>
-        <button class="add-gift-btn" onclick="addGift()">+ Adicionar</button>
-      </div>
-      <div class="step-nav" style="margin-top:1.5rem">
-        <button class="btn-sm btn-outline-sm" style="padding:.65rem" onclick="goStep(3)">← Voltar</button>
-        <button class="btn-sm btn-pink-sm" style="padding:.65rem" onclick="goStep(5)">Próximo: Publicar →</button>
+
+      <div class="step-nav">
+        <button class="btn-sm btn-outline-sm" onclick="goStep(3)">← Voltar</button>
+        <button class="btn-sm btn-pink-sm" onclick="goStep(5)">Próximo: Publicar →</button>
       </div>
     </div>
 
-    <!-- STEP 5: PUBLICAR -->
+    <!-- ══ STEP 5: PUBLICAR ══ -->
     <div class="step-panel" id="step5">
       <div class="step-title">Publicar convite 🚀</div>
-      <div class="step-sub">Revise e publique seu convite.</div>
-      <div id="step4summary" style="background:rgba(26,10,0,.04);border:1px solid var(--border);border-radius:12px;padding:1rem;margin-bottom:1.25rem;font-size:.85rem;"></div>
+      <div class="step-sub">Revise e publique para seus convidados.</div>
+
+      <div class="publish-summary" id="step4summary"></div>
+
       <div class="field">
         <label>Slug do link (URL personalizada)</label>
         <div style="display:flex;align-items:center;gap:.4rem">
-          <span style="font-size:.8rem;color:rgba(26,10,0,.3);white-space:nowrap">contecomigo.vercel.app/</span>
-          <input type="text" id="fSlug" placeholder="festa-camila-30" oninput="updateSlugPreview()"/>
+          <span style="font-size:.75rem;color:rgba(26,10,0,.3);white-space:nowrap;flex-shrink:0">…/convite?slug=</span>
+          <input type="text" id="fSlug" placeholder="festa-camila-30" oninput="updateSlugPreview()" style="min-width:0"/>
         </div>
-        <div style="margin-top:.4rem;font-size:.75rem;color:rgba(26,10,0,.3)" id="slugPreview"></div>
+        <div style="margin-top:.35rem;font-size:.72rem;color:rgba(26,10,0,.3)" id="slugPreview"></div>
       </div>
+
       <div class="field">
         <label>Visibilidade</label>
         <select id="fVisib">
-          <option value="public">🌍 Público — qualquer pessoa com o link acessa</option>
-          <option value="private">🔒 Privado — apenas quem receber o link</option>
+          <option value="public">🌍 Público — qualquer pessoa com o link</option>
+          <option value="private">🔒 Privado — só quem receber o link</option>
         </select>
       </div>
-      <div style="display:flex;flex-direction:column;gap:.6rem;margin-top:1rem">
-        <button class="btn-sm btn-pink-sm" id="btnPublish2" style="padding:.75rem;font-size:.9rem" onclick="publishInvite()">🚀 Publicar convite agora!</button>
-        <button class="btn-sm btn-outline-sm" style="padding:.75rem" onclick="saveDraft()">💾 Salvar como rascunho</button>
-        <button class="btn-sm btn-yellow-sm" style="padding:.75rem" onclick="openPreviewTab()">👁 Ver como o convidado vê</button>
+
+      <div class="publish-actions" style="margin-top:1rem">
+        <button class="btn-sm btn-pink-sm" id="btnPublish2" onclick="publishInvite()">🚀 Publicar convite agora!</button>
+        <button class="btn-sm btn-outline-sm" onclick="saveDraft()">💾 Salvar como rascunho</button>
+        <button class="btn-sm btn-yellow-sm" onclick="openPreviewTab()">👁 Ver como o convidado vê</button>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn-sm btn-outline-sm" onclick="goStep(4)">← Voltar</button>
       </div>
     </div>
-  </div>
+  </div><!-- /sidebar -->
 
-  <!-- PREVIEW -->
+  <!-- ══ PREVIEW ══ -->
   <div class="preview-area">
     <div class="preview-toolbar">
       <span class="preview-label">Preview em tempo real</span>
@@ -380,136 +486,486 @@ const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
 let currentUser = null;
 let editingInviteId = null;
 
-const tplImgs = {
-  tropical:'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&q=80',
-  estrelada:'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80',
-  jardim:'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80',
-  neon:'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80',
-  bebe:'https://images.unsplash.com/photo-1544427920-c49ccfb85579?w=800&q=80',
-  elegante:'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=800&q=80',
+// ══ TEMPLATES ══
+// Cada template: { id, name, category, img (Unsplash URL), supportsHeroUpload, colors }
+// colors: { accent, bgKey, textColor, overlayOpacity }
+const TEMPLATES = {
+  'aniversario-adulto': [
+    {
+      id:'aniv-neon',name:'Neon Night',
+      img:'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#FFD93D',defaultBg:'dark-purple',
+      heroStyle:'color:#FFD93D;text-shadow:0 0 20px rgba(255,217,61,.5)',
+      overlayStyle:'background:linear-gradient(to bottom,rgba(26,10,30,.3),rgba(26,10,30,.85))'
+    },
+    {
+      id:'aniv-tropical',name:'Tropical Party',
+      img:'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#34D399',defaultBg:'dark-green',
+      heroStyle:'color:#34D399',
+      overlayStyle:'background:linear-gradient(to bottom,rgba(10,30,10,.2),rgba(10,30,10,.8))'
+    },
+    {
+      id:'aniv-elegante',name:'Elegante',
+      img:'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=600&q=80',
+      supportsHeroUpload:true,
+      defaultAccent:'#FFD93D',defaultBg:'rose-gold',
+      heroStyle:'color:#FFD93D',
+      overlayStyle:'background:linear-gradient(to bottom,rgba(80,10,10,.2),rgba(50,5,5,.85))'
+    },
+    {
+      id:'aniv-fotos',name:'Com suas fotos 📷',
+      img:'https://images.unsplash.com/photo-1543269865-cbf427effbad?w=600&q=80',
+      supportsHeroUpload:true,
+      defaultAccent:'#F472B6',defaultBg:'violet',
+      heroStyle:'color:#F472B6',
+      overlayStyle:'background:linear-gradient(to bottom,rgba(30,10,40,.1),rgba(30,10,40,.82))'
+    },
+  ],
+  'infantil': [
+    {
+      id:'kids-baloes',name:'Balões Coloridos',
+      img:'https://images.unsplash.com/photo-1558008258-3256797b43f3?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#FB923C',defaultBg:'coral',
+      heroStyle:'color:#fff',
+      overlayStyle:'background:linear-gradient(to bottom,rgba(255,100,50,.1),rgba(200,60,20,.75))'
+    },
+    {
+      id:'kids-unicorn',name:'Unicórnio',
+      img:'https://images.unsplash.com/photo-1567225557594-88d73398014a?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#A78BFA',defaultBg:'violet',
+      heroStyle:'color:#A78BFA',
+      overlayStyle:'background:linear-gradient(to bottom,rgba(40,10,60,.1),rgba(40,10,60,.8))'
+    },
+    {
+      id:'kids-dinossauro',name:'Dinossauro',
+      img:'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#34D399',defaultBg:'dark-green',
+      heroStyle:'color:#34D399',
+      overlayStyle:'background:linear-gradient(to bottom,rgba(5,30,10,.2),rgba(5,30,10,.85))'
+    },
+    {
+      id:'kids-fotos',name:'Com suas fotos 📷',
+      img:'https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=600&q=80',
+      supportsHeroUpload:true,
+      defaultAccent:'#FB923C',defaultBg:'coral',
+      heroStyle:'color:#fff',
+      overlayStyle:'background:linear-gradient(to bottom,rgba(200,60,20,.1),rgba(200,60,20,.75))'
+    },
+  ],
+  'casamento': [
+    {
+      id:'wed-estrelada',name:'Noite Estrelada',
+      img:'https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#FFD93D',defaultBg:'dark-purple',
+      heroStyle:'color:#FFD93D',
+      overlayStyle:'background:linear-gradient(to bottom,rgba(15,5,25,.1),rgba(15,5,25,.82))'
+    },
+    {
+      id:'wed-jardim',name:'Jardim Romântico',
+      img:'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#FFFFFF',defaultBg:'dark-green',
+      heroStyle:'color:#fff',
+      overlayStyle:'background:linear-gradient(to bottom,rgba(5,25,10,.15),rgba(5,25,10,.8))'
+    },
+    {
+      id:'wed-rosegold',name:'Rose Gold',
+      img:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#FFD93D',defaultBg:'rose-gold',
+      heroStyle:'color:#fff',
+      overlayStyle:'background:linear-gradient(to bottom,rgba(100,30,20,.1),rgba(100,30,20,.8))'
+    },
+    {
+      id:'wed-fotos',name:'Com suas fotos 📷',
+      img:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80',
+      supportsHeroUpload:true,
+      defaultAccent:'#FFFFFF',defaultBg:'transparent',
+      heroStyle:'color:#fff',
+      overlayStyle:'background:linear-gradient(to bottom,rgba(0,0,0,.05),rgba(0,0,0,.6))'
+    },
+  ],
+  'cha': [
+    {
+      id:'cha-pastel',name:'Pastel Delicado',
+      img:'https://images.unsplash.com/photo-1544427920-c49ccfb85579?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#F472B6',defaultBg:'violet',
+      heroStyle:'color:#F472B6',
+      overlayStyle:'background:linear-gradient(to bottom,rgba(40,5,50,.1),rgba(40,5,50,.8))'
+    },
+    {
+      id:'cha-revelacao-azul',name:'Revelação — Menino',
+      img:'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#60A5FA',defaultBg:'dark-blue',
+      heroStyle:'color:#60A5FA',
+      overlayStyle:'background:linear-gradient(to bottom,rgba(5,15,40,.15),rgba(5,15,40,.82))'
+    },
+    {
+      id:'cha-revelacao-rosa',name:'Revelação — Menina',
+      img:'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#F472B6',defaultBg:'violet',
+      heroStyle:'color:#F472B6',
+      overlayStyle:'background:linear-gradient(to bottom,rgba(40,5,50,.1),rgba(40,5,50,.8))'
+    },
+    {
+      id:'cha-fotos',name:'Com suas fotos 📷',
+      img:'https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=600&q=80',
+      supportsHeroUpload:true,
+      defaultAccent:'#F472B6',defaultBg:'transparent',
+      heroStyle:'color:#fff',
+      overlayStyle:'background:linear-gradient(to bottom,rgba(0,0,0,.05),rgba(0,0,0,.65))'
+    },
+  ],
 };
 
+const BG_GRADIENTS = {
+  'dark-purple':'linear-gradient(135deg,#1a0a1e,#2d0a3a)',
+  'dark-blue':'linear-gradient(135deg,#0a1628,#1e3a5f)',
+  'dark-green':'linear-gradient(135deg,#0d2a10,#1a4020)',
+  'dark-brown':'linear-gradient(135deg,#2a1a0a,#3d1a0d)',
+  'coral':'linear-gradient(135deg,#FF3D6B,#ff7043)',
+  'violet':'linear-gradient(135deg,#1e0a2a,#6b21a8)',
+  'rose-gold':'linear-gradient(135deg,#c0392b,#f39c12)',
+  'mint':'linear-gradient(135deg,#134e4a,#0d9488)',
+  'transparent':'transparent',
+};
+
+// ══ STATE ══
 const state = {
-  tipo:'🎂', titulo:'', nome:'', data:'', hora:'', local:'', dress:'', msg:'',
-  prazo:'', accent:'#FFD93D', bg:'linear-gradient(135deg,#1a0a1e,#2d0a3a)',
-  tpl:'tropical', gifts:[], slug:'', visib:'public',
-  // v2 extras
-  music_url:'', gallery_urls:[], pix_key:'', wishes_enabled:true, closed_list:false
+  tplId:'aniv-neon', tplCat:'aniversario-adulto',
+  titulo:'', nome:'', data:'', hora:'', local:'', dress:'', msg:'', prazo:'',
+  accent:'#FFD93D', bgKey:'dark-purple',
+  heroPhotoUrl:'', heroPhotoBlob:null,  // foto de fundo personalizada
+  gifts:[], slug:'', visib:'public',
+  music_url:'', gallery_files:[], gallery_urls:[], pix_key:'',
+  wishes_enabled:true, closed_list:false
 };
 
-// ── AUTH CHECK ──
+// Foto temporária de presente sendo adicionado
+let newGiftImageUrl = '';
+let newGiftImageBlob = null;
+let galleryBlobs = []; // { blob, url (object URL) }
+
+// ══ INIT ══
 async function init(){
   const { data:{ session } } = await sb.auth.getSession();
   if(!session){ location.href='login.html'; return; }
   currentUser = session.user;
 
-  // Load template from index page selection
-  const savedTpl = JSON.parse(localStorage.getItem('ccm_template')||'null');
-  if(savedTpl){
-    state.tpl = Object.keys(tplImgs).find(k=>savedTpl.name?.toLowerCase().includes(k)) || 'tropical';
-    localStorage.removeItem('ccm_template');
-  }
+  renderCatTemplates('aniversario-adulto');
 
-  // Load existing invite to edit (from dashboard)
   const editId = localStorage.getItem('ccm_edit_invite');
   if(editId){
     localStorage.removeItem('ccm_edit_invite');
     await loadInvite(editId);
   } else {
-    // Load local draft as fallback
     const draft = JSON.parse(localStorage.getItem('ccm_draft')||'null');
-    if(draft){ Object.assign(state,draft); fillForm(); renderGiftList(); fillExtras(); }
+    if(draft){ Object.assign(state,draft); fillForm(); fillExtras(); }
   }
-
   renderGiftList();
   updatePreview();
 }
 
-async function loadInvite(id){
-  const {data:inv} = await sb.from('invites').select('*').eq('id',id).single();
-  if(!inv) return;
-  editingInviteId = inv.id;
-  Object.assign(state,{
-    tipo: inv.event_type||'🎂', titulo: inv.title||'', nome: inv.event_name||'',
-    data: inv.event_date||'', hora: inv.event_time||'', local: inv.location||'',
-    dress: inv.dress_code||'', msg: inv.message||'', prazo: inv.rsvp_deadline||'',
-    accent: inv.accent||'#FFD93D', bg: inv.bg_gradient||state.bg,
-    tpl: inv.template||'tropical', slug: inv.slug||'', visib: inv.visibility||'public',
-    music_url: inv.music_url||'', gallery_urls: inv.gallery_urls||[],
-    pix_key: inv.pix_key||'', wishes_enabled: inv.wishes_enabled!==false,
-    closed_list: inv.closed_list||false
+// ══ TEMPLATE PICKER ══
+function selectCat(el){
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  state.tplCat = el.dataset.cat;
+  renderCatTemplates(state.tplCat);
+}
+
+function renderCatTemplates(cat){
+  const tpls = TEMPLATES[cat]||[];
+  const grid = document.getElementById('tplGrid');
+  grid.innerHTML = tpls.map(t=>`
+    <div>
+      <div class="tpl-card${t.id===state.tplId?' selected':''}" data-tplid="${t.id}" onclick="selectTemplate('${t.id}','${cat}',this)">
+        <img class="tpl-card-img" src="${t.img}" alt="${t.name}" loading="lazy"/>
+        ${t.supportsHeroUpload?'<div class="tpl-upload-badge">+ Foto</div>':''}
+      </div>
+      <div style="font-size:.67rem;font-weight:800;text-align:center;padding:.35rem .2rem .4rem;color:rgba(26,10,0,.55)">${t.name}</div>
+    </div>
+  `).join('');
+}
+
+function selectTemplate(tplId, cat, el){
+  document.querySelectorAll('.tpl-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  state.tplId = tplId;
+  state.tplCat = cat;
+
+  // Apply template defaults
+  const tpl = getTemplate(tplId);
+  if(tpl){
+    // Set accent color
+    state.accent = tpl.defaultAccent;
+    document.querySelectorAll('#colorSwatches .swatch').forEach(s=>{
+      s.classList.toggle('selected', s.dataset.color === tpl.defaultAccent);
+    });
+    // Set bg
+    state.bgKey = tpl.defaultBg;
+    document.querySelectorAll('#bgOptions .bg-opt').forEach(s=>{
+      s.classList.toggle('selected', s.dataset.bg === tpl.defaultBg);
+    });
+    // Show/hide hero upload
+    const field = document.getElementById('heroUploadField');
+    field.style.display = tpl.supportsHeroUpload ? 'block' : 'none';
+  }
+  updatePreview();
+}
+
+function getTemplate(id){
+  for(const cat of Object.values(TEMPLATES)){
+    const t = cat.find(t=>t.id===id);
+    if(t) return t;
+  }
+  return null;
+}
+
+function getCurrentTemplate(){
+  return getTemplate(state.tplId) || TEMPLATES['aniversario-adulto'][0];
+}
+
+// ══ HERO UPLOAD ══
+function handleHeroUpload(input){
+  const file = input.files[0];
+  if(!file) return;
+  if(file.size > 5*1024*1024){ showToast('❌ Foto muito grande (máx 5MB)'); return; }
+  const url = URL.createObjectURL(file);
+  state.heroPhotoBlob = file;
+  state.heroPhotoUrl = url;
+  document.getElementById('heroThumb').src = url;
+  document.getElementById('heroThumbWrap').style.display = 'block';
+  updatePreview();
+}
+
+function removeHeroPhoto(){
+  state.heroPhotoBlob = null;
+  state.heroPhotoUrl = '';
+  document.getElementById('heroThumbWrap').style.display = 'none';
+  document.getElementById('heroFileInput').value = '';
+  updatePreview();
+}
+
+// ══ GALLERY UPLOAD ══
+function handleGalleryUpload(input){
+  const files = Array.from(input.files);
+  files.forEach(file=>{
+    if(file.size > 8*1024*1024){ showToast('⚠️ '+file.name+' ignorado (>8MB)'); return; }
+    const url = URL.createObjectURL(file);
+    galleryBlobs.push({ blob:file, url });
   });
-  // Load gifts
-  const {data:gifts} = await sb.from('gifts').select('*').eq('invite_id',id);
-  state.gifts = (gifts||[]).map(g=>({id:g.id,name:g.name,price:g.price,emoji:g.emoji,link:g.link,reserved:g.reserved}));
-  fillForm();
-  renderGiftList();
-  fillExtras();
-  document.getElementById('topbarTitle').textContent = 'Editar convite';
+  input.value = '';
+  renderGalleryThumbs();
 }
 
-function fillForm(){
-  const map={fTipo:'tipo',fTitulo:'titulo',fNome:'nome',fData:'data',fHora:'hora',fLocal:'local',fDress:'dress',fMsg:'msg',fPrazo:'prazo',fSlug:'slug',fVisib:'visib'};
-  Object.entries(map).forEach(([id,k])=>{const el=document.getElementById(id);if(el&&state[k])el.value=state[k];});
+function removeGalleryItem(idx){
+  URL.revokeObjectURL(galleryBlobs[idx]?.url);
+  galleryBlobs.splice(idx,1);
+  renderGalleryThumbs();
 }
 
-function fillExtras(){
-  const mu=document.getElementById('fMusic'); if(mu) mu.value=state.music_url||'';
-  const gal=document.getElementById('fGallery'); if(gal) gal.value=(state.gallery_urls||[]).join('\n');
-  const pix=document.getElementById('fPix'); if(pix) pix.value=state.pix_key||'';
-  const wish=document.getElementById('fWishes'); if(wish) wish.checked=state.wishes_enabled!==false;
-  const closed=document.getElementById('fClosed'); if(closed) closed.checked=!!state.closed_list;
+function renderGalleryThumbs(){
+  const el = document.getElementById('galleryThumbs');
+  el.innerHTML = galleryBlobs.map((g,i)=>`
+    <div class="gallery-thumb-wrap">
+      <img class="gallery-thumb" src="${g.url}" alt="Foto ${i+1}"/>
+      <div class="gallery-thumb-del" onclick="removeGalleryItem(${i})">✕</div>
+    </div>
+  `).join('');
 }
 
-// ── STEPS ──
-let currentStep=1;
-function goStep(n){
-  collectState();
-  currentStep=n;
-  for(let i=1;i<=5;i++){
-    const panel=document.getElementById('step'+i);
-    const tab=document.getElementById('step'+i+'tab');
-    if(panel) panel.classList.toggle('active',i===n);
-    if(tab){ tab.classList.toggle('active',i===n); tab.classList.toggle('done',i<n); }
+// ══ GIFT IMAGE ══
+async function fetchProductImage(){
+  const link = document.getElementById('newGiftLink').value.trim();
+  if(!link){ showToast('❌ Cole o link da loja primeiro'); return; }
+
+  // Try to get Open Graph image via a public proxy
+  showToast('🔍 Buscando imagem do produto...');
+
+  // Use allorigins to fetch page HTML and extract og:image
+  try {
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(link)}`;
+    const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(8000) });
+    const data = await res.json();
+    const html = data.contents || '';
+    // Extract og:image
+    const match = html.match(/og:image[^>]*content=["']([^"']+)["']/i)
+                || html.match(/content=["']([^"']+)["'][^>]*og:image/i);
+    if(match && match[1]){
+      setGiftImage(match[1]);
+      showToast('✅ Imagem encontrada!');
+    } else {
+      showToast('⚠️ Imagem não encontrada — faça upload manual');
+    }
+  } catch(e){
+    showToast('⚠️ Não foi possível buscar — faça upload manual');
   }
-  if(n===5) renderStep4Summary();
+}
+
+function handleGiftImageUpload(input){
+  const file = input.files[0];
+  if(!file) return;
+  const url = URL.createObjectURL(file);
+  newGiftImageBlob = file;
+  setGiftImage(url);
+}
+
+function setGiftImage(url){
+  newGiftImageUrl = url;
+  const preview = document.getElementById('newGiftImgPreview');
+  preview.innerHTML = `<img src="${url}" onerror="this.parentNode.innerHTML='🎁'" alt="Presente"/>`;
+}
+
+// ══ GIFTS ══
+function addGift(){
+  const name = document.getElementById('newGiftName').value.trim();
+  const price = document.getElementById('newGiftPrice').value.trim();
+  const link = document.getElementById('newGiftLink').value.trim();
+  if(!name){ showToast('❌ Insira o nome do presente'); return; }
+
+  state.gifts.push({
+    id:'local_'+Date.now(),
+    name, price, link,
+    imageUrl: newGiftImageUrl,
+    imageBlob: newGiftImageBlob,
+    reserved:false, isNew:true
+  });
+
+  // Reset form
+  document.getElementById('newGiftName').value = '';
+  document.getElementById('newGiftPrice').value = '';
+  document.getElementById('newGiftLink').value = '';
+  document.getElementById('newGiftImgPreview').innerHTML = '🎁';
+  document.getElementById('giftFileInput').value = '';
+  newGiftImageUrl = '';
+  newGiftImageBlob = null;
+
+  renderGiftList();
   updatePreview();
 }
 
+function removeGift(id){
+  state.gifts = state.gifts.filter(g=>String(g.id)!==String(id));
+  renderGiftList();
+  updatePreview();
+}
+
+function renderGiftList(){
+  const el = document.getElementById('giftListEdit');
+  if(!state.gifts.length){
+    el.innerHTML = '<div style="font-size:.8rem;color:rgba(26,10,0,.3);text-align:center;padding:.75rem">Nenhum presente adicionado ainda</div>';
+    return;
+  }
+  el.innerHTML = state.gifts.map(g=>`
+    <div class="gift-item-edit">
+      <div class="gift-item-img">
+        ${g.imageUrl
+          ? `<img src="${g.imageUrl}" alt="${g.name}" onerror="this.parentNode.innerHTML='🎁'"/>`
+          : '🎁'}
+      </div>
+      <div class="gift-item-info">
+        <div class="gift-item-name">${g.name}</div>
+        ${g.price?`<div class="gift-item-price">${g.price}</div>`:''}
+      </div>
+      <button class="gift-item-del" onclick="removeGift('${g.id}')">✕</button>
+    </div>`).join('');
+}
+
+// ══ STYLE PICKERS ══
+function selectColor(el){
+  document.querySelectorAll('#colorSwatches .swatch').forEach(s=>s.classList.remove('selected'));
+  el.classList.add('selected');
+  state.accent = el.dataset.color;
+  updatePreview();
+}
+
+function selectBg(el){
+  document.querySelectorAll('#bgOptions .bg-opt').forEach(s=>s.classList.remove('selected'));
+  el.classList.add('selected');
+  state.bgKey = el.dataset.bg;
+  const hint = document.getElementById('bgHint');
+  hint.textContent = state.bgKey==='transparent'
+    ? 'A foto do template aparecerá em destaque, sem overlay escuro.' : '';
+  updatePreview();
+}
+
+// ══ COLLECT STATE ══
 function collectState(){
-  const map={fTipo:'tipo',fTitulo:'titulo',fNome:'nome',fData:'data',fHora:'hora',fLocal:'local',fDress:'dress',fMsg:'msg',fPrazo:'prazo',fSlug:'slug',fVisib:'visib'};
+  const map={fTitulo:'titulo',fNome:'nome',fData:'data',fHora:'hora',fLocal:'local',fDress:'dress',fMsg:'msg',fPrazo:'prazo',fSlug:'slug',fVisib:'visib'};
   Object.entries(map).forEach(([id,k])=>{const el=document.getElementById(id);if(el)state[k]=el.value;});
-  // Extras
   const mu=document.getElementById('fMusic'); if(mu) state.music_url=mu.value.trim();
-  const gal=document.getElementById('fGallery'); if(gal) state.gallery_urls=gal.value.split('\n').map(s=>s.trim()).filter(Boolean);
   const pix=document.getElementById('fPix'); if(pix) state.pix_key=pix.value.trim();
   const wish=document.getElementById('fWishes'); if(wish) state.wishes_enabled=wish.checked;
   const closed=document.getElementById('fClosed'); if(closed) state.closed_list=closed.checked;
 }
 
-// ── PREVIEW ──
+// ══ FILL FORM ══
+function fillForm(){
+  const map={fTitulo:'titulo',fNome:'nome',fData:'data',fHora:'hora',fLocal:'local',fDress:'dress',fMsg:'msg',fPrazo:'prazo',fSlug:'slug',fVisib:'visib'};
+  Object.entries(map).forEach(([id,k])=>{const el=document.getElementById(id);if(el&&state[k]!==undefined)el.value=state[k];});
+}
+
+function fillExtras(){
+  const mu=document.getElementById('fMusic'); if(mu) mu.value=state.music_url||'';
+  const pix=document.getElementById('fPix'); if(pix) pix.value=state.pix_key||'';
+  const wish=document.getElementById('fWishes'); if(wish) wish.checked=state.wishes_enabled!==false;
+  const closed=document.getElementById('fClosed'); if(closed) closed.checked=!!state.closed_list;
+  // restore gallery thumbs from saved URLs
+  if(state.gallery_urls?.length){
+    galleryBlobs = state.gallery_urls.map(u=>({ blob:null, url:u }));
+    renderGalleryThumbs();
+  }
+}
+
+// ══ PREVIEW ══
 function updatePreview(){
   collectState();
+  const tpl = getCurrentTemplate();
   const date = state.data ? new Date(state.data+'T12:00:00') : null;
   const dateStr = date ? date.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) : '—';
-  let countdown = '— dias';
+  let countdown='— dias';
   if(date){
-    const diff = date - new Date();
-    if(diff>0){ const d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000); countdown=`${d}d ${h}h`; }
+    const diff=date-new Date();
+    if(diff>0){const d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000);countdown=`${d}d ${h}h`;}
     else countdown='🎉 Chegou o dia!';
   }
-  const giftsHtml = state.gifts.slice(0,4).map(g=>`<div class="inv-gift-chip">${g.emoji||'🎁'} ${g.name}</div>`).join('');
+
+  // Hero background
+  const isTransparent = state.bgKey === 'transparent';
+  const heroImg = state.heroPhotoUrl || tpl.img;
+  const overlayStyle = isTransparent
+    ? 'background:linear-gradient(to bottom,rgba(0,0,0,0.05),rgba(0,0,0,0.55))'
+    : (tpl.overlayStyle || 'background:linear-gradient(to bottom,rgba(0,0,0,.2),rgba(0,0,0,.8))');
+  const heroBg = isTransparent ? 'transparent' : (BG_GRADIENTS[state.bgKey]||BG_GRADIENTS['dark-purple']);
+
+  const giftsHtml = state.gifts.slice(0,4).map(g=>`
+    <div class="inv-gift-chip">
+      ${g.imageUrl?`<img src="${g.imageUrl}" style="width:16px;height:16px;border-radius:3px;object-fit:cover" onerror="this.outerHTML='🎁'"/>`:'🎁'}
+      ${g.name}
+    </div>`).join('');
+
   document.getElementById('invitePreview').innerHTML = `
-    <div class="inv-hero" style="--inv-bg:${state.bg};--inv-accent:${state.accent}">
-      <div class="inv-hero-bg" style="background-image:url('${tplImgs[state.tpl]||tplImgs.tropical}')"></div>
+    <div class="inv-hero" style="background:${heroBg}">
+      <div class="inv-hero-bg" style="background-image:url('${heroImg}');opacity:${isTransparent?'1':'0.2'}"></div>
+      <div class="inv-hero-overlay" style="${overlayStyle}"></div>
       <div class="inv-hero-content">
-        <div class="inv-emoji">${state.tipo||'🎉'}</div>
-        <div class="inv-title">${state.titulo||'Você está convidado!'}</div>
-        <div class="inv-name">${state.nome||'Nome do homenageado'}</div>
-        <div class="inv-detail">📅 ${dateStr}</div>
-        ${state.hora?`<div class="inv-detail">⏰ ${state.hora}</div>`:''}
-        ${state.local?`<div class="inv-detail">📍 ${state.local}</div>`:''}
-        ${state.dress?`<div class="inv-detail">👗 ${state.dress}</div>`:''}
+        <div class="inv-title" style="color:${state.accent};${isTransparent?'text-shadow:0 2px 12px rgba(0,0,0,.5)':''}">${state.titulo||'Você está convidado!'}</div>
+        <div class="inv-name" style="color:rgba(255,248,240,.9)">${state.nome||'Nome do homenageado'}</div>
+        <div class="inv-detail" style="color:rgba(255,248,240,.8)">📅 ${dateStr}</div>
+        ${state.hora?`<div class="inv-detail" style="color:rgba(255,248,240,.8)">⏰ ${state.hora}</div>`:''}
+        ${state.local?`<div class="inv-detail" style="color:rgba(255,248,240,.8)">📍 ${state.local}</div>`:''}
+        ${state.dress?`<div class="inv-detail" style="color:rgba(255,248,240,.8)">👗 ${state.dress}</div>`:''}
       </div>
     </div>
     <div class="inv-body">
@@ -518,63 +974,42 @@ function updatePreview(){
         <div class="inv-countdown-num">${countdown}</div>
         <div class="inv-countdown-label">para a festa começar</div>
       </div>
-      <div class="inv-rsvp-prompt" style="background:${state.accent};color:#FFF8F0">✅ Confirmar presença</div>
+      <div class="inv-rsvp-prompt" style="background:${state.accent};color:${state.accent==='#FFFFFF'?'#1A0A00':'#FFF8F0'}">✅ Confirmar presença</div>
       ${state.gifts.length?`<div class="inv-section-title" style="margin-top:1.5rem">Lista de presentes</div><div>${giftsHtml}</div>`:''}
     </div>`;
 }
 
-// ── PICKERS ──
-function selectColor(el){document.querySelectorAll('#colorSwatches .swatch').forEach(s=>s.classList.remove('selected'));el.classList.add('selected');state.accent=el.dataset.color;updatePreview();}
-function selectBg(el){document.querySelectorAll('#bgSwatches .swatch').forEach(s=>s.classList.remove('selected'));el.classList.add('selected');state.bg=el.dataset.bg;updatePreview();}
-function selectTpl(el){document.querySelectorAll('#tPicker .tpick').forEach(t=>t.classList.remove('selected'));el.classList.add('selected');state.tpl=el.dataset.tpl;updatePreview();}
-
-// ── GIFTS ──
-function addGift(){
-  const name=document.getElementById('newGiftName').value.trim();
-  const price=document.getElementById('newGiftPrice').value.trim();
-  const emoji=document.getElementById('newGiftEmoji').value.trim()||'🎁';
-  const link=document.getElementById('newGiftLink').value.trim();
-  if(!name){showToast('❌ Insira o nome do presente');return;}
-  state.gifts.push({id:'local_'+Date.now(),name,price,emoji,link,reserved:false,isNew:true});
-  ['newGiftName','newGiftPrice','newGiftEmoji','newGiftLink'].forEach(id=>document.getElementById(id).value='');
-  renderGiftList();updatePreview();
+// ══ STEPS ══
+let currentStep=1;
+function goStep(n){
+  collectState();
+  currentStep=n;
+  for(let i=1;i<=5;i++){
+    const panel=document.getElementById('step'+i);
+    const tab=document.getElementById('step'+i+'tab');
+    if(panel) panel.classList.toggle('active',i===n);
+    if(tab){tab.classList.toggle('active',i===n);tab.classList.toggle('done',i<n);}
+  }
+  if(n===5) renderPublishSummary();
+  updatePreview();
+  // Scroll sidebar to top
+  document.querySelector('.sidebar').scrollTop=0;
 }
 
-function removeGift(id){state.gifts=state.gifts.filter(g=>String(g.id)!==String(id));renderGiftList();updatePreview();}
-
-function renderGiftList(){
-  const el=document.getElementById('giftListEdit');
-  el.innerHTML=state.gifts.length?state.gifts.map(g=>`
-    <div class="gift-item-edit">
-      <span class="gift-emoji">${g.emoji}</span>
-      <span class="gift-name">${g.name}</span>
-      <span class="gift-px">${g.price||''}</span>
-      <button class="del-btn" onclick="removeGift('${g.id}')">✕</button>
-    </div>`).join(''):'<div style="font-size:.8rem;color:rgba(26,10,0,.3);text-align:center;padding:.5rem">Nenhum presente adicionado ainda</div>';
-}
-
-// ── SLUG ──
-function updateSlugPreview(){
-  const v=document.getElementById('fSlug').value;
-  document.getElementById('slugPreview').textContent=v?`Seu link: contecomigo.vercel.app/convite.html?slug=${v}`:'';
-  state.slug=v;
-}
-
-// ── STEP 5 SUMMARY ──
-function renderStep4Summary(){
+// ══ PUBLISH SUMMARY ══
+function renderPublishSummary(){
   collectState();
   const el=document.getElementById('step4summary');
-  const ok=(k)=>state[k]?'<span style="color:#34d399">✓</span>':'<span style="color:#f87171">✗</span>';
-  el.innerHTML=`<div style="display:flex;flex-direction:column;gap:.4rem;font-size:.82rem">
-    <div>${ok('titulo')} Título: <strong>${state.titulo||'Não preenchido'}</strong></div>
-    <div>${ok('nome')} Homenageado: <strong>${state.nome||'Não preenchido'}</strong></div>
-    <div>${ok('data')} Data: <strong>${state.data||'Não preenchida'}</strong></div>
-    <div>${ok('local')} Local: <strong>${state.local||'Não preenchido'}</strong></div>
-    <div>🎁 Presentes: <strong>${state.gifts.length} item(s)</strong></div>
-    <div>🎵 Música: <strong>${state.music_url?'✓ Configurada':'Não adicionada'}</strong></div>
-    <div>📸 Galeria: <strong>${state.gallery_urls.length} foto(s)</strong></div>
-    <div>💸 PIX: <strong>${state.pix_key||'Não configurado'}</strong></div>
-    <div>💌 Mural: <strong>${state.wishes_enabled?'Ativado':'Desativado'}</strong></div>
+  const ok=(v)=>v?'<span style="color:#34d399;font-size:.9rem">✓</span>':'<span style="color:#f87171;font-size:.9rem">✗</span>';
+  el.innerHTML=`<div style="display:flex;flex-direction:column;gap:.35rem">
+    <div class="publish-summary-row">${ok(state.titulo)} <span>Título: <strong>${state.titulo||'Não preenchido'}</strong></span></div>
+    <div class="publish-summary-row">${ok(state.nome)} <span>Homenageado: <strong>${state.nome||'Não preenchido'}</strong></span></div>
+    <div class="publish-summary-row">${ok(state.data)} <span>Data: <strong>${state.data||'Não preenchida'}</strong></span></div>
+    <div class="publish-summary-row">${ok(state.local)} <span>Local: <strong>${state.local||'Não preenchido'}</strong></span></div>
+    <div class="publish-summary-row">🎁 <span>Presentes: <strong>${state.gifts.length} item(s)</strong></span></div>
+    <div class="publish-summary-row">🎵 <span>Música: <strong>${state.music_url?'Configurada':'Não adicionada'}</strong></span></div>
+    <div class="publish-summary-row">📸 <span>Galeria: <strong>${galleryBlobs.length} foto(s)</strong></span></div>
+    <div class="publish-summary-row">💸 <span>PIX: <strong>${state.pix_key||'Não configurado'}</strong></span></div>
   </div>`;
   if(!state.slug && state.nome){
     const slug=state.nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
@@ -583,7 +1018,156 @@ function renderStep4Summary(){
   }
 }
 
-// ── DEVICE TOGGLE ──
+// ══ SLUG ══
+function updateSlugPreview(){
+  const v=document.getElementById('fSlug').value;
+  document.getElementById('slugPreview').textContent=v?`Link: contecomigo.vercel.app/convite.html?slug=${v}`:'';
+  state.slug=v;
+}
+
+// ══ SAVE DRAFT ══
+function saveDraft(){
+  collectState();
+  const saveable={...state,heroPhotoBlob:null,heroPhotoUrl:state.heroPhotoUrl,gallery_urls:galleryBlobs.map(g=>g.url)};
+  try{localStorage.setItem('ccm_draft',JSON.stringify(saveable));}catch(e){}
+  showToast('💾 Rascunho salvo!');
+}
+
+// ══ LOAD INVITE ══
+async function loadInvite(id){
+  const {data:inv}=await sb.from('invites').select('*').eq('id',id).single();
+  if(!inv) return;
+  editingInviteId=inv.id;
+  Object.assign(state,{
+    tplId:inv.template||'aniv-neon',
+    titulo:inv.title||'',nome:inv.event_name||'',data:inv.event_date||'',
+    hora:inv.event_time||'',local:inv.location||'',dress:inv.dress_code||'',
+    msg:inv.message||'',prazo:inv.rsvp_deadline||'',
+    accent:inv.accent||'#FFD93D',bgKey:inv.bg_key||'dark-purple',
+    slug:inv.slug||'',visib:inv.visibility||'public',
+    music_url:inv.music_url||'',pix_key:inv.pix_key||'',
+    gallery_urls:inv.gallery_urls||[],
+    wishes_enabled:inv.wishes_enabled!==false,closed_list:inv.closed_list||false,
+    heroPhotoUrl:inv.photo_url||''
+  });
+  const {data:gifts}=await sb.from('gifts').select('*').eq('invite_id',id);
+  state.gifts=(gifts||[]).map(g=>({id:g.id,name:g.name,price:g.price,link:g.link,imageUrl:g.photo_url||'',reserved:g.reserved}));
+  fillForm();renderGiftList();fillExtras();
+  // select cat tab and template
+  const tpl=getTemplate(state.tplId);
+  if(tpl){
+    const cat=Object.entries(TEMPLATES).find(([k,arr])=>arr.find(t=>t.id===state.tplId))?.[0]||'aniversario-adulto';
+    state.tplCat=cat;
+    document.querySelectorAll('.cat-tab').forEach(t=>t.classList.toggle('active',t.dataset.cat===cat));
+    renderCatTemplates(cat);
+  }
+  document.getElementById('topbarTitle').textContent='Editar convite';
+}
+
+// ══ PUBLISH ══
+async function publishInvite(){
+  collectState();
+  if(!state.titulo||!state.nome||!state.data){showToast('❌ Preencha título, nome e data');goStep(1);return;}
+  if(!currentUser){showToast('❌ Você precisa estar logado');return;}
+
+  const btns=[document.getElementById('btnPublish'),document.getElementById('btnPublish2')];
+  btns.forEach(b=>{if(b){b.disabled=true;b.textContent='Publicando…';}});
+
+  let heroPhotoPublicUrl = state.heroPhotoUrl;
+  let galleryPublicUrls = galleryBlobs.filter(g=>!g.blob).map(g=>g.url); // already-uploaded
+
+  // Upload hero photo if new
+  if(state.heroPhotoBlob){
+    const ext=state.heroPhotoBlob.name.split('.').pop();
+    const path=`${currentUser.id}/hero_${Date.now()}.${ext}`;
+    const {data:upData,error:upErr}=await sb.storage.from('invite-images').upload(path,state.heroPhotoBlob,{upsert:true});
+    if(!upErr){
+      const {data:{publicUrl}}=sb.storage.from('invite-images').getPublicUrl(path);
+      heroPhotoPublicUrl=publicUrl;
+    }
+  }
+
+  // Upload gallery new blobs
+  const newGalleryUploads = galleryBlobs.filter(g=>g.blob);
+  for(const g of newGalleryUploads){
+    const ext=g.blob.name.split('.').pop();
+    const path=`${currentUser.id}/gallery_${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+    const {data:upData,error:upErr}=await sb.storage.from('invite-images').upload(path,g.blob,{upsert:true});
+    if(!upErr){
+      const {data:{publicUrl}}=sb.storage.from('invite-images').getPublicUrl(path);
+      galleryPublicUrls.push(publicUrl);
+    }
+  }
+
+  // Upload gift images
+  const giftsWithUrls = await Promise.all(state.gifts.map(async g=>{
+    if(g.imageBlob){
+      const ext=g.imageBlob.name.split('.').pop();
+      const path=`${currentUser.id}/gift_${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+      const {data:upData,error:upErr}=await sb.storage.from('invite-images').upload(path,g.imageBlob,{upsert:true});
+      if(!upErr){
+        const {data:{publicUrl}}=sb.storage.from('invite-images').getPublicUrl(path);
+        return {...g,imageUrl:publicUrl};
+      }
+    }
+    return g;
+  }));
+
+  const slug=state.slug||state.nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'')+'-'+Date.now();
+
+  const inviteData={
+    user_id:currentUser.id,slug,
+    title:state.titulo,event_name:state.nome,
+    event_type:getCurrentTemplate()?.id||'',
+    event_date:state.data||null,event_time:state.hora||null,
+    location:state.local,dress_code:state.dress,message:state.msg,
+    rsvp_deadline:state.prazo||null,
+    accent:state.accent,bg_key:state.bgKey,
+    bg_gradient:BG_GRADIENTS[state.bgKey]||BG_GRADIENTS['dark-purple'],
+    template:state.tplId,
+    photo_url:heroPhotoPublicUrl||getCurrentTemplate()?.img||null,
+    visibility:state.visib,published:true,
+    music_url:state.music_url||null,
+    gallery_urls:galleryPublicUrls.length?galleryPublicUrls:null,
+    pix_key:state.pix_key||null,
+    wishes_enabled:state.wishes_enabled,
+    closed_list:state.closed_list,
+  };
+
+  let inviteId=editingInviteId;
+  if(editingInviteId){
+    const {error}=await sb.from('invites').update(inviteData).eq('id',editingInviteId);
+    if(error){showToast('❌ Erro: '+error.message);btns.forEach(b=>{if(b){b.disabled=false;b.textContent='🚀 Publicar convite agora!';}}); return;}
+    await sb.from('gifts').delete().eq('invite_id',editingInviteId);
+  } else {
+    const {data,error}=await sb.from('invites').insert(inviteData).select().single();
+    if(error){showToast('❌ Erro: '+error.message);btns.forEach(b=>{if(b){b.disabled=false;b.textContent='🚀 Publicar convite agora!';}}); return;}
+    inviteId=data.id;
+  }
+
+  if(giftsWithUrls.length && inviteId){
+    await sb.from('gifts').insert(giftsWithUrls.map(g=>({
+      invite_id:inviteId,name:g.name,price:g.price||null,
+      link:g.link||null,photo_url:g.imageUrl||null,reserved:false,emoji:null
+    })));
+  }
+
+  localStorage.removeItem('ccm_draft');
+  localStorage.setItem('ccm_current_slug',slug);
+  showToast('🚀 Convite publicado com sucesso!');
+  setTimeout(()=>location.href='dashboard.html',1200);
+}
+
+// ══ PREVIEW TAB ══
+function openPreviewTab(){
+  collectState();
+  const slug=state.slug||'preview';
+  localStorage.setItem('ccm_current_slug',slug);
+  localStorage.setItem('ccm_current_invite',JSON.stringify({...state,slug,guests:[],gifts:state.gifts,gallery_urls:galleryBlobs.map(g=>g.url)}));
+  window.open('convite.html?slug='+slug,'_blank');
+}
+
+// ══ DEVICE ══
 function setDevice(d,btn){
   document.querySelectorAll('.dev-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
@@ -591,102 +1175,16 @@ function setDevice(d,btn){
   frame.className='preview-frame'+(d==='desktop'?' desktop':d==='tablet'?' tablet':'');
 }
 
-// ── SAVE DRAFT (local) ──
-function saveDraft(){
-  collectState();
-  localStorage.setItem('ccm_draft',JSON.stringify(state));
-  showToast('💾 Rascunho salvo localmente!');
-}
-
-// ── PUBLISH ──
-async function publishInvite(){
-  collectState();
-  if(!state.titulo||!state.nome||!state.data){showToast('❌ Preencha título, nome e data');goStep(1);return;}
-  if(!currentUser){showToast('❌ Você precisa estar logado');return;}
-
-  const btns=[document.getElementById('btnPublish'),document.getElementById('btnPublish2')];
-  btns.forEach(b=>{if(b){b.disabled=true;b.textContent='Publicando...';}});
-
-  const slug = state.slug || state.nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'')+'-'+Date.now();
-
-  const inviteData = {
-    user_id: currentUser.id,
-    slug,
-    title: state.titulo,
-    event_name: state.nome,
-    event_type: state.tipo,
-    event_date: state.data || null,
-    event_time: state.hora || null,
-    location: state.local,
-    dress_code: state.dress,
-    message: state.msg,
-    rsvp_deadline: state.prazo || null,
-    accent: state.accent,
-    bg_gradient: state.bg,
-    template: state.tpl,
-    photo_url: tplImgs[state.tpl]||null,
-    visibility: state.visib,
-    published: true,
-    // v2 extras
-    music_url: state.music_url || null,
-    gallery_urls: state.gallery_urls.length ? state.gallery_urls : null,
-    pix_key: state.pix_key || null,
-    wishes_enabled: state.wishes_enabled,
-    closed_list: state.closed_list,
-  };
-
-  let inviteId = editingInviteId;
-
-  if(editingInviteId){
-    const {error} = await sb.from('invites').update(inviteData).eq('id',editingInviteId);
-    if(error){showToast('❌ Erro ao atualizar: '+error.message);btns.forEach(b=>{if(b){b.disabled=false;b.textContent='🚀 Publicar convite agora!';}}); return;}
-    // Delete old gifts and re-insert
-    await sb.from('gifts').delete().eq('invite_id',editingInviteId);
-  } else {
-    const {data,error} = await sb.from('invites').insert(inviteData).select().single();
-    if(error){showToast('❌ Erro: '+error.message);btns.forEach(b=>{if(b){b.disabled=false;b.textContent='🚀 Publicar convite agora!';}}); return;}
-    inviteId = data.id;
-  }
-
-  // Insert gifts
-  if(state.gifts.length && inviteId){
-    const giftsToInsert = state.gifts.map(g=>({
-      invite_id: inviteId,
-      name: g.name,
-      price: g.price||null,
-      emoji: g.emoji||'🎁',
-      link: g.link||null,
-      reserved: false,
-    }));
-    await sb.from('gifts').insert(giftsToInsert);
-  }
-
-  localStorage.removeItem('ccm_draft');
-  localStorage.setItem('ccm_current_slug', slug);
-  showToast('🚀 Convite publicado com sucesso!');
-  setTimeout(()=>location.href='dashboard.html', 1200);
-}
-
-// ── PREVIEW TAB ──
-function openPreviewTab(){
-  collectState();
-  const slug = state.slug || 'preview';
-  localStorage.setItem('ccm_current_slug', slug);
-  // Also save state locally for preview
-  localStorage.setItem('ccm_current_invite', JSON.stringify({...state, slug, guests:[], gifts:state.gifts}));
-  window.open('convite.html?slug='+slug,'_blank');
-}
-
-// ── TOAST ──
+// ══ TOAST ══
 function showToast(msg){
   const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
   clearTimeout(window._toastTimer);
   window._toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
 }
 
-// ── START ──
+// ══ START ══
 init();
-setInterval(()=>{collectState();localStorage.setItem('ccm_draft',JSON.stringify(state));},30000);
+setInterval(()=>saveDraft(),30000);
 </script>
 </body>
 </html>

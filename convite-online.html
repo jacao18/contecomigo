@@ -1998,27 +1998,27 @@
         </div>
         <div class="gifts-grid" style="pointer-events:none;user-select:none">
           <div class="gift-card">
-            <div class="gift-img" style="background:rgba(26,10,0,.04);display:flex;align-items:center;justify-content:center;font-size:2.5rem">☕</div>
+            <div class="gift-img"><img src="imgs/cha-twinings.jpg" alt="Kit de Chá Twinings" style="width:100%;height:100%;object-fit:cover"/></div>
             <div class="gift-info">
-              <div class="gift-name">Kit de Chá Gourmet</div>
+              <div class="gift-name">Kit de Chá Gourmet Twinings</div>
               <div class="gift-price">R$ 89,90</div>
               <div class="gift-status available">✅ Disponível</div>
               <button class="gift-btn" style="opacity:.5">Quero dar este presente</button>
             </div>
           </div>
           <div class="gift-card">
-            <div class="gift-img" style="background:rgba(26,10,0,.04);display:flex;align-items:center;justify-content:center;font-size:2.5rem">📚</div>
+            <div class="gift-img"><img src="imgs/livro-palmirinha.jpg" alt="Livro 50 Receitas Palmirinha" style="width:100%;height:100%;object-fit:cover"/></div>
             <div class="gift-info">
-              <div class="gift-name">Livro de Receitas</div>
+              <div class="gift-name">50 Receitas por Palmirinha</div>
               <div class="gift-price">R$ 65,00</div>
               <div class="gift-status reserved">🔒 Reservado por Ana</div>
               <button class="gift-btn" disabled style="opacity:.35">Já reservado</button>
             </div>
           </div>
           <div class="gift-card">
-            <div class="gift-img" style="background:rgba(26,10,0,.04);display:flex;align-items:center;justify-content:center;font-size:2.5rem">🍫</div>
+            <div class="gift-img"><img src="imgs/chocolates-brasil-cacau.jpg" alt="Chocolates Brasil Cacau Experiências" style="width:100%;height:100%;object-fit:cover"/></div>
             <div class="gift-info">
-              <div class="gift-name">Caixa de Chocolates</div>
+              <div class="gift-name">Chocolates Brasil Cacau</div>
               <div class="gift-price">R$ 75,00</div>
               <div class="gift-status available">✅ Disponível</div>
               <button class="gift-btn" style="opacity:.5">Quero dar este presente</button>
@@ -2087,7 +2087,7 @@
       <h2 class="section-title reveal">Simples assim:<br>sem letras miúdas.</h2>
       <p class="section-sub reveal" style="margin-bottom:3rem">Comece grátis. Evolua quando quiser.</p>
 
-      <div class="pricing-grid">
+      <div class="pricing-grid" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr));max-width:1100px;margin:0 auto">
         <!-- Free -->
         <div class="pricing-card reveal">
           <div class="pricing-name">GRATUITO</div>
@@ -2100,10 +2100,10 @@
             <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Confirmação de presença</div>
             <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> 5 templates gratuitos</div>
             <div class="pricing-feature"><span class="pricing-feature-icon off">✗</span> Lista de presentes</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon off">✗</span> Música &amp; galeria</div>
             <div class="pricing-feature"><span class="pricing-feature-icon off">✗</span> Sem marca d'água</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon off">✗</span> Domínio personalizado</div>
           </div>
-          <button class="pricing-btn pricing-btn-outline">Começar grátis</button>
+          <a href="login.html" class="pricing-btn pricing-btn-outline" style="display:block;text-align:center;text-decoration:none">Começar grátis</a>
         </div>
 
         <!-- Pro -->
@@ -2116,31 +2116,35 @@
           <div class="pricing-features">
             <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Convites ilimitados</div>
             <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Convidados ilimitados</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Todos os templates</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Lista de presentes completa</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Todos os 16 templates</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Upload de fotos</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Lista de presentes com fotos</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Música &amp; galeria de fotos</div>
             <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Sem marca d'água</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Contador regressivo</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Exportar lista de convidados</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Mural de mensagens</div>
           </div>
-          <button class="pricing-btn pricing-btn-primary">Assinar Pro →</button>
+          <a href="login.html" class="pricing-btn pricing-btn-primary" style="display:block;text-align:center;text-decoration:none">Assinar Pro →</a>
         </div>
 
-        <!-- Premium -->
-        <div class="pricing-card reveal">
-          <div class="pricing-name">PREMIUM</div>
-          <div class="pricing-price"><sup>R$</sup>49</div>
+        <!-- Profissional -->
+        <div class="pricing-card reveal" style="border:2px solid rgba(255,217,61,.4);background:linear-gradient(135deg,rgba(255,217,61,.06),rgba(255,61,107,.04))">
+          <div class="pricing-tag" style="background:var(--yellow);color:rgba(26,10,0,.85)">🏢 Para empresas</div>
+          <div class="pricing-name">PROFISSIONAL</div>
+          <div class="pricing-price"><sup>R$</sup>149</div>
           <div class="pricing-period">por mês</div>
           <hr class="pricing-divider" />
           <div class="pricing-features">
             <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Tudo do Pro</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Domínio personalizado</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Notificações automáticas</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> <strong>Convites para seus clientes</strong></div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Clientes criam convites pela sua conta</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Painel multi-eventos</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Marca personalizada (logo própria)</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Relatórios e exportações</div>
             <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Suporte prioritário</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Múltiplos eventos</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Análises detalhadas</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> API para integrações</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Templates exclusivos para sua marca</div>
           </div>
-          <button class="pricing-btn pricing-btn-outline">Assinar Premium</button>
+          <a href="mailto:contato@contecomigo.com.br" class="pricing-btn pricing-btn-outline" style="display:block;text-align:center;text-decoration:none">Falar com a equipe →</a>
+          <div style="font-size:.72rem;color:rgba(26,10,0,.35);text-align:center;margin-top:.75rem">Ideal para casas de festas, buffets e cerimonialistas</div>
         </div>
       </div>
     </div>
@@ -2499,4 +2503,3 @@
   </script>
 </body>
 </html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
