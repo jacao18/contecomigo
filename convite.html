@@ -458,7 +458,7 @@
 
 <!-- NAV -->
 <nav class="nav">
-  <div class="nav-logo" onclick="location.href='convite-online.html'">ConteComigo</div>
+  <div class="nav-logo" onclick="goHome()">ConteComigo</div>
   <div class="nav-links">
     <div class="nav-link-pill" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar</div>
     <div class="nav-link-pill" onclick="document.getElementById('giftsSection').scrollIntoView({behavior:'smooth'})">🎁 Presentes</div>
@@ -674,6 +674,14 @@ function hideLoading() {
 function showError() {
   hideLoading();
   document.getElementById('errorScreen').classList.add('show');
+}
+
+// ══════════════════════════════════════════
+//  LOGO HOME — redireciona pro dashboard se logado
+// ══════════════════════════════════════════
+async function goHome() {
+  const { data:{ session } } = await sb.auth.getSession();
+  location.href = session ? 'dashboard.html' : 'convite-online.html';
 }
 
 // ══════════════════════════════════════════

@@ -143,7 +143,7 @@
 <body>
 
 <nav class="sidenav">
-  <div class="sidenav-logo" onclick="location.href='convite-online.html'">ConteComigo</div>
+  <div class="sidenav-logo" onclick="location.href='dashboard.html'">ConteComigo</div>
   <div class="sidenav-user">
     <div class="sidenav-avatar" id="userAvatar">?</div>
     <div>
@@ -163,6 +163,7 @@
   <div class="sidenav-item" onclick="showSection('share',this)"><span class="sidenav-icon">🔗</span>Compartilhar</div>
 
   <div class="sidenav-section">Conta</div>
+  <div class="sidenav-item" onclick="showSection('upgrade',this)"><span class="sidenav-icon">⭐</span>Fazer upgrade</div>
   <div class="sidenav-item" onclick="location.href='convite-online.html'"><span class="sidenav-icon">🏡</span>Página inicial</div>
   <div class="sidenav-item" onclick="doLogout()"><span class="sidenav-icon">🚪</span>Sair</div>
 
@@ -252,7 +253,7 @@ async function loadData(){
 
 function showSection(s, el){
   activeSection = s;
-  const titles={overview:'Visão Geral',guests:'Convidados',gifts:'Presentes',share:'Compartilhar'};
+  const titles={overview:'Visão Geral',guests:'Convidados',gifts:'Presentes',share:'Compartilhar',upgrade:'Fazer Upgrade'};
   document.getElementById('pageTitle').textContent = titles[s]||s;
   document.querySelectorAll('.sidenav-item').forEach(i=>i.classList.remove('active'));
   if(el) el.classList.add('active');
@@ -265,6 +266,7 @@ function render(){
   else if(activeSection==='guests') c.innerHTML = renderGuestsSection();
   else if(activeSection==='gifts') c.innerHTML = renderGiftsSection();
   else if(activeSection==='share') c.innerHTML = renderShare();
+  else if(activeSection==='upgrade') c.innerHTML = renderUpgrade();
 }
 
 // ── OVERVIEW ──
@@ -283,7 +285,7 @@ function renderOverview(){
 
   return `
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-top"><div class="stat-icon pink">📨</div><div class="stat-trend neutral">${invites.length} convito(s)</div></div><div class="stat-num">${guests.length}</div><div class="stat-label">Confirmações recebidas</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-icon pink">📨</div><div class="stat-trend neutral">${invites.length} convite(s)</div></div><div class="stat-num">${guests.length}</div><div class="stat-label">Confirmações recebidas</div></div>
       <div class="stat-card"><div class="stat-top"><div class="stat-icon green">✅</div><div class="stat-trend up">+${yes.length}</div></div><div class="stat-num">${yes.length}</div><div class="stat-label">Confirmados</div></div>
       <div class="stat-card"><div class="stat-top"><div class="stat-icon yellow">👥</div><div class="stat-trend neutral">pessoas</div></div><div class="stat-num">${totalPeople}</div><div class="stat-label">Pessoas confirmadas</div></div>
       <div class="stat-card"><div class="stat-top"><div class="stat-icon blue">🎁</div><div class="stat-trend up">${reservedGifts} reserv.</div></div><div class="stat-num">${reservedGifts}/${gifts.length}</div><div class="stat-label">Presentes reservados</div></div>
@@ -315,9 +317,10 @@ function renderOverview(){
         <div style="padding:1rem">
           <div style="font-weight:800;margin-bottom:.25rem">${invTitle}</div>
           <div style="font-size:.75rem;color:rgba(26,10,0,.4);margin-bottom:1rem">${invDate}</div>
-          <div style="display:flex;gap:.5rem">
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap">
             <button class="btn-xs btn-xs-pink" onclick="goEditor()">✏️ Editar</button>
             <button class="btn-xs btn-xs-outline" onclick="openPublicInvite()">👁 Ver</button>
+            <button class="btn-xs btn-xs-outline" style="color:#f87171;border-color:rgba(248,113,113,.3)" onclick="confirmDeleteInvite('${activeInvite?.id}')">🗑 Deletar</button>
           </div>
         </div>
       </div>
@@ -408,6 +411,84 @@ function renderShare(){
         <button class="share-btn share-view" onclick="openPublicInvite()">👁 Ver convite</button>
       </div>
     </div>`;
+}
+
+// ── UPGRADE ──
+function renderUpgrade(){
+  const plan = currentUser?.user_metadata?.plan || 'gratuito';
+  const planLabel = {gratuito:'Gratuito',pro:'PRO',profissional:'Profissional'}[plan]||'Gratuito';
+  return `
+    <div style="max-width:820px">
+      <div style="background:linear-gradient(135deg,rgba(255,61,107,.08),rgba(255,217,61,.06));border:1px solid rgba(255,61,107,.15);border-radius:16px;padding:1.5rem;margin-bottom:2rem;display:flex;align-items:center;gap:1rem">
+        <div style="font-size:2rem">⭐</div>
+        <div>
+          <div style="font-weight:800;margin-bottom:.2rem">Seu plano atual: <span style="color:var(--pink)">${planLabel}</span></div>
+          <div style="font-size:.85rem;color:rgba(26,10,0,.5)">Faça upgrade para desbloquear mais recursos e criar convites incríveis.</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem">
+        <!-- FREE -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:1.5rem;${plan==='gratuito'?'border-color:var(--pink);box-shadow:0 0 0 2px rgba(255,61,107,.15)':''}">
+          <div style="font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(26,10,0,.35);margin-bottom:.5rem">GRATUITO</div>
+          <div style="font-family:var(--font-display);font-size:2rem;font-weight:900;font-style:italic;line-height:1;margin-bottom:.2rem">R$ 0</div>
+          <div style="font-size:.78rem;color:rgba(26,10,0,.4);margin-bottom:1.25rem">para sempre</div>
+          <div style="display:flex;flex-direction:column;gap:.5rem;font-size:.82rem;margin-bottom:1.5rem">
+            <div>✓ 1 convite ativo</div>
+            <div>✓ Até 50 convidados</div>
+            <div>✓ Confirmação de presença</div>
+            <div style="color:rgba(26,10,0,.3)">✗ Lista de presentes</div>
+            <div style="color:rgba(26,10,0,.3)">✗ Música e galeria</div>
+          </div>
+          ${plan==='gratuito'?'<div style="text-align:center;font-size:.8rem;font-weight:800;color:var(--pink)">✓ Plano atual</div>':'<div style="text-align:center;font-size:.8rem;color:rgba(26,10,0,.3)">Plano básico</div>'}
+        </div>
+        <!-- PRO -->
+        <div style="background:var(--panel);border:2px solid var(--pink);border-radius:16px;padding:1.5rem;position:relative;${plan==='pro'?'box-shadow:0 0 0 3px rgba(255,61,107,.2)':''}">
+          <div style="position:absolute;top:-.75rem;left:50%;transform:translateX(-50%);background:var(--pink);color:#fff;font-size:.65rem;font-weight:800;padding:.2rem .75rem;border-radius:99px;white-space:nowrap">⭐ Mais popular</div>
+          <div style="font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--pink);margin-bottom:.5rem">PRO</div>
+          <div style="font-family:var(--font-display);font-size:2rem;font-weight:900;font-style:italic;line-height:1;margin-bottom:.2rem">R$ 19</div>
+          <div style="font-size:.78rem;color:rgba(26,10,0,.4);margin-bottom:1.25rem">por evento</div>
+          <div style="display:flex;flex-direction:column;gap:.5rem;font-size:.82rem;margin-bottom:1.5rem">
+            <div>✓ Convites ilimitados</div>
+            <div>✓ Todos os 16 templates</div>
+            <div>✓ Upload de fotos</div>
+            <div>✓ Lista de presentes com fotos</div>
+            <div>✓ Música e galeria</div>
+            <div>✓ Sem marca d'água</div>
+          </div>
+          ${plan==='pro'?'<div style="text-align:center;font-size:.8rem;font-weight:800;color:var(--pink)">✓ Plano atual</div>':`<button onclick="showToast('Em breve! Entre em contato: contato@contecomigo.com.br')" style="width:100%;padding:.65rem;background:var(--pink);color:#fff;border:none;border-radius:10px;font-family:var(--font-body);font-size:.85rem;font-weight:800;cursor:pointer">Assinar Pro →</button>`}
+        </div>
+        <!-- PROFISSIONAL -->
+        <div style="background:var(--panel);border:2px solid rgba(255,217,61,.4);border-radius:16px;padding:1.5rem;background:linear-gradient(135deg,rgba(255,217,61,.04),rgba(255,61,107,.02));${plan==='profissional'?'box-shadow:0 0 0 3px rgba(255,217,61,.25)':''}">
+          <div style="font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--yellow-dk);margin-bottom:.5rem">🏢 PROFISSIONAL</div>
+          <div style="font-family:var(--font-display);font-size:2rem;font-weight:900;font-style:italic;line-height:1;margin-bottom:.2rem">R$ 149</div>
+          <div style="font-size:.78rem;color:rgba(26,10,0,.4);margin-bottom:1.25rem">por mês</div>
+          <div style="display:flex;flex-direction:column;gap:.5rem;font-size:.82rem;margin-bottom:1.5rem">
+            <div>✓ Tudo do Pro</div>
+            <div>✓ <strong>Clientes criam seus próprios convites</strong></div>
+            <div>✓ Painel multi-eventos</div>
+            <div>✓ Marca personalizada</div>
+            <div>✓ Relatórios e exportações</div>
+            <div>✓ Suporte prioritário</div>
+          </div>
+          ${plan==='profissional'?'<div style="text-align:center;font-size:.8rem;font-weight:800;color:var(--yellow-dk)">✓ Plano atual</div>':`<button onclick="window.location.href='mailto:contato@contecomigo.com.br?subject=Plano Profissional'" style="width:100%;padding:.65rem;background:var(--yellow);color:rgba(26,10,0,.85);border:none;border-radius:10px;font-family:var(--font-body);font-size:.85rem;font-weight:800;cursor:pointer">Falar com a equipe →</button>`}
+          <div style="font-size:.7rem;color:rgba(26,10,0,.3);text-align:center;margin-top:.6rem">Ideal para casas de festas e buffets</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── DELETE INVITE ──
+async function confirmDeleteInvite(id){
+  if(!id) return;
+  const inv = invites.find(i=>i.id===id);
+  if(!inv) return;
+  if(!confirm(`Tem certeza que deseja deletar o convite "${inv.title}"?\n\nEsta ação não pode ser desfeita. Todos os convidados e presentes serão removidos.`)) return;
+  const {error} = await sb.from('invites').delete().eq('id',id).eq('user_id',currentUser.id);
+  if(error){ showToast('❌ Erro ao deletar: '+error.message); return; }
+  showToast('🗑 Convite deletado com sucesso.');
+  localStorage.removeItem('ccm_current_slug');
+  await loadData();
+  render();
 }
 
 // ── FILTER ──
