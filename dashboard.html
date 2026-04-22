@@ -168,7 +168,7 @@
   <div class="sidenav-item" onclick="doLogout()"><span class="sidenav-icon">🚪</span>Sair</div>
 
   <div class="sidenav-bottom">
-    <button class="btn-new-invite" onclick="location.href='editor.html'">✨ Novo convite</button>
+    <button class="btn-new-invite" onclick="newInvite()">✨ Novo convite</button>
   </div>
 </nav>
 
@@ -486,7 +486,8 @@ async function confirmDeleteInvite(id){
   const {error} = await sb.from('invites').delete().eq('id',id).eq('user_id',currentUser.id);
   if(error){ showToast('❌ Erro ao deletar: '+error.message); return; }
   showToast('🗑 Convite deletado com sucesso.');
-  localStorage.removeItem('ccm_current_slug');
+  // Limpa TUDO do localStorage relacionado ao convite deletado
+  ['ccm_current_slug','ccm_current_invite','ccm_draft','ccm_edit_invite','ccm_template'].forEach(k=>localStorage.removeItem(k));
   await loadData();
   render();
 }
@@ -515,6 +516,11 @@ function openPublicInvite(){
 }
 function goEditor(){
   if(activeInvite) localStorage.setItem('ccm_edit_invite', activeInvite.id);
+  location.href='editor.html';
+}
+function newInvite(){
+  // Limpa qualquer rascunho ou convite anterior antes de começar do zero
+  ['ccm_current_slug','ccm_current_invite','ccm_draft','ccm_edit_invite','ccm_template'].forEach(k=>localStorage.removeItem(k));
   location.href='editor.html';
 }
 async function doLogout(){

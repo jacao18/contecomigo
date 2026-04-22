@@ -1184,7 +1184,8 @@ function showToast(msg){
 
 // ══ START ══
 init();
-setInterval(()=>saveDraft(),30000);
+// Autosave só roda se estiver editando um convite existente (não em criação nova)
+setInterval(()=>{ if(editingInviteId) saveDraft(); },30000);
 </script>
 </body>
 </html>
