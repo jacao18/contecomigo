@@ -466,35 +466,8 @@
   </div>
 </nav>
 
-<!-- HERO -->
-<section class="invite-hero" id="heroSection">
-  <div class="invite-hero-img" id="heroImg"></div>
-  <div class="invite-hero-overlay"></div>
-  <div class="hero-content">
-    <div class="invite-event-badge" id="eventBadge">🎉 Você está convidado!</div>
-    <span class="invite-emoji" id="invEmoji">🎂</span>
-    <div class="invite-title" id="invTitle">Você está convidado!</div>
-    <div class="invite-name" id="invName">Nome do homenageado</div>
-    <div class="invite-details-grid" id="invDetails">
-      <div class="inv-det"><span class="inv-det-icon">📅</span><span id="invDate">—</span></div>
-      <div class="inv-det"><span class="inv-det-icon">⏰</span><span id="invTime">—</span></div>
-      <div class="inv-det"><span class="inv-det-icon">📍</span><span id="invLocal">—</span></div>
-    </div>
-    <div class="invite-actions">
-      <button class="btn-rsvp" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</button>
-      <button class="btn-presents" onclick="document.getElementById('giftsSection').scrollIntoView({behavior:'smooth'})">🎁 Ver lista de presentes</button>
-    </div>
-    <div class="countdown-bar" id="countdownBar">
-      <div class="cd-unit"><span class="cd-num" id="cdD">—</span><div class="cd-label">Dias</div></div>
-      <div class="cd-sep">:</div>
-      <div class="cd-unit"><span class="cd-num" id="cdH">—</span><div class="cd-label">Horas</div></div>
-      <div class="cd-sep">:</div>
-      <div class="cd-unit"><span class="cd-num" id="cdM">—</span><div class="cd-label">Min</div></div>
-      <div class="cd-sep">:</div>
-      <div class="cd-unit"><span class="cd-num" id="cdS">—</span><div class="cd-label">Seg</div></div>
-    </div>
-  </div>
-</section>
+<!-- HERO — rendered by template system -->
+<div id="templateHero"></div>
 
 <!-- MESSAGE -->
 <section class="section reveal" id="msgSection" style="display:none">
@@ -685,6 +658,387 @@ async function goHome() {
 }
 
 // ══════════════════════════════════════════
+//  TEMPLATE RENDERER — idêntico ao editor
+// ══════════════════════════════════════════
+function renderTemplateHTML(tplId, s){
+  const ac = s.accent || '#FFD93D';
+  const heroImg = s.photo_url || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80';
+
+  const date = s.event_date ? new Date(s.event_date+'T12:00:00') : null;
+  const dateStr = date ? date.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) : '—';
+  const dateShort = date ? date.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'}) : '—';
+  let days='—';
+  if(date){ const d=Math.floor((date-new Date())/86400000); days=d>0?d+'':'🎉'; }
+
+  const giftsChips = s.gifts.slice(0,3).map(g=>`
+    <div style="display:flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.12);border-radius:8px;padding:.35rem .65rem;font-size:.75rem;color:inherit">
+      ${g.photo_url?`<img src="${g.photo_url}" style="width:14px;height:14px;border-radius:3px;object-fit:cover"/>`:'🎁'}
+      ${g.name}
+    </div>`).join('');
+
+  const rsvpBtn = `<div onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})" style="background:${ac};color:${ac==='#FFFFFF'?'#1A0A00':'#1a0a00'};font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;cursor:pointer">✅ Confirmar presença</div>`;
+  const presentsBtn = s.gifts.length ? `<div onclick="document.getElementById('giftsSection').scrollIntoView({behavior:'smooth'})" style="display:inline-block;margin-top:.5rem;padding:.55rem 1.25rem;border:1px solid rgba(255,255,255,.3);border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;color:inherit;opacity:.75">🎁 Ver presentes</div>` : '';
+
+  const titulo = s.title || s.titulo || 'Você está convidado!';
+  const nome = s.event_name || s.nome || '';
+  const hora = s.event_time || s.hora || '';
+  const local = s.location || s.local || '';
+  const dress = s.dress_code || s.dress || '';
+  const msg = s.message || s.msg || '';
+
+  if(tplId==='aniv-neon') return `
+    <div style="background:#0a0010;min-height:500px;font-family:'Nunito',sans-serif;color:#fff;position:relative;overflow:hidden">
+      <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;background-position:center;opacity:.15"></div>
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,${ac},#ff3d6b,${ac})"></div>
+      <div style="position:relative;padding:2.5rem 1.5rem 1.5rem;text-align:center">
+        <div style="display:inline-block;border:1px solid ${ac};border-radius:99px;padding:.25rem .9rem;font-size:.65rem;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:${ac};margin-bottom:1rem">✦ Você está convidado ✦</div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,8vw,3rem);font-weight:900;font-style:italic;line-height:1;color:${ac};text-shadow:0 0 40px ${ac}88;margin-bottom:.5rem">${titulo}</div>
+        <div style="font-size:1.1rem;font-weight:700;color:rgba(255,255,255,.7);margin-bottom:1.5rem">${nome}</div>
+        <div style="display:inline-flex;flex-direction:column;gap:.4rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:1rem 1.5rem;margin-bottom:1.5rem;min-width:200px">
+          <div style="font-size:.85rem;color:rgba(255,255,255,.6)">📅 ${dateStr}</div>
+          ${hora?`<div style="font-size:.85rem;color:rgba(255,255,255,.6)">⏰ ${hora}</div>`:''}
+          ${local?`<div style="font-size:.85rem;color:rgba(255,255,255,.6)">📍 ${local}</div>`:''}
+          ${dress?`<div style="font-size:.85rem;color:rgba(255,255,255,.6)">👗 ${dress}</div>`:''}
+        </div>
+        <div style="display:flex;justify-content:center;gap:.5rem;margin-bottom:1.5rem">
+          <div style="text-align:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:.75rem 1.25rem">
+            <div style="font-family:'Fraunces',Georgia,serif;font-size:2rem;font-weight:900;color:${ac}">${days}</div>
+            <div style="font-size:.6rem;color:rgba(255,255,255,.4);letter-spacing:.1em;text-transform:uppercase">dias</div>
+          </div>
+        </div>
+        ${msg?`<div style="background:rgba(255,255,255,.04);border-left:3px solid ${ac};border-radius:0 8px 8px 0;padding:.85rem 1rem;font-size:.85rem;color:rgba(255,255,255,.6);line-height:1.6;text-align:left;margin-bottom:1rem;font-style:italic">"${msg}"</div>`:''}
+        ${rsvpBtn}${presentsBtn}
+        ${s.gifts.length?`<div style="margin-top:1rem"><div style="font-size:.65rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:.5rem">🎁 Lista de presentes</div><div style="display:flex;flex-wrap:wrap;gap:.35rem;justify-content:center">${giftsChips}</div></div>`:''}
+      </div>
+      <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,${ac},#ff3d6b,${ac})"></div>
+    </div>`;
+
+  if(tplId==='aniv-tropical') return `
+    <div style="background:linear-gradient(160deg,#0d3320,#1a5c3a);min-height:500px;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+      <div style="position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:${ac};opacity:.08;border-radius:50%"></div>
+      <div style="position:absolute;bottom:-40px;left:-40px;width:160px;height:160px;background:${ac};opacity:.08;border-radius:50%"></div>
+      <div style="position:relative;padding:2rem 1.5rem;text-align:center">
+        <div style="width:110px;height:110px;border-radius:50%;overflow:hidden;margin:0 auto 1rem;border:4px solid ${ac};box-shadow:0 0 0 8px ${ac}22">
+          <img src="${heroImg}" style="width:100%;height:100%;object-fit:cover"/>
+        </div>
+        <div style="font-size:.65rem;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:${ac};margin-bottom:.4rem">🌺 Você está convidado!</div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;line-height:1.1;margin-bottom:.3rem">${titulo}</div>
+        <div style="font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:1.5rem">${nome}</div>
+        <div style="background:rgba(255,255,255,.08);border-radius:16px;padding:1rem;margin-bottom:1.5rem;display:flex;flex-direction:column;gap:.4rem">
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👗':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="display:flex;align-items:center;gap:.5rem;font-size:.82rem"><span>${i}</span><span>${v}</span></div>`).join('')}
+        </div>
+        ${msg?`<div style="font-style:italic;font-size:.85rem;color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:.85rem;margin-bottom:1rem;line-height:1.6">"${msg}"</div>`:''}
+        ${rsvpBtn}${presentsBtn}
+      </div>
+    </div>`;
+
+  if(tplId==='aniv-elegante') return `
+    <div style="background:#fff;min-height:500px;font-family:'Nunito',sans-serif;color:#1A0A00;overflow:hidden">
+      <div style="height:260px;position:relative;overflow:hidden">
+        <img src="${heroImg}" style="width:100%;height:100%;object-fit:cover;display:block"/>
+        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 30%,rgba(0,0,0,.75))"></div>
+        <div style="position:absolute;bottom:1.25rem;left:1.25rem;right:1.25rem">
+          <div style="font-size:.6rem;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:${ac};margin-bottom:.35rem">Você está convidado</div>
+          <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.6rem,6vw,2.4rem);font-weight:900;font-style:italic;color:#fff;line-height:1.1">${titulo}</div>
+        </div>
+      </div>
+      <div style="padding:1.5rem">
+        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid rgba(26,10,0,.08)">
+          <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,${ac},${ac}88);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',Georgia,serif;font-size:1.4rem;font-weight:900;font-style:italic;flex-shrink:0">${days}</div>
+          <div>
+            <div style="font-size:.65rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(26,10,0,.3)">dias para o evento</div>
+            <div style="font-weight:800;font-size:.95rem">${nome}</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.55rem;margin-bottom:1.25rem">
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👗':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="display:flex;gap:.6rem;font-size:.85rem;align-items:flex-start"><span style="flex-shrink:0">${i}</span><span style="color:rgba(26,10,0,.65)">${v}</span></div>`).join('')}
+        </div>
+        ${msg?`<div style="background:rgba(26,10,0,.03);border-left:3px solid ${ac};padding:.8rem 1rem;border-radius:0 8px 8px 0;font-style:italic;font-size:.85rem;color:rgba(26,10,0,.55);margin-bottom:1rem;line-height:1.6">"${msg}"</div>`:''}
+        ${rsvpBtn}${presentsBtn}
+      </div>
+    </div>`;
+
+  if(tplId==='aniv-fotos') return `
+    <div style="min-height:500px;font-family:'Nunito',sans-serif;position:relative;overflow:hidden">
+      <img src="${heroImg}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>
+      <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.2),rgba(0,0,0,.75))"></div>
+      <div style="position:relative;padding:3rem 1.5rem 2rem;text-align:center;color:#fff;min-height:500px;display:flex;flex-direction:column;justify-content:space-between">
+        <div>
+          <div style="font-size:.6rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:${ac};margin-bottom:.75rem">✦ Convite especial ✦</div>
+          <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2.2rem,8vw,3.2rem);font-weight:900;font-style:italic;line-height:1;text-shadow:0 2px 16px rgba(0,0,0,.5);margin-bottom:.5rem;color:${ac}">${titulo}</div>
+          <div style="font-size:1.1rem;font-weight:700;color:rgba(255,255,255,.85);margin-bottom:2rem">${nome}</div>
+        </div>
+        <div>
+          <div style="background:rgba(255,255,255,.12);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:1.25rem;margin-bottom:1.5rem">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;text-align:left">
+              <div style="font-size:.78rem;color:rgba(255,255,255,.7)">📅 ${dateShort}</div>
+              <div style="font-size:.78rem;color:rgba(255,255,255,.7)">${hora?'⏰ '+hora:''}</div>
+              <div style="font-size:.78rem;color:rgba(255,255,255,.7);grid-column:1/-1">${local?'📍 '+local:''}</div>
+              <div style="font-size:.78rem;color:rgba(255,255,255,.7);grid-column:1/-1">${dress?'👗 '+dress:''}</div>
+            </div>
+            ${msg?`<div style="border-top:1px solid rgba(255,255,255,.15);margin-top:.75rem;padding-top:.75rem;font-style:italic;font-size:.82rem;color:rgba(255,255,255,.65);line-height:1.5">"${msg}"</div>`:''}
+          </div>
+          ${rsvpBtn}${presentsBtn}
+        </div>
+      </div>
+    </div>`;
+
+  if(tplId==='kids-baloes') return `
+    <div style="background:#fff5f0;min-height:500px;font-family:'Nunito',sans-serif;overflow:hidden;position:relative">
+      <div style="position:absolute;top:0;left:0;right:0;height:180px;background:linear-gradient(135deg,${ac},#FF3D6B);overflow:hidden">
+        <img src="${heroImg}" style="width:100%;height:100%;object-fit:cover;opacity:.3;mix-blend-mode:overlay"/>
+        <div style="position:absolute;top:.5rem;left:50%;transform:translateX(-50%);font-size:2rem;opacity:.4">🎈🎈🎈</div>
+      </div>
+      <div style="position:relative;padding:0 1.25rem 2rem;text-align:center;padding-top:10px">
+        <div style="width:90px;height:90px;border-radius:50%;overflow:hidden;border:4px solid #fff;margin:120px auto 1rem;box-shadow:0 8px 24px rgba(0,0,0,.15);position:relative;z-index:1;margin-top:100px">
+          <img src="${heroImg}" style="width:100%;height:100%;object-fit:cover"/>
+        </div>
+        <div style="font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:${ac};margin-bottom:.3rem">🎉 Festa de Aniversário!</div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;color:#1A0A00;line-height:1.1;margin-bottom:.3rem">${titulo}</div>
+        <div style="font-weight:700;color:rgba(26,10,0,.5);margin-bottom:1.5rem">${nome}</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.5rem">
+          ${[['🗓',dateShort,'Data'],['⏰',hora||'—','Hora'],['📍',local?local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:#fff;border-radius:12px;padding:.65rem .35rem;box-shadow:0 2px 8px rgba(0,0,0,.06)"><div style="font-size:1.1rem">${i}</div><div style="font-size:.72rem;font-weight:800;color:#1A0A00">${v}</div><div style="font-size:.58rem;color:rgba(26,10,0,.3);text-transform:uppercase;letter-spacing:.06em">${l}</div></div>`).join('')}
+        </div>
+        ${dress?`<div style="background:#fff;border-radius:10px;padding:.6rem;font-size:.8rem;color:rgba(26,10,0,.6);margin-bottom:1rem;box-shadow:0 2px 8px rgba(0,0,0,.06)">👗 Dress code: <strong>${dress}</strong></div>`:''}
+        ${msg?`<div style="background:rgba(255,61,107,.06);border-radius:12px;padding:.85rem;font-style:italic;font-size:.85rem;color:rgba(26,10,0,.6);margin-bottom:1rem;line-height:1.6">"${msg}"</div>`:''}
+        <div onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})" style="background:linear-gradient(135deg,${ac},#FF3D6B);color:#fff;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;margin-bottom:1rem;box-shadow:0 6px 20px rgba(255,61,107,.3);cursor:pointer">✅ Confirmar presença</div>
+        ${presentsBtn}
+      </div>
+    </div>`;
+
+  if(tplId==='kids-unicorn') return `
+    <div style="background:linear-gradient(160deg,#2d0a4a,#6b21a8,#c026d3);min-height:500px;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+      <div style="position:absolute;top:0;left:0;right:0;height:100%;opacity:.08;background-image:url('${heroImg}');background-size:cover"></div>
+      <div style="position:absolute;top:1rem;right:1rem;font-size:3rem;opacity:.3">🦄</div>
+      <div style="position:absolute;bottom:2rem;left:1rem;font-size:2rem;opacity:.2">⭐✨🌟</div>
+      <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
+        <div style="font-size:3rem;margin-bottom:.5rem">🦄</div>
+        <div style="font-size:.6rem;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:${ac};margin-bottom:.4rem">✨ Você está convidada!</div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,7vw,2.8rem);font-weight:900;font-style:italic;line-height:1.1;margin-bottom:.3rem;color:${ac}">${titulo}</div>
+        <div style="font-size:1rem;color:rgba(255,255,255,.75);margin-bottom:1.75rem">${nome}</div>
+        <div style="background:rgba(255,255,255,.1);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:1.25rem;margin-bottom:1.5rem">
+          <div style="display:flex;flex-direction:column;gap:.4rem">
+            <div style="font-size:.82rem;color:rgba(255,255,255,.75)">🗓 ${dateStr}</div>
+            ${hora?`<div style="font-size:.82rem;color:rgba(255,255,255,.75)">⏰ ${hora}</div>`:''}
+            ${local?`<div style="font-size:.82rem;color:rgba(255,255,255,.75)">📍 ${local}</div>`:''}
+            ${dress?`<div style="font-size:.82rem;color:rgba(255,255,255,.75)">👗 ${dress}</div>`:''}
+          </div>
+          ${msg?`<div style="border-top:1px solid rgba(255,255,255,.12);margin-top:.75rem;padding-top:.75rem;font-style:italic;font-size:.82rem;color:rgba(255,255,255,.6);line-height:1.5">"${msg}"</div>`:''}
+        </div>
+        <div style="display:flex;justify-content:center;gap:.5rem;margin-bottom:1.5rem">
+          <div style="background:rgba(255,255,255,.12);border-radius:12px;padding:.65rem 1.25rem;text-align:center"><div style="font-family:'Fraunces',Georgia,serif;font-size:1.8rem;font-weight:900;color:${ac}">${days}</div><div style="font-size:.6rem;color:rgba(255,255,255,.4);text-transform:uppercase">dias</div></div>
+        </div>
+        <div onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})" style="background:${ac};color:#2d0a4a;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;margin-bottom:1rem;cursor:pointer">✅ Confirmar presença</div>
+        ${presentsBtn}
+      </div>
+    </div>`;
+
+  if(tplId==='kids-dinossauro') return `
+    <div style="background:linear-gradient(160deg,#052a10,#0d4a1a);min-height:500px;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+      <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;background-position:center;opacity:.15"></div>
+      <div style="position:absolute;bottom:0;left:0;right:0;height:80px;opacity:.15;font-size:4rem;text-align:center">🦕🌿🦖</div>
+      <div style="position:relative;padding:2rem 1.5rem;text-align:center">
+        <div style="font-size:3.5rem;margin-bottom:.5rem">🦖</div>
+        <div style="background:${ac};color:#052a10;display:inline-block;padding:.2rem .9rem;border-radius:99px;font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.75rem">Vem aí!</div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;line-height:1.1;color:${ac};margin-bottom:.35rem">${titulo}</div>
+        <div style="font-size:1rem;color:rgba(255,255,255,.65);margin-bottom:1.5rem">${nome}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.5rem;text-align:left">
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👗':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:.55rem .75rem;font-size:.75rem;display:flex;align-items:center;gap:.35rem"><span>${i}</span><span style="color:rgba(255,255,255,.7)">${v}</span></div>`).join('')}
+        </div>
+        ${msg?`<div style="background:rgba(255,255,255,.05);border-left:3px solid ${ac};border-radius:0 8px 8px 0;padding:.8rem 1rem;font-style:italic;font-size:.82rem;color:rgba(255,255,255,.55);margin-bottom:1rem;line-height:1.5;text-align:left">"${msg}"</div>`:''}
+        ${rsvpBtn}${presentsBtn}
+      </div>
+    </div>`;
+
+  if(tplId==='kids-fotos') return `
+    <div style="background:linear-gradient(160deg,#fff5f8,#ffeef5);min-height:500px;font-family:'Nunito',sans-serif;color:#1A0A00;overflow:hidden">
+      <div style="height:200px;position:relative;overflow:hidden">
+        <img src="${heroImg}" style="width:100%;height:100%;object-fit:cover"/>
+        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent,rgba(255,245,248,1))"></div>
+      </div>
+      <div style="padding:0 1.5rem 2rem;text-align:center;margin-top:-2rem;position:relative">
+        <div style="font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:${ac};margin-bottom:.4rem">🎉 Você está convidado!</div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;color:#1A0A00;line-height:1.1;margin-bottom:.3rem">${titulo}</div>
+        <div style="color:rgba(26,10,0,.5);font-weight:700;margin-bottom:1.5rem">${nome}</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.25rem">
+          ${[['🗓',dateShort,'Data'],['⏰',hora||'—','Hora'],['📍',local?local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:#fff;border-radius:12px;padding:.65rem .35rem;box-shadow:0 2px 8px rgba(0,0,0,.06)"><div style="font-size:1rem">${i}</div><div style="font-size:.7rem;font-weight:800">${v}</div><div style="font-size:.55rem;color:rgba(26,10,0,.3);text-transform:uppercase">${l}</div></div>`).join('')}
+        </div>
+        ${msg?`<div style="background:#fff;border-radius:12px;padding:.85rem;font-style:italic;font-size:.83rem;color:rgba(26,10,0,.55);margin-bottom:1rem;line-height:1.6;box-shadow:0 2px 8px rgba(0,0,0,.05)">"${msg}"</div>`:''}
+        ${rsvpBtn}${presentsBtn}
+      </div>
+    </div>`;
+
+  if(tplId==='wed-estrelada') return `
+    <div style="background:#08030f;min-height:500px;font-family:'Nunito',sans-serif;color:#fff;position:relative;overflow:hidden">
+      <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;background-position:center;opacity:.25"></div>
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center top,rgba(255,215,61,.05) 0%,transparent 70%)"></div>
+      <div style="position:relative;padding:3rem 1.5rem 2rem;text-align:center">
+        <div style="font-size:.6rem;font-weight:800;letter-spacing:.25em;text-transform:uppercase;color:${ac};opacity:.7;margin-bottom:1rem">— Celebração de Amor —</div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,7vw,3rem);font-weight:900;font-style:italic;color:${ac};line-height:1;margin-bottom:.5rem;text-shadow:0 0 30px ${ac}44">${titulo}</div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-size:1.1rem;font-style:italic;color:rgba(255,255,255,.55);margin-bottom:.3rem">de</div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-size:1.4rem;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:2rem">${nome}</div>
+        <div style="width:60px;height:1px;background:${ac};opacity:.4;margin:0 auto 2rem"></div>
+        <div style="display:flex;flex-direction:column;gap:.6rem;margin-bottom:2rem">
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👗':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.85rem;color:rgba(255,255,255,.6);letter-spacing:.02em">${i} ${v}</div>`).join('')}
+        </div>
+        ${msg?`<div style="border:1px solid rgba(255,215,61,.2);border-radius:16px;padding:1.25rem;font-style:italic;font-size:.88rem;color:rgba(255,255,255,.55);margin-bottom:1.5rem;line-height:1.7">"${msg}"</div>`:''}
+        <div onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})" style="background:transparent;border:1px solid ${ac};color:${ac};font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;letter-spacing:.05em;cursor:pointer">✅ Confirmar Presença</div>
+        ${presentsBtn}
+      </div>
+    </div>`;
+
+  if(tplId==='wed-jardim') return `
+    <div style="background:#fafdf6;min-height:500px;font-family:'Nunito',sans-serif;color:#1A0A00;overflow:hidden">
+      <div style="height:220px;position:relative;overflow:hidden">
+        <img src="${heroImg}" style="width:100%;height:100%;object-fit:cover"/>
+        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,#fafdf6)"></div>
+      </div>
+      <div style="padding:0 1.5rem 2rem;text-align:center">
+        <div style="font-size:.6rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:${ac};margin-bottom:.5rem">🌸 Você está convidado 🌸</div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,6vw,2.6rem);font-weight:900;font-style:italic;color:#1A0A00;line-height:1.1;margin-bottom:.3rem">${titulo}</div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-size:.95rem;font-style:italic;color:rgba(26,10,0,.4);margin-bottom:.3rem">de</div>
+        <div style="font-size:1rem;font-weight:700;color:rgba(26,10,0,.7);margin-bottom:1.5rem">${nome}</div>
+        <div style="display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem">
+          ${[['📅',dateShort],[hora?'⏰':null,hora],[local?'📍':null,local]].filter(x=>x[0]).map(([i,v])=>`<div style="background:rgba(26,10,0,.04);border:1px solid rgba(26,10,0,.07);border-radius:8px;padding:.4rem .7rem;font-size:.75rem;color:rgba(26,10,0,.6)">${i} ${v}</div>`).join('')}
+        </div>
+        ${dress?`<div style="font-size:.8rem;color:rgba(26,10,0,.4);margin-bottom:1.25rem">👗 ${dress}</div>`:''}
+        ${msg?`<div style="font-style:italic;font-size:.85rem;color:rgba(26,10,0,.45);line-height:1.6;margin-bottom:1.25rem;padding:0 .5rem">"${msg}"</div>`:''}
+        ${rsvpBtn}${presentsBtn}
+      </div>
+    </div>`;
+
+  if(tplId==='wed-rosegold') return `
+    <div style="background:linear-gradient(160deg,#2a0a08,#5c1a10);min-height:500px;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+      <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.2"></div>
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,${ac},transparent)"></div>
+      <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
+        <div style="width:80px;height:80px;border-radius:50%;overflow:hidden;margin:0 auto 1.25rem;border:2px solid ${ac};box-shadow:0 0 0 6px ${ac}22">
+          <img src="${heroImg}" style="width:100%;height:100%;object-fit:cover"/>
+        </div>
+        <div style="font-size:.6rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:${ac};opacity:.8;margin-bottom:.5rem">Com amor, celebramos</div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,7vw,2.8rem);font-weight:900;font-style:italic;color:${ac};line-height:1.1;margin-bottom:.3rem">${titulo}</div>
+        <div style="font-size:.95rem;color:rgba(255,255,255,.65);margin-bottom:2rem">${nome}</div>
+        <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:1.25rem;margin-bottom:1.5rem;display:flex;flex-direction:column;gap:.5rem">
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👗':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.6)">${i} ${v}</div>`).join('')}
+        </div>
+        ${msg?`<div style="border-left:2px solid ${ac};padding:.75rem 1rem;text-align:left;font-style:italic;font-size:.83rem;color:rgba(255,255,255,.5);margin-bottom:1.25rem;line-height:1.6">"${msg}"</div>`:''}
+        <div onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})" style="border:1px solid ${ac};color:${ac};background:transparent;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;cursor:pointer">✅ Confirmar presença</div>
+        ${presentsBtn}
+      </div>
+    </div>`;
+
+  if(tplId==='wed-fotos') return `
+    <div style="min-height:500px;font-family:'Nunito',sans-serif;overflow:hidden;position:relative;background:#000">
+      <img src="${heroImg}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.6"/>
+      <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.1),rgba(0,0,0,.8))"></div>
+      <div style="position:relative;padding:3rem 1.5rem 2rem;display:flex;flex-direction:column;min-height:500px;justify-content:flex-end;color:#fff;text-align:center">
+        <div style="font-size:.6rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:${ac};margin-bottom:.6rem">— Celebração de amor —</div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,8vw,3rem);font-weight:900;font-style:italic;color:${ac};line-height:1;margin-bottom:.4rem">${titulo}</div>
+        <div style="font-size:1rem;color:rgba(255,255,255,.75);margin-bottom:1.5rem">${nome}</div>
+        <div style="background:rgba(255,255,255,.1);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:1rem;margin-bottom:1rem">
+          <div style="display:flex;flex-direction:column;gap:.4rem;font-size:.82rem;color:rgba(255,255,255,.75)">
+            <div>📅 ${dateStr}</div>
+            ${hora?`<div>⏰ ${hora}</div>`:''}
+            ${local?`<div>📍 ${local}</div>`:''}
+            ${dress?`<div>👗 ${dress}</div>`:''}
+          </div>
+          ${msg?`<div style="border-top:1px solid rgba(255,255,255,.12);margin-top:.75rem;padding-top:.75rem;font-style:italic;font-size:.8rem;color:rgba(255,255,255,.5);line-height:1.5">"${msg}"</div>`:''}
+        </div>
+        ${rsvpBtn}${presentsBtn}
+      </div>
+    </div>`;
+
+  if(tplId==='cha-pastel') return `
+    <div style="background:linear-gradient(160deg,#fdf0ff,#f5e6ff);min-height:500px;font-family:'Nunito',sans-serif;color:#1A0A00;overflow:hidden">
+      <div style="height:180px;position:relative;overflow:hidden">
+        <img src="${heroImg}" style="width:100%;height:100%;object-fit:cover"/>
+        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 30%,#fdf0ff)"></div>
+      </div>
+      <div style="padding:0 1.5rem 2rem;text-align:center">
+        <div style="font-size:2rem;margin-bottom:.5rem">👶🏻</div>
+        <div style="font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:${ac};margin-bottom:.4rem">Você está convidado!</div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.7rem,6vw,2.4rem);font-weight:900;font-style:italic;color:#1A0A00;line-height:1.1;margin-bottom:.3rem">${titulo}</div>
+        <div style="color:rgba(26,10,0,.5);margin-bottom:1.5rem">${nome}</div>
+        <div style="background:#fff;border-radius:16px;padding:1rem;margin-bottom:1.25rem;box-shadow:0 4px 16px rgba(200,100,220,.1)">
+          <div style="display:flex;flex-direction:column;gap:.4rem">
+            <div style="font-size:.82rem;color:rgba(26,10,0,.6)">📅 ${dateStr}</div>
+            ${hora?`<div style="font-size:.82rem;color:rgba(26,10,0,.6)">⏰ ${hora}</div>`:''}
+            ${local?`<div style="font-size:.82rem;color:rgba(26,10,0,.6)">📍 ${local}</div>`:''}
+            ${dress?`<div style="font-size:.82rem;color:rgba(26,10,0,.6)">👗 ${dress}</div>`:''}
+          </div>
+        </div>
+        ${msg?`<div style="background:#fff;border-radius:12px;padding:.85rem;font-style:italic;font-size:.83rem;color:rgba(26,10,0,.5);margin-bottom:1rem;line-height:1.6;box-shadow:0 2px 8px rgba(200,100,220,.08)">"${msg}"</div>`:''}
+        ${rsvpBtn}${presentsBtn}
+      </div>
+    </div>`;
+
+  if(tplId==='cha-revelacao-azul') return `
+    <div style="background:linear-gradient(160deg,#040d1f,#0a2550);min-height:500px;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+      <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.15"></div>
+      <div style="position:absolute;top:1rem;right:1rem;font-size:2.5rem;opacity:.25">🚀⭐🌙</div>
+      <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
+        <div style="font-size:3rem;margin-bottom:.5rem">👶💙</div>
+        <div style="background:${ac};color:#040d1f;display:inline-block;padding:.25rem 1rem;border-radius:99px;font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.75rem">É MENINO!</div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;color:${ac};line-height:1.1;margin-bottom:.3rem">${titulo}</div>
+        <div style="color:rgba(255,255,255,.6);margin-bottom:1.75rem">${nome}</div>
+        <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:1.1rem;margin-bottom:1.5rem">
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👗':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:.35rem">${i} ${v}</div>`).join('')}
+          ${msg?`<div style="border-top:1px solid rgba(255,255,255,.08);margin-top:.7rem;padding-top:.7rem;font-style:italic;font-size:.8rem;color:rgba(255,255,255,.45);line-height:1.5">"${msg}"</div>`:''}
+        </div>
+        ${rsvpBtn}${presentsBtn}
+      </div>
+    </div>`;
+
+  if(tplId==='cha-revelacao-rosa') return `
+    <div style="background:linear-gradient(160deg,#2d0020,#6b0a35);min-height:500px;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+      <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.18"></div>
+      <div style="position:absolute;top:1rem;right:1rem;font-size:2rem;opacity:.25">🌸🌷💕</div>
+      <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
+        <div style="font-size:3rem;margin-bottom:.5rem">👶💗</div>
+        <div style="background:${ac};color:#2d0020;display:inline-block;padding:.25rem 1rem;border-radius:99px;font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.75rem">É MENINA!</div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;color:${ac};line-height:1.1;margin-bottom:.3rem">${titulo}</div>
+        <div style="color:rgba(255,255,255,.6);margin-bottom:1.75rem">${nome}</div>
+        <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:1.1rem;margin-bottom:1.5rem">
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👗':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:.35rem">${i} ${v}</div>`).join('')}
+          ${msg?`<div style="border-top:1px solid rgba(255,255,255,.08);margin-top:.7rem;padding-top:.7rem;font-style:italic;font-size:.8rem;color:rgba(255,255,255,.45);line-height:1.5">"${msg}"</div>`:''}
+        </div>
+        ${rsvpBtn}${presentsBtn}
+      </div>
+    </div>`;
+
+  if(tplId==='cha-fotos') return `
+    <div style="background:linear-gradient(160deg,#fff8f0,#fff0f5);min-height:500px;font-family:'Nunito',sans-serif;color:#1A0A00;overflow:hidden">
+      <div style="padding:1.5rem;text-align:center">
+        <div style="background:#fff;border-radius:4px;padding:.75rem;box-shadow:0 8px 24px rgba(0,0,0,.12);transform:rotate(-1.5deg);margin-bottom:1.25rem;max-width:240px;margin-left:auto;margin-right:auto">
+          <img src="${heroImg}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;border-radius:2px;margin-bottom:.5rem"/>
+          <div style="font-size:.72rem;color:rgba(26,10,0,.4);font-style:italic">${nome||'Bebê'} 💕</div>
+        </div>
+        <div style="font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:${ac};margin-bottom:.4rem">Você está convidado!</div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.7rem,6vw,2.4rem);font-weight:900;font-style:italic;color:#1A0A00;line-height:1.1;margin-bottom:1.25rem">${titulo}</div>
+        <div style="background:#fff;border-radius:12px;padding:1rem;margin-bottom:1rem;box-shadow:0 2px 8px rgba(0,0,0,.06);text-align:left">
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👗':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(26,10,0,.6);margin-bottom:.3rem;display:flex;gap:.4rem"><span>${i}</span><span>${v}</span></div>`).join('')}
+        </div>
+        ${msg?`<div style="background:#fff;border-radius:12px;padding:.85rem;font-style:italic;font-size:.83rem;color:rgba(26,10,0,.5);margin-bottom:1rem;line-height:1.6;box-shadow:0 2px 8px rgba(0,0,0,.05)">"${msg}"</div>`:''}
+        ${rsvpBtn}${presentsBtn}
+      </div>
+    </div>`;
+
+  // fallback genérico
+  return `
+    <div style="background:linear-gradient(135deg,#1a0a1e,#2d0a3a);min-height:500px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-family:'Nunito',sans-serif;text-align:center;padding:3rem 1.5rem;position:relative;overflow:hidden">
+      <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;background-position:center;opacity:.2"></div>
+      <div style="position:relative;z-index:1">
+        <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,7vw,3rem);font-weight:900;font-style:italic;color:${ac};margin-bottom:.5rem">${titulo}</div>
+        <div style="font-size:1.1rem;color:rgba(255,255,255,.75);margin-bottom:1.5rem">${nome}</div>
+        <div style="font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:.4rem">📅 ${dateStr}</div>
+        ${hora?`<div style="font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:.4rem">⏰ ${hora}</div>`:''}
+        ${local?`<div style="font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:1.5rem">📍 ${local}</div>`:''}
+        ${rsvpBtn}
+      </div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════
 //  LOAD INVITE
 // ══════════════════════════════════════════
 async function init() {
@@ -693,75 +1047,68 @@ async function init() {
 
   if (!slug) { showError(); return; }
 
-  // Fetch invite
-  const { data: inv, error: invErr } = await sb
-    .from('invites')
-    .select('*')
-    .eq('slug', slug)
-    .eq('published', true)
-    .single();
+  // Check for local preview data (from editor "Ver como o convidado vê")
+  const localInviteRaw = localStorage.getItem('ccm_current_invite');
+  const localSlug = localStorage.getItem('ccm_current_slug');
 
-  if (invErr || !inv) { showError(); return; }
-  invite = inv;
+  let inv = null;
+  let giftData = [];
 
-  // Fetch gifts
-  const { data: giftData } = await sb
-    .from('gifts')
-    .select('*')
-    .eq('invite_id', invite.id)
-    .order('created_at');
-
-  gifts = giftData || [];
-
-  // Apply theme
-  document.documentElement.style.setProperty('--accent', invite.accent || '#FFD93D');
-  document.documentElement.style.setProperty('--inv-bg', invite.bg_gradient || 'linear-gradient(135deg,#1a0a1e,#2d0a3a)');
-
-  // Populate hero
-  if (invite.photo_url) {
-    document.getElementById('heroImg').style.backgroundImage = `url('${invite.photo_url}')`;
+  if (localSlug === slug && localInviteRaw) {
+    try {
+      const local = JSON.parse(localInviteRaw);
+      inv = {
+        ...local,
+        title: local.titulo || local.title,
+        event_name: local.nome || local.event_name,
+        event_date: local.data || local.event_date,
+        event_time: local.hora || local.event_time,
+        location: local.local || local.location,
+        dress_code: local.dress || local.dress_code,
+        message: local.msg || local.message,
+        template: local.tplId || local.template || 'aniv-neon',
+        photo_url: local.heroPhotoUrl || local.photo_url || '',
+        gallery_urls: local.gallery_urls || [],
+        published: true
+      };
+      giftData = (local.gifts || []).map(g => ({...g, photo_url: g.imageUrl || g.photo_url || ''}));
+    } catch(e) { inv = null; }
   }
 
-  const eventType = invite.event_type || invite.template || 'Evento';
-  document.getElementById('eventBadge').textContent = `🎉 Você está convidado!`;
-  document.getElementById('invEmoji').textContent = getEventEmoji(invite.event_type);
-  document.getElementById('invTitle').textContent = invite.title || 'Você está convidado!';
-  document.getElementById('invName').textContent = invite.event_name || '';
+  if (!inv) {
+    // Fetch from Supabase
+    const { data: fetchedInv, error: invErr } = await sb
+      .from('invites')
+      .select('*')
+      .eq('slug', slug)
+      .eq('published', true)
+      .single();
+
+    if (invErr || !fetchedInv) { showError(); return; }
+    inv = fetchedInv;
+
+    const { data: fetchedGifts } = await sb
+      .from('gifts')
+      .select('*')
+      .eq('invite_id', inv.id)
+      .order('created_at');
+
+    giftData = fetchedGifts || [];
+  }
+
+  invite = inv;
+  gifts = giftData;
+
+  // Apply accent color as CSS var
+  document.documentElement.style.setProperty('--accent', invite.accent || '#FFD93D');
+
   document.title = `${invite.title || 'Convite'} — ConteComigo`;
 
-  // Date
-  if (invite.event_date) {
-    const date = new Date(invite.event_date + 'T12:00:00');
-    document.getElementById('invDate').textContent = date.toLocaleDateString('pt-BR', {
-      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-    });
-    startCountdown(date);
-  }
-  if (invite.event_time) {
-    document.getElementById('invTime').textContent = `A partir das ${invite.event_time}`;
-  }
-  if (invite.location) {
-    document.getElementById('invLocal').textContent = invite.location;
-  }
+  // Render template hero
+  const tplId = invite.template || 'aniv-neon';
+  document.getElementById('templateHero').innerHTML = renderTemplateHTML(tplId, invite);
 
-  // Dress code
-  if (invite.dress_code) {
-    const det = document.getElementById('invDetails');
-    const d = document.createElement('div'); d.className = 'inv-det';
-    d.innerHTML = `<span class="inv-det-icon">👗</span><span>${invite.dress_code}</span>`;
-    det.appendChild(d);
-  }
-
-  // RSVP deadline
-  if (invite.rsvp_deadline) {
-    const det = document.getElementById('invDetails');
-    const deadline = new Date(invite.rsvp_deadline + 'T12:00:00');
-    const d = document.createElement('div'); d.className = 'inv-det';
-    d.innerHTML = `<span class="inv-det-icon">📋</span><span>Confirme até ${deadline.toLocaleDateString('pt-BR', {day:'numeric',month:'long'})}</span>`;
-    det.appendChild(d);
-  }
-
-  // Message
+  // Message (separate section below hero)
   if (invite.message) {
     document.getElementById('msgSection').style.display = 'block';
     document.getElementById('msgCard').textContent = invite.message;
@@ -774,6 +1121,11 @@ async function init() {
     const sz = Math.random() * 10 + 5;
     el.style.cssText = `left:${Math.random()*100}%;top:0;width:${sz}px;height:${sz}px;background:${cols[i % cols.length]};animation-duration:${Math.random()*12+6}s;animation-delay:-${Math.random()*12}s;`;
     cw.appendChild(el);
+  }
+
+  // Start countdown (pick up date from invite)
+  if (invite.event_date) {
+    startCountdown(new Date(invite.event_date + 'T12:00:00'));
   }
 
   // Render gifts
@@ -801,10 +1153,9 @@ async function init() {
   }
 
   // Check previous RSVP (stored locally by phone)
-  const rsvpKey = 'ccm_rsvp_' + invite.id;
+  const rsvpKey = 'ccm_rsvp_' + (invite.id || slug);
   const savedPhone = localStorage.getItem(rsvpKey);
-  if (savedPhone) {
-    // Try to find this guest in DB
+  if (savedPhone && invite.id) {
     const { data: existing } = await sb
       .from('guests')
       .select('*')
@@ -827,46 +1178,12 @@ async function init() {
   document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
 }
 
-function getEventEmoji(type) {
-  const map = {
-    'aniversario': '🎂', 'birthday': '🎂',
-    'casamento': '💍', 'wedding': '💍',
-    'formatura': '🎓', 'graduation': '🎓',
-    'chá': '☕', 'cha': '☕',
-    'batizado': '👶',
-    'corporativo': '🏢',
-    'festa': '🎉', 'party': '🎉',
-  };
-  if (!type) return '🎉';
-  const lower = type.toLowerCase();
-  for (const [key, emoji] of Object.entries(map)) {
-    if (lower.includes(key)) return emoji;
-  }
-  return '🎉';
-}
-
 // ══════════════════════════════════════════
-//  COUNTDOWN
+//  COUNTDOWN (unused — template shows static days count)
 // ══════════════════════════════════════════
 function startCountdown(date) {
-  function update() {
-    const diff = date - new Date();
-    if (diff <= 0) {
-      document.getElementById('countdownBar').innerHTML =
-        '<div style="font-family:var(--font-display);font-size:2rem;font-weight:900;font-style:italic;color:var(--accent)">🎉 Chegou o dia!</div>';
-      return;
-    }
-    const d = Math.floor(diff / 86400000);
-    const h = Math.floor((diff % 86400000) / 3600000);
-    const m = Math.floor((diff % 3600000) / 60000);
-    const s = Math.floor((diff % 60000) / 1000);
-    document.getElementById('cdD').textContent = String(d).padStart(2, '0');
-    document.getElementById('cdH').textContent = String(h).padStart(2, '0');
-    document.getElementById('cdM').textContent = String(m).padStart(2, '0');
-    document.getElementById('cdS').textContent = String(s).padStart(2, '0');
-  }
-  update();
-  setInterval(update, 1000);
+  // Countdown is now embedded in the template hero HTML as a static display.
+  // No-op kept for compatibility.
 }
 
 // ══════════════════════════════════════════
@@ -878,9 +1195,14 @@ function renderGifts() {
     grid.innerHTML = '<div style="text-align:center;color:rgba(26,10,0,.25);padding:2rem;grid-column:1/-1">Nenhum presente cadastrado ainda.</div>';
     return;
   }
-  grid.innerHTML = gifts.map(g => `
+  grid.innerHTML = gifts.map(g => {
+    const photoSrc = g.photo_url || g.imageUrl || '';
+    const imgHtml = photoSrc
+      ? `<img src="${photoSrc}" alt="${g.name}" style="width:100%;height:100%;object-fit:cover;display:block"/>`
+      : `<span style="font-size:3rem">${g.emoji || '🎁'}</span>`;
+    return `
     <div class="gift-card">
-      <div class="gift-emoji-box">${g.emoji || '🎁'}</div>
+      <div class="gift-emoji-box" style="height:140px;overflow:hidden;display:flex;align-items:center;justify-content:center;">${imgHtml}</div>
       <div class="gift-info">
         <div class="gift-name">${g.name}</div>
         ${g.price ? `<div class="gift-price">${g.price}</div>` : ''}
@@ -892,15 +1214,18 @@ function renderGifts() {
           ${g.reserved ? 'Já reservado' : 'Quero dar este presente 🎁'}
         </button>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 function openGiftModal(id) {
   selectedGiftId = id;
   const g = gifts.find(x => x.id === id);
+  const photoSrc = g.photo_url || g.imageUrl || '';
   document.getElementById('modalItemPreview').innerHTML = `
-    <div class="modal-item-emoji">${g.emoji || '🎁'}</div>
+    <div class="modal-item-emoji" style="${photoSrc ? 'width:48px;height:48px;border-radius:8px;overflow:hidden;flex-shrink:0' : ''}">
+      ${photoSrc ? `<img src="${photoSrc}" alt="${g.name}" style="width:100%;height:100%;object-fit:cover"/>` : (g.emoji || '🎁')}
+    </div>
     <div>
       <div class="modal-item-name">${g.name}</div>
       ${g.price ? `<div class="modal-item-price">${g.price}</div>` : ''}
