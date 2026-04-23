@@ -212,10 +212,15 @@
       <div class="field">
         <label>Template do convite</label>
         <div class="cat-tabs" id="catTabs">
-          <div class="cat-tab active" data-cat="aniversario-adulto" onclick="selectCat(this)">🎂 Aniversário</div>
-          <div class="cat-tab" data-cat="infantil" onclick="selectCat(this)">🎈 Infantil</div>
+          <div class="cat-tab active" data-cat="homem" onclick="selectCat(this)">🍺 Homem</div>
+          <div class="cat-tab" data-cat="mulher" onclick="selectCat(this)">🥂 Mulher</div>
+          <div class="cat-tab" data-cat="quinze" onclick="selectCat(this)">👑 15 Anos</div>
+          <div class="cat-tab" data-cat="menino" onclick="selectCat(this)">🦸 Menino</div>
+          <div class="cat-tab" data-cat="menina" onclick="selectCat(this)">🧚 Menina</div>
           <div class="cat-tab" data-cat="casamento" onclick="selectCat(this)">💍 Casamento</div>
-          <div class="cat-tab" data-cat="cha" onclick="selectCat(this)">👶 Chá / Revelação</div>
+          <div class="cat-tab" data-cat="cha" onclick="selectCat(this)">👶 Chá</div>
+          <div class="cat-tab" data-cat="aniversario-adulto" onclick="selectCat(this)">🎉 Geral</div>
+          <div class="cat-tab" id="customTplsTab" data-cat="custom" onclick="selectCat(this)" style="display:none">⭐ Personalizados</div>
         </div>
         <div class="tpl-grid" id="tplGrid"></div>
       </div>
@@ -487,9 +492,239 @@ let currentUser = null;
 let editingInviteId = null;
 
 // ══ TEMPLATES ══
-// Cada template: { id, name, category, img (Unsplash URL), supportsHeroUpload, colors }
-// colors: { accent, bgKey, textColor, overlayOpacity }
 const TEMPLATES = {
+  // ── HOMEM ──
+  'homem': [
+    {
+      id:'hom-cerveja',name:'Chope & Futebol',
+      img:'https://images.unsplash.com/photo-1555658636-6e4a36218be7?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#F59E0B',defaultBg:'dark-brown',
+      heroStyle:'color:#F59E0B',overlayStyle:''
+    },
+    {
+      id:'hom-futebol',name:'Campo de Futebol',
+      img:'https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#34D399',defaultBg:'dark-green',
+      heroStyle:'color:#34D399',overlayStyle:''
+    },
+    {
+      id:'hom-minimalista',name:'Minimalista',
+      img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#E5E7EB',defaultBg:'dark-brown',
+      heroStyle:'color:#E5E7EB',overlayStyle:''
+    },
+    {
+      id:'hom-fotos',name:'Com suas fotos 📷',
+      img:'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&q=80',
+      supportsHeroUpload:true,
+      defaultAccent:'#F59E0B',defaultBg:'dark-brown',
+      heroStyle:'color:#F59E0B',overlayStyle:''
+    },
+  ],
+  // ── MULHER ──
+  'mulher': [
+    {
+      id:'mul-champanhe',name:'Champanhe & Glamour',
+      img:'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#FCD34D',defaultBg:'dark-brown',
+      heroStyle:'color:#FCD34D',overlayStyle:''
+    },
+    {
+      id:'mul-rosa',name:'Rosa & Fofo',
+      img:'https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#F472B6',defaultBg:'violet',
+      heroStyle:'color:#F472B6',overlayStyle:''
+    },
+    {
+      id:'mul-pool',name:'Pool Party',
+      img:'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#60A5FA',defaultBg:'mint',
+      heroStyle:'color:#60A5FA',overlayStyle:''
+    },
+    {
+      id:'mul-fotos',name:'Com suas fotos 📷',
+      img:'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&q=80',
+      supportsHeroUpload:true,
+      defaultAccent:'#F472B6',defaultBg:'violet',
+      heroStyle:'color:#F472B6',overlayStyle:''
+    },
+  ],
+  // ── 15 ANOS ──
+  'quinze': [
+    {
+      id:'deb-valsa',name:'Valsa Real',
+      img:'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#FCD34D',defaultBg:'dark-purple',
+      heroStyle:'color:#FCD34D',overlayStyle:''
+    },
+    {
+      id:'deb-clean',name:'Clean & Moderno',
+      img:'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#F472B6',defaultBg:'violet',
+      heroStyle:'color:#F472B6',overlayStyle:''
+    },
+    {
+      id:'deb-vintage',name:'Vintage Dourado',
+      img:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#FCD34D',defaultBg:'rose-gold',
+      heroStyle:'color:#FCD34D',overlayStyle:''
+    },
+    {
+      id:'deb-fotos',name:'Com suas fotos 📷',
+      img:'https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=600&q=80',
+      supportsHeroUpload:true,
+      defaultAccent:'#F472B6',defaultBg:'transparent',
+      heroStyle:'color:#fff',overlayStyle:''
+    },
+  ],
+  // ── MENINO ──
+  'menino': [
+    {
+      id:'boy-spiderman',name:'Homem-Aranha',
+      img:'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#EF4444',defaultBg:'dark-blue',
+      heroStyle:'color:#EF4444',overlayStyle:''
+    },
+    {
+      id:'boy-pokemon',name:'Pokémon',
+      img:'https://images.unsplash.com/photo-1542779867-5b23e9e44cbf?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#FBBF24',defaultBg:'dark-blue',
+      heroStyle:'color:#FBBF24',overlayStyle:''
+    },
+    {
+      id:'boy-mickey',name:'Mickey Mouse',
+      img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#EF4444',defaultBg:'dark-brown',
+      heroStyle:'color:#EF4444',overlayStyle:''
+    },
+    {
+      id:'boy-spongebob',name:'Bob Esponja',
+      img:'https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#FBBF24',defaultBg:'dark-blue',
+      heroStyle:'color:#FBBF24',overlayStyle:''
+    },
+    {
+      id:'boy-fotos',name:'Com suas fotos 📷',
+      img:'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=600&q=80',
+      supportsHeroUpload:true,
+      defaultAccent:'#60A5FA',defaultBg:'dark-blue',
+      heroStyle:'color:#60A5FA',overlayStyle:''
+    },
+  ],
+  // ── MENINA ──
+  'menina': [
+    {
+      id:'girl-ariel',name:'Pequena Sereia',
+      img:'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#60A5FA',defaultBg:'mint',
+      heroStyle:'color:#60A5FA',overlayStyle:''
+    },
+    {
+      id:'girl-cinderela',name:'Cinderela',
+      img:'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#93C5FD',defaultBg:'dark-blue',
+      heroStyle:'color:#93C5FD',overlayStyle:''
+    },
+    {
+      id:'girl-minnie',name:'Minnie Mouse',
+      img:'https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#F472B6',defaultBg:'violet',
+      heroStyle:'color:#F472B6',overlayStyle:''
+    },
+    {
+      id:'girl-ursinha',name:'Ursinha Fofa',
+      img:'https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#FCD34D',defaultBg:'coral',
+      heroStyle:'color:#FCD34D',overlayStyle:''
+    },
+    {
+      id:'girl-fotos',name:'Com suas fotos 📷',
+      img:'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=600&q=80',
+      supportsHeroUpload:true,
+      defaultAccent:'#F472B6',defaultBg:'transparent',
+      heroStyle:'color:#fff',overlayStyle:''
+    },
+  ],
+  // ── CASAMENTO ──
+  'casamento': [
+    {
+      id:'wed-estrelada',name:'Noite Estrelada',
+      img:'https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#FFD93D',defaultBg:'dark-purple',
+      heroStyle:'color:#FFD93D',overlayStyle:'background:linear-gradient(to bottom,rgba(15,5,25,.1),rgba(15,5,25,.82))'
+    },
+    {
+      id:'wed-jardim',name:'Jardim Romântico',
+      img:'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#FFFFFF',defaultBg:'dark-green',
+      heroStyle:'color:#fff',overlayStyle:'background:linear-gradient(to bottom,rgba(5,25,10,.15),rgba(5,25,10,.8))'
+    },
+    {
+      id:'wed-rosegold',name:'Rose Gold',
+      img:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#FFD93D',defaultBg:'rose-gold',
+      heroStyle:'color:#fff',overlayStyle:'background:linear-gradient(to bottom,rgba(100,30,20,.1),rgba(100,30,20,.8))'
+    },
+    {
+      id:'wed-fotos',name:'Com suas fotos 📷',
+      img:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80',
+      supportsHeroUpload:true,
+      defaultAccent:'#FFFFFF',defaultBg:'transparent',
+      heroStyle:'color:#fff',overlayStyle:'background:linear-gradient(to bottom,rgba(0,0,0,.05),rgba(0,0,0,.6))'
+    },
+  ],
+  // ── CHÁ / REVELAÇÃO ──
+  'cha': [
+    {
+      id:'cha-pastel',name:'Pastel Delicado',
+      img:'https://images.unsplash.com/photo-1544427920-c49ccfb85579?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#F472B6',defaultBg:'violet',
+      heroStyle:'color:#F472B6',overlayStyle:'background:linear-gradient(to bottom,rgba(40,5,50,.1),rgba(40,5,50,.8))'
+    },
+    {
+      id:'cha-revelacao-azul',name:'Revelação — Menino',
+      img:'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#60A5FA',defaultBg:'dark-blue',
+      heroStyle:'color:#60A5FA',overlayStyle:'background:linear-gradient(to bottom,rgba(5,15,40,.15),rgba(5,15,40,.82))'
+    },
+    {
+      id:'cha-revelacao-rosa',name:'Revelação — Menina',
+      img:'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=600&q=80',
+      supportsHeroUpload:false,
+      defaultAccent:'#F472B6',defaultBg:'violet',
+      heroStyle:'color:#F472B6',overlayStyle:'background:linear-gradient(to bottom,rgba(40,5,50,.1),rgba(40,5,50,.8))'
+    },
+    {
+      id:'cha-fotos',name:'Com suas fotos 📷',
+      img:'https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=600&q=80',
+      supportsHeroUpload:true,
+      defaultAccent:'#F472B6',defaultBg:'transparent',
+      heroStyle:'color:#fff',overlayStyle:'background:linear-gradient(to bottom,rgba(0,0,0,.05),rgba(0,0,0,.65))'
+    },
+  ],
+  // ── GERAL ──
   'aniversario-adulto': [
     {
       id:'aniv-neon',name:'Neon Night',
@@ -524,108 +759,8 @@ const TEMPLATES = {
       overlayStyle:'background:linear-gradient(to bottom,rgba(30,10,40,.1),rgba(30,10,40,.82))'
     },
   ],
-  'infantil': [
-    {
-      id:'kids-baloes',name:'Balões Coloridos',
-      img:'https://images.unsplash.com/photo-1558008258-3256797b43f3?w=600&q=80',
-      supportsHeroUpload:false,
-      defaultAccent:'#FB923C',defaultBg:'coral',
-      heroStyle:'color:#fff',
-      overlayStyle:'background:linear-gradient(to bottom,rgba(255,100,50,.1),rgba(200,60,20,.75))'
-    },
-    {
-      id:'kids-unicorn',name:'Unicórnio',
-      img:'https://images.unsplash.com/photo-1567225557594-88d73398014a?w=600&q=80',
-      supportsHeroUpload:false,
-      defaultAccent:'#A78BFA',defaultBg:'violet',
-      heroStyle:'color:#A78BFA',
-      overlayStyle:'background:linear-gradient(to bottom,rgba(40,10,60,.1),rgba(40,10,60,.8))'
-    },
-    {
-      id:'kids-dinossauro',name:'Dinossauro',
-      img:'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=600&q=80',
-      supportsHeroUpload:false,
-      defaultAccent:'#34D399',defaultBg:'dark-green',
-      heroStyle:'color:#34D399',
-      overlayStyle:'background:linear-gradient(to bottom,rgba(5,30,10,.2),rgba(5,30,10,.85))'
-    },
-    {
-      id:'kids-fotos',name:'Com suas fotos 📷',
-      img:'https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=600&q=80',
-      supportsHeroUpload:true,
-      defaultAccent:'#FB923C',defaultBg:'coral',
-      heroStyle:'color:#fff',
-      overlayStyle:'background:linear-gradient(to bottom,rgba(200,60,20,.1),rgba(200,60,20,.75))'
-    },
-  ],
-  'casamento': [
-    {
-      id:'wed-estrelada',name:'Noite Estrelada',
-      img:'https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80',
-      supportsHeroUpload:false,
-      defaultAccent:'#FFD93D',defaultBg:'dark-purple',
-      heroStyle:'color:#FFD93D',
-      overlayStyle:'background:linear-gradient(to bottom,rgba(15,5,25,.1),rgba(15,5,25,.82))'
-    },
-    {
-      id:'wed-jardim',name:'Jardim Romântico',
-      img:'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&q=80',
-      supportsHeroUpload:false,
-      defaultAccent:'#FFFFFF',defaultBg:'dark-green',
-      heroStyle:'color:#fff',
-      overlayStyle:'background:linear-gradient(to bottom,rgba(5,25,10,.15),rgba(5,25,10,.8))'
-    },
-    {
-      id:'wed-rosegold',name:'Rose Gold',
-      img:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80',
-      supportsHeroUpload:false,
-      defaultAccent:'#FFD93D',defaultBg:'rose-gold',
-      heroStyle:'color:#fff',
-      overlayStyle:'background:linear-gradient(to bottom,rgba(100,30,20,.1),rgba(100,30,20,.8))'
-    },
-    {
-      id:'wed-fotos',name:'Com suas fotos 📷',
-      img:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80',
-      supportsHeroUpload:true,
-      defaultAccent:'#FFFFFF',defaultBg:'transparent',
-      heroStyle:'color:#fff',
-      overlayStyle:'background:linear-gradient(to bottom,rgba(0,0,0,.05),rgba(0,0,0,.6))'
-    },
-  ],
-  'cha': [
-    {
-      id:'cha-pastel',name:'Pastel Delicado',
-      img:'https://images.unsplash.com/photo-1544427920-c49ccfb85579?w=600&q=80',
-      supportsHeroUpload:false,
-      defaultAccent:'#F472B6',defaultBg:'violet',
-      heroStyle:'color:#F472B6',
-      overlayStyle:'background:linear-gradient(to bottom,rgba(40,5,50,.1),rgba(40,5,50,.8))'
-    },
-    {
-      id:'cha-revelacao-azul',name:'Revelação — Menino',
-      img:'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=600&q=80',
-      supportsHeroUpload:false,
-      defaultAccent:'#60A5FA',defaultBg:'dark-blue',
-      heroStyle:'color:#60A5FA',
-      overlayStyle:'background:linear-gradient(to bottom,rgba(5,15,40,.15),rgba(5,15,40,.82))'
-    },
-    {
-      id:'cha-revelacao-rosa',name:'Revelação — Menina',
-      img:'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=600&q=80',
-      supportsHeroUpload:false,
-      defaultAccent:'#F472B6',defaultBg:'violet',
-      heroStyle:'color:#F472B6',
-      overlayStyle:'background:linear-gradient(to bottom,rgba(40,5,50,.1),rgba(40,5,50,.8))'
-    },
-    {
-      id:'cha-fotos',name:'Com suas fotos 📷',
-      img:'https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=600&q=80',
-      supportsHeroUpload:true,
-      defaultAccent:'#F472B6',defaultBg:'transparent',
-      heroStyle:'color:#fff',
-      overlayStyle:'background:linear-gradient(to bottom,rgba(0,0,0,.05),rgba(0,0,0,.65))'
-    },
-  ],
+  // ── CUSTOM (templates criados pelo admin) ──
+  'custom': [],
 };
 
 const BG_GRADIENTS = {
@@ -642,7 +777,7 @@ const BG_GRADIENTS = {
 
 // ══ STATE ══
 const state = {
-  tplId:'aniv-neon', tplCat:'aniversario-adulto',
+  tplId:'hom-cerveja', tplCat:'homem',
   titulo:'', nome:'', data:'', hora:'', local:'', dress:'', msg:'', prazo:'',
   accent:'#FFD93D', bgKey:'dark-purple',
   heroPhotoUrl:'', heroPhotoBlob:null,  // foto de fundo personalizada
@@ -662,7 +797,9 @@ async function init(){
   if(!session){ location.href='login.html'; return; }
   currentUser = session.user;
 
-  renderCatTemplates('aniversario-adulto');
+  // Load custom templates from Supabase
+  await loadCustomTemplates();
+  renderCatTemplates('homem');
 
   const editId = localStorage.getItem('ccm_edit_invite');
   if(editId){
@@ -674,6 +811,31 @@ async function init(){
   }
   renderGiftList();
   updatePreview();
+}
+
+// ══ LOAD CUSTOM TEMPLATES FROM SUPABASE ══
+async function loadCustomTemplates(){
+  try {
+    const { data } = await sb.from('custom_templates').select('*').eq('active', true).order('created_at');
+    if(data && data.length){
+      TEMPLATES['custom'] = data.map(t=>({
+        id: 'custom_'+t.id,
+        name: t.name,
+        img: t.preview_img || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80',
+        supportsHeroUpload: t.supports_hero_upload || false,
+        defaultAccent: t.default_accent || '#FFD93D',
+        defaultBg: t.default_bg || 'dark-purple',
+        heroStyle: '',
+        overlayStyle: '',
+        customHtml: t.html_template || '',
+        editableFields: t.editable_fields || [],
+        category: t.category || 'custom',
+      }));
+      // Show custom tab if there are custom templates
+      const tab = document.getElementById('customTplsTab');
+      if(tab) tab.style.display = '';
+    }
+  } catch(e) { /* table may not exist yet */ }
 }
 
 // ══ TEMPLATE PICKER ══
@@ -1313,6 +1475,472 @@ function renderTemplateHTML(tplId, s){
         <div style="background:${ac};color:${ac==='#FFFFFF'?'#1A0A00':'#fff'};font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem">✅ Confirmar presença</div>
       </div>
     </div>`;
+
+  // ── HOMEM ──
+
+  // ── CHOPE & FUTEBOL ──
+  if(tplId==='hom-cerveja') return `
+    <div style="background:linear-gradient(160deg,#1a0e00,#3d2200);min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+      <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.18"></div>
+      <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#F59E0B,#EF4444,#F59E0B)"></div>
+      <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
+        <div style="font-size:3rem;margin-bottom:.5rem">🍺⚽🎉</div>
+        <div style="display:inline-block;background:${ac};color:#1a0e00;padding:.2rem 1rem;border-radius:99px;font-size:.65rem;font-weight:800;letter-spacing:.15em;text-transform:uppercase;margin-bottom:.75rem">Você está convidado!</div>
+        <div style="font-family:'Fraunces',serif;font-size:clamp(2rem,7vw,3rem);font-weight:900;font-style:italic;color:${ac};line-height:1;margin-bottom:.4rem;text-shadow:0 0 20px ${ac}55">${s.titulo||'Festa do Cara!'}</div>
+        <div style="font-size:1.1rem;color:rgba(255,255,255,.7);font-weight:700;margin-bottom:1.75rem">${s.nome||''}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.5rem;text-align:left">
+          ${[['📅',dateStr],[s.hora?'⏰':null,s.hora],[s.local?'📍':null,s.local],[s.dress?'👕':null,s.dress]].filter(x=>x[0]).map(([i,v])=>`<div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,165,0,.2);border-radius:10px;padding:.55rem .75rem;font-size:.75rem;display:flex;gap:.35rem;align-items:center"><span>${i}</span><span style="color:rgba(255,255,255,.75)">${v}</span></div>`).join('')}
+        </div>
+        ${s.msg?`<div style="background:rgba(245,158,11,.08);border-left:3px solid ${ac};padding:.8rem 1rem;font-style:italic;font-size:.85rem;color:rgba(255,255,255,.55);margin-bottom:1rem;line-height:1.5;text-align:left">"${s.msg}"</div>`:''}
+        ${rsvpBtn}
+        ${s.gifts.length?`<div style="margin-top:1rem;display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center">${giftsChips}</div>`:''}
+      </div>
+      <div style="position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#F59E0B,#EF4444,#F59E0B)"></div>
+    </div>`;
+
+  // ── CAMPO DE FUTEBOL ──
+  if(tplId==='hom-futebol') return `
+    <div style="background:linear-gradient(160deg,#052a10,#0a4a1a);min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+      <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.12"></div>
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:220px;height:140px;border:2px solid rgba(255,255,255,.08);border-radius:4px;pointer-events:none"></div>
+      <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
+        <div style="font-size:3rem;margin-bottom:.75rem">⚽🏆</div>
+        <div style="font-size:.65rem;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:${ac};margin-bottom:.4rem">⚡ CONVITE ESPECIAL ⚡</div>
+        <div style="font-family:'Fraunces',serif;font-size:clamp(2rem,7vw,2.8rem);font-weight:900;font-style:italic;color:#fff;line-height:1.1;margin-bottom:.3rem">${s.titulo||'A Festa!'}</div>
+        <div style="font-size:1rem;color:rgba(255,255,255,.65);margin-bottom:1.5rem">${s.nome||''}</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.5rem">
+          ${[['📅',dateShort,'Data'],['⏰',s.hora||'—','Hora'],['📍',s.local?s.local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:rgba(255,255,255,.08);border:1px solid rgba(52,211,153,.2);border-radius:10px;padding:.6rem .25rem;text-align:center"><div style="font-size:1rem">${i}</div><div style="font-size:.7rem;font-weight:800;color:${ac}">${v}</div><div style="font-size:.55rem;color:rgba(255,255,255,.35);text-transform:uppercase">${l}</div></div>`).join('')}
+        </div>
+        ${s.msg?`<div style="border:1px solid rgba(52,211,153,.15);border-radius:12px;padding:.85rem;font-style:italic;font-size:.83rem;color:rgba(255,255,255,.5);margin-bottom:1rem;line-height:1.5">"${s.msg}"</div>`:''}
+        <div style="background:${ac};color:#052a10;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem">✅ Confirmar presença</div>
+        ${s.gifts.length?`<div style="margin-top:1rem;display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center">${giftsChips}</div>`:''}
+      </div>
+    </div>`;
+
+  // ── MINIMALISTA (homem) ──
+  if(tplId==='hom-minimalista') return `
+    <div style="background:#111;min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+      <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.1;filter:grayscale(80%)"></div>
+      <div style="position:relative;padding:3rem 1.75rem 2rem">
+        <div style="width:40px;height:2px;background:${ac};margin-bottom:1.5rem"></div>
+        <div style="font-size:.65rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:.5rem">Você está convidado</div>
+        <div style="font-family:'Fraunces',serif;font-size:clamp(2rem,7vw,3rem);font-weight:900;font-style:italic;color:#fff;line-height:1;margin-bottom:.4rem">${s.titulo||'Evento'}</div>
+        <div style="font-size:1rem;color:rgba(255,255,255,.5);margin-bottom:2.5rem">${s.nome||''}</div>
+        <div style="display:flex;flex-direction:column;gap:.6rem;margin-bottom:2.5rem">
+          ${[['—',dateStr],[s.hora?'—':null,s.hora],[s.local?'—':null,s.local],[s.dress?'—':null,s.dress]].filter(x=>x[0]).map(([i,v])=>`<div style="display:flex;gap:.75rem;font-size:.88rem;color:rgba(255,255,255,.5)"><span style="color:${ac};font-weight:900">${i}</span><span>${v}</span></div>`).join('')}
+        </div>
+        ${s.msg?`<div style="border-top:1px solid rgba(255,255,255,.1);padding-top:1.25rem;font-style:italic;font-size:.85rem;color:rgba(255,255,255,.35);line-height:1.7;margin-bottom:1.5rem">"${s.msg}"</div>`:''}
+        <div style="background:transparent;border:1px solid ${ac};color:${ac};font-weight:800;text-align:center;padding:.85rem;border-radius:4px;font-size:.9rem;letter-spacing:.08em">CONFIRMAR PRESENÇA →</div>
+        <div style="width:40px;height:2px;background:${ac};margin-top:1.5rem"></div>
+      </div>
+    </div>`;
+
+  // ── HOMEM COM FOTOS ──
+  if(tplId==='hom-fotos') return `
+    <div style="min-height:100%;font-family:'Nunito',sans-serif;overflow:hidden;position:relative;background:#111">
+      <img src="${heroImg}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55"/>
+      <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.1),rgba(0,0,0,.85))"></div>
+      <div style="position:relative;padding:3rem 1.5rem 2rem;min-height:580px;display:flex;flex-direction:column;justify-content:flex-end;color:#fff;text-align:left">
+        <div style="font-size:.6rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:${ac};margin-bottom:.6rem">VOCÊ ESTÁ CONVIDADO</div>
+        <div style="font-family:'Fraunces',serif;font-size:clamp(2rem,8vw,3rem);font-weight:900;font-style:italic;color:#fff;line-height:1;margin-bottom:.4rem">${s.titulo||'Evento!'}</div>
+        <div style="font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:1.5rem">${s.nome||''}</div>
+        <div style="background:rgba(255,255,255,.1);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:1rem;margin-bottom:1.25rem;display:flex;flex-direction:column;gap:.4rem">
+          ${[['📅',dateStr],[s.hora?'⏰':null,s.hora],[s.local?'📍':null,s.local]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.75)">${i} ${v}</div>`).join('')}
+        </div>
+        <div style="background:${ac};color:#1a0a00;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem">✅ Confirmar presença</div>
+      </div>
+    </div>`;
+
+  // ── MULHER ──
+
+  // ── CHAMPANHE & GLAMOUR ──
+  if(tplId==='mul-champanhe') return `
+    <div style="background:linear-gradient(160deg,#1a1000,#3d2800);min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+      <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.2"></div>
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,${ac},transparent)"></div>
+      <div style="position:relative;padding:3rem 1.5rem 2rem;text-align:center">
+        <div style="font-size:2.5rem;margin-bottom:.75rem">🥂✨</div>
+        <div style="font-size:.6rem;font-weight:800;letter-spacing:.25em;text-transform:uppercase;color:${ac};opacity:.8;margin-bottom:.75rem">— Com muito glamour —</div>
+        <div style="font-family:'Fraunces',serif;font-size:clamp(2rem,7vw,3rem);font-weight:900;font-style:italic;color:${ac};line-height:1;margin-bottom:.5rem;text-shadow:0 0 30px ${ac}44">${s.titulo||'Festa!'}</div>
+        <div style="font-family:'Fraunces',serif;font-size:1.1rem;font-style:italic;color:rgba(255,255,255,.6);margin-bottom:2rem">${s.nome||''}</div>
+        <div style="width:50px;height:1px;background:${ac};opacity:.5;margin:0 auto 1.5rem"></div>
+        <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.75rem">
+          ${[['📅',dateStr],[s.hora?'⏰':null,s.hora],[s.local?'📍':null,s.local],[s.dress?'👗':null,s.dress]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.85rem;color:rgba(255,255,255,.6)">${i} ${v}</div>`).join('')}
+        </div>
+        ${s.msg?`<div style="border:1px solid rgba(252,211,77,.15);border-radius:16px;padding:1.1rem;font-style:italic;font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:1.5rem;line-height:1.7">"${s.msg}"</div>`:''}
+        <div style="background:transparent;border:1px solid ${ac};color:${ac};font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;letter-spacing:.05em">✅ Confirmar presença</div>
+        ${s.gifts.length?`<div style="margin-top:1rem;display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center">${giftsChips}</div>`:''}
+      </div>
+    </div>`;
+
+  // ── ROSA & FOFO ──
+  if(tplId==='mul-rosa') return `
+    <div style="background:linear-gradient(160deg,#fff0f8,#ffe4f5);min-height:100%;font-family:'Nunito',sans-serif;color:#1A0A00;overflow:hidden;position:relative">
+      <div style="position:absolute;top:0;left:0;right:0;height:160px;background:linear-gradient(135deg,#f9a8d4,#ec4899);overflow:hidden">
+        <img src="${heroImg}" style="width:100%;height:100%;object-fit:cover;opacity:.25;mix-blend-mode:overlay"/>
+        <div style="position:absolute;top:.75rem;right:1rem;font-size:2rem;opacity:.4">🌸💕🌸</div>
+      </div>
+      <div style="position:relative;padding-top:110px;text-align:center;padding:0 1.25rem 2rem">
+        <div style="width:90px;height:90px;border-radius:50%;overflow:hidden;border:4px solid #fff;margin:110px auto 1rem;box-shadow:0 8px 24px rgba(236,72,153,.25);position:relative;z-index:1;margin-top:90px">
+          <img src="${heroImg}" style="width:100%;height:100%;object-fit:cover"/>
+        </div>
+        <div style="font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#ec4899;margin-bottom:.3rem">💕 Você está convidada!</div>
+        <div style="font-family:'Fraunces',serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;color:#1A0A00;line-height:1.1;margin-bottom:.3rem">${s.titulo||'Festa!'}</div>
+        <div style="color:rgba(26,10,0,.5);font-weight:700;margin-bottom:1.5rem">${s.nome||''}</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.25rem">
+          ${[['🗓',dateShort,'Data'],['⏰',s.hora||'—','Hora'],['📍',s.local?s.local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:#fff;border-radius:12px;padding:.65rem .35rem;box-shadow:0 2px 8px rgba(236,72,153,.12)"><div style="font-size:1rem">${i}</div><div style="font-size:.7rem;font-weight:800">${v}</div><div style="font-size:.55rem;color:rgba(26,10,0,.3);text-transform:uppercase">${l}</div></div>`).join('')}
+        </div>
+        ${s.dress?`<div style="background:#fff;border-radius:10px;padding:.6rem;font-size:.8rem;color:rgba(26,10,0,.6);margin-bottom:1rem;box-shadow:0 2px 8px rgba(236,72,153,.08)">👗 Dress code: <strong>${s.dress}</strong></div>`:''}
+        ${s.msg?`<div style="background:rgba(249,168,212,.15);border-radius:12px;padding:.85rem;font-style:italic;font-size:.85rem;color:rgba(26,10,0,.55);margin-bottom:1rem;line-height:1.6">"${s.msg}"</div>`:''}
+        <div style="background:linear-gradient(135deg,#f472b6,#ec4899);color:#fff;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;box-shadow:0 6px 20px rgba(236,72,153,.3)">✅ Confirmar presença</div>
+        ${s.gifts.length?`<div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center">${giftsChips}</div>`:''}
+      </div>
+    </div>`;
+
+  // ── POOL PARTY ──
+  if(tplId==='mul-pool') return `
+    <div style="background:linear-gradient(160deg,#0c3a4a,#0e6b8a);min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+      <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.2"></div>
+      <div style="position:absolute;bottom:0;left:0;right:0;height:60px;background:rgba(255,255,255,.05);clip-path:ellipse(55% 100% at 50% 100%)"></div>
+      <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
+        <div style="font-size:3rem;margin-bottom:.5rem">🏊‍♀️☀️🍹</div>
+        <div style="display:inline-block;background:${ac};color:#0c3a4a;padding:.2rem 1rem;border-radius:99px;font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.75rem">Você está convidada!</div>
+        <div style="font-family:'Fraunces',serif;font-size:clamp(2rem,7vw,2.8rem);font-weight:900;font-style:italic;line-height:1.1;margin-bottom:.3rem">${s.titulo||'Pool Party!'}</div>
+        <div style="font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:1.5rem">${s.nome||''}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.5rem">
+          ${[['📅',dateStr],[s.hora?'⏰':null,s.hora],[s.local?'📍':null,s.local],[s.dress?'👙':null,s.dress]].filter(x=>x[0]).map(([i,v])=>`<div style="background:rgba(255,255,255,.1);border:1px solid rgba(96,165,250,.2);border-radius:10px;padding:.55rem .75rem;font-size:.75rem;display:flex;gap:.35rem;align-items:center"><span>${i}</span><span style="color:rgba(255,255,255,.8)">${v}</span></div>`).join('')}
+        </div>
+        ${s.msg?`<div style="background:rgba(96,165,250,.1);border-radius:12px;padding:.85rem;font-style:italic;font-size:.83rem;color:rgba(255,255,255,.55);margin-bottom:1rem;line-height:1.5">"${s.msg}"</div>`:''}
+        <div style="background:${ac};color:#0c3a4a;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem">✅ Confirmar presença</div>
+        ${s.gifts.length?`<div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center">${giftsChips}</div>`:''}
+      </div>
+    </div>`;
+
+  // ── MULHER COM FOTOS ──
+  if(tplId==='mul-fotos') return `
+    <div style="min-height:100%;font-family:'Nunito',sans-serif;overflow:hidden;position:relative;background:#1a0020">
+      <img src="${heroImg}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.5"/>
+      <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(80,0,80,.2),rgba(40,0,40,.85))"></div>
+      <div style="position:relative;padding:3rem 1.5rem 2rem;text-align:center;min-height:540px;display:flex;flex-direction:column;justify-content:flex-end;color:#fff">
+        <div style="font-size:.6rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:${ac};margin-bottom:.6rem">✨ Celebração especial ✨</div>
+        <div style="font-family:'Fraunces',serif;font-size:clamp(2rem,8vw,3rem);font-weight:900;font-style:italic;color:${ac};line-height:1;margin-bottom:.4rem">${s.titulo||'Festa!'}</div>
+        <div style="font-size:1rem;color:rgba(255,255,255,.75);margin-bottom:1.25rem">${s.nome||''}</div>
+        <div style="background:rgba(255,255,255,.12);backdrop-filter:blur(12px);border:1px solid rgba(244,114,182,.2);border-radius:16px;padding:1rem;margin-bottom:1rem">
+          <div style="display:flex;flex-direction:column;gap:.4rem;font-size:.82rem;color:rgba(255,255,255,.75)">
+            <div>📅 ${dateStr}</div>
+            ${s.hora?`<div>⏰ ${s.hora}</div>`:''}
+            ${s.local?`<div>📍 ${s.local}</div>`:''}
+          </div>
+        </div>
+        <div style="background:${ac};color:#1a0020;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem">✅ Confirmar presença</div>
+      </div>
+    </div>`;
+
+  // ── 15 ANOS ──
+
+  // ── VALSA REAL ──
+  if(tplId==='deb-valsa') return `
+    <div style="background:#08030f;min-height:100%;font-family:'Nunito',sans-serif;color:#fff;position:relative;overflow:hidden">
+      <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;background-position:center;opacity:.22"></div>
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center top,rgba(252,211,77,.06) 0%,transparent 65%)"></div>
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,${ac},transparent)"></div>
+      <div style="position:relative;padding:3rem 1.5rem 2rem;text-align:center">
+        <div style="font-size:2.5rem;margin-bottom:.5rem">👑💫</div>
+        <div style="font-size:.6rem;font-weight:800;letter-spacing:.25em;text-transform:uppercase;color:${ac};opacity:.7;margin-bottom:.75rem">— Uma noite inesquecível —</div>
+        <div style="font-family:'Fraunces',serif;font-size:clamp(2rem,7vw,2.8rem);font-weight:900;font-style:italic;color:${ac};line-height:1;margin-bottom:.4rem;text-shadow:0 0 30px ${ac}44">${s.titulo||'Debutante'}</div>
+        <div style="font-family:'Fraunces',serif;font-size:1rem;font-style:italic;color:rgba(255,255,255,.5);margin-bottom:.3rem">Os 15 anos de</div>
+        <div style="font-family:'Fraunces',serif;font-size:1.5rem;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:2rem">${s.nome||''}</div>
+        <div style="width:50px;height:1px;background:${ac};opacity:.45;margin:0 auto 1.5rem"></div>
+        <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.75rem">
+          ${[['📅',dateStr],[s.hora?'⏰':null,s.hora],[s.local?'📍':null,s.local],[s.dress?'👗':null,s.dress]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.85rem;color:rgba(255,255,255,.55)">${i} ${v}</div>`).join('')}
+        </div>
+        ${s.msg?`<div style="border:1px solid rgba(252,211,77,.18);border-radius:16px;padding:1.1rem;font-style:italic;font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:1.5rem;line-height:1.7">"${s.msg}"</div>`:''}
+        <div style="background:transparent;border:1px solid ${ac};color:${ac};font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem">✅ Confirmar presença</div>
+      </div>
+    </div>`;
+
+  // ── CLEAN & MODERNO (15 anos) ──
+  if(tplId==='deb-clean') return `
+    <div style="background:#fff;min-height:100%;font-family:'Nunito',sans-serif;color:#1A0A00;overflow:hidden">
+      <div style="height:240px;position:relative;overflow:hidden">
+        <img src="${heroImg}" style="width:100%;height:100%;object-fit:cover;display:block"/>
+        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 25%,rgba(255,255,255,1))"></div>
+        <div style="position:absolute;bottom:1rem;left:1.25rem;right:1.25rem;text-align:center">
+          <div style="display:inline-block;background:${ac};color:#fff;padding:.2rem .9rem;border-radius:99px;font-size:.6rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase">👑 15 anos</div>
+        </div>
+      </div>
+      <div style="padding:.5rem 1.5rem 2rem;text-align:center">
+        <div style="font-family:'Fraunces',serif;font-size:clamp(1.8rem,6vw,2.6rem);font-weight:900;font-style:italic;color:#1A0A00;line-height:1.1;margin-bottom:.25rem">${s.titulo||'Uma noite mágica'}</div>
+        <div style="font-size:.95rem;color:rgba(26,10,0,.4);font-style:italic;margin-bottom:.3rem">Os 15 anos de</div>
+        <div style="font-size:1.15rem;font-weight:800;color:rgba(26,10,0,.8);margin-bottom:1.5rem">${s.nome||''}</div>
+        <div style="display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.25rem">
+          ${[['📅',dateShort],[s.hora?'⏰':null,s.hora],[s.local?'📍':null,s.local]].filter(x=>x[0]).map(([i,v])=>`<div style="background:rgba(26,10,0,.04);border:1px solid rgba(26,10,0,.07);border-radius:8px;padding:.4rem .75rem;font-size:.77rem;color:rgba(26,10,0,.6)">${i} ${v}</div>`).join('')}
+        </div>
+        ${s.dress?`<div style="font-size:.82rem;color:rgba(26,10,0,.4);margin-bottom:1.25rem">👗 ${s.dress}</div>`:''}
+        ${s.msg?`<div style="font-style:italic;font-size:.85rem;color:rgba(26,10,0,.4);line-height:1.6;margin-bottom:1.25rem;padding:0 .5rem">"${s.msg}"</div>`:''}
+        <div style="background:${ac};color:#fff;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;box-shadow:0 6px 20px ${ac}55">✅ Confirmar presença</div>
+      </div>
+    </div>`;
+
+  // ── VINTAGE DOURADO (15 anos) ──
+  if(tplId==='deb-vintage') return `
+    <div style="background:linear-gradient(160deg,#2a0a08,#5c1a10);min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+      <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.18"></div>
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,${ac},transparent)"></div>
+      <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
+        <div style="font-size:2.5rem;margin-bottom:.5rem">🌹👑🌹</div>
+        <div style="font-size:.6rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:${ac};opacity:.8;margin-bottom:.5rem">Com toda elegância</div>
+        <div style="font-family:'Fraunces',serif;font-size:clamp(1.8rem,7vw,2.8rem);font-weight:900;font-style:italic;color:${ac};line-height:1.1;margin-bottom:.3rem">${s.titulo||'Debutante'}</div>
+        <div style="font-family:'Fraunces',serif;font-size:.9rem;font-style:italic;color:rgba(255,255,255,.45);margin-bottom:.25rem">Os 15 anos de</div>
+        <div style="font-size:1.15rem;font-weight:700;color:rgba(255,255,255,.85);margin-bottom:2rem">${s.nome||''}</div>
+        <div style="background:rgba(255,255,255,.07);border:1px solid rgba(252,211,77,.2);border-radius:16px;padding:1.1rem;margin-bottom:1.5rem">
+          ${[['📅',dateStr],[s.hora?'⏰':null,s.hora],[s.local?'📍':null,s.local],[s.dress?'👗':null,s.dress]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.55);margin-bottom:.35rem">${i} ${v}</div>`).join('')}
+        </div>
+        ${s.msg?`<div style="border-left:2px solid ${ac};padding:.75rem 1rem;text-align:left;font-style:italic;font-size:.83rem;color:rgba(255,255,255,.45);margin-bottom:1.25rem;line-height:1.6">"${s.msg}"</div>`:''}
+        <div style="border:1px solid ${ac};color:${ac};background:transparent;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem">✅ Confirmar presença</div>
+      </div>
+    </div>`;
+
+  // ── 15 ANOS COM FOTOS ──
+  if(tplId==='deb-fotos') return `
+    <div style="min-height:100%;font-family:'Nunito',sans-serif;overflow:hidden;position:relative;background:#0a001a">
+      <img src="${heroImg}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.5"/>
+      <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(60,0,80,.2),rgba(30,0,40,.88))"></div>
+      <div style="position:relative;padding:3rem 1.5rem 2rem;text-align:center;min-height:540px;display:flex;flex-direction:column;justify-content:flex-end;color:#fff">
+        <div style="font-size:.6rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:${ac};margin-bottom:.6rem">👑 Festa de 15 anos</div>
+        <div style="font-family:'Fraunces',serif;font-size:clamp(2rem,8vw,3rem);font-weight:900;font-style:italic;color:${ac};line-height:1;margin-bottom:.4rem">${s.titulo||'Debutante'}</div>
+        <div style="font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:1.25rem">${s.nome||''}</div>
+        <div style="background:rgba(255,255,255,.1);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:1rem;margin-bottom:1rem">
+          <div style="display:flex;flex-direction:column;gap:.4rem;font-size:.82rem;color:rgba(255,255,255,.75)">
+            <div>📅 ${dateStr}</div>
+            ${s.hora?`<div>⏰ ${s.hora}</div>`:''}
+            ${s.local?`<div>📍 ${s.local}</div>`:''}
+          </div>
+        </div>
+        <div style="background:${ac};color:#0a001a;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem">✅ Confirmar presença</div>
+      </div>
+    </div>`;
+
+  // ── MENINO ──
+
+  // ── HOMEM-ARANHA ──
+  if(tplId==='boy-spiderman') return `
+    <div style="background:linear-gradient(160deg,#0f0020,#1a0040);min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+      <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.12"></div>
+      <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#EF4444,#1d4ed8,#EF4444)"></div>
+      <div style="position:absolute;bottom:0;right:0;font-size:8rem;opacity:.06;line-height:1">🕷️</div>
+      <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
+        <div style="font-size:3.5rem;margin-bottom:.5rem">🕷️🦸</div>
+        <div style="display:inline-block;background:#EF4444;color:#fff;padding:.2rem 1rem;border-radius:6px;font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.75rem">⚡ Convite especial!</div>
+        <div style="font-family:'Fraunces',serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;color:#EF4444;line-height:1.1;margin-bottom:.3rem">${s.titulo||'Festa do Homem-Aranha!'}</div>
+        <div style="font-size:.95rem;color:rgba(255,255,255,.6);margin-bottom:1.5rem">${s.nome||''}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1.5rem">
+          ${[['📅',dateStr],[s.hora?'⏰':null,s.hora],[s.local?'📍':null,s.local],[s.dress?'👕':null,s.dress]].filter(x=>x[0]).map(([i,v])=>`<div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:.5rem .65rem;font-size:.75rem;display:flex;gap:.35rem;align-items:center"><span>${i}</span><span style="color:rgba(255,255,255,.7)">${v}</span></div>`).join('')}
+        </div>
+        ${s.msg?`<div style="background:rgba(239,68,68,.07);border-left:3px solid #EF4444;padding:.75rem 1rem;font-style:italic;font-size:.82rem;color:rgba(255,255,255,.5);margin-bottom:1rem;line-height:1.5">"${s.msg}"</div>`:''}
+        <div style="background:linear-gradient(135deg,#EF4444,#1d4ed8);color:#fff;font-weight:800;text-align:center;padding:.85rem;border-radius:8px;font-size:.9rem">✅ Confirmar presença</div>
+        ${s.gifts.length?`<div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center">${giftsChips}</div>`:''}
+      </div>
+    </div>`;
+
+  // ── POKÉMON ──
+  if(tplId==='boy-pokemon') return `
+    <div style="background:linear-gradient(160deg,#0a1a3a,#1a3a6a);min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+      <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.1"></div>
+      <div style="position:absolute;top:1rem;right:1rem;font-size:3rem;opacity:.15">⚡🎮</div>
+      <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
+        <div style="font-size:3rem;margin-bottom:.5rem">⚡🎮⚡</div>
+        <div style="display:inline-block;background:#FBBF24;color:#0a1a3a;padding:.25rem 1rem;border-radius:6px;font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.75rem">Você está convidado!</div>
+        <div style="font-family:'Fraunces',serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;color:#FBBF24;line-height:1.1;margin-bottom:.3rem">${s.titulo||'Festa Pokémon!'}</div>
+        <div style="font-size:.95rem;color:rgba(255,255,255,.65);margin-bottom:1.5rem">${s.nome||''}</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.5rem">
+          ${[['📅',dateShort,'Data'],['⏰',s.hora||'—','Hora'],['📍',s.local?s.local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:10px;padding:.6rem .25rem;text-align:center"><div style="font-size:1rem">${i}</div><div style="font-size:.7rem;font-weight:800;color:#FBBF24">${v}</div><div style="font-size:.55rem;color:rgba(255,255,255,.35);text-transform:uppercase">${l}</div></div>`).join('')}
+        </div>
+        ${s.msg?`<div style="border:1px solid rgba(251,191,36,.15);border-radius:12px;padding:.85rem;font-style:italic;font-size:.83rem;color:rgba(255,255,255,.5);margin-bottom:1rem;line-height:1.5">"${s.msg}"</div>`:''}
+        <div style="background:#FBBF24;color:#0a1a3a;font-weight:800;text-align:center;padding:.85rem;border-radius:8px;font-size:.9rem">✅ Confirmar presença</div>
+        ${s.gifts.length?`<div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center">${giftsChips}</div>`:''}
+      </div>
+    </div>`;
+
+  // ── MICKEY ──
+  if(tplId==='boy-mickey') return `
+    <div style="background:#0a0000;min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+      <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.12"></div>
+      <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#EF4444,#1a0000,#EF4444)"></div>
+      <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
+        <div style="font-size:3rem;margin-bottom:.5rem">🎪🐭🎉</div>
+        <div style="display:inline-block;border:2px solid #EF4444;color:#EF4444;padding:.2rem .9rem;border-radius:99px;font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.75rem">Você está convidado!</div>
+        <div style="font-family:'Fraunces',serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;color:#EF4444;line-height:1.1;margin-bottom:.3rem">${s.titulo||'Festa do Mickey!'}</div>
+        <div style="font-size:.95rem;color:rgba(255,255,255,.6);margin-bottom:1.5rem">${s.nome||''}</div>
+        <div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:16px;padding:1.1rem;margin-bottom:1.5rem">
+          ${[['📅',dateStr],[s.hora?'⏰':null,s.hora],[s.local?'📍':null,s.local],[s.dress?'👕':null,s.dress]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:.3rem">${i} ${v}</div>`).join('')}
+        </div>
+        ${s.msg?`<div style="border-left:3px solid #EF4444;padding:.75rem 1rem;font-style:italic;font-size:.82rem;color:rgba(255,255,255,.45);margin-bottom:1rem;line-height:1.5;text-align:left">"${s.msg}"</div>`:''}
+        <div style="background:#EF4444;color:#fff;font-weight:800;text-align:center;padding:.85rem;border-radius:99px;font-size:.9rem">✅ Confirmar presença</div>
+        ${s.gifts.length?`<div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center">${giftsChips}</div>`:''}
+      </div>
+    </div>`;
+
+  // ── BOB ESPONJA ──
+  if(tplId==='boy-spongebob') return `
+    <div style="background:linear-gradient(160deg,#001a3a,#003566);min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+      <div style="position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to top,rgba(251,191,36,.12),transparent)"></div>
+      <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
+        <div style="font-size:3rem;margin-bottom:.5rem">🧽🌊⭐</div>
+        <div style="display:inline-block;background:#FBBF24;color:#001a3a;padding:.25rem 1rem;border-radius:4px;font-size:.65rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.75rem">Estão prontos?!</div>
+        <div style="font-family:'Fraunces',serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;color:#FBBF24;line-height:1.1;margin-bottom:.3rem">${s.titulo||'Festa do Bob Esponja!'}</div>
+        <div style="font-size:.95rem;color:rgba(255,255,255,.65);margin-bottom:1.5rem">${s.nome||''}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1.5rem">
+          ${[['📅',dateStr],[s.hora?'⏰':null,s.hora],[s.local?'📍':null,s.local],[s.dress?'👕':null,s.dress]].filter(x=>x[0]).map(([i,v])=>`<div style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.25);border-radius:10px;padding:.55rem .65rem;font-size:.75rem;display:flex;gap:.35rem;align-items:center"><span>${i}</span><span style="color:rgba(255,255,255,.75)">${v}</span></div>`).join('')}
+        </div>
+        ${s.msg?`<div style="background:rgba(251,191,36,.07);border-radius:12px;padding:.85rem;font-style:italic;font-size:.82rem;color:rgba(255,255,255,.5);margin-bottom:1rem;line-height:1.5">"${s.msg}"</div>`:''}
+        <div style="background:#FBBF24;color:#001a3a;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem">✅ Confirmar presença</div>
+        ${s.gifts.length?`<div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center">${giftsChips}</div>`:''}
+      </div>
+    </div>`;
+
+  // ── MENINO COM FOTOS ──
+  if(tplId==='boy-fotos') return `
+    <div style="background:linear-gradient(160deg,#001a3a,#003566);min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden">
+      <div style="height:200px;position:relative;overflow:hidden">
+        <img src="${heroImg}" style="width:100%;height:100%;object-fit:cover"/>
+        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent,rgba(0,26,58,1))"></div>
+      </div>
+      <div style="padding:0 1.5rem 2rem;text-align:center;margin-top:-1.5rem;position:relative">
+        <div style="font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:${ac};margin-bottom:.4rem">🎉 Você está convidado!</div>
+        <div style="font-family:'Fraunces',serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;color:#fff;line-height:1.1;margin-bottom:.3rem">${s.titulo||'Festa!'}</div>
+        <div style="color:rgba(255,255,255,.55);font-weight:700;margin-bottom:1.5rem">${s.nome||''}</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.25rem">
+          ${[['🗓',dateShort,'Data'],['⏰',s.hora||'—','Hora'],['📍',s.local?s.local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:rgba(255,255,255,.07);border-radius:12px;padding:.65rem .35rem"><div style="font-size:1rem">${i}</div><div style="font-size:.7rem;font-weight:800;color:${ac}">${v}</div><div style="font-size:.55rem;color:rgba(255,255,255,.3);text-transform:uppercase">${l}</div></div>`).join('')}
+        </div>
+        ${s.msg?`<div style="background:rgba(255,255,255,.06);border-radius:12px;padding:.85rem;font-style:italic;font-size:.83rem;color:rgba(255,255,255,.45);margin-bottom:1rem;line-height:1.6">"${s.msg}"</div>`:''}
+        <div style="background:${ac};color:#001a3a;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem">✅ Confirmar presença</div>
+      </div>
+    </div>`;
+
+  // ── MENINA ──
+
+  // ── PEQUENA SEREIA ──
+  if(tplId==='girl-ariel') return `
+    <div style="background:linear-gradient(160deg,#0a2540,#0e4a7a);min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+      <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.15"></div>
+      <div style="position:absolute;bottom:0;left:0;right:0;height:70px;opacity:.08;font-size:3rem;text-align:center;line-height:1.5">🐚🐠🐟🌊</div>
+      <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
+        <div style="font-size:3rem;margin-bottom:.5rem">🧜‍♀️🐚🌊</div>
+        <div style="display:inline-block;background:${ac};color:#0a2540;padding:.25rem 1rem;border-radius:99px;font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.75rem">Você está convidada!</div>
+        <div style="font-family:'Fraunces',serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;color:${ac};line-height:1.1;margin-bottom:.3rem">${s.titulo||'Festa da Sereia!'}</div>
+        <div style="font-size:.95rem;color:rgba(255,255,255,.6);margin-bottom:1.5rem">${s.nome||''}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1.5rem">
+          ${[['📅',dateStr],[s.hora?'⏰':null,s.hora],[s.local?'📍':null,s.local],[s.dress?'👗':null,s.dress]].filter(x=>x[0]).map(([i,v])=>`<div style="background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.25);border-radius:10px;padding:.55rem .65rem;font-size:.75rem;display:flex;gap:.35rem;align-items:center"><span>${i}</span><span style="color:rgba(255,255,255,.75)">${v}</span></div>`).join('')}
+        </div>
+        ${s.msg?`<div style="background:rgba(96,165,250,.08);border-radius:12px;padding:.85rem;font-style:italic;font-size:.82rem;color:rgba(255,255,255,.5);margin-bottom:1rem;line-height:1.5">"${s.msg}"</div>`:''}
+        <div style="background:${ac};color:#0a2540;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem">✅ Confirmar presença</div>
+        ${s.gifts.length?`<div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center">${giftsChips}</div>`:''}
+      </div>
+    </div>`;
+
+  // ── CINDERELA ──
+  if(tplId==='girl-cinderela') return `
+    <div style="background:linear-gradient(160deg,#0a0a2a,#1a1a5a);min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+      <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.15"></div>
+      <div style="position:absolute;top:1rem;right:1rem;font-size:2rem;opacity:.2">✨⭐✨</div>
+      <div style="position:absolute;bottom:1rem;left:1rem;font-size:2rem;opacity:.15">🔮🪄</div>
+      <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
+        <div style="font-size:3rem;margin-bottom:.5rem">👸🏼🎀✨</div>
+        <div style="font-size:.6rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:${ac};opacity:.8;margin-bottom:.75rem">— Um baile encantado —</div>
+        <div style="font-family:'Fraunces',serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;color:${ac};line-height:1.1;margin-bottom:.3rem">${s.titulo||'Festa da Cinderela!'}</div>
+        <div style="font-size:.95rem;color:rgba(255,255,255,.55);margin-bottom:1.75rem">${s.nome||''}</div>
+        <div style="background:rgba(147,197,253,.06);border:1px solid rgba(147,197,253,.2);border-radius:16px;padding:1.1rem;margin-bottom:1.5rem">
+          ${[['📅',dateStr],[s.hora?'⏰':null,s.hora],[s.local?'📍':null,s.local],[s.dress?'👗':null,s.dress]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.55);margin-bottom:.3rem">${i} ${v}</div>`).join('')}
+        </div>
+        ${s.msg?`<div style="border:1px solid rgba(147,197,253,.15);border-radius:12px;padding:.85rem;font-style:italic;font-size:.82rem;color:rgba(255,255,255,.45);margin-bottom:1rem;line-height:1.5">"${s.msg}"</div>`:''}
+        <div style="background:${ac};color:#0a0a2a;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem">✅ Confirmar presença</div>
+        ${s.gifts.length?`<div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center">${giftsChips}</div>`:''}
+      </div>
+    </div>`;
+
+  // ── MINNIE ──
+  if(tplId==='girl-minnie') return `
+    <div style="background:linear-gradient(160deg,#2d0020,#5a003d);min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+      <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.12"></div>
+      <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#F472B6,#EC4899,#F472B6)"></div>
+      <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
+        <div style="font-size:3rem;margin-bottom:.5rem">🎀🐭🎀</div>
+        <div style="display:inline-block;border:2px solid #F472B6;color:#F472B6;padding:.2rem .9rem;border-radius:99px;font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.75rem">Você está convidada!</div>
+        <div style="font-family:'Fraunces',serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;color:#F472B6;line-height:1.1;margin-bottom:.3rem">${s.titulo||'Festa da Minnie!'}</div>
+        <div style="font-size:.95rem;color:rgba(255,255,255,.6);margin-bottom:1.5rem">${s.nome||''}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1.5rem">
+          ${[['📅',dateStr],[s.hora?'⏰':null,s.hora],[s.local?'📍':null,s.local],[s.dress?'👗':null,s.dress]].filter(x=>x[0]).map(([i,v])=>`<div style="background:rgba(244,114,182,.1);border:1px solid rgba(244,114,182,.25);border-radius:10px;padding:.55rem .65rem;font-size:.75rem;display:flex;gap:.35rem;align-items:center"><span>${i}</span><span style="color:rgba(255,255,255,.75)">${v}</span></div>`).join('')}
+        </div>
+        ${s.msg?`<div style="background:rgba(244,114,182,.07);border-left:3px solid #F472B6;padding:.75rem 1rem;font-style:italic;font-size:.82rem;color:rgba(255,255,255,.5);margin-bottom:1rem;line-height:1.5;text-align:left">"${s.msg}"</div>`:''}
+        <div style="background:linear-gradient(135deg,#F472B6,#EC4899);color:#fff;font-weight:800;text-align:center;padding:.85rem;border-radius:99px;font-size:.9rem;box-shadow:0 6px 20px rgba(236,72,153,.35)">✅ Confirmar presença</div>
+        ${s.gifts.length?`<div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center">${giftsChips}</div>`:''}
+      </div>
+    </div>`;
+
+  // ── URSINHA FOFA ──
+  if(tplId==='girl-ursinha') return `
+    <div style="background:linear-gradient(160deg,#fff0e8,#ffe4d4);min-height:100%;font-family:'Nunito',sans-serif;color:#1A0A00;overflow:hidden;position:relative">
+      <div style="position:absolute;top:0;left:0;right:0;height:170px;background:linear-gradient(135deg,#FCD34D,#FB923C);overflow:hidden">
+        <img src="${heroImg}" style="width:100%;height:100%;object-fit:cover;opacity:.2;mix-blend-mode:overlay"/>
+        <div style="position:absolute;top:.5rem;left:50%;transform:translateX(-50%);font-size:2rem;opacity:.35">🐻🍯🌸</div>
+      </div>
+      <div style="position:relative;padding-top:10px;text-align:center;padding:0 1.25rem 2rem">
+        <div style="width:85px;height:85px;border-radius:50%;overflow:hidden;border:4px solid #fff;margin:115px auto 1rem;box-shadow:0 8px 24px rgba(251,146,60,.3);position:relative;z-index:1;margin-top:100px">
+          <img src="${heroImg}" style="width:100%;height:100%;object-fit:cover"/>
+        </div>
+        <div style="font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#FB923C;margin-bottom:.3rem">🐻 Você está convidada!</div>
+        <div style="font-family:'Fraunces',serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;color:#1A0A00;line-height:1.1;margin-bottom:.3rem">${s.titulo||'Festa da Ursinha!'}</div>
+        <div style="color:rgba(26,10,0,.45);font-weight:700;margin-bottom:1.5rem">${s.nome||''}</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.25rem">
+          ${[['🗓',dateShort,'Data'],['⏰',s.hora||'—','Hora'],['📍',s.local?s.local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:#fff;border-radius:12px;padding:.65rem .35rem;box-shadow:0 2px 8px rgba(251,146,60,.12)"><div style="font-size:1rem">${i}</div><div style="font-size:.7rem;font-weight:800">${v}</div><div style="font-size:.55rem;color:rgba(26,10,0,.3);text-transform:uppercase">${l}</div></div>`).join('')}
+        </div>
+        ${s.msg?`<div style="background:rgba(251,146,60,.08);border-radius:12px;padding:.85rem;font-style:italic;font-size:.83rem;color:rgba(26,10,0,.5);margin-bottom:1rem;line-height:1.6">"${s.msg}"</div>`:''}
+        <div style="background:linear-gradient(135deg,#FCD34D,#FB923C);color:#1A0A00;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;box-shadow:0 6px 20px rgba(251,146,60,.3)">✅ Confirmar presença</div>
+        ${s.gifts.length?`<div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center">${giftsChips}</div>`:''}
+      </div>
+    </div>`;
+
+  // ── MENINA COM FOTOS ──
+  if(tplId==='girl-fotos') return `
+    <div style="min-height:100%;font-family:'Nunito',sans-serif;overflow:hidden;position:relative;background:#1a0020">
+      <img src="${heroImg}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.5"/>
+      <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(80,0,80,.15),rgba(40,0,40,.88))"></div>
+      <div style="position:relative;padding:3rem 1.5rem 2rem;text-align:center;min-height:540px;display:flex;flex-direction:column;justify-content:flex-end;color:#fff">
+        <div style="font-size:.6rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:${ac};margin-bottom:.6rem">💕 Você está convidada!</div>
+        <div style="font-family:'Fraunces',serif;font-size:clamp(2rem,8vw,3rem);font-weight:900;font-style:italic;color:${ac};line-height:1;margin-bottom:.4rem">${s.titulo||'Festa!'}</div>
+        <div style="font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:1.25rem">${s.nome||''}</div>
+        <div style="background:rgba(255,255,255,.1);backdrop-filter:blur(12px);border:1px solid rgba(244,114,182,.2);border-radius:16px;padding:1rem;margin-bottom:1rem">
+          <div style="display:flex;flex-direction:column;gap:.4rem;font-size:.82rem;color:rgba(255,255,255,.75)">
+            <div>📅 ${dateStr}</div>
+            ${s.hora?`<div>⏰ ${s.hora}</div>`:''}
+            ${s.local?`<div>📍 ${s.local}</div>`:''}
+          </div>
+        </div>
+        <div style="background:${ac};color:#1a0020;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem">✅ Confirmar presença</div>
+      </div>
+    </div>`;
+
+  // ── CUSTOM TEMPLATE (criado pelo admin) ──
+  if(tplId && tplId.startsWith('custom_')){
+    const tplDef = getTemplate(tplId);
+    if(tplDef && tplDef.customHtml){
+      // Replace placeholders in the custom HTML
+      let html = tplDef.customHtml;
+      html = html.replace(/\{\{titulo\}\}/g, s.titulo||'Você está convidado!')
+                 .replace(/\{\{nome\}\}/g, s.nome||'')
+                 .replace(/\{\{data\}\}/g, dateStr)
+                 .replace(/\{\{dataShort\}\}/g, dateShort)
+                 .replace(/\{\{hora\}\}/g, s.hora||'')
+                 .replace(/\{\{local\}\}/g, s.local||'')
+                 .replace(/\{\{dress\}\}/g, s.dress||'')
+                 .replace(/\{\{msg\}\}/g, s.msg||'')
+                 .replace(/\{\{accent\}\}/g, ac)
+                 .replace(/\{\{heroImg\}\}/g, heroImg)
+                 .replace(/\{\{dias\}\}/g, days);
+      return html;
+    }
+  }
 
   // fallback — layout padrão
   return `<div style="background:linear-gradient(135deg,#1a0a1e,#2d0a3a);min-height:100%;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Nunito',sans-serif;text-align:center;padding:2rem">

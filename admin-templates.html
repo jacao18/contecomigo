@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin — Templates — ConteComigo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,700;1,9..144,900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#0d0d14;--bg2:#13131f;--panel:#1a1a2e;
+      --border:rgba(255,255,255,.08);
+      --pink:#FF3D6B;--pink-dark:#CC1F4E;
+      --yellow:#FFD93D;--yellow-dk:#E6B800;
+      --green:#34D399;--blue:#60A5FA;
+      --text:#f0f0f8;--text-dim:rgba(240,240,248,.5);
+      --font-display:'Fraunces',Georgia,serif;
+      --font-body:'Nunito',system-ui,sans-serif;
+      --ease:cubic-bezier(0.16,1,0.3,1);
+    }
+    body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
+    a{text-decoration:none;color:inherit;}
+    input,select,textarea{font-family:var(--font-body);}
+
+    /* TOPBAR */
+    .topbar{height:56px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;position:sticky;top:0;z-index:100;}
+    .topbar-logo{font-family:var(--font-display);font-size:1.2rem;font-weight:700;font-style:italic;background:linear-gradient(135deg,var(--pink),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .admin-badge{background:rgba(255,61,107,.15);border:1px solid rgba(255,61,107,.3);color:var(--pink);font-size:.65rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:.2rem .65rem;border-radius:99px;}
+    .topbar-right{display:flex;align-items:center;gap:.75rem;}
+    .btn{padding:.5rem 1.1rem;border-radius:8px;font-family:var(--font-body);font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;border:none;}
+    .btn-pink{background:var(--pink);color:#fff;box-shadow:0 4px 16px rgba(255,61,107,.3);}
+    .btn-pink:hover{background:var(--pink-dark);transform:translateY(-1px);}
+    .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-dim);}
+    .btn-outline:hover{border-color:rgba(255,255,255,.25);color:var(--text);}
+    .btn-green{background:var(--green);color:#052a10;box-shadow:0 4px 16px rgba(52,211,153,.25);}
+    .btn-green:hover{background:#22c55e;transform:translateY(-1px);}
+    .btn-danger{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#ef4444;}
+    .btn-danger:hover{background:rgba(239,68,68,.25);}
+    .btn-sm{padding:.35rem .8rem;font-size:.75rem;}
+
+    /* LAYOUT */
+    .admin-layout{display:grid;grid-template-columns:380px 1fr;height:calc(100vh - 56px);overflow:hidden;}
+    .left-panel{background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+    .right-panel{display:grid;grid-template-rows:1fr 56px;overflow:hidden;}
+    .editor-area{overflow-y:auto;padding:1.5rem;}
+    .preview-area{background:var(--panel);overflow:hidden;display:flex;flex-direction:column;}
+    .preview-topbar{padding:.75rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:.75rem;font-weight:700;color:var(--text-dim);flex-shrink:0;}
+    .preview-frame{flex:1;overflow:hidden;position:relative;}
+    .preview-frame iframe{width:100%;height:100%;border:none;background:#fff;}
+
+    /* LEFT PANEL */
+    .panel-tabs{display:flex;border-bottom:1px solid var(--border);}
+    .panel-tab{flex:1;padding:.7rem;font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;text-align:center;}
+    .panel-tab.active{color:var(--pink);border-bottom-color:var(--pink);}
+    .panel-body{flex:1;overflow-y:auto;padding:1rem;}
+    .panel-body::-webkit-scrollbar{width:4px;}
+    .panel-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
+
+    /* TEMPLATE LIST */
+    .tpl-item{display:flex;align-items:center;gap:.75rem;padding:.65rem .75rem;border-radius:10px;border:1px solid var(--border);margin-bottom:.5rem;cursor:pointer;transition:all .18s;background:var(--panel);}
+    .tpl-item:hover{border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.04);}
+    .tpl-item.selected{border-color:var(--pink);background:rgba(255,61,107,.08);}
+    .tpl-item-img{width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,.08);}
+    .tpl-item-info{flex:1;min-width:0;}
+    .tpl-item-name{font-size:.82rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .tpl-item-cat{font-size:.68rem;color:var(--text-dim);margin-top:.1rem;}
+    .tpl-item-actions{display:flex;gap:.3rem;flex-shrink:0;}
+    .tpl-badge-active{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;}
+    .tpl-badge-inactive{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);flex-shrink:0;}
+    .empty-state{text-align:center;padding:2.5rem 1rem;color:var(--text-dim);}
+    .empty-state .icon{font-size:2.5rem;margin-bottom:.75rem;}
+
+    /* FORM */
+    .form-group{margin-bottom:1.1rem;}
+    .form-label{display:block;font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim);margin-bottom:.4rem;}
+    .form-label span{font-size:.65rem;font-weight:600;text-transform:none;letter-spacing:0;margin-left:.35rem;color:rgba(240,240,248,.3);}
+    .form-input,.form-select{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;padding:.6rem .75rem;font-size:.85rem;color:var(--text);outline:none;transition:border .2s;}
+    .form-input:focus,.form-select:focus{border-color:var(--pink);}
+    .form-select option{background:#1a1a2e;color:#f0f0f8;}
+    .form-textarea{width:100%;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:8px;padding:.75rem;font-size:.8rem;color:var(--text);font-family:'Courier New',monospace;outline:none;resize:vertical;min-height:280px;transition:border .2s;line-height:1.5;}
+    .form-textarea:focus{border-color:var(--pink);}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;}
+    .form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;}
+
+    /* CHECKBOXES */
+    .fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;}
+    .field-check{display:flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;padding:.45rem .65rem;cursor:pointer;transition:all .15s;}
+    .field-check:hover{border-color:rgba(255,255,255,.15);}
+    .field-check input{accent-color:var(--pink);width:14px;height:14px;}
+    .field-check label{font-size:.78rem;cursor:pointer;user-select:none;}
+
+    /* CODE EDITOR TOOLBAR */
+    .code-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;}
+    .code-toolbar-left{font-size:.7rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;}
+    .var-chips{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.5rem;}
+    .var-chip{background:rgba(255,61,107,.12);border:1px solid rgba(255,61,107,.25);border-radius:6px;padding:.2rem .55rem;font-size:.7rem;font-family:'Courier New',monospace;color:var(--pink);cursor:pointer;transition:all .15s;}
+    .var-chip:hover{background:rgba(255,61,107,.22);}
+
+    /* SECTION HEADERS */
+    .section-title{font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:.75rem;padding-bottom:.4rem;border-bottom:1px solid var(--border);}
+
+    /* BOTTOM BAR */
+    .bottom-bar{height:56px;background:var(--bg2);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:flex-end;padding:0 1.5rem;gap:.75rem;}
+
+    /* DIVIDER */
+    .divider{height:1px;background:var(--border);margin:1.25rem 0;}
+
+    /* TOAST */
+    #toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(100px);background:#fff;color:#1A0A00;font-weight:700;padding:.65rem 1.25rem;border-radius:10px;font-size:.85rem;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:9999;transition:transform .3s var(--ease),opacity .3s;opacity:0;}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+    #toast.error{background:#ef4444;color:#fff;}
+    #toast.success{background:var(--green);color:#052a10;}
+
+    /* AUTH GATE */
+    #authGate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000;}
+    .auth-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:2.5rem;max-width:380px;width:100%;text-align:center;}
+    .auth-card h2{font-family:var(--font-display);font-size:1.6rem;font-style:italic;background:linear-gradient(135deg,var(--pink),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.4rem;}
+    .auth-card p{font-size:.88rem;color:var(--text-dim);margin-bottom:1.5rem;}
+    .auth-card .form-input{margin-bottom:.75rem;}
+    .auth-error{font-size:.78rem;color:#ef4444;margin-top:.4rem;display:none;}
+
+    /* LOADING */
+    .spinner{display:inline-block;width:20px;height:20px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--pink);border-radius:50%;animation:spin .7s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* TOGGLE */
+    .toggle-switch{position:relative;display:inline-block;width:36px;height:20px;}
+    .toggle-switch input{opacity:0;width:0;height:0;}
+    .toggle-slider{position:absolute;inset:0;background:rgba(255,255,255,.15);border-radius:20px;cursor:pointer;transition:.2s;}
+    .toggle-slider:before{content:'';position:absolute;width:14px;height:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s;}
+    input:checked+.toggle-slider{background:var(--green);}
+    input:checked+.toggle-slider:before{transform:translateX(16px);}
+
+    /* MOBILE PREVIEW WRAPPER */
+    .phone-mockup{width:320px;margin:0 auto;background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);border:2px solid rgba(255,255,255,.1);}
+  </style>
+</head>
+<body>
+
+<!-- AUTH GATE -->
+<div id="authGate">
+  <div class="auth-card">
+    <div style="font-size:2rem;margin-bottom:.75rem">🔐</div>
+    <h2>Admin — ConteComigo</h2>
+    <p>Área restrita. Entre com sua conta admin.</p>
+    <input type="email" id="loginEmail" class="form-input" placeholder="Email" autocomplete="email"/>
+    <input type="password" id="loginPass" class="form-input" placeholder="Senha"/>
+    <p class="auth-error" id="authError">Email ou senha incorretos.</p>
+    <button class="btn btn-pink" style="width:100%;margin-top:.25rem" onclick="doLogin()">Entrar</button>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:.75rem">
+    <div class="topbar-logo" onclick="location.href='dashboard.html'" style="cursor:pointer">ConteComigo</div>
+    <div class="admin-badge">Admin</div>
+    <span style="font-size:.75rem;color:var(--text-dim)">/ Templates</span>
+  </div>
+  <div class="topbar-right">
+    <span id="adminEmail" style="font-size:.78rem;color:var(--text-dim)"></span>
+    <button class="btn btn-outline btn-sm" onclick="doLogout()">Sair</button>
+    <button class="btn btn-green btn-sm" onclick="newTemplate()">+ Novo template</button>
+  </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="admin-layout" id="mainLayout" style="display:none">
+
+  <!-- LEFT PANEL — template list + form -->
+  <div class="left-panel">
+    <div class="panel-tabs">
+      <div class="panel-tab active" data-tab="list" onclick="switchTab('list',this)">Templates</div>
+      <div class="panel-tab" data-tab="editor" onclick="switchTab('editor',this)">Editor</div>
+    </div>
+
+    <!-- LIST TAB -->
+    <div class="panel-body" id="tabList">
+      <div id="tplList">
+        <div class="empty-state"><div class="icon">✨</div><div>Nenhum template ainda</div></div>
+      </div>
+    </div>
+
+    <!-- EDITOR TAB -->
+    <div class="panel-body" id="tabEditor" style="display:none">
+      <!-- Meta -->
+      <div class="section-title">Informações gerais</div>
+      <div class="form-group">
+        <label class="form-label">Nome do template</label>
+        <input type="text" id="tplName" class="form-input" placeholder="Ex: Tropical Neon"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Categoria</label>
+          <select id="tplCategory" class="form-select">
+            <option value="homem">🍺 Homem</option>
+            <option value="mulher">🥂 Mulher</option>
+            <option value="quinze">👑 15 Anos</option>
+            <option value="menino">🦸 Menino</option>
+            <option value="menina">🧚 Menina</option>
+            <option value="casamento">💍 Casamento</option>
+            <option value="cha">👶 Chá</option>
+            <option value="aniversario-adulto">🎉 Geral</option>
+            <option value="custom">⭐ Personalizado</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cor de destaque</label>
+          <div style="display:flex;gap:.4rem;align-items:center">
+            <input type="color" id="tplAccent" value="#FFD93D" style="width:40px;height:34px;border:none;background:none;cursor:pointer;border-radius:6px;padding:2px;"/>
+            <input type="text" id="tplAccentHex" class="form-input" value="#FFD93D" style="flex:1" oninput="syncAccentHex(this.value)"/>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Fundo padrão</label>
+          <select id="tplBg" class="form-select">
+            <option value="dark-purple">Roxo escuro</option>
+            <option value="dark-brown">Marrom escuro</option>
+            <option value="dark-blue">Azul escuro</option>
+            <option value="dark-green">Verde escuro</option>
+            <option value="violet">Violeta</option>
+            <option value="mint">Menta</option>
+            <option value="coral">Coral</option>
+            <option value="rose-gold">Rose gold</option>
+            <option value="white">Branco</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Suporta foto hero</label>
+          <div style="display:flex;align-items:center;gap:.65rem;margin-top:.5rem">
+            <label class="toggle-switch">
+              <input type="checkbox" id="tplSupportsHero"/>
+              <span class="toggle-slider"></span>
+            </label>
+            <span style="font-size:.82rem;color:var(--text-dim)">Ativar upload</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">URL da imagem de preview <span>(thumbnail no seletor)</span></label>
+        <input type="text" id="tplPreviewImg" class="form-input" placeholder="https://images.unsplash.com/..."/>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Editable fields -->
+      <div class="section-title">Campos editáveis pelo usuário</div>
+      <p style="font-size:.78rem;color:var(--text-dim);margin-bottom:.75rem">Selecione quais campos o usuário poderá editar neste template.</p>
+      <div class="fields-grid">
+        <div class="field-check"><input type="checkbox" id="ef-titulo" checked/><label for="ef-titulo">Título</label></div>
+        <div class="field-check"><input type="checkbox" id="ef-nome" checked/><label for="ef-nome">Nome</label></div>
+        <div class="field-check"><input type="checkbox" id="ef-data" checked/><label for="ef-data">Data</label></div>
+        <div class="field-check"><input type="checkbox" id="ef-hora" checked/><label for="ef-hora">Hora</label></div>
+        <div class="field-check"><input type="checkbox" id="ef-local" checked/><label for="ef-local">Local</label></div>
+        <div class="field-check"><input type="checkbox" id="ef-dress" checked/><label for="ef-dress">Dress code</label></div>
+        <div class="field-check"><input type="checkbox" id="ef-msg" checked/><label for="ef-msg">Mensagem</label></div>
+        <div class="field-check"><input type="checkbox" id="ef-heroImg"/><label for="ef-heroImg">Foto hero</label></div>
+        <div class="field-check"><input type="checkbox" id="ef-accent" checked/><label for="ef-accent">Cor accent</label></div>
+        <div class="field-check"><input type="checkbox" id="ef-gifts"/><label for="ef-gifts">Presentes</label></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- HTML editor -->
+      <div class="section-title">HTML do template</div>
+      <p style="font-size:.78rem;color:var(--text-dim);margin-bottom:.65rem">Escreva o HTML completo. Use as variáveis abaixo. Clique numa variável para inserir no cursor.</p>
+      <div class="var-chips" id="varChips">
+        <div class="var-chip" onclick="insertVar('{{titulo}}')">{{titulo}}</div>
+        <div class="var-chip" onclick="insertVar('{{nome}}')">{{nome}}</div>
+        <div class="var-chip" onclick="insertVar('{{data}}')">{{data}}</div>
+        <div class="var-chip" onclick="insertVar('{{hora}}')">{{hora}}</div>
+        <div class="var-chip" onclick="insertVar('{{local}}')">{{local}}</div>
+        <div class="var-chip" onclick="insertVar('{{dress}}')">{{dress}}</div>
+        <div class="var-chip" onclick="insertVar('{{msg}}')">{{msg}}</div>
+        <div class="var-chip" onclick="insertVar('{{heroImg}}')">{{heroImg}}</div>
+        <div class="var-chip" onclick="insertVar('{{accent}}')">{{accent}}</div>
+        <div class="var-chip" onclick="insertVar('{{dataFormatada}}')">{{dataFormatada}}</div>
+        <div class="var-chip" onclick="insertVar('{{diasRestantes}}')">{{diasRestantes}}</div>
+      </div>
+      <div class="code-toolbar">
+        <span class="code-toolbar-left">HTML</span>
+        <div style="display:flex;gap:.4rem">
+          <button class="btn btn-outline btn-sm" onclick="loadBoilerplate()">Usar base</button>
+          <button class="btn btn-outline btn-sm" onclick="formatCode()">Formatar</button>
+        </div>
+      </div>
+      <textarea id="tplHtml" class="form-textarea" placeholder='<div style="background:#0a0010;min-height:500px;...">&#10;  ...&#10;</div>' oninput="debouncePreview()"></textarea>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL — preview + bottom bar -->
+  <div class="right-panel">
+    <div class="preview-area">
+      <div class="preview-topbar">
+        <span>Preview ao vivo</span>
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <span id="previewStatus" style="font-size:.7rem;color:var(--green)">● pronto</span>
+          <button class="btn btn-outline btn-sm" onclick="refreshPreview()">↻ Atualizar</button>
+        </div>
+      </div>
+      <div class="preview-frame">
+        <!-- Phone mockup wrapper centered -->
+        <div style="height:100%;overflow-y:auto;display:flex;align-items:flex-start;justify-content:center;padding:1.5rem;background:var(--bg)">
+          <div class="phone-mockup">
+            <div id="previewContent" style="min-height:400px;font-family:'Nunito',sans-serif;background:#fff"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-bar">
+      <span id="editingLabel" style="font-size:.78rem;color:var(--text-dim)">Nenhum template selecionado</span>
+      <button class="btn btn-outline btn-sm" onclick="discardChanges()">Cancelar</button>
+      <button class="btn btn-green" onclick="saveTemplate()" id="saveBtn">💾 Salvar template</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPA_URL = 'https://wevmgnzmkdecdcnouhjq.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indldm1nbnpta2RlY2Rjbm91aGpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTI5MTYsImV4cCI6MjA5MjI4ODkxNn0.R7IF4vEF_D5fvB18ZRl8mJwXOsEpW-q2hSdsRRs9nM4';
+const ADMIN_EMAIL = 'jkauer1811@gmail.com';
+
+const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+let currentUser = null;
+let editingId = null; // null = new, string = existing id
+let templates = [];
+let previewTimer = null;
+
+// ── AUTH ──────────────────────────────────────────────────────────
+
+async function checkAuth() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    currentUser = session.user;
+    if (currentUser.email !== ADMIN_EMAIL) {
+      showToast('Acesso negado.', 'error');
+      await sb.auth.signOut();
+      return;
+    }
+    onAuthed();
+  }
+  // else gate stays visible
+}
+
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPass').value;
+  const errEl = document.getElementById('authError');
+  errEl.style.display = 'none';
+
+  if (!email || !pass) return;
+
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  if (error || !data.user) {
+    errEl.style.display = 'block';
+    errEl.textContent = 'Email ou senha incorretos.';
+    return;
+  }
+  if (data.user.email !== ADMIN_EMAIL) {
+    errEl.style.display = 'block';
+    errEl.textContent = 'Você não tem permissão de admin.';
+    await sb.auth.signOut();
+    return;
+  }
+  currentUser = data.user;
+  onAuthed();
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  location.reload();
+}
+
+function onAuthed() {
+  document.getElementById('authGate').style.display = 'none';
+  document.getElementById('mainLayout').style.display = 'grid';
+  document.getElementById('adminEmail').textContent = currentUser.email;
+  loadTemplates();
+}
+
+// ── TEMPLATES LIST ──────────────────────────────────────────────
+
+async function loadTemplates() {
+  const { data, error } = await sb
+    .from('custom_templates')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    if (error.code === '42P01') {
+      // table doesn't exist yet
+      document.getElementById('tplList').innerHTML = `
+        <div class="empty-state">
+          <div class="icon">⚠️</div>
+          <div style="margin-bottom:.5rem">Tabela <code>custom_templates</code> não existe.</div>
+          <div style="font-size:.75rem;color:var(--text-dim)">Execute o SQL de migração no Supabase.</div>
+          <button class="btn btn-outline btn-sm" style="margin-top:1rem" onclick="showSQLModal()">Ver SQL</button>
+        </div>`;
+      return;
+    }
+    showToast('Erro ao carregar templates.', 'error');
+    return;
+  }
+
+  templates = data || [];
+  renderList();
+}
+
+const CATEGORY_LABELS = {
+  'homem': '🍺 Homem', 'mulher': '🥂 Mulher', 'quinze': '👑 15 Anos',
+  'menino': '🦸 Menino', 'menina': '🧚 Menina', 'casamento': '💍 Casamento',
+  'cha': '👶 Chá', 'aniversario-adulto': '🎉 Geral', 'custom': '⭐ Personalizado'
+};
+
+function renderList() {
+  const el = document.getElementById('tplList');
+  if (!templates.length) {
+    el.innerHTML = `<div class="empty-state"><div class="icon">✨</div><div>Nenhum template ainda.<br><small style="font-size:.72rem;opacity:.6">Clique em "Novo template" para começar.</small></div></div>`;
+    return;
+  }
+  el.innerHTML = templates.map(t => `
+    <div class="tpl-item${editingId===t.id?' selected':''}" onclick="editTemplate('${t.id}')">
+      <img class="tpl-item-img" src="${t.preview_img||'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=120&q=60'}" onerror="this.style.display='none'"/>
+      <div class="tpl-item-info">
+        <div class="tpl-item-name">${t.name||'Sem nome'}</div>
+        <div class="tpl-item-cat">${CATEGORY_LABELS[t.category]||t.category}</div>
+      </div>
+      <div class="tpl-item-actions">
+        <div class="${t.active?'tpl-badge-active':'tpl-badge-inactive'}" title="${t.active?'Ativo':'Inativo'}"></div>
+        <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteTemplate('${t.id}')" title="Excluir">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+// ── EDIT TEMPLATE ──────────────────────────────────────────────
+
+function newTemplate() {
+  editingId = null;
+  clearForm();
+  switchTab('editor', document.querySelector('[data-tab="editor"]'));
+  document.getElementById('editingLabel').textContent = 'Novo template';
+  document.getElementById('tplName').focus();
+}
+
+function editTemplate(id) {
+  const t = templates.find(x => x.id === id);
+  if (!t) return;
+  editingId = id;
+  // Fill form
+  document.getElementById('tplName').value = t.name || '';
+  document.getElementById('tplCategory').value = t.category || 'custom';
+  document.getElementById('tplAccent').value = t.default_accent || '#FFD93D';
+  document.getElementById('tplAccentHex').value = t.default_accent || '#FFD93D';
+  document.getElementById('tplBg').value = t.default_bg || 'dark-purple';
+  document.getElementById('tplSupportsHero').checked = !!t.supports_hero_upload;
+  document.getElementById('tplPreviewImg').value = t.preview_img || '';
+  document.getElementById('tplHtml').value = t.html_template || '';
+
+  // Editable fields
+  const ef = t.editable_fields || [];
+  ['titulo','nome','data','hora','local','dress','msg','heroImg','accent','gifts'].forEach(f => {
+    const el = document.getElementById('ef-'+f);
+    if (el) el.checked = ef.length === 0 || ef.includes(f);
+  });
+
+  document.getElementById('editingLabel').textContent = `Editando: ${t.name}`;
+  renderList(); // re-render to highlight selected
+  switchTab('editor', document.querySelector('[data-tab="editor"]'));
+  debouncePreview();
+}
+
+function clearForm() {
+  document.getElementById('tplName').value = '';
+  document.getElementById('tplCategory').value = 'homem';
+  document.getElementById('tplAccent').value = '#FFD93D';
+  document.getElementById('tplAccentHex').value = '#FFD93D';
+  document.getElementById('tplBg').value = 'dark-purple';
+  document.getElementById('tplSupportsHero').checked = false;
+  document.getElementById('tplPreviewImg').value = '';
+  document.getElementById('tplHtml').value = '';
+  ['titulo','nome','data','hora','local','dress','msg','heroImg','accent','gifts'].forEach(f => {
+    const el = document.getElementById('ef-'+f);
+    if (el) el.checked = ['titulo','nome','data','hora','local','dress','msg','accent'].includes(f);
+  });
+  document.getElementById('previewContent').innerHTML = '';
+  document.getElementById('editingLabel').textContent = 'Novo template';
+}
+
+function discardChanges() {
+  editingId = null;
+  clearForm();
+  switchTab('list', document.querySelector('[data-tab="list"]'));
+  renderList();
+}
+
+// ── SAVE / DELETE ──────────────────────────────────────────────
+
+async function saveTemplate() {
+  const name     = document.getElementById('tplName').value.trim();
+  const category = document.getElementById('tplCategory').value;
+  const accent   = document.getElementById('tplAccentHex').value.trim() || '#FFD93D';
+  const bg       = document.getElementById('tplBg').value;
+  const supHero  = document.getElementById('tplSupportsHero').checked;
+  const prevImg  = document.getElementById('tplPreviewImg').value.trim();
+  const html     = document.getElementById('tplHtml').value.trim();
+
+  if (!name) { showToast('Dê um nome ao template.', 'error'); return; }
+  if (!html)  { showToast('O HTML do template está vazio.', 'error'); return; }
+
+  const editableFields = ['titulo','nome','data','hora','local','dress','msg','heroImg','accent','gifts']
+    .filter(f => document.getElementById('ef-'+f)?.checked);
+
+  const payload = {
+    name,
+    category,
+    html_template: html,
+    editable_fields: editableFields,
+    default_accent: accent,
+    default_bg: bg,
+    supports_hero_upload: supHero,
+    preview_img: prevImg || null,
+    active: true,
+  };
+
+  let result;
+  if (editingId) {
+    result = await sb.from('custom_templates').update(payload).eq('id', editingId);
+  } else {
+    result = await sb.from('custom_templates').insert([payload]).select().single();
+    if (result.data) editingId = result.data.id;
+  }
+
+  if (result.error) {
+    if (result.error.code === '42P01') {
+      showSQLModal();
+      showToast('Crie a tabela primeiro.', 'error');
+    } else {
+      showToast('Erro ao salvar: ' + result.error.message, 'error');
+    }
+    return;
+  }
+
+  showToast('Template salvo com sucesso!', 'success');
+  await loadTemplates();
+  renderList();
+}
+
+async function deleteTemplate(id) {
+  if (!confirm('Excluir este template?')) return;
+  const { error } = await sb.from('custom_templates').delete().eq('id', id);
+  if (error) { showToast('Erro ao excluir.', 'error'); return; }
+  if (editingId === id) discardChanges();
+  showToast('Template excluído.', 'success');
+  await loadTemplates();
+}
+
+async function toggleActive(id, current) {
+  await sb.from('custom_templates').update({ active: !current }).eq('id', id);
+  await loadTemplates();
+}
+
+// ── PREVIEW ──────────────────────────────────────────────────────
+
+function debouncePreview() {
+  document.getElementById('previewStatus').textContent = '● renderizando...';
+  document.getElementById('previewStatus').style.color = 'var(--yellow)';
+  clearTimeout(previewTimer);
+  previewTimer = setTimeout(refreshPreview, 600);
+}
+
+function refreshPreview() {
+  const html = document.getElementById('tplHtml').value;
+  const accent = document.getElementById('tplAccentHex').value || '#FFD93D';
+  if (!html.trim()) {
+    document.getElementById('previewContent').innerHTML = `
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;color:rgba(26,10,0,.3);font-family:'Nunito',sans-serif;text-align:center;padding:2rem">
+        <div style="font-size:2.5rem;margin-bottom:.75rem">📝</div>
+        <div style="font-size:.9rem">Escreva o HTML do template para ver o preview aqui.</div>
+      </div>`;
+    document.getElementById('previewStatus').textContent = '● vazio';
+    document.getElementById('previewStatus').style.color = 'rgba(240,240,248,.3)';
+    return;
+  }
+
+  // Replace variables with sample data
+  const sampleData = {
+    '{{titulo}}': 'Você está convidado!',
+    '{{nome}}': 'João da Silva',
+    '{{data}}': '25/01/2025',
+    '{{dataFormatada}}': 'sábado, 25 de janeiro de 2025',
+    '{{hora}}': '19:00',
+    '{{local}}': 'Rua das Flores, 123 - São Paulo',
+    '{{dress}}': 'Esporte fino',
+    '{{msg}}': 'Será uma noite inesquecível. Conte conosco!',
+    '{{heroImg}}': 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80',
+    '{{accent}}': accent,
+    '{{diasRestantes}}': '14',
+  };
+
+  let rendered = html;
+  for (const [key, val] of Object.entries(sampleData)) {
+    rendered = rendered.split(key).join(val);
+  }
+
+  document.getElementById('previewContent').innerHTML = rendered;
+  document.getElementById('previewStatus').textContent = '● pronto';
+  document.getElementById('previewStatus').style.color = 'var(--green)';
+}
+
+// ── HELPERS ──────────────────────────────────────────────────────
+
+function switchTab(name, el) {
+  document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.getElementById('tabList').style.display   = name === 'list'   ? '' : 'none';
+  document.getElementById('tabEditor').style.display = name === 'editor' ? '' : 'none';
+}
+
+function insertVar(v) {
+  const ta = document.getElementById('tplHtml');
+  const start = ta.selectionStart;
+  const end   = ta.selectionEnd;
+  ta.value = ta.value.slice(0, start) + v + ta.value.slice(end);
+  ta.selectionStart = ta.selectionEnd = start + v.length;
+  ta.focus();
+  debouncePreview();
+}
+
+function syncAccentHex(val) {
+  if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+    document.getElementById('tplAccent').value = val;
+    debouncePreview();
+  }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('tplAccent').addEventListener('input', e => {
+    document.getElementById('tplAccentHex').value = e.target.value;
+    debouncePreview();
+  });
+});
+
+function loadBoilerplate() {
+  const accent = document.getElementById('tplAccentHex').value || '#FFD93D';
+  const boilerplate = `<div style="background:linear-gradient(160deg,#1a0a1e,#2d0a3a);min-height:500px;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+  <!-- Hero / imagem de fundo -->
+  <div style="position:absolute;inset:0;background-image:url('{{heroImg}}');background-size:cover;background-position:center;opacity:.2"></div>
+
+  <!-- Conteúdo -->
+  <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
+    <!-- Título -->
+    <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,7vw,3rem);font-weight:900;font-style:italic;color:{{accent}};line-height:1;margin-bottom:.5rem">{{titulo}}</div>
+
+    <!-- Nome -->
+    <div style="font-size:1.1rem;color:rgba(255,255,255,.7);margin-bottom:1.5rem">{{nome}}</div>
+
+    <!-- Info box -->
+    <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:1.1rem;margin-bottom:1.5rem;display:flex;flex-direction:column;gap:.4rem">
+      <div style="font-size:.85rem;color:rgba(255,255,255,.6)">📅 {{dataFormatada}}</div>
+      <div style="font-size:.85rem;color:rgba(255,255,255,.6)">⏰ {{hora}}</div>
+      <div style="font-size:.85rem;color:rgba(255,255,255,.6)">📍 {{local}}</div>
+      <div style="font-size:.85rem;color:rgba(255,255,255,.6)">👗 {{dress}}</div>
+    </div>
+
+    <!-- Mensagem -->
+    <div style="font-style:italic;font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:1.5rem;line-height:1.6">"{{msg}}"</div>
+
+    <!-- RSVP Button -->
+    <div style="background:{{accent}};color:#1a0a00;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;cursor:pointer">✅ Confirmar presença</div>
+  </div>
+</div>`;
+  document.getElementById('tplHtml').value = boilerplate;
+  debouncePreview();
+}
+
+function formatCode() {
+  // Basic: just normalize line endings and trim
+  const ta = document.getElementById('tplHtml');
+  ta.value = ta.value.trim().replace(/\r\n/g, '\n');
+  showToast('Código normalizado.', 'success');
+}
+
+function showSQLModal() {
+  const sql = `-- Execute este SQL no Supabase SQL Editor:
+
+CREATE TABLE IF NOT EXISTS public.custom_templates (
+  id              uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  name            text NOT NULL,
+  category        text NOT NULL DEFAULT 'custom',
+  html_template   text,
+  editable_fields jsonb DEFAULT '[]'::jsonb,
+  default_accent  text DEFAULT '#FFD93D',
+  default_bg      text DEFAULT 'dark-purple',
+  supports_hero_upload boolean DEFAULT false,
+  preview_img     text,
+  active          boolean DEFAULT true,
+  created_at      timestamptz DEFAULT now()
+);
+
+-- RLS
+ALTER TABLE public.custom_templates ENABLE ROW LEVEL SECURITY;
+
+-- Todos autenticados podem ler templates ativos
+CREATE POLICY "read active templates"
+  ON public.custom_templates FOR SELECT
+  USING (active = true);
+
+-- Apenas admin pode inserir/atualizar/deletar
+CREATE POLICY "admin full access"
+  ON public.custom_templates
+  USING (auth.jwt() ->> 'email' = 'jkauer1811@gmail.com')
+  WITH CHECK (auth.jwt() ->> 'email' = 'jkauer1811@gmail.com');`;
+
+  const pre = document.createElement('pre');
+  pre.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#0d0d14;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:1.5rem;max-width:600px;width:90%;max-height:70vh;overflow:auto;z-index:9999;font-size:.75rem;color:#f0f0f8;white-space:pre-wrap;';
+  pre.textContent = sql;
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9998;';
+  overlay.onclick = () => { document.body.removeChild(overlay); document.body.removeChild(pre); };
+  const closeBtn = document.createElement('button');
+  closeBtn.textContent = '✕ Fechar';
+  closeBtn.style.cssText = 'position:absolute;top:.75rem;right:.75rem;background:var(--pink);border:none;color:#fff;padding:.35rem .75rem;border-radius:6px;cursor:pointer;font-family:Nunito,sans-serif;font-size:.75rem;font-weight:700;';
+  closeBtn.onclick = () => { document.body.removeChild(overlay); document.body.removeChild(pre); };
+  pre.appendChild(closeBtn);
+  document.body.appendChild(overlay);
+  document.body.appendChild(pre);
+}
+
+let toastTimer;
+function showToast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `show ${type}`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = ''; }, 3000);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+checkAuth();
+</script>
+</body>
+</html>
