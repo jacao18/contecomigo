@@ -257,8 +257,10 @@
     setLoading('btnLogin',false,'Entrar na minha conta →');
 
     if(error){showAlert('loginAlert', traduzErro(error.message));return;}
-    showSuccess('👋', `Bem-vindo de volta!`, 'Redirecionando para o seu painel...');
-    setTimeout(()=>location.href='dashboard.html', 1500);
+    showSuccess('👋', `Bem-vindo de volta!`, 'Redirecionando...');
+    const afterLogin = sessionStorage.getItem('ccm_after_login');
+    if(afterLogin){ sessionStorage.removeItem('ccm_after_login'); setTimeout(()=>location.href=afterLogin, 1500); }
+    else { setTimeout(()=>location.href='dashboard.html', 1500); }
   }
 
   async function doCadastro(){
