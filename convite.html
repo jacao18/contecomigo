@@ -1441,19 +1441,9 @@ function renderTemplateHTML(tplId, s){
       </div>
     </div>`;
 
-  // ── CUSTOM TEMPLATES ──
+  // ── CUSTOM TEMPLATES — handled async in init() ──
   if(tplId && tplId.startsWith('custom_')) {
-    // Custom templates are rendered server-side or with placeholder substitution
-    return `
-    <div style="background:linear-gradient(135deg,#1a0a1e,#2d0a3a);min-height:500px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Nunito',sans-serif;text-align:center;padding:2rem">
-      <div>
-        <div style="font-size:2rem;margin-bottom:1rem">⭐</div>
-        <div style="font-family:'Fraunces',Georgia,serif;font-size:1.8rem;font-weight:900;font-style:italic;color:${ac};margin-bottom:.5rem">${titulo}</div>
-        <div style="color:rgba(255,255,255,.7);margin-bottom:1rem">${nome}</div>
-        <div style="font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:1.5rem">📅 ${dateStr}${hora?' · ⏰ '+hora:''}${local?'<br>📍 '+local:''}</div>
-        ${rsvpBtn}
-      </div>
-    </div>`;
+    return '__CUSTOM_TPL__';
   }
 
   // fallback genérico
@@ -1469,6 +1459,100 @@ function renderTemplateHTML(tplId, s){
         ${rsvpBtn}
       </div>
     </div>`;
+}
+
+// ══════════════════════════════════════════
+//  CUSTOM TEMPLATE RENDERER (async, iframe)
+// ══════════════════════════════════════════
+async function renderCustomTemplate(tplId, s) {
+  const heroEl = document.getElementById('templateHero');
+
+  // Show loading state
+  heroEl.innerHTML = `
+    <div style="background:linear-gradient(135deg,#1a0a1e,#2d0a3a);min-height:420px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4);font-family:'Nunito',sans-serif;font-size:.9rem">
+      <div style="text-align:center"><div style="font-size:1.8rem;margin-bottom:.75rem">✨</div>Carregando template...</div>
+    </div>`;
+
+  // Fetch template HTML from Supabase
+  const templateId = tplId.replace('custom_', '');
+  const { data: tpl, error } = await sb
+    .from('custom_templates')
+    .select('html_template, name, default_accent')
+    .eq('id', templateId)
+    .eq('active', true)
+    .single();
+
+  if (error || !tpl || !tpl.html_template) {
+    // Fallback: show generic block with invite data
+    const ac = s.accent || '#FFD93D';
+    const titulo = s.title || s.titulo || 'Você está convidado!';
+    const nome = s.event_name || s.nome || '';
+    const date = s.event_date ? new Date(s.event_date+'T12:00:00') : null;
+    const dateStr = date ? date.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}) : '';
+    const hora = s.event_time || s.hora || '';
+    const local = s.location || s.local || '';
+    const rsvpBtn = `<div onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})" style="background:${ac};color:#1a0a00;font-weight:800;text-align:center;padding:.85rem 2rem;border-radius:12px;font-size:.9rem;cursor:pointer;display:inline-block;margin-top:1rem">✅ Confirmar presença</div>`;
+    heroEl.innerHTML = `
+      <div style="background:linear-gradient(135deg,#1a0a1e,#2d0a3a);min-height:500px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Nunito',sans-serif;text-align:center;padding:3rem 1.5rem">
+        <div>
+          <div style="font-family:'Fraunces',Georgia,serif;font-size:2rem;font-weight:900;font-style:italic;color:${ac};margin-bottom:.5rem">${titulo}</div>
+          <div style="color:rgba(255,255,255,.7);margin-bottom:1rem">${nome}</div>
+          <div style="font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:1.5rem">${dateStr}${hora?' · '+hora:''}${local?'<br>📍 '+local:''}</div>
+          ${rsvpBtn}
+        </div>
+      </div>`;
+    return;
+  }
+
+  // Build variable map from invite data
+  const ac = s.accent || tpl.default_accent || '#FFD93D';
+  const date = s.event_date ? new Date(s.event_date+'T12:00:00') : null;
+  const dia = date ? String(date.getDate()).padStart(2,'0') : '';
+  const mes = date ? date.toLocaleDateString('pt-BR',{month:'long'}) : '';
+  const diaSemana = date ? date.toLocaleDateString('pt-BR',{weekday:'long'}) : '';
+  const dataFormatada = date ? date.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) : '';
+  const diasRestantes = date ? Math.max(0, Math.floor((date - new Date()) / 86400000)) : '';
+
+  const vars = {
+    '{{titulo}}':       s.title || s.titulo || 'Você está convidado!',
+    '{{nome}}':         s.event_name || s.nome || '',
+    '{{hora}}':         s.event_time || s.hora || '',
+    '{{local}}':        s.location || s.local || '',
+    '{{endereco}}':     s.address || s.endereco || '',
+    '{{dress}}':        s.dress_code || s.dress || '',
+    '{{msg}}':          s.message || s.msg || '',
+    '{{accent}}':       ac,
+    '{{dia}}':          dia,
+    '{{mes}}':          mes,
+    '{{diaSemana}}':    diaSemana,
+    '{{dataFormatada}}':dataFormatada,
+    '{{diasRestantes}}':String(diasRestantes),
+    '{{idade}}':        s.age || s.idade || '',
+    '{{tema}}':         s.theme || s.tema || '',
+    '{{heroImg}}':      s.photo_url || '',
+  };
+
+  let html = tpl.html_template;
+  for (const [k, v] of Object.entries(vars)) {
+    html = html.split(k).join(v);
+  }
+
+  // Inject RSVP button at end of body if placeholder present
+  const rsvpHtml = `<div id="ccm-rsvp-inject" onclick="window.parent.document.getElementById('rsvpSection')?.scrollIntoView({behavior:'smooth'})" style="position:fixed;bottom:1.5rem;right:1.5rem;background:${ac};color:#1a0a00;font-weight:800;padding:.75rem 1.5rem;border-radius:99px;font-size:.9rem;cursor:pointer;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.3)">✅ Confirmar presença</div>`;
+  if (html.includes('</body>')) {
+    html = html.replace('</body>', rsvpHtml + '</body>');
+  }
+
+  // Render in iframe
+  heroEl.innerHTML = `<iframe id="customTplFrame" sandbox="allow-scripts allow-same-origin allow-popups" style="width:100%;border:none;display:block;min-height:600px;transition:height .3s ease"></iframe>`;
+  const frame = document.getElementById('customTplFrame');
+  frame.srcdoc = html;
+  frame.onload = () => {
+    try {
+      const h = frame.contentDocument?.documentElement?.scrollHeight || frame.contentDocument?.body?.scrollHeight;
+      if (h && h > 200) frame.style.minHeight = h + 'px';
+    } catch(e) {}
+  };
 }
 
 // ══════════════════════════════════════════
@@ -1539,7 +1623,12 @@ async function init() {
 
   // Render template hero
   const tplId = invite.template || 'aniv-neon';
-  document.getElementById('templateHero').innerHTML = renderTemplateHTML(tplId, invite);
+  if (tplId.startsWith('custom_')) {
+    // Custom templates: fetch from Supabase and render in iframe
+    renderCustomTemplate(tplId, invite); // async, non-blocking
+  } else {
+    document.getElementById('templateHero').innerHTML = renderTemplateHTML(tplId, invite);
+  }
 
   // Message (separate section below hero)
   if (invite.message) {

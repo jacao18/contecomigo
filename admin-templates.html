@@ -5,16 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin — Templates — ConteComigo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,700;1,9..144,900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
       --bg:#0d0d14;--bg2:#13131f;--panel:#1a1a2e;
       --border:rgba(255,255,255,.08);
       --pink:#FF3D6B;--pink-dark:#CC1F4E;
-      --yellow:#FFD93D;--yellow-dk:#E6B800;
-      --green:#34D399;--blue:#60A5FA;
+      --yellow:#FFD93D;
+      --green:#34D399;
       --text:#f0f0f8;--text-dim:rgba(240,240,248,.5);
       --font-display:'Fraunces',Georgia,serif;
       --font-body:'Nunito',system-ui,sans-serif;
@@ -26,9 +25,11 @@
 
     /* TOPBAR */
     .topbar{height:56px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;position:sticky;top:0;z-index:100;}
-    .topbar-logo{font-family:var(--font-display);font-size:1.2rem;font-weight:700;font-style:italic;background:linear-gradient(135deg,var(--pink),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .topbar-logo{font-family:var(--font-display);font-size:1.2rem;font-weight:700;font-style:italic;background:linear-gradient(135deg,var(--pink),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:pointer;}
     .admin-badge{background:rgba(255,61,107,.15);border:1px solid rgba(255,61,107,.3);color:var(--pink);font-size:.65rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:.2rem .65rem;border-radius:99px;}
     .topbar-right{display:flex;align-items:center;gap:.75rem;}
+
+    /* BUTTONS */
     .btn{padding:.5rem 1.1rem;border-radius:8px;font-family:var(--font-body);font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;border:none;}
     .btn-pink{background:var(--pink);color:#fff;box-shadow:0 4px 16px rgba(255,61,107,.3);}
     .btn-pink:hover{background:var(--pink-dark);transform:translateY(-1px);}
@@ -41,17 +42,17 @@
     .btn-sm{padding:.35rem .8rem;font-size:.75rem;}
 
     /* LAYOUT */
-    .admin-layout{display:grid;grid-template-columns:380px 1fr;height:calc(100vh - 56px);overflow:hidden;}
+    .admin-layout{display:grid;grid-template-columns:400px 1fr;height:calc(100vh - 56px);overflow:hidden;}
     .left-panel{background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
     .right-panel{display:grid;grid-template-rows:1fr 56px;overflow:hidden;}
-    .editor-area{overflow-y:auto;padding:1.5rem;}
-    .preview-area{background:var(--panel);overflow:hidden;display:flex;flex-direction:column;}
-    .preview-topbar{padding:.75rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:.75rem;font-weight:700;color:var(--text-dim);flex-shrink:0;}
-    .preview-frame{flex:1;overflow:hidden;position:relative;}
-    .preview-frame iframe{width:100%;height:100%;border:none;background:#fff;}
+    .preview-area{overflow:hidden;display:flex;flex-direction:column;background:var(--bg);}
+    .preview-topbar{padding:.75rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:.75rem;font-weight:700;color:var(--text-dim);flex-shrink:0;background:var(--bg2);}
+    .preview-frame{flex:1;overflow:hidden;display:flex;align-items:flex-start;justify-content:center;padding:1.25rem;overflow-y:auto;}
+    .phone-mockup{width:360px;flex-shrink:0;border-radius:28px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6);border:2px solid rgba(255,255,255,.1);background:#0b0720;}
+    .phone-mockup iframe{width:100%;min-height:620px;border:none;display:block;}
 
-    /* LEFT PANEL */
-    .panel-tabs{display:flex;border-bottom:1px solid var(--border);}
+    /* PANEL */
+    .panel-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;}
     .panel-tab{flex:1;padding:.7rem;font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;text-align:center;}
     .panel-tab.active{color:var(--pink);border-bottom-color:var(--pink);}
     .panel-body{flex:1;overflow-y:auto;padding:1rem;}
@@ -60,75 +61,61 @@
 
     /* TEMPLATE LIST */
     .tpl-item{display:flex;align-items:center;gap:.75rem;padding:.65rem .75rem;border-radius:10px;border:1px solid var(--border);margin-bottom:.5rem;cursor:pointer;transition:all .18s;background:var(--panel);}
-    .tpl-item:hover{border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.04);}
+    .tpl-item:hover{border-color:rgba(255,255,255,.15);}
     .tpl-item.selected{border-color:var(--pink);background:rgba(255,61,107,.08);}
-    .tpl-item-img{width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,.08);}
+    .tpl-item-img{width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,.06);}
     .tpl-item-info{flex:1;min-width:0;}
     .tpl-item-name{font-size:.82rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .tpl-item-cat{font-size:.68rem;color:var(--text-dim);margin-top:.1rem;}
-    .tpl-item-actions{display:flex;gap:.3rem;flex-shrink:0;}
-    .tpl-badge-active{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;}
-    .tpl-badge-inactive{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);flex-shrink:0;}
+    .tpl-item-meta{font-size:.68rem;color:var(--text-dim);margin-top:.1rem;display:flex;gap:.5rem;align-items:center;}
+    .tpl-item-actions{display:flex;gap:.3rem;flex-shrink:0;align-items:center;}
+    .dot-active{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0;}
+    .dot-inactive{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2);flex-shrink:0;}
     .empty-state{text-align:center;padding:2.5rem 1rem;color:var(--text-dim);}
     .empty-state .icon{font-size:2.5rem;margin-bottom:.75rem;}
 
     /* FORM */
-    .form-group{margin-bottom:1.1rem;}
-    .form-label{display:block;font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim);margin-bottom:.4rem;}
-    .form-label span{font-size:.65rem;font-weight:600;text-transform:none;letter-spacing:0;margin-left:.35rem;color:rgba(240,240,248,.3);}
-    .form-input,.form-select{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;padding:.6rem .75rem;font-size:.85rem;color:var(--text);outline:none;transition:border .2s;}
+    .form-group{margin-bottom:1rem;}
+    .form-label{display:block;font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim);margin-bottom:.35rem;}
+    .form-label span{font-size:.65rem;font-weight:600;text-transform:none;letter-spacing:0;margin-left:.35rem;color:rgba(240,240,248,.25);}
+    .form-input,.form-select{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;padding:.55rem .75rem;font-size:.85rem;color:var(--text);outline:none;transition:border .2s;}
     .form-input:focus,.form-select:focus{border-color:var(--pink);}
-    .form-select option{background:#1a1a2e;color:#f0f0f8;}
-    .form-textarea{width:100%;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:8px;padding:.75rem;font-size:.8rem;color:var(--text);font-family:'Courier New',monospace;outline:none;resize:vertical;min-height:280px;transition:border .2s;line-height:1.5;}
+    .form-select option{background:#1a1a2e;}
+    .form-textarea{width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:8px;padding:.75rem;font-size:.75rem;color:var(--text);font-family:'Courier New',monospace;outline:none;resize:vertical;min-height:320px;transition:border .2s;line-height:1.55;tab-size:2;}
     .form-textarea:focus{border-color:var(--pink);}
     .form-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;}
-    .form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;}
 
-    /* CHECKBOXES */
-    .fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;}
-    .field-check{display:flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;padding:.45rem .65rem;cursor:pointer;transition:all .15s;}
-    .field-check:hover{border-color:rgba(255,255,255,.15);}
-    .field-check input{accent-color:var(--pink);width:14px;height:14px;}
-    .field-check label{font-size:.78rem;cursor:pointer;user-select:none;}
+    /* SECTION TITLE */
+    .section-title{font-size:.68rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:.65rem;padding-bottom:.4rem;border-bottom:1px solid var(--border);}
+    .divider{height:1px;background:var(--border);margin:1rem 0;}
 
-    /* CODE EDITOR TOOLBAR */
-    .code-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;}
-    .code-toolbar-left{font-size:.7rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;}
+    /* FIELDS */
+    .fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:.35rem;}
+    .field-check{display:flex;align-items:center;gap:.45rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:7px;padding:.4rem .6rem;cursor:pointer;}
+    .field-check:hover{border-color:rgba(255,255,255,.14);}
+    .field-check input{accent-color:var(--pink);width:13px;height:13px;flex-shrink:0;}
+    .field-check label{font-size:.76rem;cursor:pointer;user-select:none;}
+
+    /* VAR CHIPS */
     .var-chips{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.5rem;}
-    .var-chip{background:rgba(255,61,107,.12);border:1px solid rgba(255,61,107,.25);border-radius:6px;padding:.2rem .55rem;font-size:.7rem;font-family:'Courier New',monospace;color:var(--pink);cursor:pointer;transition:all .15s;}
+    .var-chip{background:rgba(255,61,107,.1);border:1px solid rgba(255,61,107,.25);border-radius:6px;padding:.18rem .5rem;font-size:.68rem;font-family:'Courier New',monospace;color:var(--pink);cursor:pointer;transition:all .15s;}
     .var-chip:hover{background:rgba(255,61,107,.22);}
 
-    /* SECTION HEADERS */
-    .section-title{font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:.75rem;padding-bottom:.4rem;border-bottom:1px solid var(--border);}
+    /* CODE TOOLBAR */
+    .code-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;}
+    .code-toolbar-label{font-size:.68rem;font-weight:800;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;}
+
+    /* HTML MODE BADGE */
+    .mode-badge{display:inline-flex;align-items:center;gap:.35rem;background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.25);border-radius:6px;padding:.2rem .6rem;font-size:.68rem;font-weight:700;color:#60A5FA;}
 
     /* BOTTOM BAR */
     .bottom-bar{height:56px;background:var(--bg2);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:flex-end;padding:0 1.5rem;gap:.75rem;}
 
-    /* DIVIDER */
-    .divider{height:1px;background:var(--border);margin:1.25rem 0;}
-
-    /* TOAST */
-    #toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(100px);background:#fff;color:#1A0A00;font-weight:700;padding:.65rem 1.25rem;border-radius:10px;font-size:.85rem;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:9999;transition:transform .3s var(--ease),opacity .3s;opacity:0;}
-    #toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
-    #toast.error{background:#ef4444;color:#fff;}
-    #toast.success{background:var(--green);color:#052a10;}
-
     /* AUTH GATE */
     #authGate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000;}
-    .auth-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:2.5rem;max-width:380px;width:100%;text-align:center;}
+    .auth-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:2.5rem;max-width:360px;width:100%;text-align:center;}
     .auth-card h2{font-family:var(--font-display);font-size:1.6rem;font-style:italic;background:linear-gradient(135deg,var(--pink),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.4rem;}
     .auth-card p{font-size:.88rem;color:var(--text-dim);margin-bottom:1.5rem;}
-    .auth-card .form-input{margin-bottom:.75rem;}
-    .auth-error{font-size:.78rem;color:#ef4444;margin-top:.4rem;display:none;}
-    .btn-google{display:flex;align-items:center;justify-content:center;gap:.65rem;width:100%;background:#fff;color:#1a1a1a;border:1px solid rgba(0,0,0,.12);border-radius:8px;padding:.65rem 1rem;font-size:.88rem;font-weight:700;cursor:pointer;transition:all .2s;font-family:var(--font-body);}
-    .btn-google:hover{background:#f5f5f5;box-shadow:0 2px 8px rgba(0,0,0,.15);}
-    .btn-google svg{width:18px;height:18px;flex-shrink:0;}
-    .auth-divider{display:flex;align-items:center;gap:.75rem;margin:.9rem 0;color:var(--text-dim);font-size:.75rem;}
-    .auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border);}
-
-    /* LOADING */
-    .spinner{display:inline-block;width:20px;height:20px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--pink);border-radius:50%;animation:spin .7s linear infinite;}
-    @keyframes spin{to{transform:rotate(360deg)}}
+    .auth-error{font-size:.78rem;color:#ef4444;margin-top:.5rem;display:none;}
 
     /* TOGGLE */
     .toggle-switch{position:relative;display:inline-block;width:36px;height:20px;}
@@ -138,8 +125,19 @@
     input:checked+.toggle-slider{background:var(--green);}
     input:checked+.toggle-slider:before{transform:translateX(16px);}
 
-    /* MOBILE PREVIEW WRAPPER */
-    .phone-mockup{width:320px;margin:0 auto;background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);border:2px solid rgba(255,255,255,.1);}
+    /* TOAST */
+    #toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(100px);background:#fff;color:#1A0A00;font-weight:700;padding:.65rem 1.25rem;border-radius:10px;font-size:.85rem;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:9999;transition:transform .3s var(--ease),opacity .3s;opacity:0;pointer-events:none;}
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+    #toast.error{background:#ef4444;color:#fff;}
+    #toast.success{background:var(--green);color:#052a10;}
+
+    /* SPINNER */
+    .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--pink);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* INFO BOX */
+    .info-box{background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.2);border-radius:8px;padding:.65rem .85rem;font-size:.76rem;color:rgba(240,240,248,.7);line-height:1.5;margin-bottom:.85rem;}
+    .info-box strong{color:#60A5FA;}
   </style>
 </head>
 <body>
@@ -149,20 +147,17 @@
   <div class="auth-card">
     <div style="font-size:2rem;margin-bottom:.75rem">🔐</div>
     <h2>Admin — ConteComigo</h2>
-    <p>Área restrita. Faça login com sua conta Google para continuar.</p>
+    <p>Área restrita. Faça login com sua conta para continuar.</p>
     <p class="auth-error" id="authError"></p>
     <button class="btn btn-pink" style="width:100%" onclick="goToLogin()">Fazer login →</button>
-    <p style="font-size:.72rem;color:var(--text-dim);margin-top:1rem">
-      Você será redirecionado para o login do ConteComigo.<br/>
-      Após entrar, volte para esta página.
-    </p>
+    <p style="font-size:.72rem;color:var(--text-dim);margin-top:1rem">Após entrar no ConteComigo, volte para esta página.</p>
   </div>
 </div>
 
 <!-- TOPBAR -->
 <div class="topbar">
   <div style="display:flex;align-items:center;gap:.75rem">
-    <div class="topbar-logo" onclick="location.href='dashboard.html'" style="cursor:pointer">ConteComigo</div>
+    <div class="topbar-logo" onclick="location.href='dashboard.html'">ConteComigo</div>
     <div class="admin-badge">Admin</div>
     <span style="font-size:.75rem;color:var(--text-dim)">/ Templates</span>
   </div>
@@ -176,11 +171,11 @@
 <!-- MAIN LAYOUT -->
 <div class="admin-layout" id="mainLayout" style="display:none">
 
-  <!-- LEFT PANEL — template list + form -->
+  <!-- LEFT PANEL -->
   <div class="left-panel">
     <div class="panel-tabs">
-      <div class="panel-tab active" data-tab="list" onclick="switchTab('list',this)">Templates</div>
-      <div class="panel-tab" data-tab="editor" onclick="switchTab('editor',this)">Editor</div>
+      <div class="panel-tab active" data-tab="list" onclick="switchTab('list',this)">📋 Templates</div>
+      <div class="panel-tab" data-tab="editor" onclick="switchTab('editor',this)">✏️ Editor</div>
     </div>
 
     <!-- LIST TAB -->
@@ -192,11 +187,17 @@
 
     <!-- EDITOR TAB -->
     <div class="panel-body" id="tabEditor" style="display:none">
-      <!-- Meta -->
-      <div class="section-title">Informações gerais</div>
+
+      <!-- INFO -->
+      <div class="info-box">
+        Cole aqui o <strong>HTML completo</strong> do template — incluindo React, scripts externos, CSS, animações. As variáveis <strong>{{nome}}</strong>, <strong>{{hora}}</strong> etc. serão substituídas quando o usuário personalizar. O template será salvo na categoria escolhida e aparecerá automaticamente no editor.
+      </div>
+
+      <!-- NOME + CATEGORIA -->
+      <div class="section-title">Informações</div>
       <div class="form-group">
         <label class="form-label">Nome do template</label>
-        <input type="text" id="tplName" class="form-input" placeholder="Ex: Tropical Neon"/>
+        <input type="text" id="tplName" class="form-input" placeholder="Ex: Reino Encantado"/>
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -206,7 +207,7 @@
             <option value="mulher">🥂 Mulher</option>
             <option value="quinze">👑 15 Anos</option>
             <option value="menino">🦸 Menino</option>
-            <option value="menina">🧚 Menina</option>
+            <option value="menina" selected>🧚 Menina</option>
             <option value="casamento">💍 Casamento</option>
             <option value="cha">👶 Chá</option>
             <option value="aniversario-adulto">🎉 Geral</option>
@@ -214,9 +215,9 @@
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">Cor de destaque</label>
+          <label class="form-label">Cor accent <span>(para preview)</span></label>
           <div style="display:flex;gap:.4rem;align-items:center">
-            <input type="color" id="tplAccent" value="#FFD93D" style="width:40px;height:34px;border:none;background:none;cursor:pointer;border-radius:6px;padding:2px;"/>
+            <input type="color" id="tplAccent" value="#FFD93D" style="width:38px;height:32px;border:none;background:none;cursor:pointer;border-radius:6px;padding:2px;" oninput="document.getElementById('tplAccentHex').value=this.value;debouncePreview()"/>
             <input type="text" id="tplAccentHex" class="form-input" value="#FFD93D" style="flex:1" oninput="syncAccentHex(this.value)"/>
           </div>
         </div>
@@ -238,12 +239,12 @@
         </div>
         <div class="form-group">
           <label class="form-label">Suporta foto hero</label>
-          <div style="display:flex;align-items:center;gap:.65rem;margin-top:.5rem">
+          <div style="display:flex;align-items:center;gap:.65rem;margin-top:.6rem">
             <label class="toggle-switch">
               <input type="checkbox" id="tplSupportsHero"/>
               <span class="toggle-slider"></span>
             </label>
-            <span style="font-size:.82rem;color:var(--text-dim)">Ativar upload</span>
+            <span style="font-size:.8rem;color:var(--text-dim)">Upload de foto</span>
           </div>
         </div>
       </div>
@@ -254,67 +255,71 @@
 
       <div class="divider"></div>
 
-      <!-- Editable fields -->
+      <!-- CAMPOS EDITÁVEIS -->
       <div class="section-title">Campos editáveis pelo usuário</div>
-      <p style="font-size:.78rem;color:var(--text-dim);margin-bottom:.75rem">Selecione quais campos o usuário poderá editar neste template.</p>
-      <div class="fields-grid">
-        <div class="field-check"><input type="checkbox" id="ef-titulo" checked/><label for="ef-titulo">Título</label></div>
+      <div class="fields-grid" style="margin-bottom:.85rem">
         <div class="field-check"><input type="checkbox" id="ef-nome" checked/><label for="ef-nome">Nome</label></div>
+        <div class="field-check"><input type="checkbox" id="ef-titulo" checked/><label for="ef-titulo">Título/Tag</label></div>
         <div class="field-check"><input type="checkbox" id="ef-data" checked/><label for="ef-data">Data</label></div>
         <div class="field-check"><input type="checkbox" id="ef-hora" checked/><label for="ef-hora">Hora</label></div>
         <div class="field-check"><input type="checkbox" id="ef-local" checked/><label for="ef-local">Local</label></div>
-        <div class="field-check"><input type="checkbox" id="ef-dress" checked/><label for="ef-dress">Dress code</label></div>
-        <div class="field-check"><input type="checkbox" id="ef-msg" checked/><label for="ef-msg">Mensagem</label></div>
+        <div class="field-check"><input type="checkbox" id="ef-endereco"/><label for="ef-endereco">Endereço</label></div>
+        <div class="field-check"><input type="checkbox" id="ef-dress"/><label for="ef-dress">Dress code</label></div>
+        <div class="field-check"><input type="checkbox" id="ef-msg"/><label for="ef-msg">Mensagem</label></div>
+        <div class="field-check"><input type="checkbox" id="ef-idade"/><label for="ef-idade">Idade</label></div>
+        <div class="field-check"><input type="checkbox" id="ef-tema"/><label for="ef-tema">Tema de cor</label></div>
         <div class="field-check"><input type="checkbox" id="ef-heroImg"/><label for="ef-heroImg">Foto hero</label></div>
-        <div class="field-check"><input type="checkbox" id="ef-accent" checked/><label for="ef-accent">Cor accent</label></div>
-        <div class="field-check"><input type="checkbox" id="ef-gifts"/><label for="ef-gifts">Presentes</label></div>
+        <div class="field-check"><input type="checkbox" id="ef-accent"/><label for="ef-accent">Cor accent</label></div>
       </div>
 
       <div class="divider"></div>
 
-      <!-- HTML editor -->
-      <div class="section-title">HTML do template</div>
-      <p style="font-size:.78rem;color:var(--text-dim);margin-bottom:.65rem">Escreva o HTML completo. Use as variáveis abaixo. Clique numa variável para inserir no cursor.</p>
-      <div class="var-chips" id="varChips">
-        <div class="var-chip" onclick="insertVar('{{titulo}}')">{{titulo}}</div>
+      <!-- HTML EDITOR -->
+      <div class="section-title">HTML completo do template</div>
+      <p style="font-size:.75rem;color:var(--text-dim);margin-bottom:.6rem">Cole o HTML completo. Clique nas variáveis para inserir no cursor.</p>
+
+      <div class="var-chips">
         <div class="var-chip" onclick="insertVar('{{nome}}')">{{nome}}</div>
-        <div class="var-chip" onclick="insertVar('{{data}}')">{{data}}</div>
+        <div class="var-chip" onclick="insertVar('{{titulo}}')">{{titulo}}</div>
+        <div class="var-chip" onclick="insertVar('{{idade}}')">{{idade}}</div>
+        <div class="var-chip" onclick="insertVar('{{dia}}')">{{dia}}</div>
+        <div class="var-chip" onclick="insertVar('{{mes}}')">{{mes}}</div>
+        <div class="var-chip" onclick="insertVar('{{diaSemana}}')">{{diaSemana}}</div>
         <div class="var-chip" onclick="insertVar('{{hora}}')">{{hora}}</div>
         <div class="var-chip" onclick="insertVar('{{local}}')">{{local}}</div>
+        <div class="var-chip" onclick="insertVar('{{endereco}}')">{{endereco}}</div>
         <div class="var-chip" onclick="insertVar('{{dress}}')">{{dress}}</div>
         <div class="var-chip" onclick="insertVar('{{msg}}')">{{msg}}</div>
         <div class="var-chip" onclick="insertVar('{{heroImg}}')">{{heroImg}}</div>
         <div class="var-chip" onclick="insertVar('{{accent}}')">{{accent}}</div>
-        <div class="var-chip" onclick="insertVar('{{dataFormatada}}')">{{dataFormatada}}</div>
-        <div class="var-chip" onclick="insertVar('{{diasRestantes}}')">{{diasRestantes}}</div>
       </div>
+
       <div class="code-toolbar">
-        <span class="code-toolbar-left">HTML</span>
-        <div style="display:flex;gap:.4rem">
-          <button class="btn btn-outline btn-sm" onclick="loadBoilerplate()">Usar base</button>
-          <button class="btn btn-outline btn-sm" onclick="formatCode()">Formatar</button>
+        <div style="display:flex;align-items:center;gap:.5rem">
+          <span class="code-toolbar-label">HTML</span>
+          <span class="mode-badge">✦ Suporta React & scripts externos</span>
         </div>
+        <button class="btn btn-outline btn-sm" onclick="refreshPreview()">↻ Preview</button>
       </div>
-      <textarea id="tplHtml" class="form-textarea" placeholder='<div style="background:#0a0010;min-height:500px;...">&#10;  ...&#10;</div>' oninput="debouncePreview()"></textarea>
+      <textarea id="tplHtml" class="form-textarea"
+        placeholder="Cole aqui o HTML completo do template (<!DOCTYPE html>...)"
+        oninput="debouncePreview()"></textarea>
     </div>
   </div>
 
-  <!-- RIGHT PANEL — preview + bottom bar -->
+  <!-- RIGHT PANEL -->
   <div class="right-panel">
     <div class="preview-area">
       <div class="preview-topbar">
         <span>Preview ao vivo</span>
         <div style="display:flex;align-items:center;gap:.75rem">
-          <span id="previewStatus" style="font-size:.7rem;color:var(--green)">● pronto</span>
+          <span id="previewStatus" style="font-size:.7rem;color:rgba(240,240,248,.35)">● aguardando</span>
           <button class="btn btn-outline btn-sm" onclick="refreshPreview()">↻ Atualizar</button>
         </div>
       </div>
       <div class="preview-frame">
-        <!-- Phone mockup wrapper centered -->
-        <div style="height:100%;overflow-y:auto;display:flex;align-items:flex-start;justify-content:center;padding:1.5rem;background:var(--bg)">
-          <div class="phone-mockup">
-            <div id="previewContent" style="min-height:400px;font-family:'Nunito',sans-serif;background:#fff"></div>
-          </div>
+        <div class="phone-mockup">
+          <iframe id="previewIframe" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
         </div>
       </div>
     </div>
@@ -322,41 +327,36 @@
     <div class="bottom-bar">
       <span id="editingLabel" style="font-size:.78rem;color:var(--text-dim)">Nenhum template selecionado</span>
       <button class="btn btn-outline btn-sm" onclick="discardChanges()">Cancelar</button>
-      <button class="btn btn-green" onclick="saveTemplate()" id="saveBtn">💾 Salvar template</button>
+      <button class="btn btn-green" onclick="saveTemplate()">💾 Salvar template</button>
     </div>
   </div>
 </div>
 
-<!-- TOAST -->
 <div id="toast"></div>
 
-<!-- Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPA_URL = 'https://wevmgnzmkdecdcnouhjq.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indldm1nbnpta2RlY2Rjbm91aGpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTI5MTYsImV4cCI6MjA5MjI4ODkxNn0.R7IF4vEF_D5fvB18ZRl8mJwXOsEpW-q2hSdsRRs9nM4';
+const SUPA_URL  = 'https://wevmgnzmkdecdcnouhjq.supabase.co';
+const SUPA_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indldm1nbnpta2RlY2Rjbm91aGpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTI5MTYsImV4cCI6MjA5MjI4ODkxNn0.R7IF4vEF_D5fvB18ZRl8mJwXOsEpW-q2hSdsRRs9nM4';
 const ADMIN_EMAIL = 'jkauer1811@gmail.com';
 
 const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
 
-let currentUser = null;
-let editingId = null; // null = new, string = existing id
-let templates = [];
+let currentUser  = null;
+let editingId    = null;
+let templates    = [];
 let previewTimer = null;
 
-// ── AUTH ──────────────────────────────────────────────────────────
+// ── AUTH ─────────────────────────────────────────────────────────
 
 async function checkAuth() {
   const { data: { session } } = await sb.auth.getSession();
-  if (!session) {
-    // Não logado — mostra gate com botão para ir ao login
-    return;
-  }
+  if (!session) return; // gate stays visible
   currentUser = session.user;
   if (currentUser.email !== ADMIN_EMAIL) {
-    const errEl = document.getElementById('authError');
-    errEl.textContent = `Conta "${currentUser.email}" não tem permissão de admin.`;
-    errEl.style.display = 'block';
+    const err = document.getElementById('authError');
+    err.textContent = `"${currentUser.email}" não tem acesso admin.`;
+    err.style.display = 'block';
     await sb.auth.signOut();
     return;
   }
@@ -364,7 +364,6 @@ async function checkAuth() {
 }
 
 function goToLogin() {
-  // Salva destino para redirecionar de volta após login
   sessionStorage.setItem('ccm_after_login', window.location.href);
   window.location.href = 'login.html';
 }
@@ -381,17 +380,18 @@ function onAuthed() {
   loadTemplates();
 }
 
-// ── TEMPLATES LIST ──────────────────────────────────────────────
+// ── TEMPLATE LIST ─────────────────────────────────────────────────
+
+const CAT_LABELS = {
+  'homem':'🍺 Homem','mulher':'🥂 Mulher','quinze':'👑 15 Anos',
+  'menino':'🦸 Menino','menina':'🧚 Menina','casamento':'💍 Casamento',
+  'cha':'👶 Chá','aniversario-adulto':'🎉 Geral','custom':'⭐ Personalizado'
+};
 
 async function loadTemplates() {
-  const { data, error } = await sb
-    .from('custom_templates')
-    .select('*')
-    .order('created_at', { ascending: false });
-
+  const { data, error } = await sb.from('custom_templates').select('*').order('created_at', { ascending: false });
   if (error) {
     if (error.code === '42P01') {
-      // table doesn't exist yet
       document.getElementById('tplList').innerHTML = `
         <div class="empty-state">
           <div class="icon">⚠️</div>
@@ -401,41 +401,38 @@ async function loadTemplates() {
         </div>`;
       return;
     }
-    showToast('Erro ao carregar templates.', 'error');
+    showToast('Erro ao carregar: ' + error.message, 'error');
     return;
   }
-
   templates = data || [];
   renderList();
 }
 
-const CATEGORY_LABELS = {
-  'homem': '🍺 Homem', 'mulher': '🥂 Mulher', 'quinze': '👑 15 Anos',
-  'menino': '🦸 Menino', 'menina': '🧚 Menina', 'casamento': '💍 Casamento',
-  'cha': '👶 Chá', 'aniversario-adulto': '🎉 Geral', 'custom': '⭐ Personalizado'
-};
-
 function renderList() {
   const el = document.getElementById('tplList');
   if (!templates.length) {
-    el.innerHTML = `<div class="empty-state"><div class="icon">✨</div><div>Nenhum template ainda.<br><small style="font-size:.72rem;opacity:.6">Clique em "Novo template" para começar.</small></div></div>`;
+    el.innerHTML = `<div class="empty-state"><div class="icon">✨</div><div>Nenhum template ainda.<br/><small style="opacity:.5">Clique em "+ Novo template" para começar.</small></div></div>`;
     return;
   }
   el.innerHTML = templates.map(t => `
     <div class="tpl-item${editingId===t.id?' selected':''}" onclick="editTemplate('${t.id}')">
-      <img class="tpl-item-img" src="${t.preview_img||'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=120&q=60'}" onerror="this.style.display='none'"/>
+      <img class="tpl-item-img" src="${t.preview_img||'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=120&q=60'}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2244%22 height=%2244%22><rect fill=%22%23222%22 width=%2244%22 height=%2244%22/></svg>'"/>
       <div class="tpl-item-info">
         <div class="tpl-item-name">${t.name||'Sem nome'}</div>
-        <div class="tpl-item-cat">${CATEGORY_LABELS[t.category]||t.category}</div>
+        <div class="tpl-item-meta">
+          <span>${CAT_LABELS[t.category]||t.category}</span>
+          <span style="opacity:.4">·</span>
+          <span>${(t.html_template||'').length > 0 ? (t.html_template.length/1000).toFixed(1)+'kb HTML' : 'sem HTML'}</span>
+        </div>
       </div>
       <div class="tpl-item-actions">
-        <div class="${t.active?'tpl-badge-active':'tpl-badge-inactive'}" title="${t.active?'Ativo':'Inativo'}"></div>
+        <div class="${t.active?'dot-active':'dot-inactive'}" title="${t.active?'Ativo':'Inativo'}"></div>
         <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteTemplate('${t.id}')" title="Excluir">✕</button>
       </div>
     </div>`).join('');
 }
 
-// ── EDIT TEMPLATE ──────────────────────────────────────────────
+// ── EDIT ─────────────────────────────────────────────────────────
 
 function newTemplate() {
   editingId = null;
@@ -449,43 +446,46 @@ function editTemplate(id) {
   const t = templates.find(x => x.id === id);
   if (!t) return;
   editingId = id;
-  // Fill form
-  document.getElementById('tplName').value = t.name || '';
-  document.getElementById('tplCategory').value = t.category || 'custom';
-  document.getElementById('tplAccent').value = t.default_accent || '#FFD93D';
-  document.getElementById('tplAccentHex').value = t.default_accent || '#FFD93D';
-  document.getElementById('tplBg').value = t.default_bg || 'dark-purple';
+
+  document.getElementById('tplName').value       = t.name || '';
+  document.getElementById('tplCategory').value   = t.category || 'custom';
+  document.getElementById('tplAccent').value     = t.default_accent || '#FFD93D';
+  document.getElementById('tplAccentHex').value  = t.default_accent || '#FFD93D';
+  document.getElementById('tplBg').value         = t.default_bg || 'dark-purple';
   document.getElementById('tplSupportsHero').checked = !!t.supports_hero_upload;
   document.getElementById('tplPreviewImg').value = t.preview_img || '';
-  document.getElementById('tplHtml').value = t.html_template || '';
+  document.getElementById('tplHtml').value       = t.html_template || '';
 
-  // Editable fields
   const ef = t.editable_fields || [];
-  ['titulo','nome','data','hora','local','dress','msg','heroImg','accent','gifts'].forEach(f => {
-    const el = document.getElementById('ef-'+f);
-    if (el) el.checked = ef.length === 0 || ef.includes(f);
-  });
+  ['nome','titulo','data','hora','local','endereco','dress','msg','idade','tema','heroImg','accent']
+    .forEach(f => {
+      const el = document.getElementById('ef-'+f);
+      if (el) el.checked = ef.length === 0 || ef.includes(f);
+    });
 
   document.getElementById('editingLabel').textContent = `Editando: ${t.name}`;
-  renderList(); // re-render to highlight selected
+  renderList();
   switchTab('editor', document.querySelector('[data-tab="editor"]'));
   debouncePreview();
 }
 
 function clearForm() {
-  document.getElementById('tplName').value = '';
-  document.getElementById('tplCategory').value = 'homem';
-  document.getElementById('tplAccent').value = '#FFD93D';
+  document.getElementById('tplName').value      = '';
+  document.getElementById('tplCategory').value  = 'menina';
+  document.getElementById('tplAccent').value    = '#FFD93D';
   document.getElementById('tplAccentHex').value = '#FFD93D';
-  document.getElementById('tplBg').value = 'dark-purple';
+  document.getElementById('tplBg').value        = 'dark-purple';
   document.getElementById('tplSupportsHero').checked = false;
   document.getElementById('tplPreviewImg').value = '';
-  document.getElementById('tplHtml').value = '';
-  ['titulo','nome','data','hora','local','dress','msg','heroImg','accent','gifts'].forEach(f => {
-    const el = document.getElementById('ef-'+f);
-    if (el) el.checked = ['titulo','nome','data','hora','local','dress','msg','accent'].includes(f);
-  });
-  document.getElementById('previewContent').innerHTML = '';
+  document.getElementById('tplHtml').value       = '';
+  ['nome','titulo','data','hora','local','endereco','dress','msg','idade','tema','heroImg','accent']
+    .forEach(f => {
+      const el = document.getElementById('ef-'+f);
+      if (el) el.checked = ['nome','titulo','data','hora','local'].includes(f);
+    });
+  document.getElementById('previewStatus').textContent = '● aguardando';
+  document.getElementById('previewStatus').style.color = 'rgba(240,240,248,.35)';
+  document.getElementById('previewIframe').srcdoc = '';
   document.getElementById('editingLabel').textContent = 'Novo template';
 }
 
@@ -496,26 +496,26 @@ function discardChanges() {
   renderList();
 }
 
-// ── SAVE / DELETE ──────────────────────────────────────────────
+// ── SAVE / DELETE ─────────────────────────────────────────────────
 
 async function saveTemplate() {
-  const name     = document.getElementById('tplName').value.trim();
-  const category = document.getElementById('tplCategory').value;
-  const accent   = document.getElementById('tplAccentHex').value.trim() || '#FFD93D';
-  const bg       = document.getElementById('tplBg').value;
-  const supHero  = document.getElementById('tplSupportsHero').checked;
-  const prevImg  = document.getElementById('tplPreviewImg').value.trim();
-  const html     = document.getElementById('tplHtml').value.trim();
+  const name    = document.getElementById('tplName').value.trim();
+  const cat     = document.getElementById('tplCategory').value;
+  const accent  = document.getElementById('tplAccentHex').value.trim() || '#FFD93D';
+  const bg      = document.getElementById('tplBg').value;
+  const supHero = document.getElementById('tplSupportsHero').checked;
+  const prevImg = document.getElementById('tplPreviewImg').value.trim();
+  const html    = document.getElementById('tplHtml').value.trim();
 
   if (!name) { showToast('Dê um nome ao template.', 'error'); return; }
-  if (!html)  { showToast('O HTML do template está vazio.', 'error'); return; }
+  if (!html)  { showToast('Cole o HTML do template.', 'error'); return; }
 
-  const editableFields = ['titulo','nome','data','hora','local','dress','msg','heroImg','accent','gifts']
+  const editableFields = ['nome','titulo','data','hora','local','endereco','dress','msg','idade','tema','heroImg','accent']
     .filter(f => document.getElementById('ef-'+f)?.checked);
 
   const payload = {
     name,
-    category,
+    category: cat,
     html_template: html,
     editable_fields: editableFields,
     default_accent: accent,
@@ -534,22 +534,18 @@ async function saveTemplate() {
   }
 
   if (result.error) {
-    if (result.error.code === '42P01') {
-      showSQLModal();
-      showToast('Crie a tabela primeiro.', 'error');
-    } else {
-      showToast('Erro ao salvar: ' + result.error.message, 'error');
-    }
+    if (result.error.code === '42P01') { showSQLModal(); showToast('Crie a tabela primeiro.', 'error'); }
+    else showToast('Erro: ' + result.error.message, 'error');
     return;
   }
 
-  showToast('Template salvo com sucesso!', 'success');
+  showToast('Template salvo! Já aparece no editor.', 'success');
   await loadTemplates();
   renderList();
 }
 
 async function deleteTemplate(id) {
-  if (!confirm('Excluir este template?')) return;
+  if (!confirm('Excluir este template permanentemente?')) return;
   const { error } = await sb.from('custom_templates').delete().eq('id', id);
   if (error) { showToast('Erro ao excluir.', 'error'); return; }
   if (editingId === id) discardChanges();
@@ -557,60 +553,69 @@ async function deleteTemplate(id) {
   await loadTemplates();
 }
 
-async function toggleActive(id, current) {
-  await sb.from('custom_templates').update({ active: !current }).eq('id', id);
-  await loadTemplates();
-}
+// ── PREVIEW VIA IFRAME ───────────────────────────────────────────
 
-// ── PREVIEW ──────────────────────────────────────────────────────
+// Substitui variáveis por dados de exemplo
+function applyVars(html) {
+  const accent = document.getElementById('tplAccentHex').value || '#FFD93D';
+  const vars = {
+    '{{nome}}':         'Sofia',
+    '{{titulo}}':       'Você está convidada!',
+    '{{idade}}':        '5 anos',
+    '{{dia}}':          '15',
+    '{{mes}}':          'Junho',
+    '{{diaSemana}}':    'Sábado',
+    '{{hora}}':         '16:00',
+    '{{local}}':        'Salão Encantado',
+    '{{endereco}}':     'Rua dos Contos, 123 — São Paulo, SP',
+    '{{dress}}':        'Esporte fino',
+    '{{msg}}':          'Será uma noite inesquecível!',
+    '{{heroImg}}':      'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80',
+    '{{accent}}':       accent,
+    '{{dataFormatada}}':'sábado, 15 de junho de 2025',
+    '{{diasRestantes}}':'14',
+  };
+  let result = html;
+  for (const [k, v] of Object.entries(vars)) {
+    result = result.split(k).join(v);
+  }
+  return result;
+}
 
 function debouncePreview() {
   document.getElementById('previewStatus').textContent = '● renderizando...';
   document.getElementById('previewStatus').style.color = 'var(--yellow)';
   clearTimeout(previewTimer);
-  previewTimer = setTimeout(refreshPreview, 600);
+  previewTimer = setTimeout(refreshPreview, 800);
 }
 
 function refreshPreview() {
-  const html = document.getElementById('tplHtml').value;
-  const accent = document.getElementById('tplAccentHex').value || '#FFD93D';
-  if (!html.trim()) {
-    document.getElementById('previewContent').innerHTML = `
-      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;color:rgba(26,10,0,.3);font-family:'Nunito',sans-serif;text-align:center;padding:2rem">
-        <div style="font-size:2.5rem;margin-bottom:.75rem">📝</div>
-        <div style="font-size:.9rem">Escreva o HTML do template para ver o preview aqui.</div>
-      </div>`;
+  const raw = document.getElementById('tplHtml').value.trim();
+  const iframe = document.getElementById('previewIframe');
+
+  if (!raw) {
+    iframe.srcdoc = `<div style="display:flex;height:300px;align-items:center;justify-content:center;font-family:sans-serif;color:rgba(255,255,255,.3);font-size:.9rem;background:#0b0720">Cole o HTML para ver o preview</div>`;
     document.getElementById('previewStatus').textContent = '● vazio';
-    document.getElementById('previewStatus').style.color = 'rgba(240,240,248,.3)';
+    document.getElementById('previewStatus').style.color = 'rgba(240,240,248,.25)';
     return;
   }
 
-  // Replace variables with sample data
-  const sampleData = {
-    '{{titulo}}': 'Você está convidado!',
-    '{{nome}}': 'João da Silva',
-    '{{data}}': '25/01/2025',
-    '{{dataFormatada}}': 'sábado, 25 de janeiro de 2025',
-    '{{hora}}': '19:00',
-    '{{local}}': 'Rua das Flores, 123 - São Paulo',
-    '{{dress}}': 'Esporte fino',
-    '{{msg}}': 'Será uma noite inesquecível. Conte conosco!',
-    '{{heroImg}}': 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80',
-    '{{accent}}': accent,
-    '{{diasRestantes}}': '14',
+  const rendered = applyVars(raw);
+  iframe.srcdoc = rendered;
+
+  // Ajusta altura do iframe após carregar
+  iframe.onload = () => {
+    try {
+      const h = iframe.contentDocument?.body?.scrollHeight;
+      if (h && h > 300) iframe.style.minHeight = h + 'px';
+    } catch(e) {}
   };
 
-  let rendered = html;
-  for (const [key, val] of Object.entries(sampleData)) {
-    rendered = rendered.split(key).join(val);
-  }
-
-  document.getElementById('previewContent').innerHTML = rendered;
   document.getElementById('previewStatus').textContent = '● pronto';
   document.getElementById('previewStatus').style.color = 'var(--green)';
 }
 
-// ── HELPERS ──────────────────────────────────────────────────────
+// ── HELPERS ───────────────────────────────────────────────────────
 
 function switchTab(name, el) {
   document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
@@ -620,10 +625,10 @@ function switchTab(name, el) {
 }
 
 function insertVar(v) {
-  const ta = document.getElementById('tplHtml');
+  const ta    = document.getElementById('tplHtml');
   const start = ta.selectionStart;
   const end   = ta.selectionEnd;
-  ta.value = ta.value.slice(0, start) + v + ta.value.slice(end);
+  ta.value    = ta.value.slice(0, start) + v + ta.value.slice(end);
   ta.selectionStart = ta.selectionEnd = start + v.length;
   ta.focus();
   debouncePreview();
@@ -635,97 +640,40 @@ function syncAccentHex(val) {
     debouncePreview();
   }
 }
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('tplAccent').addEventListener('input', e => {
-    document.getElementById('tplAccentHex').value = e.target.value;
-    debouncePreview();
-  });
-});
-
-function loadBoilerplate() {
-  const accent = document.getElementById('tplAccentHex').value || '#FFD93D';
-  const boilerplate = `<div style="background:linear-gradient(160deg,#1a0a1e,#2d0a3a);min-height:500px;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
-  <!-- Hero / imagem de fundo -->
-  <div style="position:absolute;inset:0;background-image:url('{{heroImg}}');background-size:cover;background-position:center;opacity:.2"></div>
-
-  <!-- Conteúdo -->
-  <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
-    <!-- Título -->
-    <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,7vw,3rem);font-weight:900;font-style:italic;color:{{accent}};line-height:1;margin-bottom:.5rem">{{titulo}}</div>
-
-    <!-- Nome -->
-    <div style="font-size:1.1rem;color:rgba(255,255,255,.7);margin-bottom:1.5rem">{{nome}}</div>
-
-    <!-- Info box -->
-    <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:1.1rem;margin-bottom:1.5rem;display:flex;flex-direction:column;gap:.4rem">
-      <div style="font-size:.85rem;color:rgba(255,255,255,.6)">📅 {{dataFormatada}}</div>
-      <div style="font-size:.85rem;color:rgba(255,255,255,.6)">⏰ {{hora}}</div>
-      <div style="font-size:.85rem;color:rgba(255,255,255,.6)">📍 {{local}}</div>
-      <div style="font-size:.85rem;color:rgba(255,255,255,.6)">👗 {{dress}}</div>
-    </div>
-
-    <!-- Mensagem -->
-    <div style="font-style:italic;font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:1.5rem;line-height:1.6">"{{msg}}"</div>
-
-    <!-- RSVP Button -->
-    <div style="background:{{accent}};color:#1a0a00;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;cursor:pointer">✅ Confirmar presença</div>
-  </div>
-</div>`;
-  document.getElementById('tplHtml').value = boilerplate;
-  debouncePreview();
-}
-
-function formatCode() {
-  // Basic: just normalize line endings and trim
-  const ta = document.getElementById('tplHtml');
-  ta.value = ta.value.trim().replace(/\r\n/g, '\n');
-  showToast('Código normalizado.', 'success');
-}
 
 function showSQLModal() {
-  const sql = `-- Execute este SQL no Supabase SQL Editor:
+  const sql = `-- Execute no Supabase SQL Editor:
 
 CREATE TABLE IF NOT EXISTS public.custom_templates (
-  id              uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-  name            text NOT NULL,
-  category        text NOT NULL DEFAULT 'custom',
-  html_template   text,
-  editable_fields jsonb DEFAULT '[]'::jsonb,
-  default_accent  text DEFAULT '#FFD93D',
-  default_bg      text DEFAULT 'dark-purple',
+  id                   uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  name                 text NOT NULL,
+  category             text NOT NULL DEFAULT 'custom',
+  html_template        text,
+  editable_fields      jsonb DEFAULT '[]'::jsonb,
+  default_accent       text DEFAULT '#FFD93D',
+  default_bg           text DEFAULT 'dark-purple',
   supports_hero_upload boolean DEFAULT false,
-  preview_img     text,
-  active          boolean DEFAULT true,
-  created_at      timestamptz DEFAULT now()
+  preview_img          text,
+  active               boolean DEFAULT true,
+  created_at           timestamptz DEFAULT now()
 );
-
--- RLS
 ALTER TABLE public.custom_templates ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "read active" ON public.custom_templates FOR SELECT USING (active = true);
+CREATE POLICY "admin all" ON public.custom_templates USING (auth.jwt() ->> 'email' = '${ADMIN_EMAIL}') WITH CHECK (auth.jwt() ->> 'email' = '${ADMIN_EMAIL}');`;
 
--- Todos autenticados podem ler templates ativos
-CREATE POLICY "read active templates"
-  ON public.custom_templates FOR SELECT
-  USING (active = true);
-
--- Apenas admin pode inserir/atualizar/deletar
-CREATE POLICY "admin full access"
-  ON public.custom_templates
-  USING (auth.jwt() ->> 'email' = 'jkauer1811@gmail.com')
-  WITH CHECK (auth.jwt() ->> 'email' = 'jkauer1811@gmail.com');`;
-
-  const pre = document.createElement('pre');
-  pre.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#0d0d14;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:1.5rem;max-width:600px;width:90%;max-height:70vh;overflow:auto;z-index:9999;font-size:.75rem;color:#f0f0f8;white-space:pre-wrap;';
-  pre.textContent = sql;
   const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9998;';
-  overlay.onclick = () => { document.body.removeChild(overlay); document.body.removeChild(pre); };
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9998;';
+  const box = document.createElement('pre');
+  box.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#0d0d14;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:1.5rem 1.5rem 3.5rem;max-width:600px;width:90%;max-height:70vh;overflow:auto;z-index:9999;font-size:.73rem;color:#f0f0f8;white-space:pre-wrap;line-height:1.6;';
+  box.textContent = sql;
   const closeBtn = document.createElement('button');
   closeBtn.textContent = '✕ Fechar';
-  closeBtn.style.cssText = 'position:absolute;top:.75rem;right:.75rem;background:var(--pink);border:none;color:#fff;padding:.35rem .75rem;border-radius:6px;cursor:pointer;font-family:Nunito,sans-serif;font-size:.75rem;font-weight:700;';
-  closeBtn.onclick = () => { document.body.removeChild(overlay); document.body.removeChild(pre); };
-  pre.appendChild(closeBtn);
+  closeBtn.style.cssText = 'position:absolute;bottom:.75rem;right:.75rem;background:var(--pink);border:none;color:#fff;padding:.4rem .9rem;border-radius:6px;cursor:pointer;font-family:Nunito,sans-serif;font-size:.75rem;font-weight:700;';
+  closeBtn.onclick = () => { document.body.removeChild(overlay); document.body.removeChild(box); };
+  overlay.onclick = closeBtn.onclick;
+  box.appendChild(closeBtn);
   document.body.appendChild(overlay);
-  document.body.appendChild(pre);
+  document.body.appendChild(box);
 }
 
 let toastTimer;
@@ -734,7 +682,7 @@ function showToast(msg, type = '') {
   el.textContent = msg;
   el.className = `show ${type}`;
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { el.className = ''; }, 3000);
+  toastTimer = setTimeout(() => { el.className = ''; }, 3200);
 }
 
 // ── INIT ──────────────────────────────────────────────────────────

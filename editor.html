@@ -818,22 +818,37 @@ async function loadCustomTemplates(){
   try {
     const { data } = await sb.from('custom_templates').select('*').eq('active', true).order('created_at');
     if(data && data.length){
-      TEMPLATES['custom'] = data.map(t=>({
-        id: 'custom_'+t.id,
-        name: t.name,
-        img: t.preview_img || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80',
-        supportsHeroUpload: t.supports_hero_upload || false,
-        defaultAccent: t.default_accent || '#FFD93D',
-        defaultBg: t.default_bg || 'dark-purple',
-        heroStyle: '',
-        overlayStyle: '',
-        customHtml: t.html_template || '',
-        editableFields: t.editable_fields || [],
-        category: t.category || 'custom',
-      }));
-      // Show custom tab if there are custom templates
-      const tab = document.getElementById('customTplsTab');
-      if(tab) tab.style.display = '';
+      // Group templates by category — they appear in the right category tab
+      // If category doesn't match any known tab, fall back to 'custom'
+      const knownCats = Object.keys(TEMPLATES);
+      let hasCustom = false;
+
+      data.forEach(t => {
+        const entry = {
+          id: 'custom_'+t.id,
+          name: t.name,
+          img: t.preview_img || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80',
+          supportsHeroUpload: t.supports_hero_upload || false,
+          defaultAccent: t.default_accent || '#FFD93D',
+          defaultBg: t.default_bg || 'dark-purple',
+          heroStyle: '',
+          overlayStyle: '',
+          customHtml: t.html_template || '',
+          editableFields: t.editable_fields || [],
+          category: t.category || 'custom',
+        };
+
+        const cat = knownCats.includes(t.category) ? t.category : 'custom';
+        if (!TEMPLATES[cat]) TEMPLATES[cat] = [];
+        TEMPLATES[cat].push(entry);
+        if (cat === 'custom') hasCustom = true;
+      });
+
+      // Show custom tab if there are templates in the custom bucket
+      if (hasCustom) {
+        const tab = document.getElementById('customTplsTab');
+        if(tab) tab.style.display = '';
+      }
     }
   } catch(e) { /* table may not exist yet */ }
 }
@@ -1093,7 +1108,77 @@ function fillExtras(){
 // ══ PREVIEW ══
 function updatePreview(){
   collectState();
-  document.getElementById('invitePreview').innerHTML = renderTemplateHTML(state.tplId, state);
+  const previewEl = document.getElementById('invitePreview');
+  if (state.tplId && state.tplId.startsWith('custom_')) {
+    updateCustomPreview(state.tplId, state);
+  } else {
+    // Remove any existing iframe before setting innerHTML
+    const existingFrame = previewEl.querySelector('iframe');
+    if (existingFrame) previewEl.innerHTML = '';
+    previewEl.innerHTML = renderTemplateHTML(state.tplId, state);
+  }
+}
+
+// ══ CUSTOM TEMPLATE PREVIEW (iframe) ══
+function updateCustomPreview(tplId, s) {
+  const previewEl = document.getElementById('invitePreview');
+  const tplDef = getTemplate(tplId);
+  if (!tplDef || !tplDef.customHtml) {
+    previewEl.innerHTML = `<div style="background:linear-gradient(135deg,#1a0a1e,#2d0a3a);min-height:600px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4);font-family:'Nunito',sans-serif;font-size:.9rem;text-align:center;padding:2rem"><div><div style="font-size:1.8rem;margin-bottom:.75rem">✨</div>Template não encontrado</div></div>`;
+    return;
+  }
+
+  // Build variable substitution
+  const ac = s.accent || tplDef.defaultAccent || '#FFD93D';
+  const heroImg = s.heroPhotoUrl || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80';
+  const date = s.data ? new Date(s.data+'T12:00:00') : null;
+  const dia = date ? String(date.getDate()).padStart(2,'0') : '';
+  const mes = date ? date.toLocaleDateString('pt-BR',{month:'long'}) : '';
+  const diaSemana = date ? date.toLocaleDateString('pt-BR',{weekday:'long'}) : '';
+  const dataFormatada = date ? date.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) : '';
+  const diasRestantes = date ? Math.max(0, Math.floor((date - new Date()) / 86400000)) : '';
+
+  const vars = {
+    '{{titulo}}':       s.titulo || 'Você está convidado!',
+    '{{nome}}':         s.nome || '',
+    '{{hora}}':         s.hora || '',
+    '{{local}}':        s.local || '',
+    '{{endereco}}':     s.endereco || s.local || '',
+    '{{dress}}':        s.dress || '',
+    '{{msg}}':          s.msg || '',
+    '{{accent}}':       ac,
+    '{{dia}}':          dia,
+    '{{mes}}':          mes,
+    '{{diaSemana}}':    diaSemana,
+    '{{dataFormatada}}':dataFormatada,
+    '{{diasRestantes}}':String(diasRestantes),
+    '{{idade}}':        s.idade || s.nome || '',
+    '{{tema}}':         s.tema || '',
+    '{{heroImg}}':      heroImg,
+  };
+
+  let html = tplDef.customHtml;
+  for (const [k, v] of Object.entries(vars)) {
+    html = html.split(k).join(v);
+  }
+
+  // Reuse existing iframe if already present, otherwise create
+  let frame = previewEl.querySelector('iframe.custom-tpl-frame');
+  if (!frame) {
+    previewEl.innerHTML = '';
+    frame = document.createElement('iframe');
+    frame.className = 'custom-tpl-frame';
+    frame.sandbox = 'allow-scripts allow-same-origin allow-popups';
+    frame.style.cssText = 'width:100%;border:none;display:block;min-height:600px;';
+    previewEl.appendChild(frame);
+  }
+  frame.srcdoc = html;
+  frame.onload = () => {
+    try {
+      const h = frame.contentDocument?.documentElement?.scrollHeight || frame.contentDocument?.body?.scrollHeight;
+      if (h && h > 200) frame.style.minHeight = h + 'px';
+    } catch(e) {}
+  };
 }
 
 // ══ TEMPLATE RENDERER — cada template tem seu layout único ══
@@ -1921,25 +2006,11 @@ function renderTemplateHTML(tplId, s){
       </div>
     </div>`;
 
-  // ── CUSTOM TEMPLATE (criado pelo admin) ──
+  // ── CUSTOM TEMPLATE — handled by updateCustomPreview() via iframe ──
   if(tplId && tplId.startsWith('custom_')){
-    const tplDef = getTemplate(tplId);
-    if(tplDef && tplDef.customHtml){
-      // Replace placeholders in the custom HTML
-      let html = tplDef.customHtml;
-      html = html.replace(/\{\{titulo\}\}/g, s.titulo||'Você está convidado!')
-                 .replace(/\{\{nome\}\}/g, s.nome||'')
-                 .replace(/\{\{data\}\}/g, dateStr)
-                 .replace(/\{\{dataShort\}\}/g, dateShort)
-                 .replace(/\{\{hora\}\}/g, s.hora||'')
-                 .replace(/\{\{local\}\}/g, s.local||'')
-                 .replace(/\{\{dress\}\}/g, s.dress||'')
-                 .replace(/\{\{msg\}\}/g, s.msg||'')
-                 .replace(/\{\{accent\}\}/g, ac)
-                 .replace(/\{\{heroImg\}\}/g, heroImg)
-                 .replace(/\{\{dias\}\}/g, days);
-      return html;
-    }
+    // This path shouldn't be reached since updatePreview() routes custom templates
+    // to updateCustomPreview() before calling renderTemplateHTML(). Fallback only:
+    return `<div style="background:linear-gradient(135deg,#1a0a1e,#2d0a3a);min-height:600px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4);font-family:'Nunito',sans-serif;font-size:.9rem;text-align:center;padding:2rem"><div><div style="font-size:1.8rem;margin-bottom:.75rem">✨</div>Carregando template...</div></div>`;
   }
 
   // fallback — layout padrão
