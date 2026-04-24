@@ -90,6 +90,18 @@
     .bg-opt-transparent.selected{border-color:var(--pink);}
     .bg-opt-transparent::after{content:'Foto';font-size:.6rem;font-weight:800;color:rgba(26,10,0,.5);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
 
+    /* ── THEME CARDS (tweaks) ── */
+    .tweak-block{margin-bottom:1.1rem;}
+    .tweak-block:last-child{margin-bottom:0;}
+    .tweak-label{font-size:.7rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:rgba(26,10,0,.4);margin-bottom:.45rem;}
+    .theme-cards{display:grid;grid-template-columns:1fr 1fr;gap:.45rem;}
+    .theme-card{border-radius:10px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color .2s,transform .15s;display:flex;flex-direction:column;}
+    .theme-card:hover{transform:scale(1.03);}
+    .theme-card.selected{border-color:var(--pink);}
+    .theme-card-preview{height:36px;width:100%;}
+    .theme-card-label{font-size:.68rem;font-weight:800;text-align:center;padding:.3rem .2rem;background:#fff;color:rgba(26,10,0,.55);border-top:1px solid rgba(26,10,0,.07);}
+    .no-tweaks-msg{font-size:.82rem;color:rgba(26,10,0,.35);background:rgba(26,10,0,.03);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;line-height:1.5;}
+
     /* ── UPLOAD ── */
     .upload-zone{border:2px dashed rgba(26,10,0,.15);border-radius:10px;padding:1rem;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:rgba(26,10,0,.02);}
     .upload-zone:hover{border-color:var(--pink);background:rgba(255,61,107,.03);}
@@ -281,36 +293,10 @@
     <!-- ══ STEP 2: ESTILO ══ -->
     <div class="step-panel" id="step2">
       <div class="step-title">Estilo do convite</div>
-      <div class="step-sub">Personalize cores e o plano de fundo do hero.</div>
+      <div class="step-sub" id="step2Sub">Personalize o visual do template selecionado.</div>
 
-      <div class="field">
-        <label>Cor de destaque</label>
-        <div class="color-swatches" id="colorSwatches">
-          <div class="swatch selected" data-color="#FFD93D" style="background:#FFD93D" onclick="selectColor(this)" title="Amarelo"></div>
-          <div class="swatch" data-color="#FF3D6B" style="background:#FF3D6B" onclick="selectColor(this)" title="Rosa"></div>
-          <div class="swatch" data-color="#60A5FA" style="background:#60A5FA" onclick="selectColor(this)" title="Azul"></div>
-          <div class="swatch" data-color="#34D399" style="background:#34D399" onclick="selectColor(this)" title="Verde"></div>
-          <div class="swatch" data-color="#A78BFA" style="background:#A78BFA" onclick="selectColor(this)" title="Lilás"></div>
-          <div class="swatch" data-color="#FB923C" style="background:#FB923C" onclick="selectColor(this)" title="Laranja"></div>
-          <div class="swatch" data-color="#F472B6" style="background:#F472B6" onclick="selectColor(this)" title="Pink"></div>
-          <div class="swatch" data-color="#FFFFFF" style="background:#FFFFFF;border:1px solid rgba(26,10,0,.2)" onclick="selectColor(this)" title="Branco"></div>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Plano de fundo do hero</label>
-        <div class="bg-options" id="bgOptions">
-          <div class="bg-opt selected" data-bg="dark-purple" style="background:linear-gradient(135deg,#1a0a1e,#2d0a3a)" onclick="selectBg(this)" title="Roxo escuro"></div>
-          <div class="bg-opt" data-bg="dark-blue" style="background:linear-gradient(135deg,#0a1628,#1e3a5f)" onclick="selectBg(this)" title="Azul noite"></div>
-          <div class="bg-opt" data-bg="dark-green" style="background:linear-gradient(135deg,#0d2a10,#1a4020)" onclick="selectBg(this)" title="Verde floresta"></div>
-          <div class="bg-opt" data-bg="dark-brown" style="background:linear-gradient(135deg,#2a1a0a,#3d1a0d)" onclick="selectBg(this)" title="Marrom escuro"></div>
-          <div class="bg-opt" data-bg="coral" style="background:linear-gradient(135deg,#FF3D6B,#ff7043)" onclick="selectBg(this)" title="Coral"></div>
-          <div class="bg-opt" data-bg="violet" style="background:linear-gradient(135deg,#1e0a2a,#6b21a8)" onclick="selectBg(this)" title="Violeta"></div>
-          <div class="bg-opt" data-bg="rose-gold" style="background:linear-gradient(135deg,#c0392b,#f39c12)" onclick="selectBg(this)" title="Rose gold"></div>
-          <div class="bg-opt" data-bg="mint" style="background:linear-gradient(135deg,#134e4a,#0d9488)" onclick="selectBg(this)" title="Mint"></div>
-          <div class="bg-opt bg-opt-transparent" data-bg="transparent" onclick="selectBg(this)" title="Foto do template em destaque"></div>
-        </div>
-        <div class="field-hint" id="bgHint"></div>
+      <div id="styleTweaks">
+        <!-- rendered dynamically by renderTweakControls() -->
       </div>
 
       <div class="step-nav">
@@ -492,6 +478,12 @@ let currentUser = null;
 let editingInviteId = null;
 
 // ══ TEMPLATES ══
+// tweaks: array de controles que aparecem no Step 2 para este template.
+// Tipos: 'accent' | 'theme' | 'hero' | 'bg'
+//   accent → seletor de cor livre
+//   theme  → seletor de tema nomeado: { key, label, colors:{bg,accent,text?} }[]
+//   hero   → upload de foto de fundo
+//   bg     → seletor de fundo pré-definido (genérico)
 const TEMPLATES = {
   // ── HOMEM ──
   'homem': [
@@ -500,28 +492,51 @@ const TEMPLATES = {
       img:'https://images.unsplash.com/photo-1555658636-6e4a36218be7?w=600&q=80',
       supportsHeroUpload:false,
       defaultAccent:'#F59E0B',defaultBg:'dark-brown',
-      heroStyle:'color:#F59E0B',overlayStyle:''
+      heroStyle:'color:#F59E0B',overlayStyle:'',
+      tweaks:[
+        { type:'theme', label:'Esquema de cor', key:'colorTheme', default:'cerveja', options:[
+          { key:'cerveja',  label:'🍺 Chope',    bg:'linear-gradient(160deg,#1a0e00,#3d2200)', accent:'#F59E0B' },
+          { key:'whisky',   label:'🥃 Whisky',   bg:'linear-gradient(160deg,#2a1200,#5c2a00)', accent:'#D97706' },
+          { key:'dark',     label:'🖤 Dark',      bg:'linear-gradient(160deg,#111,#222)',        accent:'#E5E7EB' },
+          { key:'futebol',  label:'⚽ Campo',    bg:'linear-gradient(160deg,#052a10,#0d4a1a)', accent:'#34D399' },
+        ]},
+      ],
     },
     {
       id:'hom-futebol',name:'Campo de Futebol',
       img:'https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?w=600&q=80',
       supportsHeroUpload:false,
       defaultAccent:'#34D399',defaultBg:'dark-green',
-      heroStyle:'color:#34D399',overlayStyle:''
+      heroStyle:'color:#34D399',overlayStyle:'',
+      tweaks:[
+        { type:'theme', label:'Time', key:'colorTheme', default:'verde', options:[
+          { key:'verde',    label:'🟢 Verde',     bg:'linear-gradient(160deg,#052a10,#0a4a1a)', accent:'#34D399' },
+          { key:'azul',     label:'🔵 Azul',      bg:'linear-gradient(160deg,#0a1628,#1e3a5f)', accent:'#60A5FA' },
+          { key:'vermelho', label:'🔴 Vermelho',  bg:'linear-gradient(160deg,#1a0000,#5a0000)', accent:'#EF4444' },
+          { key:'amarelo',  label:'🟡 Amarelo',   bg:'linear-gradient(160deg,#1a1000,#3a2800)', accent:'#FBBF24' },
+        ]},
+      ],
     },
     {
       id:'hom-minimalista',name:'Minimalista',
       img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80',
       supportsHeroUpload:false,
       defaultAccent:'#E5E7EB',defaultBg:'dark-brown',
-      heroStyle:'color:#E5E7EB',overlayStyle:''
+      heroStyle:'color:#E5E7EB',overlayStyle:'',
+      tweaks:[
+        { type:'accent', label:'Cor de destaque' },
+      ],
     },
     {
       id:'hom-fotos',name:'Com suas fotos 📷',
       img:'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&q=80',
       supportsHeroUpload:true,
       defaultAccent:'#F59E0B',defaultBg:'dark-brown',
-      heroStyle:'color:#F59E0B',overlayStyle:''
+      heroStyle:'color:#F59E0B',overlayStyle:'',
+      tweaks:[
+        { type:'hero', label:'Foto de fundo' },
+        { type:'accent', label:'Cor de destaque' },
+      ],
     },
   ],
   // ── MULHER ──
@@ -531,28 +546,56 @@ const TEMPLATES = {
       img:'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=600&q=80',
       supportsHeroUpload:false,
       defaultAccent:'#FCD34D',defaultBg:'dark-brown',
-      heroStyle:'color:#FCD34D',overlayStyle:''
+      heroStyle:'color:#FCD34D',overlayStyle:'',
+      tweaks:[
+        { type:'theme', label:'Paleta', key:'colorTheme', default:'champanhe', options:[
+          { key:'champanhe', label:'🥂 Champanhe', bg:'linear-gradient(160deg,#1a0e00,#3a1800)', accent:'#FCD34D' },
+          { key:'rosegold',  label:'🌹 Rose Gold', bg:'linear-gradient(160deg,#2a0808,#5c1010)', accent:'#F9A8D4' },
+          { key:'roxo',      label:'💜 Roxo',      bg:'linear-gradient(160deg,#1e0a2a,#6b21a8)', accent:'#A78BFA' },
+          { key:'preto',     label:'🖤 Black Tie', bg:'linear-gradient(160deg,#0a0a0a,#1a1a1a)', accent:'#FCD34D' },
+        ]},
+      ],
     },
     {
       id:'mul-rosa',name:'Rosa & Fofo',
       img:'https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=600&q=80',
       supportsHeroUpload:false,
       defaultAccent:'#F472B6',defaultBg:'violet',
-      heroStyle:'color:#F472B6',overlayStyle:''
+      heroStyle:'color:#F472B6',overlayStyle:'',
+      tweaks:[
+        { type:'theme', label:'Tom', key:'colorTheme', default:'rosa', options:[
+          { key:'rosa',     label:'🌸 Rosa',      bg:'linear-gradient(160deg,#2d0020,#6b0030)', accent:'#F472B6' },
+          { key:'lilas',    label:'💜 Lilás',     bg:'linear-gradient(160deg,#1e0a2a,#4c1d95)', accent:'#C084FC' },
+          { key:'coral',    label:'🪸 Coral',     bg:'linear-gradient(160deg,#2a0808,#7f1d1d)', accent:'#FB7185' },
+          { key:'menta',    label:'🌿 Menta',     bg:'linear-gradient(160deg,#0d2a10,#065f46)', accent:'#6EE7B7' },
+        ]},
+      ],
     },
     {
       id:'mul-pool',name:'Pool Party',
       img:'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600&q=80',
       supportsHeroUpload:false,
       defaultAccent:'#60A5FA',defaultBg:'mint',
-      heroStyle:'color:#60A5FA',overlayStyle:''
+      heroStyle:'color:#60A5FA',overlayStyle:'',
+      tweaks:[
+        { type:'theme', label:'Clima', key:'colorTheme', default:'piscina', options:[
+          { key:'piscina',  label:'🏊 Piscina',   bg:'linear-gradient(160deg,#0a2550,#0e4f8a)', accent:'#60A5FA' },
+          { key:'tropical', label:'🌴 Tropical',  bg:'linear-gradient(160deg,#0d3320,#1a5c3a)', accent:'#34D399' },
+          { key:'noite',    label:'🌙 Noite',     bg:'linear-gradient(160deg,#0a0820,#1e1b4b)', accent:'#A78BFA' },
+          { key:'neon',     label:'⚡ Neon',      bg:'linear-gradient(160deg,#0a0010,#1a0033)', accent:'#F472B6' },
+        ]},
+      ],
     },
     {
       id:'mul-fotos',name:'Com suas fotos 📷',
       img:'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&q=80',
       supportsHeroUpload:true,
       defaultAccent:'#F472B6',defaultBg:'violet',
-      heroStyle:'color:#F472B6',overlayStyle:''
+      heroStyle:'color:#F472B6',overlayStyle:'',
+      tweaks:[
+        { type:'hero', label:'Foto de fundo' },
+        { type:'accent', label:'Cor de destaque' },
+      ],
     },
   ],
   // ── 15 ANOS ──
@@ -562,28 +605,51 @@ const TEMPLATES = {
       img:'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&q=80',
       supportsHeroUpload:false,
       defaultAccent:'#FCD34D',defaultBg:'dark-purple',
-      heroStyle:'color:#FCD34D',overlayStyle:''
+      heroStyle:'color:#FCD34D',overlayStyle:'',
+      tweaks:[
+        { type:'theme', label:'Paleta', key:'colorTheme', default:'dourado', options:[
+          { key:'dourado',  label:'✨ Dourado',   bg:'linear-gradient(160deg,#1a0a3d,#3b1a6b)', accent:'#FCD34D' },
+          { key:'rosa',     label:'🌸 Rosa',      bg:'linear-gradient(160deg,#2d0020,#6b0a35)', accent:'#F472B6' },
+          { key:'azul',     label:'💎 Safira',    bg:'linear-gradient(160deg,#0a1628,#1e3a5f)', accent:'#93C5FD' },
+          { key:'esmeralda',label:'💚 Esmeralda', bg:'linear-gradient(160deg,#0d2a10,#065f46)', accent:'#6EE7B7' },
+        ]},
+      ],
     },
     {
       id:'deb-clean',name:'Clean & Moderno',
       img:'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&q=80',
       supportsHeroUpload:false,
       defaultAccent:'#F472B6',defaultBg:'violet',
-      heroStyle:'color:#F472B6',overlayStyle:''
+      heroStyle:'color:#F472B6',overlayStyle:'',
+      tweaks:[
+        { type:'accent', label:'Cor de destaque' },
+      ],
     },
     {
       id:'deb-vintage',name:'Vintage Dourado',
       img:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80',
       supportsHeroUpload:false,
       defaultAccent:'#FCD34D',defaultBg:'rose-gold',
-      heroStyle:'color:#FCD34D',overlayStyle:''
+      heroStyle:'color:#FCD34D',overlayStyle:'',
+      tweaks:[
+        { type:'theme', label:'Tom vintage', key:'colorTheme', default:'ouro', options:[
+          { key:'ouro',     label:'🥇 Ouro',      bg:'linear-gradient(160deg,#1c0f00,#3b2000)', accent:'#FCD34D' },
+          { key:'prata',    label:'🥈 Prata',     bg:'linear-gradient(160deg,#111,#2a2a2a)',     accent:'#E5E7EB' },
+          { key:'bronze',   label:'🥉 Bronze',    bg:'linear-gradient(160deg,#2a1a0a,#5c3010)', accent:'#D97706' },
+          { key:'rose',     label:'🌹 Rose',      bg:'linear-gradient(160deg,#2a0808,#5c1010)', accent:'#F9A8D4' },
+        ]},
+      ],
     },
     {
       id:'deb-fotos',name:'Com suas fotos 📷',
       img:'https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=600&q=80',
       supportsHeroUpload:true,
       defaultAccent:'#F472B6',defaultBg:'transparent',
-      heroStyle:'color:#fff',overlayStyle:''
+      heroStyle:'color:#fff',overlayStyle:'',
+      tweaks:[
+        { type:'hero', label:'Foto de fundo' },
+        { type:'accent', label:'Cor de destaque' },
+      ],
     },
   ],
   // ── MENINO ──
@@ -593,35 +659,68 @@ const TEMPLATES = {
       img:'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&q=80',
       supportsHeroUpload:false,
       defaultAccent:'#EF4444',defaultBg:'dark-blue',
-      heroStyle:'color:#EF4444',overlayStyle:''
+      heroStyle:'color:#EF4444',overlayStyle:'',
+      tweaks:[
+        { type:'theme', label:'Variação', key:'colorTheme', default:'vermelho', options:[
+          { key:'vermelho', label:'🔴 Clássico',  bg:'linear-gradient(160deg,#1a0000,#5a0000)', accent:'#EF4444' },
+          { key:'preto',    label:'🖤 Dark',      bg:'linear-gradient(160deg,#050510,#0f0f1f)', accent:'#EF4444' },
+          { key:'azul',     label:'🔵 Miles M.',  bg:'linear-gradient(160deg,#0a0828,#1e1b5f)', accent:'#60A5FA' },
+        ]},
+      ],
     },
     {
       id:'boy-pokemon',name:'Pokémon',
       img:'https://images.unsplash.com/photo-1542779867-5b23e9e44cbf?w=600&q=80',
       supportsHeroUpload:false,
       defaultAccent:'#FBBF24',defaultBg:'dark-blue',
-      heroStyle:'color:#FBBF24',overlayStyle:''
+      heroStyle:'color:#FBBF24',overlayStyle:'',
+      tweaks:[
+        { type:'theme', label:'Pokémon favorito', key:'colorTheme', default:'pikachu', options:[
+          { key:'pikachu',  label:'⚡ Pikachu',   bg:'linear-gradient(160deg,#1a1000,#3a2800)', accent:'#FBBF24' },
+          { key:'charizard',label:'🔥 Charizard', bg:'linear-gradient(160deg,#2a0800,#5c1800)', accent:'#F97316' },
+          { key:'squirtle', label:'💧 Squirtle',  bg:'linear-gradient(160deg,#0a1628,#1e3a5f)', accent:'#60A5FA' },
+          { key:'bulba',    label:'🌿 Bulbasaur', bg:'linear-gradient(160deg,#0d2a10,#0d4a1a)', accent:'#4ADE80' },
+        ]},
+      ],
     },
     {
       id:'boy-mickey',name:'Mickey Mouse',
       img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80',
       supportsHeroUpload:false,
       defaultAccent:'#EF4444',defaultBg:'dark-brown',
-      heroStyle:'color:#EF4444',overlayStyle:''
+      heroStyle:'color:#EF4444',overlayStyle:'',
+      tweaks:[
+        { type:'theme', label:'Tema', key:'colorTheme', default:'classico', options:[
+          { key:'classico', label:'🐭 Clássico',  bg:'linear-gradient(160deg,#0a0000,#2a0000)', accent:'#EF4444' },
+          { key:'colorido', label:'🎪 Colorido',  bg:'linear-gradient(160deg,#1a0000,#3d0050)', accent:'#FBBF24' },
+          { key:'azul',     label:'🎩 Elegante',  bg:'linear-gradient(160deg,#0a1628,#1e3a5f)', accent:'#EF4444' },
+        ]},
+      ],
     },
     {
       id:'boy-spongebob',name:'Bob Esponja',
       img:'https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=600&q=80',
       supportsHeroUpload:false,
       defaultAccent:'#FBBF24',defaultBg:'dark-blue',
-      heroStyle:'color:#FBBF24',overlayStyle:''
+      heroStyle:'color:#FBBF24',overlayStyle:'',
+      tweaks:[
+        { type:'theme', label:'Personagem', key:'colorTheme', default:'bob', options:[
+          { key:'bob',      label:'🧽 Bob Esponja',bg:'linear-gradient(160deg,#003a8c,#0055cc)', accent:'#FBBF24' },
+          { key:'patrick',  label:'⭐ Patrick',   bg:'linear-gradient(160deg,#2d0020,#7f1d5a)', accent:'#F472B6' },
+          { key:'lula',     label:'🐙 Lula Mosk.',bg:'linear-gradient(160deg,#1a0a3d,#3b1a6b)', accent:'#A78BFA' },
+        ]},
+      ],
     },
     {
       id:'boy-fotos',name:'Com suas fotos 📷',
       img:'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=600&q=80',
       supportsHeroUpload:true,
       defaultAccent:'#60A5FA',defaultBg:'dark-blue',
-      heroStyle:'color:#60A5FA',overlayStyle:''
+      heroStyle:'color:#60A5FA',overlayStyle:'',
+      tweaks:[
+        { type:'hero', label:'Foto de fundo' },
+        { type:'accent', label:'Cor de destaque' },
+      ],
     },
   ],
   // ── MENINA ──
@@ -631,35 +730,71 @@ const TEMPLATES = {
       img:'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600&q=80',
       supportsHeroUpload:false,
       defaultAccent:'#60A5FA',defaultBg:'mint',
-      heroStyle:'color:#60A5FA',overlayStyle:''
+      heroStyle:'color:#60A5FA',overlayStyle:'',
+      tweaks:[
+        { type:'theme', label:'Mar', key:'colorTheme', default:'oceano', options:[
+          { key:'oceano',   label:'🌊 Oceano',    bg:'linear-gradient(160deg,#001a3d,#003370)', accent:'#60A5FA' },
+          { key:'coral',    label:'🐚 Coral',     bg:'linear-gradient(160deg,#0d3320,#065f46)', accent:'#34D399' },
+          { key:'roxo',     label:'🔮 Mágico',    bg:'linear-gradient(160deg,#1e0a2a,#6b21a8)', accent:'#C084FC' },
+          { key:'dourado',  label:'✨ Dourado',   bg:'linear-gradient(160deg,#1a0a3d,#3b1a6b)', accent:'#FCD34D' },
+        ]},
+      ],
     },
     {
       id:'girl-cinderela',name:'Cinderela',
       img:'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&q=80',
       supportsHeroUpload:false,
       defaultAccent:'#93C5FD',defaultBg:'dark-blue',
-      heroStyle:'color:#93C5FD',overlayStyle:''
+      heroStyle:'color:#93C5FD',overlayStyle:'',
+      tweaks:[
+        { type:'theme', label:'Castelo', key:'colorTheme', default:'azul', options:[
+          { key:'azul',     label:'💙 Azul Real',  bg:'linear-gradient(160deg,#0a1040,#1a2070)', accent:'#93C5FD' },
+          { key:'dourado',  label:'✨ Dourado',    bg:'linear-gradient(160deg,#1a0a3d,#3b1a6b)', accent:'#FCD34D' },
+          { key:'rosa',     label:'🌸 Rosa',       bg:'linear-gradient(160deg,#2d0020,#6b0030)', accent:'#F9A8D4' },
+          { key:'prata',    label:'🥈 Prata',      bg:'linear-gradient(160deg,#111,#2a2a3a)',     accent:'#E5E7EB' },
+        ]},
+      ],
     },
     {
       id:'girl-minnie',name:'Minnie Mouse',
       img:'https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=600&q=80',
       supportsHeroUpload:false,
       defaultAccent:'#F472B6',defaultBg:'violet',
-      heroStyle:'color:#F472B6',overlayStyle:''
+      heroStyle:'color:#F472B6',overlayStyle:'',
+      tweaks:[
+        { type:'theme', label:'Laço', key:'colorTheme', default:'rosa', options:[
+          { key:'rosa',     label:'🎀 Rosa Clás.', bg:'linear-gradient(160deg,#2d0010,#6b0030)', accent:'#F472B6' },
+          { key:'vermelho', label:'❤️ Vermelho',  bg:'linear-gradient(160deg,#1a0000,#5a0000)', accent:'#EF4444' },
+          { key:'lilas',    label:'💜 Lilás',     bg:'linear-gradient(160deg,#1e0a2a,#4c1d95)', accent:'#C084FC' },
+          { key:'preto',    label:'🖤 Chique',    bg:'linear-gradient(160deg,#050505,#1a0a0a)', accent:'#F472B6' },
+        ]},
+      ],
     },
     {
       id:'girl-ursinha',name:'Ursinha Fofa',
       img:'https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=600&q=80',
       supportsHeroUpload:false,
       defaultAccent:'#FCD34D',defaultBg:'coral',
-      heroStyle:'color:#FCD34D',overlayStyle:''
+      heroStyle:'color:#FCD34D',overlayStyle:'',
+      tweaks:[
+        { type:'theme', label:'Pelagem', key:'colorTheme', default:'mel', options:[
+          { key:'mel',      label:'🍯 Mel',        bg:'linear-gradient(160deg,#1a0a00,#3d2000)', accent:'#FCD34D' },
+          { key:'rosa',     label:'🐻‍❄️ Rosa',    bg:'linear-gradient(160deg,#2d0010,#6b0030)', accent:'#F9A8D4' },
+          { key:'lavanda',  label:'💜 Lavanda',   bg:'linear-gradient(160deg,#1e0a2a,#4c1d95)', accent:'#C084FC' },
+          { key:'menta',    label:'🌿 Menta',     bg:'linear-gradient(160deg,#0d2a10,#065f46)', accent:'#6EE7B7' },
+        ]},
+      ],
     },
     {
       id:'girl-fotos',name:'Com suas fotos 📷',
       img:'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=600&q=80',
       supportsHeroUpload:true,
       defaultAccent:'#F472B6',defaultBg:'transparent',
-      heroStyle:'color:#fff',overlayStyle:''
+      heroStyle:'color:#fff',overlayStyle:'',
+      tweaks:[
+        { type:'hero', label:'Foto de fundo' },
+        { type:'accent', label:'Cor de destaque' },
+      ],
     },
   ],
   // ── CASAMENTO ──
@@ -669,28 +804,56 @@ const TEMPLATES = {
       img:'https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80',
       supportsHeroUpload:false,
       defaultAccent:'#FFD93D',defaultBg:'dark-purple',
-      heroStyle:'color:#FFD93D',overlayStyle:'background:linear-gradient(to bottom,rgba(15,5,25,.1),rgba(15,5,25,.82))'
+      heroStyle:'color:#FFD93D',overlayStyle:'background:linear-gradient(to bottom,rgba(15,5,25,.1),rgba(15,5,25,.82))',
+      tweaks:[
+        { type:'theme', label:'Céu noturno', key:'colorTheme', default:'dourado', options:[
+          { key:'dourado',  label:'⭐ Dourado',   bg:'linear-gradient(160deg,#08030f,#1a0a3d)', accent:'#FFD93D' },
+          { key:'prata',    label:'🌙 Prata',     bg:'linear-gradient(160deg,#050515,#0f0f30)', accent:'#E5E7EB' },
+          { key:'rose',     label:'🌹 Rose Gold', bg:'linear-gradient(160deg,#1a0808,#3d1010)', accent:'#F9A8D4' },
+          { key:'esmeralda',label:'💚 Esmeralda', bg:'linear-gradient(160deg,#03100a,#0d3320)', accent:'#6EE7B7' },
+        ]},
+      ],
     },
     {
       id:'wed-jardim',name:'Jardim Romântico',
       img:'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&q=80',
       supportsHeroUpload:false,
       defaultAccent:'#FFFFFF',defaultBg:'dark-green',
-      heroStyle:'color:#fff',overlayStyle:'background:linear-gradient(to bottom,rgba(5,25,10,.15),rgba(5,25,10,.8))'
+      heroStyle:'color:#fff',overlayStyle:'background:linear-gradient(to bottom,rgba(5,25,10,.15),rgba(5,25,10,.8))',
+      tweaks:[
+        { type:'theme', label:'Jardim', key:'colorTheme', default:'verde', options:[
+          { key:'verde',    label:'🌿 Verde',     bg:'linear-gradient(160deg,#032010,#0d3320)', accent:'#FFFFFF' },
+          { key:'rosa',     label:'🌸 Rosado',    bg:'linear-gradient(160deg,#1a0010,#4a0030)', accent:'#F9A8D4' },
+          { key:'branco',   label:'🤍 Branco',    bg:'#fafdf6',                                  accent:'#6B7280' },
+          { key:'lavanda',  label:'💜 Lavanda',   bg:'linear-gradient(160deg,#1e0a2a,#4c1d95)', accent:'#C084FC' },
+        ]},
+      ],
     },
     {
       id:'wed-rosegold',name:'Rose Gold',
       img:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80',
       supportsHeroUpload:false,
       defaultAccent:'#FFD93D',defaultBg:'rose-gold',
-      heroStyle:'color:#fff',overlayStyle:'background:linear-gradient(to bottom,rgba(100,30,20,.1),rgba(100,30,20,.8))'
+      heroStyle:'color:#fff',overlayStyle:'background:linear-gradient(to bottom,rgba(100,30,20,.1),rgba(100,30,20,.8))',
+      tweaks:[
+        { type:'theme', label:'Metal', key:'colorTheme', default:'rose', options:[
+          { key:'rose',     label:'🌹 Rose Gold',  bg:'linear-gradient(160deg,#2a0a08,#5c1a10)', accent:'#FFD93D' },
+          { key:'ouro',     label:'✨ Ouro',       bg:'linear-gradient(160deg,#1a0f00,#3d2500)', accent:'#FCD34D' },
+          { key:'prata',    label:'🥈 Prata',      bg:'linear-gradient(160deg,#111,#2a2a2a)',     accent:'#E5E7EB' },
+          { key:'cobre',    label:'🟤 Cobre',      bg:'linear-gradient(160deg,#2a1200,#5c2800)', accent:'#D97706' },
+        ]},
+      ],
     },
     {
       id:'wed-fotos',name:'Com suas fotos 📷',
       img:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80',
       supportsHeroUpload:true,
       defaultAccent:'#FFFFFF',defaultBg:'transparent',
-      heroStyle:'color:#fff',overlayStyle:'background:linear-gradient(to bottom,rgba(0,0,0,.05),rgba(0,0,0,.6))'
+      heroStyle:'color:#fff',overlayStyle:'background:linear-gradient(to bottom,rgba(0,0,0,.05),rgba(0,0,0,.6))',
+      tweaks:[
+        { type:'hero', label:'Foto de fundo' },
+        { type:'accent', label:'Cor de destaque' },
+      ],
     },
   ],
   // ── CHÁ / REVELAÇÃO ──
@@ -700,28 +863,46 @@ const TEMPLATES = {
       img:'https://images.unsplash.com/photo-1544427920-c49ccfb85579?w=600&q=80',
       supportsHeroUpload:false,
       defaultAccent:'#F472B6',defaultBg:'violet',
-      heroStyle:'color:#F472B6',overlayStyle:'background:linear-gradient(to bottom,rgba(40,5,50,.1),rgba(40,5,50,.8))'
+      heroStyle:'color:#F472B6',overlayStyle:'background:linear-gradient(to bottom,rgba(40,5,50,.1),rgba(40,5,50,.8))',
+      tweaks:[
+        { type:'theme', label:'Tom pastel', key:'colorTheme', default:'rosa', options:[
+          { key:'rosa',     label:'🌸 Rosa',      bg:'linear-gradient(160deg,#fdf0ff,#f5e6ff)', accent:'#F472B6', textDark:true },
+          { key:'azul',     label:'💙 Azul',      bg:'linear-gradient(160deg,#eff6ff,#dbeafe)', accent:'#60A5FA', textDark:true },
+          { key:'verde',    label:'🌿 Verde',     bg:'linear-gradient(160deg,#f0fdf4,#dcfce7)', accent:'#4ADE80', textDark:true },
+          { key:'amarelo',  label:'🌼 Amarelo',   bg:'linear-gradient(160deg,#fefce8,#fef9c3)', accent:'#EAB308', textDark:true },
+        ]},
+      ],
     },
     {
       id:'cha-revelacao-azul',name:'Revelação — Menino',
       img:'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=600&q=80',
       supportsHeroUpload:false,
       defaultAccent:'#60A5FA',defaultBg:'dark-blue',
-      heroStyle:'color:#60A5FA',overlayStyle:'background:linear-gradient(to bottom,rgba(5,15,40,.15),rgba(5,15,40,.82))'
+      heroStyle:'color:#60A5FA',overlayStyle:'background:linear-gradient(to bottom,rgba(5,15,40,.15),rgba(5,15,40,.82))',
+      tweaks:[
+        { type:'accent', label:'Cor de destaque' },
+      ],
     },
     {
       id:'cha-revelacao-rosa',name:'Revelação — Menina',
       img:'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=600&q=80',
       supportsHeroUpload:false,
       defaultAccent:'#F472B6',defaultBg:'violet',
-      heroStyle:'color:#F472B6',overlayStyle:'background:linear-gradient(to bottom,rgba(40,5,50,.1),rgba(40,5,50,.8))'
+      heroStyle:'color:#F472B6',overlayStyle:'background:linear-gradient(to bottom,rgba(40,5,50,.1),rgba(40,5,50,.8))',
+      tweaks:[
+        { type:'accent', label:'Cor de destaque' },
+      ],
     },
     {
       id:'cha-fotos',name:'Com suas fotos 📷',
       img:'https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=600&q=80',
       supportsHeroUpload:true,
       defaultAccent:'#F472B6',defaultBg:'transparent',
-      heroStyle:'color:#fff',overlayStyle:'background:linear-gradient(to bottom,rgba(0,0,0,.05),rgba(0,0,0,.65))'
+      heroStyle:'color:#fff',overlayStyle:'background:linear-gradient(to bottom,rgba(0,0,0,.05),rgba(0,0,0,.65))',
+      tweaks:[
+        { type:'hero', label:'Foto de fundo' },
+        { type:'accent', label:'Cor de destaque' },
+      ],
     },
   ],
   // ── GERAL ──
@@ -732,7 +913,16 @@ const TEMPLATES = {
       supportsHeroUpload:false,
       defaultAccent:'#FFD93D',defaultBg:'dark-purple',
       heroStyle:'color:#FFD93D;text-shadow:0 0 20px rgba(255,217,61,.5)',
-      overlayStyle:'background:linear-gradient(to bottom,rgba(26,10,30,.3),rgba(26,10,30,.85))'
+      overlayStyle:'background:linear-gradient(to bottom,rgba(26,10,30,.3),rgba(26,10,30,.85))',
+      tweaks:[
+        { type:'theme', label:'Cor neon', key:'colorTheme', default:'amarelo', options:[
+          { key:'amarelo',  label:'💛 Amarelo',   bg:'linear-gradient(160deg,#0a0010,#1a0033)', accent:'#FFD93D' },
+          { key:'rosa',     label:'🩷 Pink',      bg:'linear-gradient(160deg,#0a0010,#330010)', accent:'#FF3D6B' },
+          { key:'azul',     label:'💙 Azul',      bg:'linear-gradient(160deg,#000a20,#001055)', accent:'#60A5FA' },
+          { key:'verde',    label:'💚 Verde',     bg:'linear-gradient(160deg,#000a05,#002010)', accent:'#34D399' },
+          { key:'roxo',     label:'💜 Roxo',      bg:'linear-gradient(160deg,#0a0020,#200055)', accent:'#A78BFA' },
+        ]},
+      ],
     },
     {
       id:'aniv-tropical',name:'Tropical Party',
@@ -740,7 +930,10 @@ const TEMPLATES = {
       supportsHeroUpload:false,
       defaultAccent:'#34D399',defaultBg:'dark-green',
       heroStyle:'color:#34D399',
-      overlayStyle:'background:linear-gradient(to bottom,rgba(10,30,10,.2),rgba(10,30,10,.8))'
+      overlayStyle:'background:linear-gradient(to bottom,rgba(10,30,10,.2),rgba(10,30,10,.8))',
+      tweaks:[
+        { type:'accent', label:'Cor de destaque' },
+      ],
     },
     {
       id:'aniv-elegante',name:'Elegante',
@@ -748,7 +941,11 @@ const TEMPLATES = {
       supportsHeroUpload:true,
       defaultAccent:'#FFD93D',defaultBg:'rose-gold',
       heroStyle:'color:#FFD93D',
-      overlayStyle:'background:linear-gradient(to bottom,rgba(80,10,10,.2),rgba(50,5,5,.85))'
+      overlayStyle:'background:linear-gradient(to bottom,rgba(80,10,10,.2),rgba(50,5,5,.85))',
+      tweaks:[
+        { type:'hero', label:'Foto de fundo' },
+        { type:'accent', label:'Cor de destaque' },
+      ],
     },
     {
       id:'aniv-fotos',name:'Com suas fotos 📷',
@@ -756,7 +953,11 @@ const TEMPLATES = {
       supportsHeroUpload:true,
       defaultAccent:'#F472B6',defaultBg:'violet',
       heroStyle:'color:#F472B6',
-      overlayStyle:'background:linear-gradient(to bottom,rgba(30,10,40,.1),rgba(30,10,40,.82))'
+      overlayStyle:'background:linear-gradient(to bottom,rgba(30,10,40,.1),rgba(30,10,40,.82))',
+      tweaks:[
+        { type:'hero', label:'Foto de fundo' },
+        { type:'accent', label:'Cor de destaque' },
+      ],
     },
   ],
   // ── CUSTOM (templates criados pelo admin) ──
@@ -779,7 +980,8 @@ const BG_GRADIENTS = {
 const state = {
   tplId:'hom-cerveja', tplCat:'homem',
   titulo:'', nome:'', data:'', hora:'', local:'', dress:'', msg:'', prazo:'',
-  accent:'#FFD93D', bgKey:'dark-purple',
+  accent:'#F59E0B', bgKey:'__theme__', themeBg:'linear-gradient(160deg,#1a0e00,#3d2200)',
+  tweaks:{ colorTheme:'cerveja' },
   heroPhotoUrl:'', heroPhotoBlob:null,  // foto de fundo personalizada
   gifts:[], slug:'', visib:'public',
   music_url:'', gallery_files:[], gallery_urls:[], pix_key:'',
@@ -810,6 +1012,12 @@ async function init(){
     if(draft){ Object.assign(state,draft); fillForm(); fillExtras(); }
   }
   renderGiftList();
+  // Render Step 2 tweaks for the initial template
+  const initialTpl = getTemplate(state.tplId);
+  if(initialTpl) {
+    applyActiveTheme(initialTpl);
+    renderTweakControls(initialTpl);
+  }
   updatePreview();
 }
 
@@ -884,21 +1092,95 @@ function selectTemplate(tplId, cat, el){
   // Apply template defaults
   const tpl = getTemplate(tplId);
   if(tpl){
-    // Set accent color
-    state.accent = tpl.defaultAccent;
-    document.querySelectorAll('#colorSwatches .swatch').forEach(s=>{
-      s.classList.toggle('selected', s.dataset.color === tpl.defaultAccent);
+    // Reset tweaks state and apply defaults
+    state.tweaks = {};
+    (tpl.tweaks||[]).forEach(tw=>{
+      if(tw.type==='theme') state.tweaks[tw.key] = tw.default;
     });
-    // Set bg
-    state.bgKey = tpl.defaultBg;
-    document.querySelectorAll('#bgOptions .bg-opt').forEach(s=>{
-      s.classList.toggle('selected', s.dataset.bg === tpl.defaultBg);
-    });
-    // Show/hide hero upload
-    const field = document.getElementById('heroUploadField');
-    field.style.display = tpl.supportsHeroUpload ? 'block' : 'none';
+    // Derive accent/bg from active theme if present
+    applyActiveTheme(tpl);
+    // Render dynamic Step 2 controls
+    renderTweakControls(tpl);
   }
   updatePreview();
+}
+
+// Apply the selected theme's bg/accent values to state
+function applyActiveTheme(tpl){
+  const themeTweak = (tpl.tweaks||[]).find(tw=>tw.type==='theme');
+  if(themeTweak){
+    const activeKey = (state.tweaks||{})[themeTweak.key] || themeTweak.default;
+    const opt = themeTweak.options.find(o=>o.key===activeKey);
+    if(opt){
+      state.accent = opt.accent;
+      state.bgKey = '__theme__'; // signal to use theme bg
+      state.themeBg = opt.bg;
+      state.themeTextDark = opt.textDark || false;
+    }
+  } else {
+    // No theme tweak — use template defaults
+    state.accent = tpl.defaultAccent;
+    state.bgKey = tpl.defaultBg;
+    state.themeBg = null;
+    state.themeTextDark = false;
+  }
+}
+
+// Render Step 2 controls based on template tweaks
+function renderTweakControls(tpl){
+  const container = document.getElementById('styleTweaks');
+  const sub = document.getElementById('step2Sub');
+  const tweaks = tpl.tweaks || [];
+
+  if(tweaks.length === 0){
+    sub.textContent = 'Este template não possui opções de estilo.';
+    container.innerHTML = `<div class="no-tweaks-msg">✨ Este template tem um visual fixo e não possui personalizações adicionais de estilo.</div>`;
+    return;
+  }
+
+  sub.textContent = 'Personalize o visual do convite com as opções disponíveis para este template.';
+
+  const html = tweaks.map(tw=>{
+    if(tw.type==='theme'){
+      const activeKey = (state.tweaks||{})[tw.key] || tw.default;
+      const cards = tw.options.map(opt=>`
+        <div class="theme-card${opt.key===activeKey?' selected':''}"
+             onclick="selectTheme('${tw.key}','${opt.key}',this)"
+             title="${opt.label}">
+          <div class="theme-card-preview" style="background:${opt.bg}"></div>
+          <div class="theme-card-label">${opt.label}</div>
+        </div>`).join('');
+      return `<div class="tweak-block">
+        <div class="tweak-label">${tw.label}</div>
+        <div class="theme-cards">${cards}</div>
+      </div>`;
+    }
+    if(tw.type==='accent'){
+      const ac = state.accent || tpl.defaultAccent || '#FFD93D';
+      return `<div class="tweak-block">
+        <div class="tweak-label">${tw.label}</div>
+        <div class="color-swatches" id="colorSwatches">
+          ${['#FFD93D','#FF3D6B','#60A5FA','#34D399','#A78BFA','#FB923C','#F472B6','#FFFFFF'].map(c=>`
+          <div class="swatch${c===ac?' selected':''}" data-color="${c}" style="background:${c}${c==='#FFFFFF'?';border:1px solid rgba(26,10,0,.2)':''}"
+               onclick="selectColor(this)" title="${c}"></div>`).join('')}
+        </div>
+      </div>`;
+    }
+    if(tw.type==='hero'){
+      return `<div class="tweak-block">
+        <div class="tweak-label">${tw.label}</div>
+        <div class="upload-zone" onclick="document.getElementById('tweakHeroInput').click()">
+          <input type="file" id="tweakHeroInput" accept="image/*" onchange="handleHeroUpload(this)"/>
+          <div class="upload-zone-label">📸 Clique para escolher uma foto</div>
+          <div class="upload-zone-sub">JPG, PNG, WEBP — recomendado 1200×800px</div>
+        </div>
+        ${state.heroPhotoUrl?`<img src="${state.heroPhotoUrl}" style="width:100%;border-radius:8px;margin-top:.5rem;max-height:120px;object-fit:cover;">`:``}
+      </div>`;
+    }
+    return '';
+  }).join('');
+
+  container.innerHTML = html;
 }
 
 function getTemplate(id){
@@ -921,16 +1203,27 @@ function handleHeroUpload(input){
   const url = URL.createObjectURL(file);
   state.heroPhotoBlob = file;
   state.heroPhotoUrl = url;
-  document.getElementById('heroThumb').src = url;
-  document.getElementById('heroThumbWrap').style.display = 'block';
+  // Update thumbnail in old Step 1 field if visible
+  const thumb = document.getElementById('heroThumb');
+  const thumbWrap = document.getElementById('heroThumbWrap');
+  if(thumb) thumb.src = url;
+  if(thumbWrap) thumbWrap.style.display = 'block';
+  // Re-render tweak controls to show thumbnail preview
+  const tpl = getCurrentTemplate();
+  if(tpl) renderTweakControls(tpl);
   updatePreview();
 }
 
 function removeHeroPhoto(){
   state.heroPhotoBlob = null;
   state.heroPhotoUrl = '';
-  document.getElementById('heroThumbWrap').style.display = 'none';
-  document.getElementById('heroFileInput').value = '';
+  const thumbWrap = document.getElementById('heroThumbWrap');
+  if(thumbWrap) thumbWrap.style.display = 'none';
+  const heroInp = document.getElementById('heroFileInput');
+  if(heroInp) heroInp.value = '';
+  // Re-render tweak controls to remove thumbnail
+  const tpl = getCurrentTemplate();
+  if(tpl) renderTweakControls(tpl);
   updatePreview();
 }
 
@@ -1071,9 +1364,19 @@ function selectBg(el){
   document.querySelectorAll('#bgOptions .bg-opt').forEach(s=>s.classList.remove('selected'));
   el.classList.add('selected');
   state.bgKey = el.dataset.bg;
-  const hint = document.getElementById('bgHint');
-  hint.textContent = state.bgKey==='transparent'
-    ? 'A foto do template aparecerá em destaque, sem overlay escuro.' : '';
+  updatePreview();
+}
+
+function selectTheme(tweakKey, optKey, el){
+  // Update state
+  if(!state.tweaks) state.tweaks = {};
+  state.tweaks[tweakKey] = optKey;
+  // Update UI selection
+  el.closest('.theme-cards').querySelectorAll('.theme-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  // Apply theme bg/accent to state
+  const tpl = getCurrentTemplate();
+  if(tpl) applyActiveTheme(tpl);
   updatePreview();
 }
 
@@ -1185,7 +1488,15 @@ function updateCustomPreview(tplId, s) {
 function renderTemplateHTML(tplId, s){
   const tpl = getCurrentTemplate();
   const heroImg = s.heroPhotoUrl || tpl.img;
-  const ac = s.accent || '#FFD93D';
+  const ac = s.accent || tpl.defaultAccent || '#FFD93D';
+
+  // Resolve background: theme tweak overrides defaultBg
+  const themeBg = state.themeBg || null;
+  const themeTextDark = state.themeTextDark || false;
+  // Helper to get bg string for templates that use theme bg
+  function getBg(fallback){ return themeBg || fallback; }
+  // Helper for text color — dark bg = white text, light bg = dark text
+  function getTextColor(defaultDark){ return (themeTextDark || defaultDark) ? '#1A0A00' : '#fff'; }
 
   const date = s.data ? new Date(s.data+'T12:00:00') : null;
   const dateStr = date ? date.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) : '—';
@@ -1205,7 +1516,7 @@ function renderTemplateHTML(tplId, s){
 
   // ── 1. NEON NIGHT — fundo escuro, texto brilhante, moldura neon ──
   if(tplId==='aniv-neon') return `
-    <div style="background:#0a0010;min-height:100%;font-family:'Nunito',sans-serif;color:#fff;position:relative;overflow:hidden">
+    <div style="background:${getBg('#0a0010')};min-height:100%;font-family:'Nunito',sans-serif;color:#fff;position:relative;overflow:hidden">
       <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;background-position:center;opacity:.15"></div>
       <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,${ac},#ff3d6b,${ac})"></div>
       <div style="position:relative;padding:2.5rem 1.5rem 1.5rem;text-align:center">
@@ -1401,7 +1712,7 @@ function renderTemplateHTML(tplId, s){
 
   // ── 9. NOITE ESTRELADA (casamento) — escuro luxuoso, estrelas, dourado ──
   if(tplId==='wed-estrelada') return `
-    <div style="background:#08030f;min-height:100%;font-family:'Nunito',sans-serif;color:#fff;position:relative;overflow:hidden">
+    <div style="background:${getBg('#08030f')};min-height:100%;font-family:'Nunito',sans-serif;color:#fff;position:relative;overflow:hidden">
       <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;background-position:center;opacity:.25"></div>
       <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center top,rgba(255,215,61,.05) 0%,transparent 70%)"></div>
       <div style="position:relative;padding:3rem 1.5rem 2rem;text-align:center">
@@ -1420,7 +1731,7 @@ function renderTemplateHTML(tplId, s){
 
   // ── 10. JARDIM ROMÂNTICO — branco, flores, delicado ──
   if(tplId==='wed-jardim') return `
-    <div style="background:#fafdf6;min-height:100%;font-family:'Nunito',sans-serif;color:#1A0A00;overflow:hidden">
+    <div style="background:${getBg('#fafdf6')};min-height:100%;font-family:'Nunito',sans-serif;color:${themeBg?'#fff':'#1A0A00'};overflow:hidden">
       <div style="height:220px;position:relative;overflow:hidden">
         <img src="${heroImg}" style="width:100%;height:100%;object-fit:cover"/>
         <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,#fafdf6)"></div>
@@ -1441,7 +1752,7 @@ function renderTemplateHTML(tplId, s){
 
   // ── 11. ROSE GOLD — fundo morno, dourado rosado ──
   if(tplId==='wed-rosegold') return `
-    <div style="background:linear-gradient(160deg,#2a0a08,#5c1a10);min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+    <div style="background:${getBg('linear-gradient(160deg,#2a0a08,#5c1a10)')};min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
       <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.2"></div>
       <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,${ac},transparent)"></div>
       <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
@@ -1484,7 +1795,7 @@ function renderTemplateHTML(tplId, s){
 
   // ── 13. PASTEL DELICADO (chá) — tons pastel, lacinhos ──
   if(tplId==='cha-pastel') return `
-    <div style="background:linear-gradient(160deg,#fdf0ff,#f5e6ff);min-height:100%;font-family:'Nunito',sans-serif;color:#1A0A00;overflow:hidden">
+    <div style="background:${getBg('linear-gradient(160deg,#fdf0ff,#f5e6ff)')};min-height:100%;font-family:'Nunito',sans-serif;color:#1A0A00;overflow:hidden">
       <div style="height:180px;position:relative;overflow:hidden">
         <img src="${heroImg}" style="width:100%;height:100%;object-fit:cover"/>
         <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 30%,#fdf0ff)"></div>
@@ -1565,7 +1876,7 @@ function renderTemplateHTML(tplId, s){
 
   // ── CHOPE & FUTEBOL ──
   if(tplId==='hom-cerveja') return `
-    <div style="background:linear-gradient(160deg,#1a0e00,#3d2200);min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+    <div style="background:${getBg('linear-gradient(160deg,#1a0e00,#3d2200)')};min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
       <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.18"></div>
       <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#F59E0B,#EF4444,#F59E0B)"></div>
       <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
@@ -1585,7 +1896,7 @@ function renderTemplateHTML(tplId, s){
 
   // ── CAMPO DE FUTEBOL ──
   if(tplId==='hom-futebol') return `
-    <div style="background:linear-gradient(160deg,#052a10,#0a4a1a);min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+    <div style="background:${getBg('linear-gradient(160deg,#052a10,#0a4a1a)')};min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
       <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.12"></div>
       <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:220px;height:140px;border:2px solid rgba(255,255,255,.08);border-radius:4px;pointer-events:none"></div>
       <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
@@ -1640,7 +1951,7 @@ function renderTemplateHTML(tplId, s){
 
   // ── CHAMPANHE & GLAMOUR ──
   if(tplId==='mul-champanhe') return `
-    <div style="background:linear-gradient(160deg,#1a1000,#3d2800);min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+    <div style="background:${getBg('linear-gradient(160deg,#1a1000,#3d2800)')};min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
       <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.2"></div>
       <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,${ac},transparent)"></div>
       <div style="position:relative;padding:3rem 1.5rem 2rem;text-align:center">
@@ -1660,7 +1971,7 @@ function renderTemplateHTML(tplId, s){
 
   // ── ROSA & FOFO ──
   if(tplId==='mul-rosa') return `
-    <div style="background:linear-gradient(160deg,#fff0f8,#ffe4f5);min-height:100%;font-family:'Nunito',sans-serif;color:#1A0A00;overflow:hidden;position:relative">
+    <div style="background:${getBg('linear-gradient(160deg,#fff0f8,#ffe4f5)')};min-height:100%;font-family:'Nunito',sans-serif;color:${themeBg?'#fff':'#1A0A00'};overflow:hidden;position:relative">
       <div style="position:absolute;top:0;left:0;right:0;height:160px;background:linear-gradient(135deg,#f9a8d4,#ec4899);overflow:hidden">
         <img src="${heroImg}" style="width:100%;height:100%;object-fit:cover;opacity:.25;mix-blend-mode:overlay"/>
         <div style="position:absolute;top:.75rem;right:1rem;font-size:2rem;opacity:.4">🌸💕🌸</div>
@@ -1684,7 +1995,7 @@ function renderTemplateHTML(tplId, s){
 
   // ── POOL PARTY ──
   if(tplId==='mul-pool') return `
-    <div style="background:linear-gradient(160deg,#0c3a4a,#0e6b8a);min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+    <div style="background:${getBg('linear-gradient(160deg,#0c3a4a,#0e6b8a)')};min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
       <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.2"></div>
       <div style="position:absolute;bottom:0;left:0;right:0;height:60px;background:rgba(255,255,255,.05);clip-path:ellipse(55% 100% at 50% 100%)"></div>
       <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
@@ -1725,7 +2036,7 @@ function renderTemplateHTML(tplId, s){
 
   // ── VALSA REAL ──
   if(tplId==='deb-valsa') return `
-    <div style="background:#08030f;min-height:100%;font-family:'Nunito',sans-serif;color:#fff;position:relative;overflow:hidden">
+    <div style="background:${getBg('#08030f')};min-height:100%;font-family:'Nunito',sans-serif;color:#fff;position:relative;overflow:hidden">
       <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;background-position:center;opacity:.22"></div>
       <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center top,rgba(252,211,77,.06) 0%,transparent 65%)"></div>
       <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,${ac},transparent)"></div>
@@ -1769,7 +2080,7 @@ function renderTemplateHTML(tplId, s){
 
   // ── VINTAGE DOURADO (15 anos) ──
   if(tplId==='deb-vintage') return `
-    <div style="background:linear-gradient(160deg,#2a0a08,#5c1a10);min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+    <div style="background:${getBg('linear-gradient(160deg,#2a0a08,#5c1a10)')};min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
       <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.18"></div>
       <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,${ac},transparent)"></div>
       <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
@@ -1810,7 +2121,7 @@ function renderTemplateHTML(tplId, s){
 
   // ── HOMEM-ARANHA ──
   if(tplId==='boy-spiderman') return `
-    <div style="background:linear-gradient(160deg,#0f0020,#1a0040);min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+    <div style="background:${getBg('linear-gradient(160deg,#0f0020,#1a0040)')};min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
       <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.12"></div>
       <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#EF4444,#1d4ed8,#EF4444)"></div>
       <div style="position:absolute;bottom:0;right:0;font-size:8rem;opacity:.06;line-height:1">🕷️</div>
@@ -1830,7 +2141,7 @@ function renderTemplateHTML(tplId, s){
 
   // ── POKÉMON ──
   if(tplId==='boy-pokemon') return `
-    <div style="background:linear-gradient(160deg,#0a1a3a,#1a3a6a);min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+    <div style="background:${getBg('linear-gradient(160deg,#0a1a3a,#1a3a6a)')};min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
       <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.1"></div>
       <div style="position:absolute;top:1rem;right:1rem;font-size:3rem;opacity:.15">⚡🎮</div>
       <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
@@ -1849,7 +2160,7 @@ function renderTemplateHTML(tplId, s){
 
   // ── MICKEY ──
   if(tplId==='boy-mickey') return `
-    <div style="background:#0a0000;min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+    <div style="background:${getBg('#0a0000')};min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
       <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.12"></div>
       <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#EF4444,#1a0000,#EF4444)"></div>
       <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
@@ -1868,7 +2179,7 @@ function renderTemplateHTML(tplId, s){
 
   // ── BOB ESPONJA ──
   if(tplId==='boy-spongebob') return `
-    <div style="background:linear-gradient(160deg,#001a3a,#003566);min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+    <div style="background:${getBg('linear-gradient(160deg,#001a3a,#003566)')};min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
       <div style="position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to top,rgba(251,191,36,.12),transparent)"></div>
       <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
         <div style="font-size:3rem;margin-bottom:.5rem">🧽🌊⭐</div>
@@ -1907,7 +2218,7 @@ function renderTemplateHTML(tplId, s){
 
   // ── PEQUENA SEREIA ──
   if(tplId==='girl-ariel') return `
-    <div style="background:linear-gradient(160deg,#0a2540,#0e4a7a);min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+    <div style="background:${getBg('linear-gradient(160deg,#0a2540,#0e4a7a)')};min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
       <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.15"></div>
       <div style="position:absolute;bottom:0;left:0;right:0;height:70px;opacity:.08;font-size:3rem;text-align:center;line-height:1.5">🐚🐠🐟🌊</div>
       <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
@@ -1926,7 +2237,7 @@ function renderTemplateHTML(tplId, s){
 
   // ── CINDERELA ──
   if(tplId==='girl-cinderela') return `
-    <div style="background:linear-gradient(160deg,#0a0a2a,#1a1a5a);min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+    <div style="background:${getBg('linear-gradient(160deg,#0a0a2a,#1a1a5a)')};min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
       <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.15"></div>
       <div style="position:absolute;top:1rem;right:1rem;font-size:2rem;opacity:.2">✨⭐✨</div>
       <div style="position:absolute;bottom:1rem;left:1rem;font-size:2rem;opacity:.15">🔮🪄</div>
@@ -1946,7 +2257,7 @@ function renderTemplateHTML(tplId, s){
 
   // ── MINNIE ──
   if(tplId==='girl-minnie') return `
-    <div style="background:linear-gradient(160deg,#2d0020,#5a003d);min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
+    <div style="background:${getBg('linear-gradient(160deg,#2d0020,#5a003d)')};min-height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative">
       <div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;opacity:.12"></div>
       <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#F472B6,#EC4899,#F472B6)"></div>
       <div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center">
@@ -1965,7 +2276,7 @@ function renderTemplateHTML(tplId, s){
 
   // ── URSINHA FOFA ──
   if(tplId==='girl-ursinha') return `
-    <div style="background:linear-gradient(160deg,#fff0e8,#ffe4d4);min-height:100%;font-family:'Nunito',sans-serif;color:#1A0A00;overflow:hidden;position:relative">
+    <div style="background:${getBg('linear-gradient(160deg,#fff0e8,#ffe4d4)')};min-height:100%;font-family:'Nunito',sans-serif;color:${themeBg?'#fff':'#1A0A00'};overflow:hidden;position:relative">
       <div style="position:absolute;top:0;left:0;right:0;height:170px;background:linear-gradient(135deg,#FCD34D,#FB923C);overflow:hidden">
         <img src="${heroImg}" style="width:100%;height:100%;object-fit:cover;opacity:.2;mix-blend-mode:overlay"/>
         <div style="position:absolute;top:.5rem;left:50%;transform:translateX(-50%);font-size:2rem;opacity:.35">🐻🍯🌸</div>
