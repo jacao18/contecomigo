@@ -981,7 +981,7 @@ const state = {
   tplId:'hom-cerveja', tplCat:'homem',
   titulo:'', nome:'', data:'', hora:'', local:'', dress:'', msg:'', prazo:'',
   accent:'#F59E0B', bgKey:'__theme__', themeBg:'linear-gradient(160deg,#1a0e00,#3d2200)',
-  tweaks:{ colorTheme:'cerveja' },
+  tweaks:{ colorTheme:'cerveja' }, tema:'',
   heroPhotoUrl:'', heroPhotoBlob:null,  // foto de fundo personalizada
   gifts:[], slug:'', visib:'public',
   music_url:'', gallery_files:[], gallery_urls:[], pix_key:'',
@@ -1032,6 +1032,31 @@ async function loadCustomTemplates(){
       let hasCustom = false;
 
       data.forEach(t => {
+        const editableFields = t.editable_fields || [];
+
+        // Inferir tweaks a partir dos editable_fields
+        // Se o template tem "tema" nos campos, gera tweaks de tema automaticamente
+        // O campo theme_options no Supabase pode conter os temas customizados (JSON)
+        let tweaks = [];
+        if (editableFields.includes('tema') || t.theme_options) {
+          // Usa theme_options do banco se disponível, senão usa padrão Reino Encantado
+          const opts = t.theme_options
+            ? (typeof t.theme_options === 'string' ? JSON.parse(t.theme_options) : t.theme_options)
+            : [
+                { key:'roxo',      label:'💜 Roxo Real',       bg:'linear-gradient(180deg,#1a0f3d,#3b1a6b,#6b2b8c,#b14d92)', accent:'#FFD93D' },
+                { key:'rosa',      label:'🌸 Rosa Aurora',     bg:'linear-gradient(180deg,#2a0418,#5c0a2e,#8c1a4a,#c44472)', accent:'#FFB3D9' },
+                { key:'azul',      label:'🌙 Azul Meia-Noite', bg:'linear-gradient(180deg,#050a1e,#0a1a4a,#0f2d7a,#1a4aaa)', accent:'#93C5FD' },
+                { key:'esmeralda', label:'💚 Esmeralda',       bg:'linear-gradient(180deg,#021a0a,#043d18,#066030,#0a8a46)', accent:'#6EE7B7' },
+              ];
+          tweaks = [{ type:'theme', label:'Tema', key:'colorTheme', default: opts[0]?.key || 'roxo', options: opts }];
+        }
+        if (editableFields.includes('heroImg') || t.supports_hero_upload) {
+          tweaks.push({ type:'hero', label:'Foto de fundo' });
+        }
+        if (editableFields.includes('accent') && !tweaks.find(tw=>tw.type==='theme')) {
+          tweaks.push({ type:'accent', label:'Cor de destaque' });
+        }
+
         const entry = {
           id: 'custom_'+t.id,
           name: t.name,
@@ -1042,8 +1067,9 @@ async function loadCustomTemplates(){
           heroStyle: '',
           overlayStyle: '',
           customHtml: t.html_template || '',
-          editableFields: t.editable_fields || [],
+          editableFields,
           category: t.category || 'custom',
+          tweaks,
         };
 
         const cat = knownCats.includes(t.category) ? t.category : 'custom';
@@ -1116,6 +1142,7 @@ function applyActiveTheme(tpl){
       state.bgKey = '__theme__'; // signal to use theme bg
       state.themeBg = opt.bg;
       state.themeTextDark = opt.textDark || false;
+      state.tema = activeKey; // para custom templates que usam {{tema}}
     }
   } else {
     // No theme tweak — use template defaults
@@ -1123,6 +1150,7 @@ function applyActiveTheme(tpl){
     state.bgKey = tpl.defaultBg;
     state.themeBg = null;
     state.themeTextDark = false;
+    state.tema = '';
   }
 }
 
