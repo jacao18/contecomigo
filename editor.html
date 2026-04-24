@@ -1131,6 +1131,33 @@ function selectTemplate(tplId, cat, el){
   updatePreview();
 }
 
+// Build CSS :root vars from a theme option object
+// Supports generic bg/accent + Reino Encantado specific sky/gem/frame vars
+const REINO_THEME_DATA = {
+  roxo:      { skyTop:'#1a0f3d', skyMid:'#3b1a6b', skyMid2:'#6b2b8c', skyBot:'#b14d92', frame:'rgba(255,215,140,0.55)', gem:'#ffd98a', tag:'#ffe2a8', weekday:'#ffdb9f', addr:'rgba(255,223,180,0.85)' },
+  rosa:      { skyTop:'#2a0418', skyMid:'#5c0a2e', skyMid2:'#8c1a4a', skyBot:'#c44472', frame:'rgba(255,180,210,0.55)', gem:'#ffb3d9', tag:'#ffd6ea', weekday:'#ffc2e0', addr:'rgba(255,200,230,0.85)' },
+  azul:      { skyTop:'#050a1e', skyMid:'#0a1a4a', skyMid2:'#0f2d7a', skyBot:'#1a4aaa', frame:'rgba(147,197,253,0.55)', gem:'#93c5fd', tag:'#bfdbfe', weekday:'#a8d4fe', addr:'rgba(180,215,255,0.85)' },
+  esmeralda: { skyTop:'#021a0a', skyMid:'#043d18', skyMid2:'#066030', skyBot:'#0a8a46', frame:'rgba(110,231,183,0.55)', gem:'#6ee7b7', tag:'#a7f3d0', weekday:'#86efca', addr:'rgba(160,240,200,0.85)' },
+};
+
+function buildThemeCssVars(opt, allOpts) {
+  const key = opt.key;
+  const extra = REINO_THEME_DATA[key] || {};
+  let vars = ':root {\n';
+  vars += `  --accent: ${opt.accent};\n`;
+  if (extra.skyTop)   vars += `  --sky-top: ${extra.skyTop};\n`;
+  if (extra.skyMid)   vars += `  --sky-mid: ${extra.skyMid};\n`;
+  if (extra.skyMid2)  vars += `  --sky-mid2: ${extra.skyMid2};\n`;
+  if (extra.skyBot)   vars += `  --sky-bot: ${extra.skyBot};\n`;
+  if (extra.frame)    vars += `  --frame-color: ${extra.frame};\n`;
+  if (extra.gem)      vars += `  --gem-color: ${extra.gem};\n`;
+  if (extra.tag)      vars += `  --tag-color: ${extra.tag};\n`;
+  if (extra.weekday)  vars += `  --weekday-color: ${extra.weekday};\n`;
+  if (extra.addr)     vars += `  --addr-color: ${extra.addr};\n`;
+  vars += '}';
+  return vars;
+}
+
 // Apply the selected theme's bg/accent values to state
 function applyActiveTheme(tpl){
   const themeTweak = (tpl.tweaks||[]).find(tw=>tw.type==='theme');
@@ -1491,6 +1518,20 @@ function updateCustomPreview(tplId, s) {
   let html = tplDef.customHtml;
   for (const [k, v] of Object.entries(vars)) {
     html = html.split(k).join(v);
+  }
+
+  // Inject theme CSS vars into <head> — works for any template that uses CSS custom properties
+  // This is the authoritative way to pass theme data, no placeholder fragility
+  const themeTweak = (tplDef.tweaks||[]).find(tw=>tw.type==='theme');
+  if (themeTweak) {
+    const activeKey = (s.tweaks||{})[themeTweak.key] || s.tema || themeTweak.default;
+    const opt = themeTweak.options.find(o=>o.key===activeKey);
+    if (opt) {
+      // Build per-theme CSS vars from the option — Reino Encantado specific vars
+      const themeVars = buildThemeCssVars(opt, themeTweak.options);
+      const styleTag = `<style id="ccm-theme">/* ConteComigo Theme: ${activeKey} */\n${themeVars}</style>`;
+      html = html.replace('</head>', styleTag + '\n</head>');
+    }
   }
 
   // Always recreate iframe to guarantee scripts re-execute on every update

@@ -1,7 +1,9 @@
--- Cole no Supabase SQL Editor para atualizar o HTML do Reino Encantado
+-- Atualiza HTML e editable_fields do Reino Encantado no Supabase
+-- Cole no SQL Editor do Supabase e clique em Run
+
 UPDATE custom_templates
-SET 
-  html_template = '<!DOCTYPE html>
+SET
+  html_template = $html$<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
@@ -11,14 +13,12 @@ SET
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600&family=Parisienne&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
+    /* Tema padrão: Roxo Real — sobrescrito pelo editor via <style> injetado */
     --accent: #FFD93D;
     --sky-top: #1a0f3d;
     --sky-mid: #3b1a6b;
     --sky-mid2: #6b2b8c;
     --sky-bot: #b14d92;
-    --mtn-a-top: #2d1356;
-    --mtn-a-bot: #1a0a3a;
-    --mtn-b-top: #1a0a3a;
     --frame-color: rgba(255,215,140,0.55);
     --gem-color: #ffd98a;
     --tag-color: #ffe2a8;
@@ -29,7 +29,7 @@ SET
     margin: 0; padding: 0;
     min-height: 100%;
     background: #0b0720;
-    font-family: ''Inter'', sans-serif;
+    font-family: 'Inter', sans-serif;
     color: #fff;
     -webkit-font-smoothing: antialiased;
   }
@@ -79,7 +79,7 @@ SET
   }
   .star.big { width: 6px; height: 6px; background: transparent; }
   .star.big::before, .star.big::after {
-    content: '''';
+    content: '';
     position: absolute;
     left: 50%; top: 50%;
     transform: translate(-50%, -50%);
@@ -163,7 +163,7 @@ SET
     padding: 6px 22px;
     background: linear-gradient(180deg, #ffe59a 0%, var(--accent) 55%, #b3812a 100%);
     color: #2a1658;
-    font-family: ''Cinzel'', serif;
+    font-family: 'Cinzel', serif;
     font-weight: 700;
     font-size: 12px;
     letter-spacing: 0.2em;
@@ -173,7 +173,7 @@ SET
     z-index: 7;
   }
   .age-banner::before, .age-banner::after {
-    content: ''✦'';
+    content: '✦';
     color: #2a1658;
     margin: 0 8px;
     font-size: 10px;
@@ -185,7 +185,7 @@ SET
     text-align: center;
   }
   .name {
-    font-family: ''Parisienne'', cursive;
+    font-family: 'Parisienne', cursive;
     font-size: 68px;
     line-height: 0.95;
     color: #fff;
@@ -197,7 +197,7 @@ SET
     padding: 0 8px;
   }
   .tag {
-    font-family: ''Cinzel'', serif;
+    font-family: 'Cinzel', serif;
     font-size: 10px;
     letter-spacing: 0.45em;
     color: var(--tag-color);
@@ -224,14 +224,14 @@ SET
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
   }
   .date-pill .label {
-    font-family: ''Cinzel'', serif;
+    font-family: 'Cinzel', serif;
     font-size: 8.5px;
     letter-spacing: 0.25em;
     color: var(--weekday-color);
     text-transform: uppercase;
   }
   .date-pill .value {
-    font-family: ''Cormorant Garamond'', serif;
+    font-family: 'Cormorant Garamond', serif;
     font-size: 22px;
     font-weight: 500;
     color: #fff;
@@ -240,14 +240,14 @@ SET
 
   .info {
     text-align: center;
-    font-family: ''Cormorant Garamond'', serif;
+    font-family: 'Cormorant Garamond', serif;
     color: rgba(255,255,255,0.88);
     line-height: 1.5;
     margin-top: 6px;
     padding: 0 20px;
   }
   .info .weekday {
-    font-family: ''Cinzel'', serif;
+    font-family: 'Cinzel', serif;
     font-size: 11px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -289,7 +289,7 @@ SET
     position: absolute;
     bottom: 10px; left: 0; right: 0;
     text-align: center;
-    font-family: ''Cinzel'', serif;
+    font-family: 'Cinzel', serif;
     font-size: 8px;
     letter-spacing: 0.3em;
     color: rgba(255, 215, 140, 0.5);
@@ -307,9 +307,9 @@ SET
     position: absolute;
     bottom: -10px;
     width: 4px; height: 4px;
-    background: radial-gradient(circle, #fff 0%, #ffd98a 40%, transparent 70%);
+    background: radial-gradient(circle, #fff 0%, var(--gem-color) 40%, transparent 70%);
     border-radius: 50%;
-    box-shadow: 0 0 6px #ffd98a;
+    box-shadow: 0 0 6px var(--gem-color);
     animation: rise linear infinite;
   }
   @keyframes rise {
@@ -327,7 +327,7 @@ SET
     pointer-events: none;
   }
   .firework::before {
-    content: '''';
+    content: '';
     position: absolute;
     left: 50%; top: 50%;
     width: 80px; height: 80px;
@@ -520,69 +520,77 @@ SET
 </div>
 
 <script>
-  // ── Aplicação do tema via {{tema}} ───────────────────────────────────
+
+  // ── Cálculo automático do dia da semana ─────────────────────────────
+  // Se {{diaSemana}} não foi substituído (ainda é o placeholder),
+  // calcula a partir de {{dia}} e {{mes}}.
   (function() {
-    const TEMAS = {
-      roxo: {
-        skyTop:   ''#1a0f3d'', skyMid:  ''#3b1a6b'', skyMid2: ''#6b2b8c'', skyBot: ''#b14d92'',
-        mtnATop:  ''#2d1356'', mtnABot: ''#1a0a3a'', mtnBTop: ''#1a0a3a'',
-        accent:   ''#FFD93D'',
-        frame:    ''rgba(255,215,140,0.55)'',
-        gem:      ''#ffd98a'', tag: ''#ffe2a8'', weekday: ''#ffdb9f'', addr: ''rgba(255,223,180,0.85)'',
-        cardShadow: ''0 30px 80px -20px rgba(120,60,200,0.55)'',
-      },
-      rosa: {
-        skyTop:   ''#2a0418'', skyMid:  ''#5c0a2e'', skyMid2: ''#8c1a4a'', skyBot: ''#c44472'',
-        mtnATop:  ''#3d0828'', mtnABot: ''#1a0010'', mtnBTop: ''#1a0010'',
-        accent:   ''#FFB3D9'',
-        frame:    ''rgba(255,180,210,0.55)'',
-        gem:      ''#ffb3d9'', tag: ''#ffd6ea'', weekday: ''#ffc2e0'', addr: ''rgba(255,200,230,0.85)'',
-        cardShadow: ''0 30px 80px -20px rgba(200,60,120,0.55)'',
-      },
-      azul: {
-        skyTop:   ''#050a1e'', skyMid:  ''#0a1a4a'', skyMid2: ''#0f2d7a'', skyBot: ''#1a4aaa'',
-        mtnATop:  ''#0a1430'', mtnABot: ''#050a1a'', mtnBTop: ''#050a1a'',
-        accent:   ''#93C5FD'',
-        frame:    ''rgba(147,197,253,0.55)'',
-        gem:      ''#93c5fd'', tag: ''#bfdbfe'', weekday: ''#a8d4fe'', addr: ''rgba(180,215,255,0.85)'',
-        cardShadow: ''0 30px 80px -20px rgba(30,80,200,0.6)'',
-      },
-      esmeralda: {
-        skyTop:   ''#021a0a'', skyMid:  ''#043d18'', skyMid2: ''#066030'', skyBot: ''#0a8a46'',
-        mtnATop:  ''#041f0e'', mtnABot: ''#020e07'', mtnBTop: ''#020e07'',
-        accent:   ''#6EE7B7'',
-        frame:    ''rgba(110,231,183,0.55)'',
-        gem:      ''#6ee7b7'', tag: ''#a7f3d0'', weekday: ''#86efca'', addr: ''rgba(160,240,200,0.85)'',
-        cardShadow: ''0 30px 80px -20px rgba(20,150,80,0.55)'',
-      },
-    };
+    const weekdayEl = document.getElementById('weekdayEl');
+    if (!weekdayEl) return;
 
-    // Lê o placeholder {{tema}} — se foi substituído usa o valor, senão padrão ''roxo''
-    const temaRaw = ''{{tema}}'';
-    const tema = TEMAS[temaRaw] ? temaRaw : ''roxo'';
-    const t = TEMAS[tema];
+    const text = weekdayEl.textContent.trim();
 
-    const root = document.documentElement;
-    root.style.setProperty(''--accent'',       t.accent);
-    root.style.setProperty(''--sky-top'',      t.skyTop);
-    root.style.setProperty(''--sky-mid'',      t.skyMid);
-    root.style.setProperty(''--sky-mid2'',     t.skyMid2);
-    root.style.setProperty(''--sky-bot'',      t.skyBot);
-    root.style.setProperty(''--frame-color'',  t.frame);
-    root.style.setProperty(''--gem-color'',    t.gem);
-    root.style.setProperty(''--tag-color'',    t.tag);
-    root.style.setProperty(''--weekday-color'',t.weekday);
-    root.style.setProperty(''--addr-color'',   t.addr);
+    // Se o placeholder ainda está lá (não foi substituído pelo sistema),
+    // tenta calcular a partir dos outros campos já renderizados.
+    if (text === '{{diaSemana}}' || text === '') {
+      const diaEl  = document.getElementById('diaEl');
+      const mesEl  = document.getElementById('mesEl');
+      const dia    = diaEl  ? parseInt(diaEl.textContent.trim(), 10)  : null;
+      const mesStr = mesEl  ? mesEl.textContent.trim().toLowerCase()  : null;
 
-    // Atualiza cores das montanhas (SVG gradients não lêem CSS vars no Firefox/Safari)
-    const mtnATop = document.getElementById(''mtnATop'');
-    const mtnABot = document.getElementById(''mtnABot'');
-    const mtnBTop = document.getElementById(''mtnBTop',
-  editable_fields = COALESCE(
-    (CASE WHEN editable_fields::text NOT LIKE '%tema%' 
-     THEN editable_fields || '["tema"]'::jsonb 
-     ELSE editable_fields END),
-    '["nome","idade","dia","mes","hora","local","endereco","tema"]'::jsonb
+      const meses = {
+        'janeiro':1,'fevereiro':2,'março':3,'abril':4,'maio':5,'junho':6,
+        'julho':7,'agosto':8,'setembro':9,'outubro':10,'novembro':11,'dezembro':12
+      };
+      const mesNum = meses[mesStr];
+
+      if (dia && mesNum) {
+        const year = new Date().getFullYear();
+        const d = new Date(year, mesNum - 1, dia);
+        // Se a data já passou este ano, usa o próximo
+        if (d < new Date()) d.setFullYear(year + 1);
+        const nomes = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+        weekdayEl.textContent = nomes[d.getDay()];
+      }
+    }
+
+    // Se foi substituído mas está em minúsculo, capitaliza a primeira letra
+    if (weekdayEl.textContent.length > 0) {
+      weekdayEl.textContent = weekdayEl.textContent.charAt(0).toUpperCase()
+        + weekdayEl.textContent.slice(1);
+    }
+  })();
+
+  // ── Starfield ────────────────────────────────────────────────────────
+  (function() {
+    const host = document.getElementById('stars');
+    if (!host) return;
+    const count = 70;
+    let html = '';
+    for (let i = 0; i < count; i++) {
+      const x  = Math.random() * 100;
+      const y  = Math.random() * 65;
+      const d  = 2 + Math.random() * 3;
+      const dl = Math.random() * 3;
+      const big = Math.random() < 0.08;
+      html += '<div class="star' + (big ? ' big' : '') + '" style="left:' + x + '%;top:' + y + '%;--d:' + d + 's;--dl:' + dl + 's"></div>';
+    }
+    host.innerHTML = html;
+  })();
+
+  // ── Sparkles ─────────────────────────────────────────────────────────
+  (function() {
+    const host = document.getElementById('sparkles');
+    if (!host) return;
+    const count = 22;
+    let html = '';
+    for (let i = 0; i < count; i++) {
+      const$html$,
+  editable_fields = (
+    CASE
+      WHEN editable_fields IS NULL THEN '["nome","idade","dia","mes","hora","local","endereco","tema"]'::jsonb
+      WHEN editable_fields::text NOT LIKE '%tema%' THEN editable_fields || '["tema"]'::jsonb
+      ELSE editable_fields
+    END
   )
-WHERE name ILIKE '%reino%'
-   OR name ILIKE '%encantado%';
+WHERE name ILIKE '%reino%' OR name ILIKE '%encantado%';

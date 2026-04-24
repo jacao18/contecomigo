@@ -8,14 +8,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600&family=Parisienne&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
+    /* Tema padrão: Roxo Real — sobrescrito pelo editor via <style> injetado */
     --accent: #FFD93D;
     --sky-top: #1a0f3d;
     --sky-mid: #3b1a6b;
     --sky-mid2: #6b2b8c;
     --sky-bot: #b14d92;
-    --mtn-a-top: #2d1356;
-    --mtn-a-bot: #1a0a3a;
-    --mtn-b-top: #1a0a3a;
     --frame-color: rgba(255,215,140,0.55);
     --gem-color: #ffd98a;
     --tag-color: #ffe2a8;
@@ -304,9 +302,9 @@
     position: absolute;
     bottom: -10px;
     width: 4px; height: 4px;
-    background: radial-gradient(circle, #fff 0%, #ffd98a 40%, transparent 70%);
+    background: radial-gradient(circle, #fff 0%, var(--gem-color) 40%, transparent 70%);
     border-radius: 50%;
-    box-shadow: 0 0 6px #ffd98a;
+    box-shadow: 0 0 6px var(--gem-color);
     animation: rise linear infinite;
   }
   @keyframes rise {
@@ -517,95 +515,6 @@
 </div>
 
 <script>
-  // ── Aplicação do tema via {{tema}} ───────────────────────────────────
-  (function() {
-    const TEMAS = {
-      roxo: {
-        skyTop:   '#1a0f3d', skyMid:  '#3b1a6b', skyMid2: '#6b2b8c', skyBot: '#b14d92',
-        mtnATop:  '#2d1356', mtnABot: '#1a0a3a', mtnBTop: '#1a0a3a',
-        accent:   '#FFD93D',
-        frame:    'rgba(255,215,140,0.55)',
-        gem:      '#ffd98a', tag: '#ffe2a8', weekday: '#ffdb9f', addr: 'rgba(255,223,180,0.85)',
-        cardShadow: '0 30px 80px -20px rgba(120,60,200,0.55)',
-      },
-      rosa: {
-        skyTop:   '#2a0418', skyMid:  '#5c0a2e', skyMid2: '#8c1a4a', skyBot: '#c44472',
-        mtnATop:  '#3d0828', mtnABot: '#1a0010', mtnBTop: '#1a0010',
-        accent:   '#FFB3D9',
-        frame:    'rgba(255,180,210,0.55)',
-        gem:      '#ffb3d9', tag: '#ffd6ea', weekday: '#ffc2e0', addr: 'rgba(255,200,230,0.85)',
-        cardShadow: '0 30px 80px -20px rgba(200,60,120,0.55)',
-      },
-      azul: {
-        skyTop:   '#050a1e', skyMid:  '#0a1a4a', skyMid2: '#0f2d7a', skyBot: '#1a4aaa',
-        mtnATop:  '#0a1430', mtnABot: '#050a1a', mtnBTop: '#050a1a',
-        accent:   '#93C5FD',
-        frame:    'rgba(147,197,253,0.55)',
-        gem:      '#93c5fd', tag: '#bfdbfe', weekday: '#a8d4fe', addr: 'rgba(180,215,255,0.85)',
-        cardShadow: '0 30px 80px -20px rgba(30,80,200,0.6)',
-      },
-      esmeralda: {
-        skyTop:   '#021a0a', skyMid:  '#043d18', skyMid2: '#066030', skyBot: '#0a8a46',
-        mtnATop:  '#041f0e', mtnABot: '#020e07', mtnBTop: '#020e07',
-        accent:   '#6EE7B7',
-        frame:    'rgba(110,231,183,0.55)',
-        gem:      '#6ee7b7', tag: '#a7f3d0', weekday: '#86efca', addr: 'rgba(160,240,200,0.85)',
-        cardShadow: '0 30px 80px -20px rgba(20,150,80,0.55)',
-      },
-    };
-
-    // Lê o placeholder {{tema}} — se foi substituído usa o valor, senão padrão 'roxo'
-    const temaRaw = '{{tema}}';
-    const tema = TEMAS[temaRaw] ? temaRaw : 'roxo';
-    const t = TEMAS[tema];
-
-    const root = document.documentElement;
-    root.style.setProperty('--accent',       t.accent);
-    root.style.setProperty('--sky-top',      t.skyTop);
-    root.style.setProperty('--sky-mid',      t.skyMid);
-    root.style.setProperty('--sky-mid2',     t.skyMid2);
-    root.style.setProperty('--sky-bot',      t.skyBot);
-    root.style.setProperty('--frame-color',  t.frame);
-    root.style.setProperty('--gem-color',    t.gem);
-    root.style.setProperty('--tag-color',    t.tag);
-    root.style.setProperty('--weekday-color',t.weekday);
-    root.style.setProperty('--addr-color',   t.addr);
-
-    // Atualiza cores das montanhas (SVG gradients não lêem CSS vars no Firefox/Safari)
-    const mtnATop = document.getElementById('mtnATop');
-    const mtnABot = document.getElementById('mtnABot');
-    const mtnBTop = document.getElementById('mtnBTop');
-    if (mtnATop) mtnATop.setAttribute('stop-color', t.mtnATop);
-    if (mtnABot) mtnABot.setAttribute('stop-color', t.mtnABot);
-    if (mtnBTop) mtnBTop.setAttribute('stop-color', t.mtnBTop);
-
-    // Atualiza sombra do card
-    const card = document.querySelector('.invite-card');
-    if (card) card.style.boxShadow = t.cardShadow + ', 0 10px 30px -10px rgba(0,0,0,0.6), inset 0 0 0 1px ' + t.frame;
-
-    // Atualiza cor dos fogos de artifício para combinar com o tema
-    const fireworks = document.querySelectorAll('.firework');
-    const fwColors = {
-      roxo:      ['#ffd98a','#ffb0d8','#bfd4ff','#ffe2b0'],
-      rosa:      ['#ffb3d9','#ff80b0','#ffd6ea','#ffcce0'],
-      azul:      ['#93c5fd','#60a5fa','#bfdbfe','#dbeafe'],
-      esmeralda: ['#6ee7b7','#34d399','#a7f3d0','#d1fae5'],
-    };
-    (fwColors[tema] || fwColors.roxo).forEach((c, i) => {
-      if (fireworks[i]) fireworks[i].style.setProperty('--fc', c);
-    });
-
-    // Atualiza sparkles para cor do tema
-    document.querySelectorAll('.sparkle').forEach(s => {
-      s.style.background = 'radial-gradient(circle, #fff 0%, ' + t.gem + ' 40%, transparent 70%)';
-      s.style.boxShadow = '0 0 6px ' + t.gem;
-    });
-
-    // Atualiza cor das estrelas grandes
-    document.querySelectorAll('.star.big::after').forEach(s => {
-      s.style.boxShadow = '0 0 10px #fff, 0 0 20px ' + t.gem;
-    });
-  })();
 
   // ── Cálculo automático do dia da semana ─────────────────────────────
   // Se {{diaSemana}} não foi substituído (ainda é o placeholder),
@@ -668,8 +577,6 @@
   (function() {
     const host = document.getElementById('sparkles');
     if (!host) return;
-    // Lê a cor do tema já aplicada
-    const gemColor = getComputedStyle(document.documentElement).getPropertyValue('--gem-color').trim() || '#ffd98a';
     const count = 22;
     let html = '';
     for (let i = 0; i < count; i++) {
@@ -678,7 +585,8 @@
       const dur   = 6 + Math.random() * 6;
       const drift = (Math.random() - 0.5) * 80;
       const size  = 3 + Math.random() * 4;
-      html += '<div class="sparkle" style="left:' + x + '%;width:' + size + 'px;height:' + size + 'px;animation-duration:' + dur + 's;animation-delay:' + delay + 's;--drift:' + drift + 'px;background:radial-gradient(circle,#fff 0%,' + gemColor + ' 40%,transparent 70%);box-shadow:0 0 6px ' + gemColor + '"></div>';
+      // Usa CSS var para a cor — reflete o tema injetado automaticamente
+      html += '<div class="sparkle" style="left:' + x + '%;width:' + size + 'px;height:' + size + 'px;animation-duration:' + dur + 's;animation-delay:' + delay + 's;--drift:' + drift + 'px"></div>';
     }
     host.innerHTML = html;
   })();
