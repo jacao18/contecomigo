@@ -1493,16 +1493,13 @@ function updateCustomPreview(tplId, s) {
     html = html.split(k).join(v);
   }
 
-  // Reuse existing iframe if already present, otherwise create
-  let frame = previewEl.querySelector('iframe.custom-tpl-frame');
-  if (!frame) {
-    previewEl.innerHTML = '';
-    frame = document.createElement('iframe');
-    frame.className = 'custom-tpl-frame';
-    frame.sandbox = 'allow-scripts allow-same-origin allow-popups';
-    frame.style.cssText = 'width:100%;border:none;display:block;min-height:600px;';
-    previewEl.appendChild(frame);
-  }
+  // Always recreate iframe to guarantee scripts re-execute on every update
+  previewEl.innerHTML = '';
+  const frame = document.createElement('iframe');
+  frame.className = 'custom-tpl-frame';
+  frame.sandbox = 'allow-scripts allow-same-origin allow-popups';
+  frame.style.cssText = 'width:100%;border:none;display:block;min-height:600px;';
+  previewEl.appendChild(frame);
   frame.srcdoc = html;
   frame.onload = () => {
     try {
