@@ -1,6 +1,4 @@
--- Atualiza HTML e editable_fields do Reino Encantado no Supabase
--- Cole no SQL Editor do Supabase e clique em Run
-
+-- Atualizar template Reino Encantado pelo ID correto
 UPDATE custom_templates
 SET
   html_template = $html$<!DOCTYPE html>
@@ -588,9 +586,11 @@ SET
       const$html$,
   editable_fields = (
     CASE
-      WHEN editable_fields IS NULL THEN '["nome","idade","dia","mes","hora","local","endereco","tema"]'::jsonb
-      WHEN editable_fields::text NOT LIKE '%tema%' THEN editable_fields || '["tema"]'::jsonb
-      ELSE editable_fields
+      WHEN editable_fields IS NULL THEN '["nome","idade","dia","mes","hora","diaSemana","local","endereco","tema"]'::jsonb
+      WHEN editable_fields @> '["tema"]'::jsonb THEN editable_fields
+      ELSE editable_fields || '["tema"]'::jsonb
     END
-  )
-WHERE name ILIKE '%reino%' OR name ILIKE '%encantado%';
+  ),
+  updated_at = NOW()
+WHERE id = '11d7726e-5e88-435b-96cb-cf5c7e5b6230'
+RETURNING id, name, editable_fields;

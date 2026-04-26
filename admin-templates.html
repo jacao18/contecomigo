@@ -94,6 +94,15 @@
     .field-check:hover{border-color:rgba(255,255,255,.14);}
     .field-check input{accent-color:var(--pink);width:13px;height:13px;flex-shrink:0;}
     .field-check label{font-size:.76rem;cursor:pointer;user-select:none;}
+    /* MULTI-CATEGORY */
+    .cat-checks-grid{display:grid;grid-template-columns:1fr 1fr;gap:.3rem;}
+    .cat-check{display:flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:7px;padding:.35rem .55rem;cursor:pointer;transition:border-color .15s;}
+    .cat-check:hover{border-color:rgba(255,255,255,.14);}
+    .cat-check input{accent-color:var(--pink);width:13px;height:13px;flex-shrink:0;}
+    .cat-check label{font-size:.74rem;cursor:pointer;user-select:none;}
+    .cat-check.checked{border-color:rgba(255,61,107,.4);background:rgba(255,61,107,.06);}
+    /* AUTO-DETECT badge */
+    .auto-badge{display:inline-flex;align-items:center;gap:.3rem;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.25);border-radius:5px;padding:.12rem .45rem;font-size:.62rem;font-weight:700;color:#34D399;}
 
     /* VAR CHIPS */
     .var-chips{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.5rem;}
@@ -218,27 +227,25 @@
         <label class="form-label">Nome do template</label>
         <input type="text" id="tplName" class="form-input" placeholder="Ex: Reino Encantado"/>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Categoria</label>
-          <select id="tplCategory" class="form-select">
-            <option value="homem">🍺 Homem</option>
-            <option value="mulher">🥂 Mulher</option>
-            <option value="quinze">👑 15 Anos</option>
-            <option value="menino">🦸 Menino</option>
-            <option value="menina" selected>🧚 Menina</option>
-            <option value="casamento">💍 Casamento</option>
-            <option value="cha">👶 Chá</option>
-            <option value="aniversario-adulto">🎉 Geral</option>
-            <option value="custom">⭐ Personalizado</option>
-          </select>
+      <div class="form-group">
+        <label class="form-label">Categorias <span>(selecione uma ou mais)</span></label>
+        <div class="cat-checks-grid" id="catChecksGrid">
+          <div class="cat-check" onclick="toggleCatCheck('homem',this)"><input type="checkbox" id="cat-homem" value="homem"/><label for="cat-homem">🍺 Homem</label></div>
+          <div class="cat-check" onclick="toggleCatCheck('mulher',this)"><input type="checkbox" id="cat-mulher" value="mulher"/><label for="cat-mulher">🥂 Mulher</label></div>
+          <div class="cat-check" onclick="toggleCatCheck('quinze',this)"><input type="checkbox" id="cat-quinze" value="quinze"/><label for="cat-quinze">👑 15 Anos</label></div>
+          <div class="cat-check" onclick="toggleCatCheck('menino',this)"><input type="checkbox" id="cat-menino" value="menino"/><label for="cat-menino">🦸 Menino</label></div>
+          <div class="cat-check checked" onclick="toggleCatCheck('menina',this)"><input type="checkbox" id="cat-menina" value="menina" checked/><label for="cat-menina">🧚 Menina</label></div>
+          <div class="cat-check" onclick="toggleCatCheck('casamento',this)"><input type="checkbox" id="cat-casamento" value="casamento"/><label for="cat-casamento">💍 Casamento</label></div>
+          <div class="cat-check" onclick="toggleCatCheck('cha',this)"><input type="checkbox" id="cat-cha" value="cha"/><label for="cat-cha">👶 Chá</label></div>
+          <div class="cat-check" onclick="toggleCatCheck('aniversario-adulto',this)"><input type="checkbox" id="cat-aniversario-adulto" value="aniversario-adulto"/><label for="cat-aniversario-adulto">🎉 Geral</label></div>
+          <div class="cat-check" onclick="toggleCatCheck('custom',this)"><input type="checkbox" id="cat-custom" value="custom"/><label for="cat-custom">⭐ Personalizado</label></div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Cor accent <span>(para preview)</span></label>
-          <div style="display:flex;gap:.4rem;align-items:center">
-            <input type="color" id="tplAccent" value="#FFD93D" style="width:38px;height:32px;border:none;background:none;cursor:pointer;border-radius:6px;padding:2px;" oninput="document.getElementById('tplAccentHex').value=this.value;debouncePreview()"/>
-            <input type="text" id="tplAccentHex" class="form-input" value="#FFD93D" style="flex:1" oninput="syncAccentHex(this.value)"/>
-          </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Cor accent <span>(para preview)</span></label>
+        <div style="display:flex;gap:.4rem;align-items:center">
+          <input type="color" id="tplAccent" value="#FFD93D" style="width:38px;height:32px;border:none;background:none;cursor:pointer;border-radius:6px;padding:2px;" oninput="document.getElementById('tplAccentHex').value=this.value;debouncePreview()"/>
+          <input type="text" id="tplAccentHex" class="form-input" value="#FFD93D" style="flex:1" oninput="syncAccentHex(this.value)"/>
         </div>
       </div>
       <div class="form-row">
@@ -269,13 +276,24 @@
       </div>
       <div class="form-group">
         <label class="form-label">URL da imagem de preview <span>(thumbnail no seletor)</span></label>
-        <input type="text" id="tplPreviewImg" class="form-input" placeholder="https://images.unsplash.com/..."/>
+        <div style="display:flex;gap:.4rem;align-items:flex-start;flex-direction:column">
+          <input type="text" id="tplPreviewImg" class="form-input" placeholder="https://images.unsplash.com/..." oninput="updatePreviewImgThumb()"/>
+          <div style="display:flex;gap:.4rem;align-items:center">
+            <img id="previewImgThumb" src="" style="width:44px;height:44px;border-radius:6px;object-fit:cover;border:1px solid var(--border);display:none;flex-shrink:0"/>
+            <button class="btn btn-outline btn-sm" onclick="useSelectedBuiltinImg()" id="btnUseBuiltinImg" style="display:none;font-size:.7rem">← Usar imagem do template</button>
+          </div>
+        </div>
       </div>
 
       <div class="divider"></div>
 
       <!-- CAMPOS EDITÁVEIS -->
-      <div class="section-title">Campos editáveis pelo usuário</div>
+      <div class="section-title" style="display:flex;align-items:center;justify-content:space-between">
+        <span>Campos editáveis pelo usuário</span>
+        <button class="btn btn-outline btn-sm" onclick="autoDetectFields()" title="Detectar campos do HTML automaticamente">
+          <span class="auto-badge">✦ Auto-detectar</span>
+        </button>
+      </div>
       <div class="fields-grid" style="margin-bottom:.85rem">
         <div class="field-check"><input type="checkbox" id="ef-nome" checked/><label for="ef-nome">Nome</label></div>
         <div class="field-check"><input type="checkbox" id="ef-titulo" checked/><label for="ef-titulo">Título/Tag</label></div>
@@ -408,6 +426,98 @@ const CAT_LABELS = {
   'cha':'👶 Chá','aniversario-adulto':'🎉 Geral','custom':'⭐ Personalizado'
 };
 
+// ── MULTI-CATEGORY HELPERS ────────────────────────────────────────
+
+function toggleCatCheck(val, wrapEl) {
+  const cb = document.getElementById('cat-' + val);
+  if (!cb) return;
+  // If click came from the wrapper (not the checkbox itself), toggle
+  if (event && event.target !== cb) cb.checked = !cb.checked;
+  wrapEl.classList.toggle('checked', cb.checked);
+}
+
+function getSelectedCategories() {
+  const cats = ['homem','mulher','quinze','menino','menina','casamento','cha','aniversario-adulto','custom'];
+  return cats.filter(c => document.getElementById('cat-'+c)?.checked);
+}
+
+function setSelectedCategories(cats) {
+  ['homem','mulher','quinze','menino','menina','casamento','cha','aniversario-adulto','custom'].forEach(c => {
+    const cb = document.getElementById('cat-'+c);
+    const wrap = cb?.closest('.cat-check');
+    if (cb) cb.checked = cats.includes(c);
+    if (wrap) wrap.classList.toggle('checked', cats.includes(c));
+  });
+}
+
+// ── AUTO-DETECT FIELDS FROM HTML ─────────────────────────────────
+
+function autoDetectFields() {
+  const html = document.getElementById('tplHtml').value;
+  if (!html.trim()) { showToast('Cole o HTML primeiro.', 'error'); return; }
+
+  const PLACEHOLDER_MAP = {
+    '{{nome}}':     'ef-nome',
+    '{{titulo}}':   'ef-titulo',
+    '{{data}}':     'ef-data',
+    '{{dia}}':      'ef-data',
+    '{{mes}}':      'ef-data',
+    '{{diaSemana}}':'ef-data',
+    '{{hora}}':     'ef-hora',
+    '{{local}}':    'ef-local',
+    '{{endereco}}': 'ef-endereco',
+    '{{dress}}':    'ef-dress',
+    '{{msg}}':      'ef-msg',
+    '{{idade}}':    'ef-idade',
+    '{{tema}}':     'ef-tema',
+    '{{heroImg}}':  'ef-heroImg',
+    '{{accent}}':   'ef-accent',
+  };
+
+  // Uncheck all first
+  ['nome','titulo','data','hora','local','endereco','dress','msg','idade','tema','heroImg','accent'].forEach(f => {
+    const el = document.getElementById('ef-'+f);
+    if (el) el.checked = false;
+  });
+
+  // Check based on what's found in HTML
+  const detected = new Set();
+  Object.entries(PLACEHOLDER_MAP).forEach(([placeholder, fieldId]) => {
+    if (html.includes(placeholder)) detected.add(fieldId);
+  });
+
+  detected.forEach(fieldId => {
+    const el = document.getElementById(fieldId);
+    if (el) el.checked = true;
+  });
+
+  showToast(`✅ ${detected.size} campo(s) detectado(s) no HTML.`, 'success');
+}
+
+// ── PREVIEW IMG THUMB ──────────────────────────────────────────────
+
+function updatePreviewImgThumb() {
+  const url = document.getElementById('tplPreviewImg').value.trim();
+  const thumb = document.getElementById('previewImgThumb');
+  if (url) {
+    thumb.src = url;
+    thumb.style.display = 'block';
+    thumb.onerror = () => { thumb.style.display = 'none'; };
+  } else {
+    thumb.style.display = 'none';
+  }
+}
+
+function useSelectedBuiltinImg() {
+  if (!selectedBuiltinId) return;
+  const t = BUILTIN_TEMPLATES.find(x => x.id === selectedBuiltinId);
+  if (!t) return;
+  const imgUrl = t.img.replace('w=120','w=600').replace('q=70','q=80');
+  document.getElementById('tplPreviewImg').value = imgUrl;
+  updatePreviewImgThumb();
+  showToast('Imagem do template aplicada!', 'success');
+}
+
 async function loadTemplates() {
   const { data, error } = await sb.from('custom_templates').select('*').order('created_at', { ascending: false });
   if (error) {
@@ -440,7 +550,7 @@ function renderList() {
       <div class="tpl-item-info">
         <div class="tpl-item-name">${t.name||'Sem nome'}</div>
         <div class="tpl-item-meta">
-          <span>${CAT_LABELS[t.category]||t.category}</span>
+          <span>${formatCategories(t.category, t.categories)}</span>
           <span style="opacity:.4">·</span>
           <span>${(t.html_template||'').length > 0 ? (t.html_template.length/1000).toFixed(1)+'kb HTML' : 'sem HTML'}</span>
         </div>
@@ -450,6 +560,16 @@ function renderList() {
         <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteTemplate('${t.id}')" title="Excluir">✕</button>
       </div>
     </div>`).join('');
+}
+
+// ── CATEGORY HELPERS ──────────────────────────────────────────────
+
+function formatCategories(category, categories) {
+  // Support both old single-category and new multi-category format
+  const cats = Array.isArray(categories) && categories.length
+    ? categories
+    : (category ? [category] : ['custom']);
+  return cats.map(c => CAT_LABELS[c] || c).join(', ');
 }
 
 // ── EDIT ─────────────────────────────────────────────────────────
@@ -468,13 +588,18 @@ function editTemplate(id) {
   editingId = id;
 
   document.getElementById('tplName').value       = t.name || '';
-  document.getElementById('tplCategory').value   = t.category || 'custom';
   document.getElementById('tplAccent').value     = t.default_accent || '#FFD93D';
   document.getElementById('tplAccentHex').value  = t.default_accent || '#FFD93D';
   document.getElementById('tplBg').value         = t.default_bg || 'dark-purple';
   document.getElementById('tplSupportsHero').checked = !!t.supports_hero_upload;
   document.getElementById('tplPreviewImg').value = t.preview_img || '';
   document.getElementById('tplHtml').value       = t.html_template || '';
+
+  // Multi-category support: prefer `categories` array, fall back to single `category`
+  const cats = Array.isArray(t.categories) && t.categories.length
+    ? t.categories
+    : (t.category ? [t.category] : ['custom']);
+  setSelectedCategories(cats);
 
   const ef = t.editable_fields || [];
   ['nome','titulo','data','hora','local','endereco','dress','msg','idade','tema','heroImg','accent']
@@ -483,6 +608,7 @@ function editTemplate(id) {
       if (el) el.checked = ef.length === 0 || ef.includes(f);
     });
 
+  updatePreviewImgThumb();
   document.getElementById('editingLabel').textContent = `Editando: ${t.name}`;
   renderList();
   switchTab('editor', document.querySelector('[data-tab="editor"]'));
@@ -491,18 +617,21 @@ function editTemplate(id) {
 
 function clearForm() {
   document.getElementById('tplName').value      = '';
-  document.getElementById('tplCategory').value  = 'menina';
   document.getElementById('tplAccent').value    = '#FFD93D';
   document.getElementById('tplAccentHex').value = '#FFD93D';
   document.getElementById('tplBg').value        = 'dark-purple';
   document.getElementById('tplSupportsHero').checked = false;
   document.getElementById('tplPreviewImg').value = '';
   document.getElementById('tplHtml').value       = '';
+  // Default category: menina
+  setSelectedCategories(['menina']);
   ['nome','titulo','data','hora','local','endereco','dress','msg','idade','tema','heroImg','accent']
     .forEach(f => {
       const el = document.getElementById('ef-'+f);
       if (el) el.checked = ['nome','titulo','data','hora','local'].includes(f);
     });
+  const thumb = document.getElementById('previewImgThumb');
+  if (thumb) thumb.style.display = 'none';
   document.getElementById('previewStatus').textContent = '● aguardando';
   document.getElementById('previewStatus').style.color = 'rgba(240,240,248,.35)';
   document.getElementById('previewIframe').srcdoc = '';
@@ -520,7 +649,6 @@ function discardChanges() {
 
 async function saveTemplate() {
   const name    = document.getElementById('tplName').value.trim();
-  const cat     = document.getElementById('tplCategory').value;
   const accent  = document.getElementById('tplAccentHex').value.trim() || '#FFD93D';
   const bg      = document.getElementById('tplBg').value;
   const supHero = document.getElementById('tplSupportsHero').checked;
@@ -530,12 +658,18 @@ async function saveTemplate() {
   if (!name) { showToast('Dê um nome ao template.', 'error'); return; }
   if (!html)  { showToast('Cole o HTML do template.', 'error'); return; }
 
+  const selectedCats = getSelectedCategories();
+  if (selectedCats.length === 0) { showToast('Selecione ao menos uma categoria.', 'error'); return; }
+  // Primary category = first selected (for backwards compat)
+  const primaryCat = selectedCats[0];
+
   const editableFields = ['nome','titulo','data','hora','local','endereco','dress','msg','idade','tema','heroImg','accent']
     .filter(f => document.getElementById('ef-'+f)?.checked);
 
   const payload = {
     name,
-    category: cat,
+    category: primaryCat,
+    categories: selectedCats,
     html_template: html,
     editable_fields: editableFields,
     default_accent: accent,
@@ -810,6 +944,10 @@ function selectBuiltin(id) {
   };
   document.getElementById('previewStatus').textContent = `● ${t.name}`;
   document.getElementById('previewStatus').style.color = 'var(--green)';
+
+  // Show "Use this image" button in editor
+  const btnUseImg = document.getElementById('btnUseBuiltinImg');
+  if (btnUseImg) btnUseImg.style.display = '';
 }
 
 function buildBuiltinPreviewHtml(t) {
@@ -841,27 +979,30 @@ function openBuiltinInEditor(id) {
   // The HTML will be a template version with {{placeholders}}
   editingId = null;
   document.getElementById('tplName').value      = t.name + ' (variante)';
-  document.getElementById('tplCategory').value  = t.cat;
+  setSelectedCategories([t.cat]);
   document.getElementById('tplAccent').value    = t.accent;
   document.getElementById('tplAccentHex').value = t.accent;
-  document.getElementById('tplPreviewImg').value = t.img.replace('w=120','w=600');
+  // Use the same image that shows in the editor (higher resolution)
+  const imgUrl = t.img.replace('w=120','w=600').replace('q=70','q=80');
+  document.getElementById('tplPreviewImg').value = imgUrl;
+  updatePreviewImgThumb();
   document.getElementById('tplBg').value        = 'dark-purple';
   document.getElementById('tplSupportsHero').checked = t.id.includes('fotos');
+  selectedBuiltinId = t.id;
+  const btnUseImg = document.getElementById('btnUseBuiltinImg');
+  if (btnUseImg) btnUseImg.style.display = '';
 
   // Generate placeholder-based HTML
   const placeholderHtml = getBuiltinPlaceholderHtml(t.id, t.accent);
   document.getElementById('tplHtml').value = placeholderHtml;
 
-  // Check all relevant editable fields
-  ['nome','titulo','data','hora','local','dress','msg','heroImg','accent'].forEach(f => {
-    const el = document.getElementById('ef-'+f);
-    if (el) el.checked = true;
-  });
+  // Auto-detect fields from the generated HTML
+  autoDetectFields();
 
   document.getElementById('editingLabel').textContent = `Novo: ${t.name}`;
   switchTab('editor', document.querySelector('[data-tab="editor"]'));
   debouncePreview();
-  showToast(`Template "${t.name}" carregado no editor`, 'success');
+  showToast(`Template "${t.name}" carregado — campos detectados automaticamente`, 'success');
 }
 
 // Generates the preview HTML for a built-in template (with real values)

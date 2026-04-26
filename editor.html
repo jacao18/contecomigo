@@ -269,9 +269,17 @@
           <input type="time" id="fHora" oninput="updatePreview()"/>
         </div>
       </div>
-      <div class="field">
-        <label>Local / Endereço</label>
-        <input type="text" id="fLocal" placeholder="Ex: Salão Felicidade, São Paulo" oninput="updatePreview()"/>
+      <div class="field" id="fieldIdade" style="display:none">
+        <label>Idade / Número de anos <span style="font-size:.65rem;font-weight:600;text-transform:none;letter-spacing:0;color:rgba(26,10,0,.25)">(opcional)</span></label>
+        <input type="text" id="fIdade" placeholder="Ex: 15 anos, 30 anos…" oninput="updatePreview()"/>
+      </div>
+      <div class="field" id="fieldLocal">
+        <label>Local do evento <span style="font-size:.65rem;font-weight:600;text-transform:none;letter-spacing:0;color:rgba(26,10,0,.25)">(opcional)</span></label>
+        <input type="text" id="fLocal" placeholder="Ex: Salão Felicidade" oninput="updatePreview()"/>
+      </div>
+      <div class="field" id="fieldEndereco" style="display:none">
+        <label>Endereço <span style="font-size:.65rem;font-weight:600;text-transform:none;letter-spacing:0;color:rgba(26,10,0,.25)">(opcional)</span></label>
+        <input type="text" id="fEndereco" placeholder="Ex: Rua das Flores, 123 — São Paulo, SP" oninput="updatePreview()"/>
       </div>
       <div class="field">
         <label>Dress code (opcional)</label>
@@ -979,7 +987,7 @@ const BG_GRADIENTS = {
 // ══ STATE ══
 const state = {
   tplId:'hom-cerveja', tplCat:'homem',
-  titulo:'', nome:'', data:'', hora:'', local:'', dress:'', msg:'', prazo:'',
+  titulo:'', nome:'', data:'', hora:'', local:'', endereco:'', idade:'', dress:'', msg:'', prazo:'',
   accent:'#F59E0B', bgKey:'__theme__', themeBg:'linear-gradient(160deg,#1a0e00,#3d2200)',
   tweaks:{ colorTheme:'cerveja' }, tema:'',
   heroPhotoUrl:'', heroPhotoBlob:null,  // foto de fundo personalizada
@@ -1017,6 +1025,7 @@ async function init(){
   if(initialTpl) {
     applyActiveTheme(initialTpl);
     renderTweakControls(initialTpl);
+    updateEditableFields(initialTpl);
   }
   updatePreview();
 }
@@ -1072,10 +1081,21 @@ async function loadCustomTemplates(){
           tweaks,
         };
 
-        const cat = knownCats.includes(t.category) ? t.category : 'custom';
-        if (!TEMPLATES[cat]) TEMPLATES[cat] = [];
-        TEMPLATES[cat].push(entry);
-        if (cat === 'custom') hasCustom = true;
+        // Support multi-category: `categories` array takes precedence over single `category`
+        const templateCats = (Array.isArray(t.categories) && t.categories.length)
+          ? t.categories
+          : (t.category ? [t.category] : ['custom']);
+
+        // Add template to each category it belongs to
+        templateCats.forEach(cat => {
+          const resolvedCat = knownCats.includes(cat) ? cat : 'custom';
+          if (!TEMPLATES[resolvedCat]) TEMPLATES[resolvedCat] = [];
+          // Avoid duplicates if same template added to multiple known cats
+          if (!TEMPLATES[resolvedCat].find(e => e.id === entry.id)) {
+            TEMPLATES[resolvedCat].push(entry);
+          }
+          if (resolvedCat === 'custom') hasCustom = true;
+        });
       });
 
       // Show custom tab if there are templates in the custom bucket
@@ -1127,8 +1147,55 @@ function selectTemplate(tplId, cat, el){
     applyActiveTheme(tpl);
     // Render dynamic Step 2 controls
     renderTweakControls(tpl);
+    // Show/hide fields based on editable_fields
+    updateEditableFields(tpl);
   }
   updatePreview();
+}
+
+// ══ SHOW/HIDE FIELDS BASED ON editable_fields ══
+function updateEditableFields(tpl){
+  // For built-in templates, all base fields are shown
+  // For custom templates, only show fields listed in editableFields
+  const ef = tpl.editableFields;
+
+  // If no editableFields defined (built-in), show all fields
+  if(!ef || ef.length === 0){
+    showField('fieldIdade', false);
+    showField('fieldLocal', true);
+    showField('fieldEndereco', false);
+    return;
+  }
+
+  // Custom template — show/hide based on what's in editable_fields
+  showField('fieldIdade',   ef.includes('idade'));
+  showField('fieldLocal',   ef.includes('local'));
+  showField('fieldEndereco',ef.includes('endereco'));
+
+  // Also show/hide other fields (titulo, data, hora, dress, msg)
+  const fieldMap = {
+    'fTitulo':  'titulo',
+    'fDress':   'dress',
+    'fMsg':     'msg',
+    'fPrazo':   'prazo',
+  };
+  Object.entries(fieldMap).forEach(([elId, key])=>{
+    const wrapper = document.getElementById(elId)?.closest('.field');
+    if(wrapper) wrapper.style.display = ef.includes(key) ? '' : 'none';
+  });
+
+  // nome and data are always shown (essential)
+  const nomeFld = document.getElementById('fNome')?.closest('.field');
+  const dataFld = document.getElementById('fData')?.closest('.field-row') || document.getElementById('fData')?.closest('.field');
+  const horaFld = document.getElementById('fHora')?.closest('.field');
+  if(nomeFld) nomeFld.style.display = '';
+  if(dataFld) dataFld.style.display = '';
+  if(horaFld) horaFld.style.display = '';
+}
+
+function showField(fieldId, visible){
+  const el = document.getElementById(fieldId);
+  if(el) el.style.display = visible ? '' : 'none';
 }
 
 // Build CSS :root vars from a theme option object
@@ -1437,7 +1504,7 @@ function selectTheme(tweakKey, optKey, el){
 
 // ══ COLLECT STATE ══
 function collectState(){
-  const map={fTitulo:'titulo',fNome:'nome',fData:'data',fHora:'hora',fLocal:'local',fDress:'dress',fMsg:'msg',fPrazo:'prazo',fSlug:'slug',fVisib:'visib'};
+  const map={fTitulo:'titulo',fNome:'nome',fData:'data',fHora:'hora',fLocal:'local',fEndereco:'endereco',fIdade:'idade',fDress:'dress',fMsg:'msg',fPrazo:'prazo',fSlug:'slug',fVisib:'visib'};
   Object.entries(map).forEach(([id,k])=>{const el=document.getElementById(id);if(el)state[k]=el.value;});
   const mu=document.getElementById('fMusic'); if(mu) state.music_url=mu.value.trim();
   const pix=document.getElementById('fPix'); if(pix) state.pix_key=pix.value.trim();
@@ -1447,7 +1514,7 @@ function collectState(){
 
 // ══ FILL FORM ══
 function fillForm(){
-  const map={fTitulo:'titulo',fNome:'nome',fData:'data',fHora:'hora',fLocal:'local',fDress:'dress',fMsg:'msg',fPrazo:'prazo',fSlug:'slug',fVisib:'visib'};
+  const map={fTitulo:'titulo',fNome:'nome',fData:'data',fHora:'hora',fLocal:'local',fEndereco:'endereco',fIdade:'idade',fDress:'dress',fMsg:'msg',fPrazo:'prazo',fSlug:'slug',fVisib:'visib'};
   Object.entries(map).forEach(([id,k])=>{const el=document.getElementById(id);if(el&&state[k]!==undefined)el.value=state[k];});
 }
 
@@ -1501,7 +1568,7 @@ function updateCustomPreview(tplId, s) {
     '{{nome}}':         s.nome || '',
     '{{hora}}':         s.hora || '',
     '{{local}}':        s.local || '',
-    '{{endereco}}':     s.endereco || s.local || '',
+    '{{endereco}}':     s.endereco || '',
     '{{dress}}':        s.dress || '',
     '{{msg}}':          s.msg || '',
     '{{accent}}':       ac,
@@ -1510,7 +1577,7 @@ function updateCustomPreview(tplId, s) {
     '{{diaSemana}}':    diaSemana,
     '{{dataFormatada}}':dataFormatada,
     '{{diasRestantes}}':String(diasRestantes),
-    '{{idade}}':        s.idade || s.nome || '',
+    '{{idade}}':        s.idade || '',
     '{{tema}}':         s.tema || '',
     '{{heroImg}}':      heroImg,
   };
