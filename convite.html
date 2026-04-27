@@ -479,7 +479,7 @@
 <section class="rsvp-section" id="rsvpSection">
   <div class="rsvp-inner">
     <div class="section-label reveal">✉️ Confirmação de presença</div>
-    <div class="section-title reveal">Você vai <em>comparecer?</em></div>
+    <div class="section-title reveal">Conto <em>contigo?</em></div>
 
     <div id="alreadyAnswered" class="answered-banner" style="display:none">
       <div class="answered-banner-title" id="answeredTitle">✅ Presença confirmada!</div>
@@ -507,7 +507,7 @@
         </select>
       </div>
       <div class="form-group">
-        <label>Vai comparecer?</label>
+        <label>Você vai?</label>
         <div class="attend-grid">
           <div class="attend-opt"><input type="radio" name="rAttend" id="rYes" value="yes" checked/><label class="attend-lbl" for="rYes">✅ Sim, vou!</label></div>
           <div class="attend-opt"><input type="radio" name="rAttend" id="rNo" value="no"/><label class="attend-lbl" for="rNo">❌ Não posso</label></div>
@@ -683,8 +683,10 @@ function renderTemplateHTML(tplId, s){
   const nome = s.event_name || s.nome || '';
   const hora = s.event_time || s.hora || '';
   const local = s.location || s.local || '';
+  const endereco = s.address || s.endereco || '';
   const dress = s.dress_code || s.dress || '';
   const msg = s.message || s.msg || '';
+  const idade = s.idade || s.age || '';
 
   if(tplId==='aniv-neon') return `
     <div style="background:#0a0010;min-height:500px;font-family:'Nunito',sans-serif;color:#fff;position:relative;overflow:hidden">
@@ -695,9 +697,11 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,8vw,3rem);font-weight:900;font-style:italic;line-height:1;color:${ac};text-shadow:0 0 40px ${ac}88;margin-bottom:.5rem">${titulo}</div>
         <div style="font-size:1.1rem;font-weight:700;color:rgba(255,255,255,.7);margin-bottom:1.5rem">${nome}</div>
         <div style="display:inline-flex;flex-direction:column;gap:.4rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:1rem 1.5rem;margin-bottom:1.5rem;min-width:200px">
+          ${idade?`<div style="font-size:.85rem;color:rgba(255,255,255,.6)">🎂 ${idade}</div>`:''}
           <div style="font-size:.85rem;color:rgba(255,255,255,.6)">📅 ${dateStr}</div>
           ${hora?`<div style="font-size:.85rem;color:rgba(255,255,255,.6)">⏰ ${hora}</div>`:''}
           ${local?`<div style="font-size:.85rem;color:rgba(255,255,255,.6)">📍 ${local}</div>`:''}
+          ${endereco?`<div style="font-size:.85rem;color:rgba(255,255,255,.6)">🗺 ${endereco}</div>`:''}
           ${dress?`<div style="font-size:.85rem;color:rgba(255,255,255,.6)">👗 ${dress}</div>`:''}
         </div>
         <div style="display:flex;justify-content:center;gap:.5rem;margin-bottom:1.5rem">
@@ -725,7 +729,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;line-height:1.1;margin-bottom:.3rem">${titulo}</div>
         <div style="font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:1.5rem">${nome}</div>
         <div style="background:rgba(255,255,255,.08);border-radius:16px;padding:1rem;margin-bottom:1.5rem;display:flex;flex-direction:column;gap:.4rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👗':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="display:flex;align-items:center;gap:.5rem;font-size:.82rem"><span>${i}</span><span>${v}</span></div>`).join('')}
+          ${[idade?['🎂',idade]:null,['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="display:flex;align-items:center;gap:.5rem;font-size:.82rem"><span>${i}</span><span>${v}</span></div>`).join('')}
         </div>
         ${msg?`<div style="font-style:italic;font-size:.85rem;color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:.85rem;margin-bottom:1rem;line-height:1.6">"${msg}"</div>`:''}
         ${rsvpBtn}${presentsBtn}
@@ -751,7 +755,7 @@ function renderTemplateHTML(tplId, s){
           </div>
         </div>
         <div style="display:flex;flex-direction:column;gap:.55rem;margin-bottom:1.25rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👗':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="display:flex;gap:.6rem;font-size:.85rem;align-items:flex-start"><span style="flex-shrink:0">${i}</span><span style="color:rgba(26,10,0,.65)">${v}</span></div>`).join('')}
+          ${[idade?['🎂',idade]:null,['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="display:flex;gap:.6rem;font-size:.85rem;align-items:flex-start"><span style="flex-shrink:0">${i}</span><span style="color:rgba(26,10,0,.65)">${v}</span></div>`).join('')}
         </div>
         ${msg?`<div style="background:rgba(26,10,0,.03);border-left:3px solid ${ac};padding:.8rem 1rem;border-radius:0 8px 8px 0;font-style:italic;font-size:.85rem;color:rgba(26,10,0,.55);margin-bottom:1rem;line-height:1.6">"${msg}"</div>`:''}
         ${rsvpBtn}${presentsBtn}
@@ -771,9 +775,11 @@ function renderTemplateHTML(tplId, s){
         <div>
           <div style="background:rgba(255,255,255,.12);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:1.25rem;margin-bottom:1.5rem">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;text-align:left">
+              ${idade?`<div style="font-size:.78rem;color:rgba(255,255,255,.7);grid-column:1/-1">🎂 ${idade}</div>`:''}
               <div style="font-size:.78rem;color:rgba(255,255,255,.7)">📅 ${dateShort}</div>
               <div style="font-size:.78rem;color:rgba(255,255,255,.7)">${hora?'⏰ '+hora:''}</div>
               <div style="font-size:.78rem;color:rgba(255,255,255,.7);grid-column:1/-1">${local?'📍 '+local:''}</div>
+              <div style="font-size:.78rem;color:rgba(255,255,255,.7);grid-column:1/-1">${endereco?'🗺 '+endereco:''}</div>
               <div style="font-size:.78rem;color:rgba(255,255,255,.7);grid-column:1/-1">${dress?'👗 '+dress:''}</div>
             </div>
             ${msg?`<div style="border-top:1px solid rgba(255,255,255,.15);margin-top:.75rem;padding-top:.75rem;font-style:italic;font-size:.82rem;color:rgba(255,255,255,.65);line-height:1.5">"${msg}"</div>`:''}
@@ -795,10 +801,12 @@ function renderTemplateHTML(tplId, s){
         </div>
         <div style="font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:${ac};margin-bottom:.3rem">🎉 Festa de Aniversário!</div>
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;color:#1A0A00;line-height:1.1;margin-bottom:.3rem">${titulo}</div>
-        <div style="font-weight:700;color:rgba(26,10,0,.5);margin-bottom:1.5rem">${nome}</div>
+        <div style="font-weight:700;color:rgba(26,10,0,.5);margin-bottom:${idade?'.3rem':'1.5rem'}">${nome}</div>
+        ${idade?`<div style="font-size:.85rem;font-weight:800;color:${ac};margin-bottom:1.25rem">🎂 ${idade}</div>`:''}
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.5rem">
           ${[['🗓',dateShort,'Data'],['⏰',hora||'—','Hora'],['📍',local?local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:#fff;border-radius:12px;padding:.65rem .35rem;box-shadow:0 2px 8px rgba(0,0,0,.06)"><div style="font-size:1.1rem">${i}</div><div style="font-size:.72rem;font-weight:800;color:#1A0A00">${v}</div><div style="font-size:.58rem;color:rgba(26,10,0,.3);text-transform:uppercase;letter-spacing:.06em">${l}</div></div>`).join('')}
         </div>
+        ${endereco?`<div style="background:#fff;border-radius:10px;padding:.6rem;font-size:.8rem;color:rgba(26,10,0,.6);margin-bottom:.5rem;box-shadow:0 2px 8px rgba(0,0,0,.06)">🗺 ${endereco}</div>`:''}
         ${dress?`<div style="background:#fff;border-radius:10px;padding:.6rem;font-size:.8rem;color:rgba(26,10,0,.6);margin-bottom:1rem;box-shadow:0 2px 8px rgba(0,0,0,.06)">👗 Dress code: <strong>${dress}</strong></div>`:''}
         ${msg?`<div style="background:rgba(255,61,107,.06);border-radius:12px;padding:.85rem;font-style:italic;font-size:.85rem;color:rgba(26,10,0,.6);margin-bottom:1rem;line-height:1.6">"${msg}"</div>`:''}
         <div onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})" style="background:linear-gradient(135deg,${ac},#FF3D6B);color:#fff;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;margin-bottom:1rem;box-shadow:0 6px 20px rgba(255,61,107,.3);cursor:pointer">✅ Confirmar presença</div>
@@ -818,9 +826,11 @@ function renderTemplateHTML(tplId, s){
         <div style="font-size:1rem;color:rgba(255,255,255,.75);margin-bottom:1.75rem">${nome}</div>
         <div style="background:rgba(255,255,255,.1);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:1.25rem;margin-bottom:1.5rem">
           <div style="display:flex;flex-direction:column;gap:.4rem">
+            ${idade?`<div style="font-size:.82rem;color:rgba(255,255,255,.75)">🎂 ${idade}</div>`:''}
             <div style="font-size:.82rem;color:rgba(255,255,255,.75)">🗓 ${dateStr}</div>
             ${hora?`<div style="font-size:.82rem;color:rgba(255,255,255,.75)">⏰ ${hora}</div>`:''}
             ${local?`<div style="font-size:.82rem;color:rgba(255,255,255,.75)">📍 ${local}</div>`:''}
+            ${endereco?`<div style="font-size:.82rem;color:rgba(255,255,255,.75)">🗺 ${endereco}</div>`:''}
             ${dress?`<div style="font-size:.82rem;color:rgba(255,255,255,.75)">👗 ${dress}</div>`:''}
           </div>
           ${msg?`<div style="border-top:1px solid rgba(255,255,255,.12);margin-top:.75rem;padding-top:.75rem;font-style:italic;font-size:.82rem;color:rgba(255,255,255,.6);line-height:1.5">"${msg}"</div>`:''}
@@ -843,7 +853,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;line-height:1.1;color:${ac};margin-bottom:.35rem">${titulo}</div>
         <div style="font-size:1rem;color:rgba(255,255,255,.65);margin-bottom:1.5rem">${nome}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.5rem;text-align:left">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👗':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:.55rem .75rem;font-size:.75rem;display:flex;align-items:center;gap:.35rem"><span>${i}</span><span style="color:rgba(255,255,255,.7)">${v}</span></div>`).join('')}
+          ${[idade?['🎂',idade]:null,['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:.55rem .75rem;font-size:.75rem;display:flex;align-items:center;gap:.35rem"><span>${i}</span><span style="color:rgba(255,255,255,.7)">${v}</span></div>`).join('')}
         </div>
         ${msg?`<div style="background:rgba(255,255,255,.05);border-left:3px solid ${ac};border-radius:0 8px 8px 0;padding:.8rem 1rem;font-style:italic;font-size:.82rem;color:rgba(255,255,255,.55);margin-bottom:1rem;line-height:1.5;text-align:left">"${msg}"</div>`:''}
         ${rsvpBtn}${presentsBtn}
@@ -859,10 +869,13 @@ function renderTemplateHTML(tplId, s){
       <div style="padding:0 1.5rem 2rem;text-align:center;margin-top:-2rem;position:relative">
         <div style="font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:${ac};margin-bottom:.4rem">🎉 Você está convidado!</div>
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;color:#1A0A00;line-height:1.1;margin-bottom:.3rem">${titulo}</div>
-        <div style="color:rgba(26,10,0,.5);font-weight:700;margin-bottom:1.5rem">${nome}</div>
+        <div style="color:rgba(26,10,0,.5);font-weight:700;margin-bottom:${idade?'.3rem':'1.5rem'}">${nome}</div>
+        ${idade?`<div style="font-size:.85rem;font-weight:800;color:${ac};margin-bottom:1.25rem">🎂 ${idade}</div>`:''}
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.25rem">
           ${[['🗓',dateShort,'Data'],['⏰',hora||'—','Hora'],['📍',local?local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:#fff;border-radius:12px;padding:.65rem .35rem;box-shadow:0 2px 8px rgba(0,0,0,.06)"><div style="font-size:1rem">${i}</div><div style="font-size:.7rem;font-weight:800">${v}</div><div style="font-size:.55rem;color:rgba(26,10,0,.3);text-transform:uppercase">${l}</div></div>`).join('')}
         </div>
+        ${endereco?`<div style="background:#fff;border-radius:10px;padding:.6rem;font-size:.8rem;color:rgba(26,10,0,.55);margin-bottom:.75rem;box-shadow:0 2px 8px rgba(0,0,0,.05)">🗺 ${endereco}</div>`:''}
+
         ${msg?`<div style="background:#fff;border-radius:12px;padding:.85rem;font-style:italic;font-size:.83rem;color:rgba(26,10,0,.55);margin-bottom:1rem;line-height:1.6;box-shadow:0 2px 8px rgba(0,0,0,.05)">"${msg}"</div>`:''}
         ${rsvpBtn}${presentsBtn}
       </div>
@@ -879,7 +892,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:1.4rem;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:2rem">${nome}</div>
         <div style="width:60px;height:1px;background:${ac};opacity:.4;margin:0 auto 2rem"></div>
         <div style="display:flex;flex-direction:column;gap:.6rem;margin-bottom:2rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👗':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.85rem;color:rgba(255,255,255,.6);letter-spacing:.02em">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.85rem;color:rgba(255,255,255,.6);letter-spacing:.02em">${i} ${v}</div>`).join('')}
         </div>
         ${msg?`<div style="border:1px solid rgba(255,215,61,.2);border-radius:16px;padding:1.25rem;font-style:italic;font-size:.88rem;color:rgba(255,255,255,.55);margin-bottom:1.5rem;line-height:1.7">"${msg}"</div>`:''}
         <div onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})" style="background:transparent;border:1px solid ${ac};color:${ac};font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;letter-spacing:.05em;cursor:pointer">✅ Confirmar Presença</div>
@@ -899,7 +912,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:.95rem;font-style:italic;color:rgba(26,10,0,.4);margin-bottom:.3rem">de</div>
         <div style="font-size:1rem;font-weight:700;color:rgba(26,10,0,.7);margin-bottom:1.5rem">${nome}</div>
         <div style="display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem">
-          ${[['📅',dateShort],[hora?'⏰':null,hora],[local?'📍':null,local]].filter(x=>x[0]).map(([i,v])=>`<div style="background:rgba(26,10,0,.04);border:1px solid rgba(26,10,0,.07);border-radius:8px;padding:.4rem .7rem;font-size:.75rem;color:rgba(26,10,0,.6)">${i} ${v}</div>`).join('')}
+          ${[['📅',dateShort],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="background:rgba(26,10,0,.04);border:1px solid rgba(26,10,0,.07);border-radius:8px;padding:.4rem .7rem;font-size:.75rem;color:rgba(26,10,0,.6)">${i} ${v}</div>`).join('')}
         </div>
         ${dress?`<div style="font-size:.8rem;color:rgba(26,10,0,.4);margin-bottom:1.25rem">👗 ${dress}</div>`:''}
         ${msg?`<div style="font-style:italic;font-size:.85rem;color:rgba(26,10,0,.45);line-height:1.6;margin-bottom:1.25rem;padding:0 .5rem">"${msg}"</div>`:''}
@@ -919,7 +932,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,7vw,2.8rem);font-weight:900;font-style:italic;color:${ac};line-height:1.1;margin-bottom:.3rem">${titulo}</div>
         <div style="font-size:.95rem;color:rgba(255,255,255,.65);margin-bottom:2rem">${nome}</div>
         <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:1.25rem;margin-bottom:1.5rem;display:flex;flex-direction:column;gap:.5rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👗':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.6)">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.6)">${i} ${v}</div>`).join('')}
         </div>
         ${msg?`<div style="border-left:2px solid ${ac};padding:.75rem 1rem;text-align:left;font-style:italic;font-size:.83rem;color:rgba(255,255,255,.5);margin-bottom:1.25rem;line-height:1.6">"${msg}"</div>`:''}
         <div onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})" style="border:1px solid ${ac};color:${ac};background:transparent;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;cursor:pointer">✅ Confirmar presença</div>
@@ -940,6 +953,7 @@ function renderTemplateHTML(tplId, s){
             <div>📅 ${dateStr}</div>
             ${hora?`<div>⏰ ${hora}</div>`:''}
             ${local?`<div>📍 ${local}</div>`:''}
+            ${endereco?`<div>🗺 ${endereco}</div>`:''}
             ${dress?`<div>👗 ${dress}</div>`:''}
           </div>
           ${msg?`<div style="border-top:1px solid rgba(255,255,255,.12);margin-top:.75rem;padding-top:.75rem;font-style:italic;font-size:.8rem;color:rgba(255,255,255,.5);line-height:1.5">"${msg}"</div>`:''}
@@ -964,6 +978,7 @@ function renderTemplateHTML(tplId, s){
             <div style="font-size:.82rem;color:rgba(26,10,0,.6)">📅 ${dateStr}</div>
             ${hora?`<div style="font-size:.82rem;color:rgba(26,10,0,.6)">⏰ ${hora}</div>`:''}
             ${local?`<div style="font-size:.82rem;color:rgba(26,10,0,.6)">📍 ${local}</div>`:''}
+            ${endereco?`<div style="font-size:.82rem;color:rgba(26,10,0,.6)">🗺 ${endereco}</div>`:''}
             ${dress?`<div style="font-size:.82rem;color:rgba(26,10,0,.6)">👗 ${dress}</div>`:''}
           </div>
         </div>
@@ -982,7 +997,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;color:${ac};line-height:1.1;margin-bottom:.3rem">${titulo}</div>
         <div style="color:rgba(255,255,255,.6);margin-bottom:1.75rem">${nome}</div>
         <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:1.1rem;margin-bottom:1.5rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👗':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:.35rem">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:.35rem">${i} ${v}</div>`).join('')}
           ${msg?`<div style="border-top:1px solid rgba(255,255,255,.08);margin-top:.7rem;padding-top:.7rem;font-style:italic;font-size:.8rem;color:rgba(255,255,255,.45);line-height:1.5">"${msg}"</div>`:''}
         </div>
         ${rsvpBtn}${presentsBtn}
@@ -999,7 +1014,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;color:${ac};line-height:1.1;margin-bottom:.3rem">${titulo}</div>
         <div style="color:rgba(255,255,255,.6);margin-bottom:1.75rem">${nome}</div>
         <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:1.1rem;margin-bottom:1.5rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👗':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:.35rem">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:.35rem">${i} ${v}</div>`).join('')}
           ${msg?`<div style="border-top:1px solid rgba(255,255,255,.08);margin-top:.7rem;padding-top:.7rem;font-style:italic;font-size:.8rem;color:rgba(255,255,255,.45);line-height:1.5">"${msg}"</div>`:''}
         </div>
         ${rsvpBtn}${presentsBtn}
@@ -1016,7 +1031,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:${ac};margin-bottom:.4rem">Você está convidado!</div>
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.7rem,6vw,2.4rem);font-weight:900;font-style:italic;color:#1A0A00;line-height:1.1;margin-bottom:1.25rem">${titulo}</div>
         <div style="background:#fff;border-radius:12px;padding:1rem;margin-bottom:1rem;box-shadow:0 2px 8px rgba(0,0,0,.06);text-align:left">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👗':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(26,10,0,.6);margin-bottom:.3rem;display:flex;gap:.4rem"><span>${i}</span><span>${v}</span></div>`).join('')}
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(26,10,0,.6);margin-bottom:.3rem;display:flex;gap:.4rem"><span>${i}</span><span>${v}</span></div>`).join('')}
         </div>
         ${msg?`<div style="background:#fff;border-radius:12px;padding:.85rem;font-style:italic;font-size:.83rem;color:rgba(26,10,0,.5);margin-bottom:1rem;line-height:1.6;box-shadow:0 2px 8px rgba(0,0,0,.05)">"${msg}"</div>`:''}
         ${rsvpBtn}${presentsBtn}
@@ -1035,7 +1050,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,7vw,3rem);font-weight:900;font-style:italic;color:${ac};line-height:1;margin-bottom:.4rem;text-shadow:0 0 20px ${ac}55">${titulo}</div>
         <div style="font-size:1.1rem;color:rgba(255,255,255,.7);font-weight:700;margin-bottom:1.75rem">${nome}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.5rem;text-align:left">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👕':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,165,0,.2);border-radius:10px;padding:.55rem .75rem;font-size:.75rem;display:flex;gap:.35rem;align-items:center"><span>${i}</span><span style="color:rgba(255,255,255,.75)">${v}</span></div>`).join('')}
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👕':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,165,0,.2);border-radius:10px;padding:.55rem .75rem;font-size:.75rem;display:flex;gap:.35rem;align-items:center"><span>${i}</span><span style="color:rgba(255,255,255,.75)">${v}</span></div>`).join('')}
         </div>
         ${msg?`<div style="background:rgba(245,158,11,.08);border-left:3px solid ${ac};padding:.8rem 1rem;font-style:italic;font-size:.85rem;color:rgba(255,255,255,.55);margin-bottom:1rem;line-height:1.5;text-align:left">"${msg}"</div>`:''}
         ${rsvpBtn}${presentsBtn}
@@ -1071,7 +1086,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,7vw,3rem);font-weight:900;font-style:italic;color:#fff;line-height:1;margin-bottom:.4rem">${titulo}</div>
         <div style="font-size:1rem;color:rgba(255,255,255,.5);margin-bottom:2.5rem">${nome}</div>
         <div style="display:flex;flex-direction:column;gap:.6rem;margin-bottom:2.5rem">
-          ${[['—',dateStr],[hora?'—':null,hora],[local?'—':null,local],[dress?'—':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="display:flex;gap:.75rem;font-size:.88rem;color:rgba(255,255,255,.5)"><span style="color:${ac};font-weight:900">${i}</span><span>${v}</span></div>`).join('')}
+          ${[['—',dateStr],[hora?'—':null,hora],[local?'—':null,local],[endereco?'—':null,endereco],[dress?'—':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="display:flex;gap:.75rem;font-size:.88rem;color:rgba(255,255,255,.5)"><span style="color:${ac};font-weight:900">${i}</span><span>${v}</span></div>`).join('')}
         </div>
         ${msg?`<div style="border-top:1px solid rgba(255,255,255,.1);padding-top:1.25rem;font-style:italic;font-size:.85rem;color:rgba(255,255,255,.35);line-height:1.7;margin-bottom:1.5rem">"${msg}"</div>`:''}
         <div style="background:transparent;border:1px solid ${ac};color:${ac};font-weight:800;text-align:center;padding:.85rem;border-radius:4px;font-size:.9rem;letter-spacing:.08em;cursor:pointer" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">CONFIRMAR PRESENÇA →</div>
@@ -1088,7 +1103,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,8vw,3rem);font-weight:900;font-style:italic;color:#fff;line-height:1;margin-bottom:.4rem">${titulo}</div>
         <div style="font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:1.5rem">${nome}</div>
         <div style="background:rgba(255,255,255,.1);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:1rem;margin-bottom:1.25rem;display:flex;flex-direction:column;gap:.4rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.75)">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.75)">${i} ${v}</div>`).join('')}
         </div>
         ${rsvpBtn}${presentsBtn}
       </div>
@@ -1107,7 +1122,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:1.1rem;font-style:italic;color:rgba(255,255,255,.6);margin-bottom:2rem">${nome}</div>
         <div style="width:50px;height:1px;background:${ac};opacity:.5;margin:0 auto 1.5rem"></div>
         <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.75rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👗':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.85rem;color:rgba(255,255,255,.6)">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.85rem;color:rgba(255,255,255,.6)">${i} ${v}</div>`).join('')}
         </div>
         ${msg?`<div style="border:1px solid rgba(252,211,77,.15);border-radius:16px;padding:1.1rem;font-style:italic;font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:1.5rem;line-height:1.7">"${msg}"</div>`:''}
         <div style="background:transparent;border:1px solid ${ac};color:${ac};font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;letter-spacing:.05em;cursor:pointer" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
@@ -1147,7 +1162,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,7vw,2.8rem);font-weight:900;font-style:italic;line-height:1.1;margin-bottom:.3rem">${titulo}</div>
         <div style="font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:1.5rem">${nome}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.5rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👙':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="background:rgba(255,255,255,.1);border:1px solid rgba(96,165,250,.2);border-radius:10px;padding:.55rem .75rem;font-size:.75rem;display:flex;gap:.35rem;align-items:center"><span>${i}</span><span style="color:rgba(255,255,255,.8)">${v}</span></div>`).join('')}
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👙':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="background:rgba(255,255,255,.1);border:1px solid rgba(96,165,250,.2);border-radius:10px;padding:.55rem .75rem;font-size:.75rem;display:flex;gap:.35rem;align-items:center"><span>${i}</span><span style="color:rgba(255,255,255,.8)">${v}</span></div>`).join('')}
         </div>
         ${msg?`<div style="background:rgba(96,165,250,.1);border-radius:12px;padding:.85rem;font-style:italic;font-size:.83rem;color:rgba(255,255,255,.55);margin-bottom:1rem;line-height:1.5">"${msg}"</div>`:''}
         <div style="background:${ac};color:#0c3a4a;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;cursor:pointer" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
@@ -1189,7 +1204,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:1.5rem;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:2rem">${nome}</div>
         <div style="width:50px;height:1px;background:${ac};opacity:.45;margin:0 auto 1.5rem"></div>
         <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.75rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👗':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.85rem;color:rgba(255,255,255,.55)">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.85rem;color:rgba(255,255,255,.55)">${i} ${v}</div>`).join('')}
         </div>
         ${msg?`<div style="border:1px solid rgba(252,211,77,.18);border-radius:16px;padding:1.1rem;font-style:italic;font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:1.5rem;line-height:1.7">"${msg}"</div>`:''}
         <div style="background:transparent;border:1px solid ${ac};color:${ac};font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;cursor:pointer" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
@@ -1210,7 +1225,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-size:.95rem;color:rgba(26,10,0,.4);font-style:italic;margin-bottom:.3rem">Os 15 anos de</div>
         <div style="font-size:1.15rem;font-weight:800;color:rgba(26,10,0,.8);margin-bottom:1.5rem">${nome}</div>
         <div style="display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.25rem">
-          ${[['📅',dateShort],[hora?'⏰':null,hora],[local?'📍':null,local]].filter(x=>x[0]).map(([i,v])=>`<div style="background:rgba(26,10,0,.04);border:1px solid rgba(26,10,0,.07);border-radius:8px;padding:.4rem .75rem;font-size:.77rem;color:rgba(26,10,0,.6)">${i} ${v}</div>`).join('')}
+          ${[['📅',dateShort],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="background:rgba(26,10,0,.04);border:1px solid rgba(26,10,0,.07);border-radius:8px;padding:.4rem .75rem;font-size:.77rem;color:rgba(26,10,0,.6)">${i} ${v}</div>`).join('')}
         </div>
         ${dress?`<div style="font-size:.82rem;color:rgba(26,10,0,.4);margin-bottom:1.25rem">👗 ${dress}</div>`:''}
         ${msg?`<div style="font-style:italic;font-size:.85rem;color:rgba(26,10,0,.4);line-height:1.6;margin-bottom:1.25rem;padding:0 .5rem">"${msg}"</div>`:''}
@@ -1229,7 +1244,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:.9rem;font-style:italic;color:rgba(255,255,255,.45);margin-bottom:.25rem">Os 15 anos de</div>
         <div style="font-size:1.15rem;font-weight:700;color:rgba(255,255,255,.85);margin-bottom:2rem">${nome}</div>
         <div style="background:rgba(255,255,255,.07);border:1px solid rgba(252,211,77,.2);border-radius:16px;padding:1.1rem;margin-bottom:1.5rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👗':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.55);margin-bottom:.35rem">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.55);margin-bottom:.35rem">${i} ${v}</div>`).join('')}
         </div>
         ${msg?`<div style="border-left:2px solid ${ac};padding:.75rem 1rem;text-align:left;font-style:italic;font-size:.83rem;color:rgba(255,255,255,.45);margin-bottom:1.25rem;line-height:1.6">"${msg}"</div>`:''}
         <div style="background:transparent;border:1px solid ${ac};color:${ac};font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;cursor:pointer" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
@@ -1245,7 +1260,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,8vw,3rem);font-weight:900;font-style:italic;color:${ac};line-height:1;margin-bottom:.3rem">${titulo}</div>
         <div style="font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:1.25rem">${nome}</div>
         <div style="background:rgba(255,255,255,.1);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:1rem;margin-bottom:1rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👗':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.7);margin-bottom:.3rem">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.7);margin-bottom:.3rem">${i} ${v}</div>`).join('')}
         </div>
         ${rsvpBtn}${presentsBtn}
       </div>
@@ -1283,7 +1298,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,7vw,3rem);font-weight:900;font-style:italic;color:#FBBF24;line-height:1;margin-bottom:.4rem">${titulo}</div>
         <div style="font-size:1.1rem;color:rgba(255,255,255,.7);margin-bottom:1.5rem">${nome}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.5rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👕':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="background:rgba(255,255,255,.07);border:1px solid rgba(251,191,36,.2);border-radius:10px;padding:.55rem .75rem;font-size:.75rem;display:flex;gap:.35rem;align-items:center"><span>${i}</span><span style="color:rgba(255,255,255,.75)">${v}</span></div>`).join('')}
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👕':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="background:rgba(255,255,255,.07);border:1px solid rgba(251,191,36,.2);border-radius:10px;padding:.55rem .75rem;font-size:.75rem;display:flex;gap:.35rem;align-items:center"><span>${i}</span><span style="color:rgba(255,255,255,.75)">${v}</span></div>`).join('')}
         </div>
         ${msg?`<div style="background:rgba(251,191,36,.08);border-left:3px solid #FBBF24;padding:.8rem 1rem;font-style:italic;font-size:.83rem;color:rgba(255,255,255,.5);margin-bottom:1rem;line-height:1.5">"${msg}"</div>`:''}
         <div style="background:linear-gradient(135deg,#FBBF24,#EF4444);color:#1a1000;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;cursor:pointer" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
@@ -1305,7 +1320,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,7vw,3rem);font-weight:900;font-style:italic;color:#EF4444;line-height:1;margin-bottom:.4rem">${titulo}</div>
         <div style="font-size:1.1rem;color:rgba(255,255,255,.7);margin-bottom:1.5rem">${nome}</div>
         <div style="background:rgba(255,255,255,.07);border:1px solid rgba(239,68,68,.2);border-radius:16px;padding:1rem;margin-bottom:1.5rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👕':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:.3rem">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👕':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:.3rem">${i} ${v}</div>`).join('')}
         </div>
         ${msg?`<div style="font-style:italic;font-size:.83rem;color:rgba(255,255,255,.5);margin-bottom:1rem;line-height:1.5">"${msg}"</div>`:''}
         <div style="background:#EF4444;color:#fff;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;cursor:pointer" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
@@ -1340,7 +1355,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,8vw,3rem);font-weight:900;font-style:italic;color:${ac};line-height:1;margin-bottom:.4rem">${titulo}</div>
         <div style="font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:1.25rem">${nome}</div>
         <div style="background:rgba(255,255,255,.1);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:1rem;margin-bottom:1rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👕':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.7);margin-bottom:.3rem">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👕':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.7);margin-bottom:.3rem">${i} ${v}</div>`).join('')}
         </div>
         ${rsvpBtn}${presentsBtn}
       </div>
@@ -1358,7 +1373,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,7vw,2.8rem);font-weight:900;font-style:italic;color:#60A5FA;line-height:1.1;margin-bottom:.4rem;text-shadow:0 0 20px rgba(96,165,250,.4)">${titulo}</div>
         <div style="font-size:1.1rem;color:rgba(255,255,255,.7);margin-bottom:1.5rem">${nome}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.5rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👗':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="background:rgba(255,255,255,.07);border:1px solid rgba(96,165,250,.2);border-radius:10px;padding:.55rem .75rem;font-size:.75rem;display:flex;gap:.35rem;align-items:center"><span>${i}</span><span style="color:rgba(255,255,255,.75)">${v}</span></div>`).join('')}
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="background:rgba(255,255,255,.07);border:1px solid rgba(96,165,250,.2);border-radius:10px;padding:.55rem .75rem;font-size:.75rem;display:flex;gap:.35rem;align-items:center"><span>${i}</span><span style="color:rgba(255,255,255,.75)">${v}</span></div>`).join('')}
         </div>
         ${msg?`<div style="background:rgba(96,165,250,.08);border-left:3px solid #60A5FA;padding:.8rem 1rem;font-style:italic;font-size:.83rem;color:rgba(255,255,255,.5);margin-bottom:1rem;line-height:1.5">"${msg}"</div>`:''}
         <div style="background:linear-gradient(135deg,#60A5FA,#06b6d4);color:#021a2e;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;cursor:pointer" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
@@ -1376,7 +1391,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,7vw,2.8rem);font-weight:900;font-style:italic;color:#93C5FD;line-height:1.1;margin-bottom:.4rem;text-shadow:0 0 20px rgba(147,197,253,.4)">${titulo}</div>
         <div style="font-size:1rem;color:rgba(255,255,255,.65);margin-bottom:1.75rem">${nome}</div>
         <div style="background:rgba(255,255,255,.07);border:1px solid rgba(147,197,253,.2);border-radius:16px;padding:1.1rem;margin-bottom:1.5rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👗':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:.3rem">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:.3rem">${i} ${v}</div>`).join('')}
         </div>
         ${msg?`<div style="border:1px solid rgba(147,197,253,.15);border-radius:12px;padding:.85rem;font-style:italic;font-size:.83rem;color:rgba(255,255,255,.5);margin-bottom:1rem;line-height:1.5">"${msg}"</div>`:''}
         <div style="background:linear-gradient(135deg,#93C5FD,#3b82f6);color:#0a1428;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;cursor:pointer" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
@@ -1435,7 +1450,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,8vw,3rem);font-weight:900;font-style:italic;color:${ac};line-height:1;margin-bottom:.4rem">${titulo}</div>
         <div style="font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:1.25rem">${nome}</div>
         <div style="background:rgba(255,255,255,.1);backdrop-filter:blur(12px);border:1px solid rgba(244,114,182,.2);border-radius:16px;padding:1rem;margin-bottom:1rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[dress?'👗':null,dress]].filter(x=>x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.7);margin-bottom:.3rem">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.7);margin-bottom:.3rem">${i} ${v}</div>`).join('')}
         </div>
         ${rsvpBtn}${presentsBtn}
       </div>
@@ -1581,8 +1596,10 @@ async function init() {
         event_date: local.data || local.event_date,
         event_time: local.hora || local.event_time,
         location: local.local || local.location,
+        address: local.endereco || local.address || '',
         dress_code: local.dress || local.dress_code,
         message: local.msg || local.message,
+        idade: local.idade || '',
         template: local.tplId || local.template || 'aniv-neon',
         photo_url: local.heroPhotoUrl || local.photo_url || '',
         gallery_urls: local.gallery_urls || [],
@@ -2008,61 +2025,4 @@ async function loadWishes() {
 function renderWishes(wishes) {
   const grid = document.getElementById('wishesGrid');
   if (!wishes.length) {
-    grid.innerHTML = '<div style="text-align:center;color:rgba(26,10,0,.3);padding:1rem;font-size:.85rem">Seja o primeiro a deixar uma mensagem! 💕</div>';
-    return;
-  }
-  grid.innerHTML = wishes.map(w => {
-    const initials = w.name.split(' ').map(n => n[0]).slice(0,2).join('').toUpperCase();
-    const time = new Date(w.created_at).toLocaleDateString('pt-BR', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
-    return `
-      <div class="wish-card">
-        <div class="wish-avatar">${w.emoji || initials}</div>
-        <div style="flex:1">
-          <div class="wish-name">${w.name}</div>
-          <div class="wish-msg">${w.message}</div>
-          <div class="wish-time">${time}</div>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-async function submitWish() {
-  const name = document.getElementById('wishName').value.trim();
-  const message = document.getElementById('wishMsg').value.trim();
-  const emoji = document.getElementById('wishEmoji').value.trim() || '💕';
-  if (!name || !message) { showToast('😊 Preencha nome e mensagem!'); return; }
-
-  const btn = document.getElementById('btnWish');
-  btn.disabled = true;
-  btn.textContent = 'Enviando...';
-
-  const { error } = await sb.from('wishes').insert({
-    invite_id: invite.id,
-    name, message, emoji
-  });
-
-  if (error) {
-    showToast('❌ Erro ao enviar. Tente novamente.');
-    btn.disabled = false;
-    btn.textContent = '💌 Enviar mensagem';
-    return;
-  }
-
-  document.getElementById('wishName').value = '';
-  document.getElementById('wishMsg').value = '';
-  document.getElementById('wishEmoji').value = '';
-  btn.disabled = false;
-  btn.textContent = '💌 Enviar mensagem';
-  showToast('💌 Mensagem enviada!');
-  showConfetti();
-  await loadWishes();
-}
-
-// ══════════════════════════════════════════
-//  START
-// ══════════════════════════════════════════
-init();
-</script>
-</body>
-</html>
+    grid.innerHTML 

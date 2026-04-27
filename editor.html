@@ -2604,7 +2604,7 @@ async function publishInvite(){
     title:state.titulo,event_name:state.nome,
     event_type:getCurrentTemplate()?.id||'',
     event_date:state.data||null,event_time:state.hora||null,
-    location:state.local,dress_code:state.dress,message:state.msg,
+    location:state.local,address:state.endereco||null,idade:state.idade||null,dress_code:state.dress,message:state.msg,
     rsvp_deadline:state.prazo||null,
     accent:state.accent,bg_key:state.bgKey,
     bg_gradient:BG_GRADIENTS[state.bgKey]||BG_GRADIENTS['dark-purple'],
