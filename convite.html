@@ -670,7 +670,7 @@ function renderTemplateHTML(tplId, s){
   let days='—';
   if(date){ const d=Math.floor((date-new Date())/86400000); days=d>0?d+'':'🎉'; }
 
-  const giftList = (s.gifts && giftList.length) ? s.gifts : (typeof gifts !== 'undefined' ? gifts : []);
+  const giftList = (s.gifts && s.gifts.length) ? s.gifts : (typeof gifts !== 'undefined' ? gifts : []);
   const giftsChips = giftList.slice(0,3).map(g=>`
     <div style="display:flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.12);border-radius:8px;padding:.35rem .65rem;font-size:.75rem;color:inherit">
       ${g.photo_url?`<img src="${g.photo_url}" style="width:14px;height:14px;border-radius:3px;object-fit:cover"/>`:'🎁'}
