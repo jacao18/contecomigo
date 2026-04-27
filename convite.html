@@ -2024,4 +2024,69 @@ async function loadWishes() {
     .from('wishes')
     .select('*')
     .eq('invite_id', invite.id)
-   
+    .order('created_at', { ascending: false });
+
+  renderWishes(data || []);
+}
+
+function renderWishes(wishes) {
+  const grid = document.getElementById('wishesGrid');
+  if (!wishes.length) {
+    grid.innerHTML = '<div style="text-align:center;color:rgba(26,10,0,.3);padding:1rem;font-size:.85rem">Seja o primeiro a deixar uma mensagem! 💕</div>';
+    return;
+  }
+  grid.innerHTML = wishes.map(w => {
+    const initials = w.name.split(' ').map(n => n[0]).slice(0,2).join('').toUpperCase();
+    const time = new Date(w.created_at).toLocaleDateString('pt-BR', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+    return `
+      <div class="wish-card">
+        <div class="wish-avatar">${w.emoji || initials}</div>
+        <div style="flex:1">
+          <div class="wish-name">${w.name}</div>
+          <div class="wish-msg">${w.message}</div>
+          <div class="wish-time">${time}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function submitWish() {
+  const name = document.getElementById('wishName').value.trim();
+  const message = document.getElementById('wishMsg').value.trim();
+  const emoji = document.getElementById('wishEmoji').value.trim() || '💕';
+  if (!name || !message) { showToast('😊 Preencha nome e mensagem!'); return; }
+
+  const btn = document.getElementById('btnWish');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+
+  const { error } = await sb.from('wishes').insert({
+    invite_id: invite.id,
+    name, message, emoji
+  });
+
+  if (error) {
+    showToast('❌ Erro ao enviar. Tente novamente.');
+    btn.disabled = false;
+    btn.textContent = '💌 Enviar mensagem';
+    return;
+  }
+
+  document.getElementById('wishName').value = '';
+  document.getElementById('wishMsg').value = '';
+  document.getElementById('wishEmoji').value = '';
+  btn.disabled = false;
+  btn.textContent = '💌 Enviar mensagem';
+  showToast('💌 Mensagem enviada!');
+  showConfetti();
+  await loadWishes();
+}
+
+// ══════════════════════════════════════════
+//  START
+// ══════════════════════════════════════════
+init();
+</script>
+</body>
+</html>
