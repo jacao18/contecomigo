@@ -2551,7 +2551,7 @@ async function loadInvite(id){
 // ══ PUBLISH ══
 async function publishInvite(){
   collectState();
-  if(!state.titulo||!state.nome||!state.data){showToast('❌ Preencha título, nome e data');goStep(1);return;}
+  if(!state.nome){showToast('❌ Preencha o nome do homenageado');goStep(1);return;}
   if(!currentUser){showToast('❌ Você precisa estar logado');return;}
 
   const btns=[document.getElementById('btnPublish'),document.getElementById('btnPublish2')];
