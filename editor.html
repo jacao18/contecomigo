@@ -76,6 +76,7 @@
     .tpl-card-img{aspect-ratio:3/4;width:100%;object-fit:cover;display:block;}
     .tpl-card-name{font-size:.67rem;font-weight:800;text-align:center;padding:.35rem .2rem .4rem;background:#fff;color:rgba(26,10,0,.55);}
     .tpl-upload-badge{position:absolute;top:.35rem;right:.35rem;background:rgba(255,61,107,.85);color:#fff;font-size:.58rem;font-weight:800;padding:.15rem .35rem;border-radius:4px;}
+    .tpl-animated-badge{position:absolute;bottom:.35rem;left:.35rem;background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;font-size:.58rem;font-weight:800;padding:.15rem .4rem;border-radius:4px;letter-spacing:.02em;}
 
     /* ── STYLE STEP ── */
     .color-swatches{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.35rem;}
@@ -1118,19 +1119,12 @@ function selectCat(el){
 function renderCatTemplates(cat){
   const tpls = TEMPLATES[cat]||[];
   const grid = document.getElementById('tplGrid');
-  // Demo slug with generic data for previews
-  const demoSlug = 'demo';
   grid.innerHTML = tpls.map(t=>`
     <div>
       <div class="tpl-card${t.id===state.tplId?' selected':''}" data-tplid="${t.id}" onclick="selectTemplate('${t.id}','${cat}',this)">
-        <div style="aspect-ratio:3/4;width:100%;overflow:hidden;position:relative;background:#1a0a1e">
-          <iframe
-            src="convite.html?slug=${demoSlug}&tpl=${t.id}&preview=1"
-            style="position:absolute;top:0;left:0;width:300%;height:300%;transform:scale(0.333);transform-origin:top left;pointer-events:none;border:none;"
-            loading="lazy" scrolling="no" tabindex="-1">
-          </iframe>
-        </div>
+        <img class="tpl-card-img" src="${t.img}" alt="${t.name}" loading="lazy"/>
         ${t.supportsHeroUpload?'<div class="tpl-upload-badge">+ Foto</div>':''}
+        ${t.animated?'<div class="tpl-animated-badge">✨ Animado</div>':''}
       </div>
       <div style="font-size:.67rem;font-weight:800;text-align:center;padding:.35rem .2rem .4rem;color:rgba(26,10,0,.55)">${t.name}</div>
     </div>
