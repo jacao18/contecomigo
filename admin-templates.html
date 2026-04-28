@@ -372,6 +372,7 @@
 <div id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
 const SUPA_URL  = 'https://wevmgnzmkdecdcnouhjq.supabase.co';
 const SUPA_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indldm1nbnpta2RlY2Rjbm91aGpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTI5MTYsImV4cCI6MjA5MjI4ODkxNn0.R7IF4vEF_D5fvB18ZRl8mJwXOsEpW-q2hSdsRRs9nM4';
@@ -647,12 +648,56 @@ function discardChanges() {
 
 // ── SAVE / DELETE ─────────────────────────────────────────────────
 
+// ── CAPTURE THUMBNAIL FROM IFRAME ─────────────────────────────────
+async function captureTemplateThumbnail() {
+  try {
+    const raw = document.getElementById('tplHtml').value.trim();
+    if (!raw) return null;
+
+    // Render HTML into a hidden off-screen div (same origin, so html2canvas works)
+    const rendered = applyVars(raw);
+    const container = document.createElement('div');
+    container.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:360px;height:480px;overflow:hidden;z-index:-1;border-radius:0;';
+    container.innerHTML = rendered;
+    document.body.appendChild(container);
+
+    // Wait a tick for images/fonts to start loading
+    await new Promise(r => setTimeout(r, 600));
+
+    const canvas = await html2canvas(container, {
+      width: 360, height: 480,
+      scale: 1.5,
+      useCORS: true,
+      allowTaint: true,
+      logging: false,
+      backgroundColor: '#0b0720',
+    });
+
+    document.body.removeChild(container);
+
+    return new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.88));
+  } catch(e) {
+    console.warn('Thumbnail capture failed:', e);
+    return null;
+  }
+}
+
+async function uploadThumbnail(blob, templateId) {
+  const filename = `tpl_${templateId || Date.now()}.jpg`;
+  const { data, error } = await sb.storage
+    .from('template-previews')
+    .upload(filename, blob, { contentType: 'image/jpeg', upsert: true });
+  if (error) { console.warn('Upload error:', error); return null; }
+  const { data: { publicUrl } } = sb.storage.from('template-previews').getPublicUrl(filename);
+  return publicUrl;
+}
+
 async function saveTemplate() {
   const name    = document.getElementById('tplName').value.trim();
   const accent  = document.getElementById('tplAccentHex').value.trim() || '#FFD93D';
   const bg      = document.getElementById('tplBg').value;
   const supHero = document.getElementById('tplSupportsHero').checked;
-  const prevImg = document.getElementById('tplPreviewImg').value.trim();
+  let   prevImg = document.getElementById('tplPreviewImg').value.trim();
   const html    = document.getElementById('tplHtml').value.trim();
 
   if (!name) { showToast('Dê um nome ao template.', 'error'); return; }
@@ -660,11 +705,33 @@ async function saveTemplate() {
 
   const selectedCats = getSelectedCategories();
   if (selectedCats.length === 0) { showToast('Selecione ao menos uma categoria.', 'error'); return; }
-  // Primary category = first selected (for backwards compat)
   const primaryCat = selectedCats[0];
 
   const editableFields = ['nome','titulo','data','hora','local','endereco','dress','msg','idade','tema','heroImg','accent']
     .filter(f => document.getElementById('ef-'+f)?.checked);
+
+  // ── Capturar thumbnail automaticamente se não tiver imagem manual ──
+  const saveBtn = document.querySelector('.btn-green');
+  const origLabel = saveBtn.textContent;
+  saveBtn.disabled = true;
+  saveBtn.textContent = '📸 Gerando thumbnail...';
+
+  if (!prevImg) {
+    showToast('Capturando preview do template...', 'info');
+    const blob = await captureTemplateThumbnail();
+    if (blob) {
+      // Upload temporário sem ID ainda; se for edição usa editingId
+      const tmpId = editingId || ('new_' + Date.now());
+      const url = await uploadThumbnail(blob, tmpId);
+      if (url) {
+        prevImg = url;
+        document.getElementById('tplPreviewImg').value = url;
+        updatePreviewImgThumb();
+      }
+    }
+  }
+
+  saveBtn.textContent = '💾 Salvando...';
 
   const payload = {
     name,
@@ -684,8 +751,25 @@ async function saveTemplate() {
     result = await sb.from('custom_templates').update(payload).eq('id', editingId);
   } else {
     result = await sb.from('custom_templates').insert([payload]).select().single();
-    if (result.data) editingId = result.data.id;
+    if (result.data) {
+      editingId = result.data.id;
+      // Re-upload thumbnail with correct ID if it was uploaded with tmp name
+      if (prevImg && prevImg.includes('new_')) {
+        const blob2 = await captureTemplateThumbnail();
+        if (blob2) {
+          const url2 = await uploadThumbnail(blob2, editingId);
+          if (url2) {
+            await sb.from('custom_templates').update({ preview_img: url2 }).eq('id', editingId);
+            document.getElementById('tplPreviewImg').value = url2;
+            updatePreviewImgThumb();
+          }
+        }
+      }
+    }
   }
+
+  saveBtn.disabled = false;
+  saveBtn.textContent = origLabel;
 
   if (result.error) {
     if (result.error.code === '42P01') { showSQLModal(); showToast('Crie a tabela primeiro.', 'error'); }
@@ -693,7 +777,7 @@ async function saveTemplate() {
     return;
   }
 
-  showToast('Template salvo! Já aparece no editor.', 'success');
+  showToast('Template salvo com thumbnail! ✅', 'success');
   await loadTemplates();
   renderList();
 }
@@ -814,7 +898,13 @@ CREATE TABLE IF NOT EXISTS public.custom_templates (
 );
 ALTER TABLE public.custom_templates ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "read active" ON public.custom_templates FOR SELECT USING (active = true);
-CREATE POLICY "admin all" ON public.custom_templates USING (auth.jwt() ->> 'email' = '${ADMIN_EMAIL}') WITH CHECK (auth.jwt() ->> 'email' = '${ADMIN_EMAIL}');`;
+CREATE POLICY "admin all" ON public.custom_templates USING (auth.jwt() ->> 'email' = '${ADMIN_EMAIL}') WITH CHECK (auth.jwt() ->> 'email' = '${ADMIN_EMAIL}');
+
+-- Bucket para thumbnails dos templates (execute também):
+INSERT INTO storage.buckets (id, name, public) VALUES ('template-previews', 'template-previews', true) ON CONFLICT DO NOTHING;
+CREATE POLICY "public read thumbnails" ON storage.objects FOR SELECT USING (bucket_id = 'template-previews');
+CREATE POLICY "admin upload thumbnails" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'template-previews' AND auth.jwt() ->> 'email' = '${ADMIN_EMAIL}');
+CREATE POLICY "admin update thumbnails" ON storage.objects FOR UPDATE USING (bucket_id = 'template-previews' AND auth.jwt() ->> 'email' = '${ADMIN_EMAIL}');`;
 
   const overlay = document.createElement('div');
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9998;';
