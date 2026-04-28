@@ -311,8 +311,9 @@ function renderOverview(){
         </div>
       </div>
       <div style="background:var(--panel);border:1px solid var(--border);border-radius:16px;overflow:hidden">
-        <div style="height:120px;background-image:url('${invImg}');background-size:cover;background-position:center;position:relative">
-          <span style="position:absolute;top:.6rem;right:.6rem" class="badge badge-${activeInvite.published?'yes':'pending'}">${activeInvite.published?'✅ Publicado':'📝 Rascunho'}</span>
+        <div style="height:160px;position:relative;overflow:hidden;background:#f0ece8">
+          <iframe src="convite.html?slug=${activeInvite.slug}" style="position:absolute;top:0;left:0;width:200%;height:200%;transform:scale(0.5);transform-origin:top left;pointer-events:none;border:none;" loading="lazy" scrolling="no"></iframe>
+          <span style="position:absolute;top:.6rem;right:.6rem;z-index:2" class="badge badge-${activeInvite.published?'yes':'pending'}">${activeInvite.published?'✅ Publicado':'📝 Rascunho'}</span>
         </div>
         <div style="padding:1rem">
           <div style="font-weight:800;margin-bottom:.25rem">${invTitle}</div>
