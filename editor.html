@@ -1072,6 +1072,7 @@ async function loadCustomTemplates(){
           name: t.name,
           img: t.preview_img || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80',
           supportsHeroUpload: t.supports_hero_upload || false,
+          animated: !!t.is_animated,
           defaultAccent: t.default_accent || '#FFD93D',
           defaultBg: t.default_bg || 'dark-purple',
           heroStyle: '',
@@ -1298,7 +1299,10 @@ function renderTweakControls(tpl){
           <div class="upload-zone-label">📸 Clique para escolher uma foto</div>
           <div class="upload-zone-sub">JPG, PNG, WEBP — recomendado 1200×800px</div>
         </div>
-        ${state.heroPhotoUrl?`<img src="${state.heroPhotoUrl}" style="width:100%;border-radius:8px;margin-top:.5rem;max-height:120px;object-fit:cover;">`:``}
+        ${state.heroPhotoUrl ? `
+          <img src="${state.heroPhotoUrl}" style="width:100%;border-radius:8px;margin-top:.5rem;max-height:120px;object-fit:cover;display:block"/>
+          <button onclick="removeHeroPhoto()" style="width:100%;margin-top:.35rem;padding:.35rem;background:none;border:1px solid rgba(26,10,0,.12);border-radius:6px;font-size:.75rem;cursor:pointer;color:rgba(26,10,0,.45);transition:all .15s" onmouseover="this.style.borderColor='#ff3d6b';this.style.color='#ff3d6b'" onmouseout="this.style.borderColor='rgba(26,10,0,.12)';this.style.color='rgba(26,10,0,.45)'">✕ Remover foto de fundo</button>
+        ` : ''}
       </div>`;
     }
     return '';

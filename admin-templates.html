@@ -273,6 +273,16 @@
             <span style="font-size:.8rem;color:var(--text-dim)">Upload de foto</span>
           </div>
         </div>
+        <div class="form-group">
+          <label class="form-label">Template animado</label>
+          <div style="display:flex;align-items:center;gap:.65rem;margin-top:.6rem">
+            <label class="toggle-switch">
+              <input type="checkbox" id="tplIsAnimated"/>
+              <span class="toggle-slider"></span>
+            </label>
+            <span style="font-size:.8rem;color:var(--text-dim)">Exibe badge <span style="background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;font-size:.6rem;font-weight:800;padding:.1rem .35rem;border-radius:4px;vertical-align:middle">✨ Animado</span> no seletor</span>
+          </div>
+        </div>
       </div>
       <div class="form-group">
         <label class="form-label">URL da imagem de preview <span>(thumbnail no seletor)</span></label>
@@ -593,6 +603,7 @@ function editTemplate(id) {
   document.getElementById('tplAccentHex').value  = t.default_accent || '#FFD93D';
   document.getElementById('tplBg').value         = t.default_bg || 'dark-purple';
   document.getElementById('tplSupportsHero').checked = !!t.supports_hero_upload;
+  document.getElementById('tplIsAnimated').checked   = !!t.is_animated;
   document.getElementById('tplPreviewImg').value = t.preview_img || '';
   document.getElementById('tplHtml').value       = t.html_template || '';
 
@@ -622,6 +633,7 @@ function clearForm() {
   document.getElementById('tplAccentHex').value = '#FFD93D';
   document.getElementById('tplBg').value        = 'dark-purple';
   document.getElementById('tplSupportsHero').checked = false;
+  document.getElementById('tplIsAnimated').checked   = false;
   document.getElementById('tplPreviewImg').value = '';
   document.getElementById('tplHtml').value       = '';
   // Default category: menina
@@ -696,7 +708,8 @@ async function saveTemplate() {
   const name    = document.getElementById('tplName').value.trim();
   const accent  = document.getElementById('tplAccentHex').value.trim() || '#FFD93D';
   const bg      = document.getElementById('tplBg').value;
-  const supHero = document.getElementById('tplSupportsHero').checked;
+  const supHero    = document.getElementById('tplSupportsHero').checked;
+  const isAnimated = document.getElementById('tplIsAnimated').checked;
   let   prevImg = document.getElementById('tplPreviewImg').value.trim();
   const html    = document.getElementById('tplHtml').value.trim();
 
@@ -742,6 +755,7 @@ async function saveTemplate() {
     default_accent: accent,
     default_bg: bg,
     supports_hero_upload: supHero,
+    is_animated: isAnimated,
     preview_img: prevImg || null,
     active: true,
   };
@@ -892,6 +906,7 @@ CREATE TABLE IF NOT EXISTS public.custom_templates (
   default_accent       text DEFAULT '#FFD93D',
   default_bg           text DEFAULT 'dark-purple',
   supports_hero_upload boolean DEFAULT false,
+  is_animated          boolean DEFAULT false,
   preview_img          text,
   active               boolean DEFAULT true,
   created_at           timestamptz DEFAULT now()
