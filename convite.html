@@ -1578,6 +1578,39 @@ async function init() {
   try {
   const params = new URLSearchParams(location.search);
   const slug = params.get('slug');
+  const tplPreview = params.get('tpl');   // template preview mode
+  const isPreview  = params.get('preview') === '1';
+
+  // ── Template preview mode (seletor de templates no editor) ──
+  if (isPreview && tplPreview) {
+    invite = {
+      template: tplPreview,
+      title: 'Festa Incrível!',
+      event_name: 'João Silva',
+      event_date: new Date(Date.now() + 30*24*60*60*1000).toISOString().slice(0,10),
+      event_time: '20:00',
+      location: 'Casa dos Anfitriões',
+      address: 'Rua das Flores, 123',
+      dress_code: 'Casual',
+      message: 'Sua presença é o nosso maior presente.',
+      idade: '30',
+      accent: null,
+      photo_url: '',
+      gallery_urls: [],
+      wishes_enabled: false,
+      pix_key: null,
+      music_url: null,
+      published: true
+    };
+    gifts = [];
+    document.documentElement.style.setProperty('--accent', '#FFD93D');
+    document.documentElement.style.setProperty('--accent-text', '#1A0A00');
+    document.title = 'Preview — ConteComigo';
+    const tplId = tplPreview;
+    document.getElementById('templateHero').innerHTML = renderTemplateHTML(tplId, invite);
+    hideLoading();
+    return;
+  }
 
   if (!slug) { showError(); return; }
 

@@ -1118,10 +1118,18 @@ function selectCat(el){
 function renderCatTemplates(cat){
   const tpls = TEMPLATES[cat]||[];
   const grid = document.getElementById('tplGrid');
+  // Demo slug with generic data for previews
+  const demoSlug = 'demo';
   grid.innerHTML = tpls.map(t=>`
     <div>
       <div class="tpl-card${t.id===state.tplId?' selected':''}" data-tplid="${t.id}" onclick="selectTemplate('${t.id}','${cat}',this)">
-        <img class="tpl-card-img" src="${t.img}" alt="${t.name}" loading="lazy"/>
+        <div style="aspect-ratio:3/4;width:100%;overflow:hidden;position:relative;background:#1a0a1e">
+          <iframe
+            src="convite.html?slug=${demoSlug}&tpl=${t.id}&preview=1"
+            style="position:absolute;top:0;left:0;width:300%;height:300%;transform:scale(0.333);transform-origin:top left;pointer-events:none;border:none;"
+            loading="lazy" scrolling="no" tabindex="-1">
+          </iframe>
+        </div>
         ${t.supportsHeroUpload?'<div class="tpl-upload-badge">+ Foto</div>':''}
       </div>
       <div style="font-size:.67rem;font-weight:800;text-align:center;padding:.35rem .2rem .4rem;color:rgba(26,10,0,.55)">${t.name}</div>
