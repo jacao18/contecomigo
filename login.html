@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Entrar — ConteComigo</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+  <meta http-equiv="Pragma" content="no-cache"/>
+  <meta http-equiv="Expires" content="0"/>
+  <title>Entrar — CrieConvites</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,700;1,9..144,900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
@@ -95,6 +99,17 @@
     .auth-box{animation:fadeUp .6s cubic-bezier(0.16,1,0.3,1) both;}
     .strength-bar{height:4px;border-radius:99px;background:rgba(26,10,0,.08);margin-top:.5rem;overflow:hidden;}
     .strength-fill{height:100%;width:0;border-radius:99px;transition:width .3s,background .3s;}
+
+    .code-toggle-row{display:flex;align-items:center;gap:.6rem;margin-bottom:.9rem;cursor:pointer;user-select:none;}
+    .code-toggle-row input[type=checkbox]{accent-color:var(--pink);width:15px;height:15px;cursor:pointer;flex-shrink:0;}
+    .code-toggle-row span{font-size:.82rem;font-weight:700;color:rgba(26,10,0,.55);}
+    .code-toggle-row span b{color:var(--pink);}
+    .code-field{display:none;margin-bottom:1.1rem;}
+    .code-field.show{display:block;}
+    .code-field input{width:100%;background:rgba(26,10,0,.05);border:1.5px dashed rgba(255,61,107,.35);border-radius:12px;padding:.75rem 1rem;color:var(--white);font-family:var(--font-body);font-size:.95rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;outline:none;transition:border-color .2s,background .2s;}
+    .code-field input::placeholder{color:rgba(26,10,0,.2);font-weight:400;letter-spacing:normal;text-transform:none;}
+    .code-field input:focus{border-color:var(--pink);background:rgba(255,61,107,.06);}
+    .code-badge{display:inline-flex;align-items:center;gap:.4rem;background:linear-gradient(135deg,rgba(124,58,237,.12),rgba(168,85,247,.1));border:1px solid rgba(124,58,237,.25);border-radius:8px;padding:.35rem .7rem;font-size:.75rem;font-weight:700;color:#7c3aed;margin-bottom:.75rem;}
   </style>
 </head>
 <body>
@@ -102,7 +117,7 @@
 <div class="panel-left">
   <div class="confetti-bg" id="confettiBg"></div>
   <div class="panel-left-content">
-    <div class="pl-logo" onclick="location.href='convite-online.html'">ConteComigo</div>
+    <div class="pl-logo" onclick="location.href='convite-online.html'">CrieConvites</div>
     <h1 class="pl-headline">Celebrar<br>começa <span class="accent">aqui.</span></h1>
     <p class="pl-sub">Crie convites que emocionam, gerencie convidados com facilidade e faça cada festa ser inesquecível.</p>
     <div class="pl-features">
@@ -154,7 +169,7 @@
       <div class="auth-sub">Crie sua conta gratuita em segundos.</div>
       <div class="alert-box error" id="cadAlert"></div>
 
-      <div class="form-row">
+      <div class="form-row" id="personalNameRow">
         <div class="form-group">
           <label>Nome</label>
           <input type="text" id="cadNome" placeholder="Ana"/>
@@ -177,6 +192,19 @@
         <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
       </div>
 
+      <!-- Cadastro empresarial -->
+      <label class="code-toggle-row">
+        <input type="checkbox" id="isCompanyCheck" onchange="toggleCompanyField(this.checked)"/>
+        <span>Sou uma <b>empresa</b> 🏢</span>
+      </label>
+      <div class="code-field" id="companyFieldWrap">
+        <div class="code-badge">🏢 Conta Empresarial</div>
+        <div class="form-group" style="margin-bottom:0">
+          <label>Nome da empresa</label>
+          <input type="text" id="cadCompanyName" placeholder="Ex: Acme Eventos" maxlength="120"/>
+        </div>
+      </div>
+
       <button class="btn-auth" id="btnCadastro" onclick="doCadastro()">Criar minha conta grátis 🎉</button>
       <div class="auth-footer" style="font-size:.75rem;margin-top:1rem">
         Ao criar uma conta você concorda com os <a href="#">Termos de Uso</a> e <a href="#">Política de Privacidade</a>
@@ -186,7 +214,7 @@
     <!-- SUCCESS -->
     <div class="auth-success" id="authSuccess">
       <div class="success-emoji" id="successEmoji">🎉</div>
-      <div class="success-msg" id="successMsg">Bem-vindo ao ConteComigo!</div>
+      <div class="success-msg" id="successMsg">Bem-vindo ao CrieConvites!</div>
       <div class="success-sub" id="successSub">Redirecionando para o seu painel...</div>
     </div>
 
@@ -246,6 +274,42 @@
   }
   function hideAlert(id){ document.getElementById(id).classList.remove('show'); }
 
+  // Determina o dashboard correto com base em DUAS fontes de verdade:
+  //  1) profiles.plan === 'enterprise'  OU
+  //  2) existe linha em companies onde owner_id = userId (dono de empresa)
+  // Se qualquer uma bater → dashboard-empresa.html.
+  async function getRedirectUrl(userId, accessToken) {
+    const authSb = supabase.createClient(SUPA_URL, SUPA_KEY, {
+      global: { headers: { Authorization: `Bearer ${accessToken}` } }
+    });
+
+    console.log('[CCM] userId recebido:', userId);
+    console.log('[CCM] accessToken:', accessToken ? accessToken.substring(0,30)+'...' : 'AUSENTE');
+
+    const [profileRes, companyRes] = await Promise.all([
+      authSb.from('profiles').select('plan, company_id').eq('id', userId).maybeSingle(),
+      authSb.from('companies').select('id').eq('owner_id', userId).eq('active', true).maybeSingle()
+    ]);
+
+    console.log('[CCM] profile:', profileRes.data, '| profErr:', profileRes.error?.message);
+    console.log('[CCM] company:', companyRes.data, '| compErr:', companyRes.error?.message);
+
+    const isEnterprise = profileRes.data?.plan === 'enterprise' || !!companyRes.data;
+    console.log('[CCM] isEnterprise:', isEnterprise, '→', isEnterprise ? 'dashboard-empresa.html' : 'dashboard.html');
+
+    return isEnterprise ? 'dashboard-empresa.html' : 'dashboard.html';
+  }
+
+  // Limpa cache do navegador (convites/draft) se o usuário atual é diferente do último
+  function _clearStaleCacheFor(userId){
+    const last = localStorage.getItem('ccm_last_user_id');
+    if(last && last !== userId){
+      ['ccm_current_slug','ccm_current_invite','ccm_draft','ccm_edit_invite','ccm_template']
+        .forEach(k => localStorage.removeItem(k));
+    }
+    localStorage.setItem('ccm_last_user_id', userId);
+  }
+
   async function doLogin(){
     hideAlert('loginAlert');
     const email=document.getElementById('loginEmail').value.trim();
@@ -257,10 +321,32 @@
     setLoading('btnLogin',false,'Entrar na minha conta →');
 
     if(error){showAlert('loginAlert', traduzErro(error.message));return;}
-    showSuccess('👋', `Bem-vindo de volta!`, 'Redirecionando...');
+
+    _clearStaleCacheFor(data.user.id);
+
     const afterLogin = sessionStorage.getItem('ccm_after_login');
-    if(afterLogin){ sessionStorage.removeItem('ccm_after_login'); setTimeout(()=>location.href=afterLogin, 1500); }
-    else { setTimeout(()=>location.href='dashboard.html', 1500); }
+    if(afterLogin){
+      sessionStorage.removeItem('ccm_after_login');
+      showSuccess('👋', `Bem-vindo de volta!`, 'Redirecionando...');
+      setTimeout(()=>location.href=afterLogin, 1500);
+    } else {
+      const dest = await getRedirectUrl(data.user.id, data.session.access_token);
+      const isAdmin = dest === 'dashboard-empresa.html';
+      showSuccess(isAdmin ? '🏢' : '👋', `Bem-vindo de volta!`, 'Redirecionando...');
+      setTimeout(()=>location.href=dest, 1500);
+    }
+  }
+
+  function toggleCompanyField(show){
+    document.getElementById('companyFieldWrap').classList.toggle('show', show);
+    // Esconde Nome/Sobrenome quando for cadastro empresarial
+    document.getElementById('personalNameRow').style.display = show ? 'none' : '';
+    if(!show){
+      document.getElementById('cadCompanyName').value='';
+    } else {
+      document.getElementById('cadNome').value='';
+      document.getElementById('cadSobrenome').value='';
+    }
   }
 
   async function doCadastro(){
@@ -269,17 +355,68 @@
     const sob=document.getElementById('cadSobrenome').value.trim();
     const email=document.getElementById('cadEmail').value.trim();
     const pw=document.getElementById('cadPw').value;
-    if(!nome||!email||!pw){showAlert('cadAlert','Preencha todos os campos obrigatórios.');return;}
-    if(pw.length<6){showAlert('cadAlert','A senha deve ter pelo menos 6 caracteres.');return;}
+    const isCompany=document.getElementById('isCompanyCheck').checked;
+    const companyName=document.getElementById('cadCompanyName').value.trim();
 
-    setLoading('btnCadastro',true,'Criar minha conta grátis 🎉');
+    if(!email||!pw){showAlert('cadAlert','Preencha e-mail e senha.');return;}
+    if(pw.length<6){showAlert('cadAlert','A senha deve ter pelo menos 6 caracteres.');return;}
+    if(isCompany && !companyName){showAlert('cadAlert','Digite o nome da empresa ou desmarque a opção.');return;}
+    if(!isCompany && !nome){showAlert('cadAlert','Preencha o seu nome.');return;}
+
+    // No cadastro empresarial usamos o nome da empresa como display name
+    const displayName = isCompany ? companyName : (nome + (sob?' '+sob:''));
+
+    setLoading('btnCadastro',true,'Criando conta...');
     const {data,error} = await sb.auth.signUp({
       email, password:pw,
-      options:{ data:{ name: nome + (sob?' '+sob:'') } }
+      options:{
+        data:{ name: displayName, full_name: displayName, is_company: isCompany },
+        // Após confirmar o e-mail, volta para login.html — que detecta a role
+        // (empresa vs. pessoa) e redireciona para o dashboard correto.
+        emailRedirectTo: location.origin + '/login.html'
+      }
     });
     setLoading('btnCadastro',false,'Criar minha conta grátis 🎉');
 
     if(error){showAlert('cadAlert', traduzErro(error.message));return;}
+
+    // Conta nova → limpa qualquer cache de outra conta que estivesse no navegador
+    if(data.user){ _clearStaleCacheFor(data.user.id); }
+
+    // Cadastro empresarial → cria empresa e marca profile como enterprise
+    if(isCompany && companyName && data.user){
+      setLoading('btnCadastro',true,'Configurando empresa...');
+      const {data:companyResult, error:compErr} = await sb.rpc('register_company', {
+        p_user_id: data.user.id,
+        p_company_name: companyName,
+        p_email: email
+      });
+      setLoading('btnCadastro',false,'Criar minha conta grátis 🎉');
+
+      console.log('[CCM cadastro empresa] companyResult:', companyResult, '| erro:', compErr?.message);
+
+      if(compErr || !companyResult?.ok){
+        const msg = companyResult?.error || compErr?.message || 'Erro desconhecido.';
+        showAlert('cadAlert', '⚠️ Não foi possível criar sua empresa: ' + msg + '. Entre em contato com o suporte.');
+        return;
+      }
+
+      // Se Supabase exige confirmação de e-mail, data.session é null
+      if(!data.session){
+        showSuccess('📧', `Empresa ${companyResult.company_name} criada!`, 'Confirme seu e-mail para acessar o painel empresarial.');
+        return;
+      }
+
+      showSuccess('🏢', `Empresa ${companyResult.company_name} criada!`, 'Redirecionando para o painel empresarial...');
+      setTimeout(()=>location.href='dashboard-empresa.html', 2000);
+      return;
+    }
+
+    // Cadastro normal
+    if(!data.session){
+      showSuccess('📧', `Olá, ${nome}!`, 'Confirme seu e-mail para acessar a plataforma.');
+      return;
+    }
     showSuccess('🥳', `Olá, ${nome}! Conta criada!`, 'Redirecionando para o seu painel...');
     setTimeout(()=>location.href='dashboard.html', 1800);
   }
@@ -313,9 +450,12 @@
     document.getElementById('loginAlert').style.color='#059669';
   });
 
-  // Já logado? Vai pro dashboard
-  sb.auth.getSession().then(({data:{session}})=>{
-    if(session) location.href='dashboard.html';
+  // Já logado? Verifica perfil e redireciona
+  sb.auth.getSession().then(async ({data:{session}})=>{
+    if(session){
+      const dest = await getRedirectUrl(session.user.id, session.access_token);
+      location.href = dest;
+    }
   });
 </script>
 </body>

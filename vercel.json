@@ -1,0 +1,11 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/convite-online.html" },
+    { "source": "/demo", "destination": "/demo.html" },
+    { "source": "/templates", "destination": "/templates.html" },
+    {
+      "source": "/((?!.*\\.[a-zA-Z0-9]+$)(?!convite$|convite-online$|index$|login$|templates$|dashboard$|dashboard-empresa$|editor$|preview$|demo$|admin-templates$|api/).+)",
+      "destination": "/convite.html?slug=$1"
+    }
+  ]
+}

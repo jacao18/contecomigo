@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Painel — ConteComigo</title>
+  <title>Painel — CrieConvites</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
@@ -143,7 +144,7 @@
 <body>
 
 <nav class="sidenav">
-  <div class="sidenav-logo" onclick="location.href='dashboard.html'">ConteComigo</div>
+  <div class="sidenav-logo" onclick="location.href='dashboard.html'">CrieConvites</div>
   <div class="sidenav-user">
     <div class="sidenav-avatar" id="userAvatar">?</div>
     <div>
@@ -206,6 +207,31 @@ async function init(){
   if(!session){ location.href='login.html'; return; }
   currentUser = session.user;
 
+  // ── ISOLAMENTO DE DADOS ENTRE USUÁRIOS ──
+  // Se o último usuário guardado no localStorage é diferente do atual,
+  // limpa qualquer cache de convite/draft que possa pertencer a outra conta.
+  const lastUser = localStorage.getItem('ccm_last_user_id');
+  if(lastUser && lastUser !== currentUser.id){
+    ['ccm_current_slug','ccm_current_invite','ccm_draft','ccm_edit_invite','ccm_template']
+      .forEach(k => localStorage.removeItem(k));
+  }
+  localStorage.setItem('ccm_last_user_id', currentUser.id);
+
+  // ── VERIFICA SE USUÁRIO É EMPRESA → redireciona para dashboard-empresa ──
+  try {
+    const [profRes, compRes] = await Promise.all([
+      sb.from('profiles').select('plan, company_id').eq('id', currentUser.id).maybeSingle(),
+      sb.from('companies').select('id').eq('owner_id', currentUser.id).eq('active', true).maybeSingle()
+    ]);
+    const isEnterprise = profRes.data?.plan === 'enterprise' || !!compRes.data;
+    if(isEnterprise){
+      location.replace('dashboard-empresa.html');
+      return;
+    }
+  } catch(e){
+    console.warn('[CCM] Falha ao verificar role do usuário:', e);
+  }
+
   // User UI
   const name = session.user.user_metadata?.name || session.user.email.split('@')[0];
   document.getElementById('userAvatar').textContent = name[0].toUpperCase();
@@ -225,18 +251,40 @@ async function init(){
 }
 
 async function loadData(){
-  // Load all invites
-  const {data:invData} = await sb.from('invites').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false});
+  // Load all invites for this user
+  const {data:invData, error:invErr} = await sb
+    .from('invites')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .order('created_at', {ascending:false});
+
+  if(invErr) console.error('Erro ao carregar convites:', invErr);
   invites = invData || [];
 
-  // Use most recent published invite, or first invite
-  activeInvite = invites.find(i=>i.published) || invites[0] || null;
+  // Fallback seguro: se não veio nada, tenta buscar pelo slug salvo SEMPRE filtrando por user_id.
+  // Isso evita vazamento de dados entre contas diferentes que tenham o mesmo navegador.
+  if(!invites.length){
+    const savedSlug = localStorage.getItem('ccm_current_slug');
+    if(savedSlug){
+      const {data:slugData} = await sb
+        .from('invites')
+        .select('*')
+        .eq('slug', savedSlug)
+        .eq('user_id', currentUser.id)
+        .limit(1);
+      if(slugData && slugData.length) invites = slugData;
+      else localStorage.removeItem('ccm_current_slug'); // slug não é deste usuário, descarta
+    }
+  }
 
-  // Check if a specific slug was set from editor
+  // Usar convite preferido: slug atual > mais recente publicado > primeiro
   const currentSlug = localStorage.getItem('ccm_current_slug');
   if(currentSlug){
     const found = invites.find(i=>i.slug===currentSlug);
     if(found) activeInvite = found;
+  }
+  if(!activeInvite){
+    activeInvite = invites.find(i=>i.published===true) || invites[0] || null;
   }
 
   if(activeInvite){
@@ -279,7 +327,7 @@ function renderOverview(){
   const pct=guests.length?Math.round(yes.length/guests.length*100):0;
   const r=54,circ=2*Math.PI*r,dash=circ*(pct/100);
 
-  const invTitle = activeInvite?.title || 'Nenhum convite publicado';
+  const invTitle = activeInvite?.title || activeInvite?.event_name || activeInvite?.slug || 'Convite sem título';
   const invImg = activeInvite?.photo_url || 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400&q=70';
   const invDate = activeInvite?.event_date ? new Date(activeInvite.event_date+'T12:00').toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'}) : 'Data não definida';
 
@@ -318,13 +366,13 @@ function renderOverview(){
           <div style="font-weight:800;margin-bottom:.25rem">${invTitle}</div>
           <div style="font-size:.75rem;color:rgba(26,10,0,.4);margin-bottom:1rem">${invDate}</div>
           <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-            <button class="btn-xs btn-xs-pink" onclick="goEditor()">✏️ Editar</button>
+            ${activeInvite.published ? '' : '<button class="btn-xs btn-xs-pink" onclick="goEditor()">✏️ Editar</button>'}
             <button class="btn-xs btn-xs-outline" onclick="openPublicInvite()">👁 Ver</button>
             <button class="btn-xs btn-xs-outline" style="color:#f87171;border-color:rgba(248,113,113,.3)" onclick="confirmDeleteInvite('${activeInvite?.id}')">🗑 Deletar</button>
           </div>
         </div>
       </div>
-    </div>` : `<div class="empty-state"><div class="empty-state-emoji">🎉</div><div style="font-weight:700;margin-bottom:.5rem">Nenhum convite publicado ainda</div><button class="btn-xs btn-xs-pink" onclick="location.href='editor.html'" style="margin-top:1rem;padding:.5rem 1.25rem">✨ Criar meu primeiro convite</button></div>`}
+    </div>` : `<div class="empty-state"><div class="empty-state-emoji">🎉</div><div style="font-weight:700;margin-bottom:.5rem">Nenhum convite publicado ainda</div><button class="btn-xs btn-xs-pink" onclick="location.href='templates.html'" style="margin-top:1rem;padding:.5rem 1.25rem">✨ Criar meu primeiro convite</button></div>`}
 
     <div class="section-hdr"><h2>📋 Últimas confirmações</h2><button class="btn-xs btn-xs-outline" onclick="showSection('guests')">Ver todos →</button></div>
     ${renderGuestsTable(guests.slice(0,5))}
@@ -394,9 +442,26 @@ function renderGiftsSection(){
 
 // ── SHARE ──
 function renderShare(){
-  const slug = activeInvite?.slug || '';
-  const shareLink = slug ? `${location.origin}/convite.html?slug=${slug}` : location.origin+'/convite.html';
-  const invTitle = activeInvite?.title || 'meu evento';
+  // Sem convite criado → não existe link para compartilhar
+  if(!activeInvite){
+    return `
+    <div class="share-box" style="text-align:center">
+      <div class="share-box-title">🔗 Compartilhe seu convite</div>
+      <div class="share-box-sub">Você ainda não tem um convite. Crie o seu primeiro para gerar o link de compartilhamento.</div>
+      <button class="btn-xs btn-xs-pink" style="padding:.55rem 1.25rem" onclick="location.href='templates.html'">✨ Criar meu convite</button>
+    </div>`;
+  }
+  // Convite existe mas ainda não tem link público (rascunho sem slug)
+  if(!activeInvite.slug){
+    return `
+    <div class="share-box" style="text-align:center">
+      <div class="share-box-title">🔗 Quase lá!</div>
+      <div class="share-box-sub">Finalize e publique seu convite no editor para gerar o link de compartilhamento.</div>
+      <button class="btn-xs btn-xs-pink" style="padding:.55rem 1.25rem" onclick="goEditor()">✏️ Continuar editando</button>
+    </div>`;
+  }
+  const shareLink = `${location.origin}/${activeInvite.slug}`;
+  const invTitle = (activeInvite.title || 'meu evento').replace(/['"<>`]/g, '');
   return `
     <div class="share-box">
       <div class="share-box-title">🔗 Compartilhe seu convite</div>
@@ -455,7 +520,7 @@ function renderUpgrade(){
             <div>✓ Música e galeria</div>
             <div>✓ Sem marca d'água</div>
           </div>
-          ${plan==='pro'?'<div style="text-align:center;font-size:.8rem;font-weight:800;color:var(--pink)">✓ Plano atual</div>':`<button onclick="showToast('Em breve! Entre em contato: contato@contecomigo.com.br')" style="width:100%;padding:.65rem;background:var(--pink);color:#fff;border:none;border-radius:10px;font-family:var(--font-body);font-size:.85rem;font-weight:800;cursor:pointer">Assinar Pro →</button>`}
+          ${plan==='pro'?'<div style="text-align:center;font-size:.8rem;font-weight:800;color:var(--pink)">✓ Plano atual</div>':`<button onclick="showToast('Em breve! Entre em contato: contato@crieconvites.com.br')" style="width:100%;padding:.65rem;background:var(--pink);color:#fff;border:none;border-radius:10px;font-family:var(--font-body);font-size:.85rem;font-weight:800;cursor:pointer">Assinar Pro →</button>`}
         </div>
         <!-- PROFISSIONAL -->
         <div style="background:var(--panel);border:2px solid rgba(255,217,61,.4);border-radius:16px;padding:1.5rem;background:linear-gradient(135deg,rgba(255,217,61,.04),rgba(255,61,107,.02));${plan==='profissional'?'box-shadow:0 0 0 3px rgba(255,217,61,.25)':''}">
@@ -470,7 +535,7 @@ function renderUpgrade(){
             <div>✓ Relatórios e exportações</div>
             <div>✓ Suporte prioritário</div>
           </div>
-          ${plan==='profissional'?'<div style="text-align:center;font-size:.8rem;font-weight:800;color:var(--yellow-dk)">✓ Plano atual</div>':`<button onclick="window.location.href='mailto:contato@contecomigo.com.br?subject=Plano Profissional'" style="width:100%;padding:.65rem;background:var(--yellow);color:rgba(26,10,0,.85);border:none;border-radius:10px;font-family:var(--font-body);font-size:.85rem;font-weight:800;cursor:pointer">Falar com a equipe →</button>`}
+          ${plan==='profissional'?'<div style="text-align:center;font-size:.8rem;font-weight:800;color:var(--yellow-dk)">✓ Plano atual</div>':`<button onclick="window.location.href='mailto:contato@crieconvites.com.br?subject=Plano Profissional'" style="width:100%;padding:.65rem;background:var(--yellow);color:rgba(26,10,0,.85);border:none;border-radius:10px;font-family:var(--font-body);font-size:.85rem;font-weight:800;cursor:pointer">Falar com a equipe →</button>`}
           <div style="font-size:.7rem;color:rgba(26,10,0,.3);text-align:center;margin-top:.6rem">Ideal para casas de festas e buffets</div>
         </div>
       </div>
@@ -506,25 +571,67 @@ function filterGuests(q){
 
 // ── ACTIONS ──
 function copyLink(link){navigator.clipboard.writeText(link).then(()=>showToast('✅ Link copiado!'));}
-function shareWhatsApp(link,title){
-  const msg=`🎉 Você está convidado para ${title}!\n\nConfirme sua presença e veja a lista de presentes:\n${link}`;
-  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+function shareWhatsApp(link, titleArg){
+  const inv = activeInvite || {};
+  const displayTitle = (inv.title || inv.event_name || titleArg || 'Convite especial').trim();
+  const nome  = (inv.event_name || '').trim();
+  const local = (inv.location || '').trim();
+
+  let dateStr = '';
+  if(inv.event_date){
+    try{
+      const d = new Date(inv.event_date + 'T12:00:00');
+      dateStr = d.toLocaleDateString('pt-BR', {weekday:'long', day:'numeric', month:'long'});
+      dateStr = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+    }catch(_){}
+  }
+  const hora    = (inv.event_time || '').replace(':','h').replace(/h00$/,'h');
+  const horaFim = (inv.event_time_end || '').replace(':','h').replace(/h00$/,'h');
+  const horaStr = hora ? (horaFim ? `das ${hora} às ${horaFim}` : `às ${hora}`) : '';
+
+  const L = [];
+  L.push('🎉 ' + displayTitle);
+  if(nome && nome !== displayTitle) L.push('Para: ' + nome);
+  if(dateStr) L.push('📅 ' + dateStr + (horaStr ? ' ' + horaStr : ''));
+  if(local)   L.push('📍 ' + local);
+  L.push('');
+  L.push('Confirme sua presença:');
+  L.push(link);
+  L.push('');
+  L.push('Feito com CrieConvites 🎊');
+
+  window.open('https://wa.me/?text=' + encodeURIComponent(L.join('\n')), '_blank');
 }
 function openPublicInvite(){
   const slug = activeInvite?.slug;
-  window.open('convite.html'+(slug?'?slug='+slug:''),'_blank');
+  window.open(slug ? ('/'+slug) : 'convite.html','_blank');
 }
 function goEditor(){
-  if(activeInvite) localStorage.setItem('ccm_edit_invite', activeInvite.id);
-  location.href='editor.html';
+  if(activeInvite){
+    // Convite publicado não pode ser editado — é preciso deletar e criar um novo
+    if(activeInvite.published){
+      showToast('🔒 Convite publicado não pode ser editado. Exclua e crie um novo.');
+      return;
+    }
+    // Editing existing invite — go straight to editor with the invite loaded
+    localStorage.setItem('ccm_edit_invite', activeInvite.id);
+    location.href='editor.html';
+  } else {
+    // No invite yet — go to template selector first
+    location.href='templates.html';
+  }
 }
 function newInvite(){
   // Limpa qualquer rascunho ou convite anterior antes de começar do zero
   ['ccm_current_slug','ccm_current_invite','ccm_draft','ccm_edit_invite','ccm_template'].forEach(k=>localStorage.removeItem(k));
-  location.href='editor.html';
+  location.href='templates.html';
 }
 async function doLogout(){
   await sb.auth.signOut();
+  // Limpa qualquer cache de convite/draft do usuário que está saindo para evitar
+  // que o próximo login na mesma máquina veja dados da conta anterior.
+  ['ccm_current_slug','ccm_current_invite','ccm_draft','ccm_edit_invite','ccm_template','ccm_last_user_id']
+    .forEach(k => localStorage.removeItem(k));
   location.href='convite-online.html';
 }
 function exportCSV(){

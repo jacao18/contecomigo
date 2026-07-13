@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin — Templates — ConteComigo</title>
+  <title>Admin — Templates — CrieConvites</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
   <style>
@@ -165,23 +166,24 @@
 <div id="authGate">
   <div class="auth-card">
     <div style="font-size:2rem;margin-bottom:.75rem">🔐</div>
-    <h2>Admin — ConteComigo</h2>
+    <h2>Admin — CrieConvites</h2>
     <p>Área restrita. Faça login com sua conta para continuar.</p>
     <p class="auth-error" id="authError"></p>
     <button class="btn btn-pink" style="width:100%" onclick="goToLogin()">Fazer login →</button>
-    <p style="font-size:.72rem;color:var(--text-dim);margin-top:1rem">Após entrar no ConteComigo, volte para esta página.</p>
+    <p style="font-size:.72rem;color:var(--text-dim);margin-top:1rem">Após entrar no CrieConvites, volte para esta página.</p>
   </div>
 </div>
 
 <!-- TOPBAR -->
 <div class="topbar">
   <div style="display:flex;align-items:center;gap:.75rem">
-    <div class="topbar-logo" onclick="location.href='dashboard.html'">ConteComigo</div>
+    <div class="topbar-logo" onclick="location.href='dashboard.html'">CrieConvites</div>
     <div class="admin-badge">Admin</div>
     <span style="font-size:.75rem;color:var(--text-dim)">/ Templates</span>
   </div>
   <div class="topbar-right">
     <span id="adminEmail" style="font-size:.78rem;color:var(--text-dim)"></span>
+    <button class="btn btn-outline btn-sm" onclick="restoreHiddenBuiltins()" title="Restaurar templates de sistema removidos">↩ Restaurar ocultos</button>
     <button class="btn btn-outline btn-sm" onclick="doLogout()">Sair</button>
     <button class="btn btn-green btn-sm" onclick="newTemplate()">+ Novo template</button>
   </div>
@@ -193,24 +195,15 @@
   <!-- LEFT PANEL -->
   <div class="left-panel">
     <div class="panel-tabs">
-      <div class="panel-tab active" data-tab="list" onclick="switchTab('list',this)">📋 Custom</div>
-      <div class="panel-tab" data-tab="system" onclick="switchTab('system',this)">🏛 Sistema</div>
+      <div class="panel-tab active" data-tab="list" onclick="switchTab('list',this)">📋 Templates</div>
       <div class="panel-tab" data-tab="editor" onclick="switchTab('editor',this)">✏️ Editor</div>
     </div>
 
-    <!-- LIST TAB (custom) -->
+    <!-- LIST TAB (todos os templates) -->
     <div class="panel-body" id="tabList">
       <div id="tplList">
-        <div class="empty-state"><div class="icon">✨</div><div>Nenhum template ainda</div></div>
+        <div class="empty-state"><div class="icon">✨</div><div>Carregando templates...</div></div>
       </div>
-    </div>
-
-    <!-- SYSTEM TAB -->
-    <div class="panel-body" id="tabSystem" style="display:none">
-      <div style="font-size:.75rem;color:var(--text-dim);margin-bottom:.85rem;line-height:1.5;background:rgba(255,217,61,.06);border:1px solid rgba(255,217,61,.15);border-radius:8px;padding:.65rem .85rem;">
-        ⭐ Clique num template para ver o preview. Use <strong style="color:var(--yellow)">Editar →</strong> para abrir no editor e salvar como custom.
-      </div>
-      <div id="builtinList"></div>
     </div>
 
     <!-- EDITOR TAB -->
@@ -333,6 +326,8 @@
         <div class="var-chip" onclick="insertVar('{{mes}}')">{{mes}}</div>
         <div class="var-chip" onclick="insertVar('{{diaSemana}}')">{{diaSemana}}</div>
         <div class="var-chip" onclick="insertVar('{{hora}}')">{{hora}}</div>
+        <div class="var-chip" onclick="insertVar('{{horaFim}}')">{{horaFim}}</div>
+        <div class="var-chip" onclick="insertVar('{{horaCompleta}}')">{{horaCompleta}}</div>
         <div class="var-chip" onclick="insertVar('{{local}}')">{{local}}</div>
         <div class="var-chip" onclick="insertVar('{{endereco}}')">{{endereco}}</div>
         <div class="var-chip" onclick="insertVar('{{dress}}')">{{dress}}</div>
@@ -392,6 +387,7 @@ const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
 
 let currentUser  = null;
 let editingId    = null;
+let editingIsBuiltin = false;
 let templates    = [];
 let previewTimer = null;
 
@@ -425,8 +421,7 @@ function onAuthed() {
   document.getElementById('authGate').style.display = 'none';
   document.getElementById('mainLayout').style.display = 'grid';
   document.getElementById('adminEmail').textContent = currentUser.email;
-  renderBuiltinList();
-  loadTemplates();
+  loadTemplates(); // renderList() é chamado dentro de loadTemplates
 }
 
 // ── TEMPLATE LIST ─────────────────────────────────────────────────
@@ -468,21 +463,23 @@ function autoDetectFields() {
   if (!html.trim()) { showToast('Cole o HTML primeiro.', 'error'); return; }
 
   const PLACEHOLDER_MAP = {
-    '{{nome}}':     'ef-nome',
-    '{{titulo}}':   'ef-titulo',
-    '{{data}}':     'ef-data',
-    '{{dia}}':      'ef-data',
-    '{{mes}}':      'ef-data',
-    '{{diaSemana}}':'ef-data',
-    '{{hora}}':     'ef-hora',
-    '{{local}}':    'ef-local',
-    '{{endereco}}': 'ef-endereco',
-    '{{dress}}':    'ef-dress',
-    '{{msg}}':      'ef-msg',
-    '{{idade}}':    'ef-idade',
-    '{{tema}}':     'ef-tema',
-    '{{heroImg}}':  'ef-heroImg',
-    '{{accent}}':   'ef-accent',
+    '{{nome}}':         'ef-nome',
+    '{{titulo}}':       'ef-titulo',
+    '{{data}}':         'ef-data',
+    '{{dia}}':          'ef-data',
+    '{{mes}}':          'ef-data',
+    '{{diaSemana}}':    'ef-data',
+    '{{hora}}':         'ef-hora',
+    '{{horaFim}}':      'ef-hora',
+    '{{horaCompleta}}': 'ef-hora',
+    '{{local}}':        'ef-local',
+    '{{endereco}}':     'ef-endereco',
+    '{{dress}}':        'ef-dress',
+    '{{msg}}':          'ef-msg',
+    '{{idade}}':        'ef-idade',
+    '{{tema}}':         'ef-tema',
+    '{{heroImg}}':      'ef-heroImg',
+    '{{accent}}':       'ef-accent',
   };
 
   // Uncheck all first
@@ -549,21 +546,41 @@ async function loadTemplates() {
   renderList();
 }
 
+// ── localStorage helpers mantidos só para limpeza de dados legados ──
+function getHiddenBuiltins() {
+  try { return JSON.parse(localStorage.getItem('hiddenBuiltinTemplates') || '[]'); }
+  catch(e) { return []; }
+}
+function getBuiltinOverrides() {
+  try { return JSON.parse(localStorage.getItem('builtinOverrides') || '{}'); }
+  catch(e) { return {}; }
+}
+
+function restoreHiddenBuiltins() {
+  // Função legada — limpeza do localStorage antigo
+  localStorage.removeItem('hiddenBuiltinTemplates');
+  localStorage.removeItem('builtinOverrides');
+  showToast('Cache local limpo.', 'success');
+}
+
 function renderList() {
   const el = document.getElementById('tplList');
-  if (!templates.length) {
-    el.innerHTML = `<div class="empty-state"><div class="icon">✨</div><div>Nenhum template ainda.<br/><small style="opacity:.5">Clique em "+ Novo template" para começar.</small></div></div>`;
-    return;
-  }
-  el.innerHTML = templates.map(t => `
+  const fallbackImg = 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2244%22 height=%2244%22><rect fill=%22%23222%22 width=%2244%22 height=%2244%22/></svg>';
+
+  // IDs dos builtins que já têm versão custom no Supabase (pelo builtin_id ou pelo nome)
+  const customizedBuiltinIds = new Set(templates.map(t => t.builtin_id).filter(Boolean));
+  const customNames = new Set(templates.map(t => (t.name||'').trim().toLowerCase()));
+
+  // Templates do Supabase — sempre mostrados primeiro
+  const customRows = templates.map(t => `
     <div class="tpl-item${editingId===t.id?' selected':''}" onclick="editTemplate('${t.id}')">
-      <img class="tpl-item-img" src="${t.preview_img||'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=120&q=60'}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2244%22 height=%2244%22><rect fill=%22%23222%22 width=%2244%22 height=%2244%22/></svg>'"/>
+      <img class="tpl-item-img" src="${t.preview_img||fallbackImg}" onerror="this.src='${fallbackImg}'"/>
       <div class="tpl-item-info">
         <div class="tpl-item-name">${t.name||'Sem nome'}</div>
         <div class="tpl-item-meta">
           <span>${formatCategories(t.category, t.categories)}</span>
           <span style="opacity:.4">·</span>
-          <span>${(t.html_template||'').length > 0 ? (t.html_template.length/1000).toFixed(1)+'kb HTML' : 'sem HTML'}</span>
+          <span>${(t.html_template||'').length > 0 ? (t.html_template.length/1000).toFixed(1)+'kb' : 'sem HTML'}</span>
         </div>
       </div>
       <div class="tpl-item-actions">
@@ -571,6 +588,28 @@ function renderList() {
         <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteTemplate('${t.id}')" title="Excluir">✕</button>
       </div>
     </div>`).join('');
+
+  // Templates de sistema (builtins) — excluindo os que já têm versão custom no Supabase
+  const builtinRows = BUILTIN_TEMPLATES
+    .filter(t => !customizedBuiltinIds.has(t.id) && !customNames.has(t.name.trim().toLowerCase()))
+    .map(t => {
+      const imgUrl = t.img.replace('w=120','w=600').replace('q=70','q=80');
+      return `
+      <div class="tpl-item${editingId==='builtin_'+t.id?' selected':''}" onclick="editBuiltin('${t.id}')">
+        <img class="tpl-item-img" src="${imgUrl}" onerror="this.src='${fallbackImg}'"/>
+        <div class="tpl-item-info">
+          <div class="tpl-item-name">${t.name} <span style="font-size:.6rem;background:rgba(255,255,255,.1);padding:.1rem .4rem;border-radius:4px;color:var(--text-dim)">sistema</span></div>
+          <div class="tpl-item-meta"><span>${CAT_LABELS[t.cat]||t.cat}</span></div>
+        </div>
+        <div class="tpl-item-actions">
+          <div class="dot-active" title="Ativo"></div>
+          <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteBuiltin('${t.id}')" title="Desativar">✕</button>
+        </div>
+      </div>`;
+    }).join('');
+
+  const all = customRows + builtinRows;
+  el.innerHTML = all || `<div style="font-size:.75rem;color:var(--text-dim);padding:1rem 0;text-align:center">Nenhum template. Clique em "+ Novo" para criar.</div>`;
 }
 
 // ── CATEGORY HELPERS ──────────────────────────────────────────────
@@ -583,10 +622,58 @@ function formatCategories(category, categories) {
   return cats.map(c => CAT_LABELS[c] || c).join(', ');
 }
 
+// ── EDIT BUILTIN: abre no editor como novo template no Supabase ──
+// Ao salvar, cria um registro com builtin_id para não duplicar na listagem
+function editBuiltin(builtinId) {
+  const t = BUILTIN_TEMPLATES.find(x => x.id === builtinId);
+  if (!t) return;
+  // Preenche o formulário como novo template baseado no builtin
+  editingId = null;
+  editingIsBuiltin = false;
+  document.getElementById('tplName').value      = t.name;
+  document.getElementById('tplAccent').value    = t.accent;
+  document.getElementById('tplAccentHex').value = t.accent;
+  document.getElementById('tplBg').value        = 'dark-purple';
+  document.getElementById('tplSupportsHero').checked = t.id.includes('fotos');
+  document.getElementById('tplIsAnimated').checked   = false;
+  const imgUrl = t.img.replace('w=120','w=600').replace('q=70','q=80');
+  document.getElementById('tplPreviewImg').value = imgUrl;
+  updatePreviewImgThumb();
+  setSelectedCategories([t.cat]);
+  const placeholderHtml = getBuiltinPlaceholderHtml(t.id, t.accent);
+  document.getElementById('tplHtml').value = placeholderHtml;
+  autoDetectFields();
+  // Guardar o builtin_id para ser salvo junto no Supabase
+  document.getElementById('tplHtml').dataset.builtinId = builtinId;
+  document.getElementById('editingLabel').textContent = `Editando (sistema): ${t.name}`;
+  switchTab('editor', document.querySelector('[data-tab="editor"]'));
+  debouncePreview();
+  showToast(`Template "${t.name}" carregado para edição`, 'success');
+}
+
+// ── DELETE BUILTIN: salva no Supabase com active=false para ocultar do editor ──
+async function deleteBuiltin(builtinId) {
+  if (!confirm('Remover este template do sistema? Ele não aparecerá mais para os usuários.')) return;
+  // Upsert no Supabase com active=false — editor só busca active=true
+  const { error } = await sb.from('custom_templates').upsert([{
+    builtin_id: builtinId,
+    name: BUILTIN_TEMPLATES.find(x=>x.id===builtinId)?.name || builtinId,
+    active: false,
+    html_template: '',
+    category: BUILTIN_TEMPLATES.find(x=>x.id===builtinId)?.cat || 'custom',
+    categories: [BUILTIN_TEMPLATES.find(x=>x.id===builtinId)?.cat || 'custom'],
+  }], { onConflict: 'builtin_id' });
+  if (error) { showToast('Erro: ' + error.message, 'error'); return; }
+  await loadTemplates();
+  renderList();
+  showToast('Template removido do sistema.', 'success');
+}
+
 // ── EDIT ─────────────────────────────────────────────────────────
 
 function newTemplate() {
   editingId = null;
+  editingIsBuiltin = false;
   clearForm();
   switchTab('editor', document.querySelector('[data-tab="editor"]'));
   document.getElementById('editingLabel').textContent = 'Novo template';
@@ -594,9 +681,12 @@ function newTemplate() {
 }
 
 function editTemplate(id) {
+  // Busca sempre do Supabase (array templates) — sem fallback para builtin hardcoded
   const t = templates.find(x => x.id === id);
   if (!t) return;
+
   editingId = id;
+  editingIsBuiltin = false;
 
   document.getElementById('tplName').value       = t.name || '';
   document.getElementById('tplAccent').value     = t.default_accent || '#FFD93D';
@@ -653,6 +743,7 @@ function clearForm() {
 
 function discardChanges() {
   editingId = null;
+  editingIsBuiltin = false;
   clearForm();
   switchTab('list', document.querySelector('[data-tab="list"]'));
   renderList();
@@ -760,6 +851,13 @@ async function saveTemplate() {
     active: true,
   };
 
+  // Se veio de um editBuiltin(), pegar o builtin_id do dataset e incluir no payload
+  const builtinId = document.getElementById('tplHtml').dataset.builtinId || null;
+  if (builtinId && !editingId) {
+    payload.builtin_id = builtinId;
+    delete document.getElementById('tplHtml').dataset.builtinId;
+  }
+
   let result;
   if (editingId) {
     result = await sb.from('custom_templates').update(payload).eq('id', editingId);
@@ -818,6 +916,8 @@ function applyVars(html) {
     '{{mes}}':          'Junho',
     '{{diaSemana}}':    'Sábado',
     '{{hora}}':         '16:00',
+    '{{horaFim}}':      '20:00',
+    '{{horaCompleta}}': 'das 16:00 às 20:00',
     '{{local}}':        'Salão Encantado',
     '{{endereco}}':     'Rua dos Contos, 123 — São Paulo, SP',
     '{{dress}}':        'Esporte fino',
@@ -873,7 +973,6 @@ function switchTab(name, el) {
   document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
   if (el) el.classList.add('active');
   document.getElementById('tabList').style.display   = name === 'list'   ? '' : 'none';
-  document.getElementById('tabSystem').style.display = name === 'system' ? '' : 'none';
   document.getElementById('tabEditor').style.display = name === 'editor' ? '' : 'none';
 }
 

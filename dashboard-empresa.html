@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+  <meta http-equiv="Pragma" content="no-cache"/>
+  <meta http-equiv="Expires" content="0"/>
+  <title>Dashboard Empresarial — CrieConvites</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#FFF8F0;--bg2:#FFF0E6;--panel:#FFFFFF;
+      --pink:#FF3D6B;--pink-dark:#CC1F4E;
+      --yellow:#FFD93D;--green:#16A34A;--blue:#2563EB;
+      --text:#1A0A00;--border:rgba(26,10,0,0.09);
+      --font-display:'Fraunces',Georgia,serif;
+      --font-body:'Nunito',system-ui,sans-serif;
+      --ease:cubic-bezier(0.16,1,0.3,1);
+    }
+    body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;display:grid;grid-template-columns:240px 1fr;-webkit-font-smoothing:antialiased;}
+    a{text-decoration:none;color:inherit;}
+
+    /* ── SIDENAV ── */
+    .sidenav{background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;min-height:100vh;position:sticky;top:0;}
+    .sidenav-logo{padding:1.5rem 1.5rem .75rem;font-family:var(--font-display);font-size:1.3rem;font-weight:700;font-style:italic;background:linear-gradient(135deg,var(--pink),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:pointer;}
+    .sidenav-co{padding:.5rem 1.25rem 1rem;border-bottom:1px solid var(--border);display:flex;flex-direction:column;align-items:flex-start;gap:.6rem;}
+    .sidenav-co-logo{width:64px;height:64px;border-radius:14px;background:rgba(26,10,0,.04);border:1.5px dashed var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;transition:border-color .2s, background .2s;position:relative;}
+    .sidenav-co-logo:hover{border-color:var(--pink);background:rgba(255,61,107,.05);}
+    .sidenav-co-logo img{width:100%;height:100%;object-fit:cover;}
+    .sidenav-co-logo .placeholder{font-size:1.6rem;opacity:.4;}
+    .sidenav-co-logo .edit-hint{position:absolute;bottom:0;right:0;width:20px;height:20px;border-radius:50%;background:var(--pink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.65rem;border:2px solid var(--panel);}
+    .sidenav-co-name{font-size:.9rem;font-weight:800;line-height:1.2;}
+    .sidenav-co-badge{display:inline-block;font-size:.65rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:linear-gradient(135deg,var(--pink),var(--yellow));color:#fff;padding:.15rem .5rem;border-radius:99px;}
+    .nav-item{display:flex;align-items:center;gap:.65rem;padding:.7rem 1.25rem;font-size:.85rem;font-weight:700;cursor:pointer;border-left:3px solid transparent;transition:all .15s;color:rgba(26,10,0,.5);}
+    .nav-item:hover{background:rgba(26,10,0,.04);color:var(--text);}
+    .nav-item.active{border-left-color:var(--pink);color:var(--pink);background:rgba(255,61,107,.05);}
+    .nav-item-icon{font-size:1.1rem;width:22px;text-align:center;}
+    .nav-sep{height:1px;background:var(--border);margin:.5rem 1.25rem;}
+    .sidenav-bottom{margin-top:auto;padding:1rem 1.25rem;border-top:1px solid var(--border);}
+    .btn-logout{width:100%;padding:.55rem;background:none;border:1px solid var(--border);border-radius:8px;font-family:var(--font-body);font-size:.8rem;font-weight:700;cursor:pointer;color:rgba(26,10,0,.4);transition:all .2s;}
+    .btn-logout:hover{border-color:var(--pink);color:var(--pink);}
+
+    /* ── MAIN ── */
+    .main{flex:1;display:flex;flex-direction:column;min-height:100vh;}
+    .topbar{padding:1.25rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--panel);}
+    .topbar-title{font-family:var(--font-display);font-size:1.4rem;font-weight:900;font-style:italic;}
+    .topbar-period{display:flex;gap:.5rem;align-items:center;}
+    .period-btn{padding:.4rem .9rem;border:1px solid var(--border);border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;background:var(--bg);transition:all .2s;}
+    .period-btn.active{background:var(--pink);border-color:var(--pink);color:#fff;}
+    .topbar-right{display:flex;align-items:center;gap:1rem;}
+    .icon-btn{width:36px;height:36px;border-radius:50%;background:rgba(26,10,0,.05);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.9rem;transition:background .2s;}
+    .icon-btn:hover{background:rgba(26,10,0,.1);}
+    .content{padding:2rem;flex:1;overflow-y:auto;}
+
+    /* ── SECTION ── */
+    .section{display:none;}
+    .section.active{display:block;}
+    .section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;}
+    .section-hdr h2{font-size:1rem;font-weight:800;}
+
+    /* ── STAT CARDS ── */
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;}
+    .stat-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:1.25rem;transition:box-shadow .2s;}
+    .stat-card:hover{box-shadow:0 4px 20px rgba(26,10,0,.06);}
+    .stat-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.75rem;}
+    .stat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
+    .stat-icon.pink{background:rgba(255,61,107,.1);}
+    .stat-icon.yellow{background:rgba(255,217,61,.15);}
+    .stat-icon.green{background:rgba(22,163,74,.1);}
+    .stat-icon.blue{background:rgba(37,99,235,.1);}
+    .stat-icon.purple{background:rgba(124,58,237,.1);}
+    .stat-trend{font-size:.72rem;font-weight:700;padding:.2rem .5rem;border-radius:6px;}
+    .stat-trend.up{background:rgba(22,163,74,.1);color:#16a34a;}
+    .stat-trend.neutral{background:rgba(26,10,0,.05);color:rgba(26,10,0,.4);}
+    .stat-num{font-size:2rem;font-weight:900;line-height:1;margin-bottom:.25rem;}
+    .stat-label{font-size:.75rem;color:rgba(26,10,0,.4);font-weight:600;}
+
+    /* ── CHARTS ── */
+    .chart-row{display:grid;grid-template-columns:2fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+    .chart-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:1.25rem;}
+    .chart-title{font-size:.85rem;font-weight:800;margin-bottom:1rem;}
+    .chart-wrap{position:relative;height:220px;}
+
+    /* ── CODES TABLE ── */
+    .table-wrap{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+    table{width:100%;border-collapse:collapse;}
+    th{padding:.75rem 1rem;text-align:left;font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:rgba(26,10,0,.35);border-bottom:1px solid var(--border);background:var(--bg2);}
+    td{padding:.8rem 1rem;font-size:.83rem;border-bottom:1px solid var(--border);}
+    tr:last-child td{border-bottom:none;}
+    tr:hover td{background:rgba(26,10,0,.015);}
+    .badge{display:inline-block;padding:.2rem .55rem;border-radius:99px;font-size:.68rem;font-weight:800;}
+    .badge-used{background:rgba(22,163,74,.1);color:#16a34a;}
+    .badge-avail{background:rgba(37,99,235,.1);color:#2563eb;}
+    .badge-exp{background:rgba(26,10,0,.06);color:rgba(26,10,0,.35);}
+
+    /* ── CLIENTS TABLE ── */
+    .client-row{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-bottom:1px solid var(--border);transition:background .15s;}
+    .client-row:last-child{border-bottom:none;}
+    .client-row:hover{background:rgba(26,10,0,.015);}
+    .client-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--yellow));display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:800;color:#fff;flex-shrink:0;}
+    .client-info{flex:1;}
+    .client-name{font-size:.85rem;font-weight:700;}
+    .client-meta{font-size:.72rem;color:rgba(26,10,0,.4);}
+    .client-stats{text-align:right;font-size:.8rem;font-weight:700;}
+    .client-stats span{display:block;font-size:.68rem;color:rgba(26,10,0,.35);font-weight:600;}
+
+    /* ── GENERATE CODE MODAL ── */
+    .modal-overlay{position:fixed;inset:0;background:rgba(26,10,0,.4);z-index:999;display:none;align-items:center;justify-content:center;}
+    .modal-overlay.open{display:flex;}
+    .modal-box{background:var(--panel);border-radius:20px;padding:2rem;width:420px;max-width:90vw;box-shadow:0 20px 60px rgba(26,10,0,.15);}
+    .modal-title{font-family:var(--font-display);font-size:1.3rem;font-weight:900;font-style:italic;margin-bottom:1.25rem;}
+    .field-group{margin-bottom:1rem;}
+    .field-group label{display:block;font-size:.78rem;font-weight:800;margin-bottom:.35rem;color:rgba(26,10,0,.55);}
+    .field-group input,.field-group select{width:100%;padding:.7rem .9rem;border:1px solid var(--border);border-radius:10px;font-family:var(--font-body);font-size:.9rem;background:var(--bg);outline:none;transition:border-color .2s;}
+    .field-group input:focus,.field-group select:focus{border-color:var(--pink);}
+    .modal-actions{display:flex;gap:.75rem;margin-top:1.5rem;}
+    .btn-primary{flex:1;padding:.85rem;background:var(--pink);color:#fff;border:none;border-radius:12px;font-family:var(--font-body);font-size:.9rem;font-weight:800;cursor:pointer;transition:all .2s;}
+    .btn-primary:hover{background:var(--pink-dark);}
+    .btn-cancel{padding:.85rem 1.25rem;background:none;border:1px solid var(--border);border-radius:12px;font-family:var(--font-body);font-size:.9rem;font-weight:700;cursor:pointer;}
+    .code-result{margin-top:1rem;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:.85rem 1rem;display:none;}
+    .code-result-lbl{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:rgba(26,10,0,.4);margin-bottom:.35rem;}
+    .code-result-val{font-family:monospace;font-size:1.3rem;font-weight:800;letter-spacing:.15em;color:var(--pink);}
+    .btn-copy{margin-top:.5rem;padding:.35rem .8rem;font-size:.75rem;font-weight:700;border:1px solid var(--border);border-radius:6px;background:none;cursor:pointer;transition:all .15s;}
+    .btn-copy:hover{border-color:var(--pink);color:var(--pink);}
+
+    /* ── MOBILE TABS (navegação em telas pequenas) ── */
+    .mobile-tabs{display:none;gap:.4rem;padding:.6rem 1rem;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;}
+    .mobile-tab{flex-shrink:0;padding:.45rem .9rem;border:1px solid var(--border);border-radius:99px;background:var(--panel);font-family:var(--font-body);font-size:.78rem;font-weight:800;color:rgba(26,10,0,.5);cursor:pointer;white-space:nowrap;transition:all .15s;}
+    .mobile-tab.active{background:var(--pink);border-color:var(--pink);color:#fff;}
+
+    /* ── EMPTY ── */
+    .empty-state{text-align:center;padding:3rem 1rem;color:rgba(26,10,0,.35);}
+    .empty-icon{font-size:2.5rem;margin-bottom:.75rem;}
+
+    /* ── TOAST ── */
+    .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:#1A0A00;color:#fff;border-radius:12px;padding:.75rem 1.5rem;font-size:.85rem;font-weight:700;box-shadow:0 8px 24px rgba(26,10,0,.2);transition:transform .3s var(--ease);z-index:9999;}
+    .toast.show{transform:translateX(-50%) translateY(0);}
+
+    /* ── AUTH GATE (loading) ── */
+    #authGate{position:fixed;inset:0;background:var(--bg);z-index:9000;display:flex;align-items:center;justify-content:center;}
+    .auth-logo{font-family:var(--font-display);font-size:2rem;font-weight:900;font-style:italic;background:linear-gradient(135deg,var(--pink),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+    @media(max-width:900px){
+      body{grid-template-columns:1fr;}
+      .sidenav{display:none !important;}
+      .mobile-tabs{display:flex;}
+      .topbar{flex-wrap:wrap;gap:.75rem;padding:1rem;}
+      .content{padding:1rem;}
+      .stats-grid{grid-template-columns:repeat(2,1fr);}
+      .chart-row{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- AUTH GATE (loading spinner enquanto verifica sessão) -->
+<div id="authGate">
+  <div class="auth-logo">CrieConvites</div>
+</div>
+
+<!-- SIDENAV -->
+<nav class="sidenav" id="sidenav" style="display:none">
+  <div class="sidenav-logo" onclick="location.href='dashboard-empresa.html'">CrieConvites</div>
+  <div class="sidenav-co">
+    <div class="sidenav-co-logo" id="coLogoBox" onclick="document.getElementById('coLogoInput').click()" title="Trocar logo da empresa">
+      <span class="placeholder" id="coLogoPlaceholder">🏢</span>
+      <img id="coLogoImg" src="" alt="" style="display:none"/>
+      <span class="edit-hint">✎</span>
+    </div>
+    <input type="file" id="coLogoInput" accept="image/*" style="display:none" onchange="onLogoSelected(event)"/>
+    <div>
+      <div class="sidenav-co-name" id="companyName">Empresa</div>
+      <div class="sidenav-co-badge">Plano Empresarial</div>
+    </div>
+  </div>
+  <div style="padding:.5rem 0">
+    <div class="nav-item active" data-sec="overview" onclick="showSection('overview',this)">
+      <span class="nav-item-icon">📊</span> Visão Geral
+    </div>
+    <div class="nav-item" data-sec="clients" onclick="showSection('clients',this)">
+      <span class="nav-item-icon">👥</span> Clientes
+    </div>
+    <div class="nav-item" data-sec="codes" onclick="showSection('codes',this)">
+      <span class="nav-item-icon">🔑</span> Códigos
+    </div>
+    <div class="nav-item" data-sec="perfil" onclick="showSection('perfil',this)">
+      <span class="nav-item-icon">⚙️</span> Perfil & Local
+    </div>
+  </div>
+  <div class="sidenav-bottom">
+    <button class="btn-logout" onclick="doLogout()">Sair</button>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main" id="mainLayout" style="display:none">
+  <div class="topbar">
+    <div class="topbar-title" id="sectionTitle">Visão Geral</div>
+    <div class="topbar-right">
+      <div class="topbar-period">
+        <button class="period-btn" onclick="setPeriod(1,this)">1 mês</button>
+        <button class="period-btn active" onclick="setPeriod(3,this)">3 meses</button>
+        <button class="period-btn" onclick="setPeriod(6,this)">6 meses</button>
+        <button class="period-btn" onclick="setPeriod(12,this)">1 ano</button>
+      </div>
+      <div class="icon-btn" onclick="doLogout()" title="Sair">🚪</div>
+    </div>
+  </div>
+
+  <!-- Navegação mobile (sidenav fica oculto em telas pequenas) -->
+  <div class="mobile-tabs" id="mobileTabs">
+    <button class="mobile-tab active" data-sec="overview" onclick="showSection('overview')">📊 Visão Geral</button>
+    <button class="mobile-tab" data-sec="clients" onclick="showSection('clients')">👥 Clientes</button>
+    <button class="mobile-tab" data-sec="codes" onclick="showSection('codes')">🔑 Códigos</button>
+    <button class="mobile-tab" data-sec="perfil" onclick="showSection('perfil')">⚙️ Perfil</button>
+  </div>
+
+  <div class="content">
+
+    <!-- OVERVIEW -->
+    <div class="section active" id="sec-overview">
+      <div class="stats-grid" id="statsGrid">
+        <!-- preenchido por JS -->
+      </div>
+      <div class="chart-row">
+        <div class="chart-card">
+          <div class="chart-title" id="chartFestasTitle">🎉 Festas</div>
+          <div class="chart-wrap"><canvas id="chartFestas"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title" id="chartConvidadosTitle">👥 Convidados</div>
+          <div class="chart-wrap"><canvas id="chartConvidados"></canvas></div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:.85rem;font-weight:800">Últimos clientes ativos</span>
+          <span style="font-size:.75rem;color:rgba(26,10,0,.35);cursor:pointer" onclick="showSection('clients',document.querySelector('[data-sec=clients]'))">Ver todos →</span>
+        </div>
+        <div id="recentClients"></div>
+      </div>
+    </div>
+
+    <!-- CLIENTS -->
+    <div class="section" id="sec-clients">
+      <div class="section-hdr">
+        <h2>👥 Todos os Clientes</h2>
+        <span style="font-size:.8rem;color:rgba(26,10,0,.35)" id="clientCount"></span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Plano</th>
+              <th>Festas</th>
+              <th>Convidados</th>
+              <th>Desde</th>
+            </tr>
+          </thead>
+          <tbody id="clientsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CODES -->
+    <div class="section" id="sec-codes">
+      <div class="section-hdr">
+        <h2>🔑 Códigos de Acesso</h2>
+        <button class="btn-primary" style="flex:none;width:auto;padding:.45rem .9rem;font-size:.78rem" onclick="openGenerateModal()">+ Gerar código</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Cliente</th>
+              <th>Status</th>
+              <th>Usado em</th>
+              <th>Expira em</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="codesTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PERFIL & LOCALIZAÇÃO -->
+    <div class="section" id="sec-perfil">
+      <div class="section-hdr">
+        <h2>⚙️ Perfil da Empresa</h2>
+      </div>
+      <div style="max-width:600px;display:flex;flex-direction:column;gap:1.5rem">
+
+        <!-- Informações básicas -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:1.5rem">
+          <div style="font-size:.8rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:rgba(26,10,0,.35);margin-bottom:1.1rem">🏢 Informações básicas</div>
+          <div class="field-group">
+            <label>Nome da empresa</label>
+            <input type="text" id="profCompanyName" placeholder="Ex: Festas & Cia" maxlength="120"/>
+          </div>
+          <div class="field-group">
+            <label>Telefone / WhatsApp</label>
+            <input type="tel" id="profPhone" placeholder="(11) 99999-9999" maxlength="20"/>
+          </div>
+          <div class="field-group">
+            <label>Site (opcional)</label>
+            <input type="url" id="profWebsite" placeholder="https://suaempresa.com.br" maxlength="200"/>
+          </div>
+        </div>
+
+        <!-- Localização -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:1.5rem">
+          <div style="font-size:.8rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:rgba(26,10,0,.35);margin-bottom:1.1rem">📍 Localização <span style="font-size:.65rem;color:var(--pink);font-weight:700;text-transform:none;letter-spacing:0">* Obrigatório</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+            <div class="field-group">
+              <label>Estado *</label>
+              <select id="profEstado">
+                <option value="">Selecione...</option>
+                <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+                <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+                <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+                <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+                <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+                <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+                <option>SP</option><option>SE</option><option>TO</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label>Cidade *</label>
+              <input type="text" id="profCidade" placeholder="Ex: São Paulo" maxlength="100"/>
+            </div>
+          </div>
+          <div class="field-group" style="margin-top:.75rem">
+            <label>Bairro (opcional)</label>
+            <input type="text" id="profBairro" placeholder="Ex: Moema, Pinheiros..." maxlength="100"/>
+          </div>
+          <div class="field-group">
+            <label>Endereço completo (opcional)</label>
+            <input type="text" id="profEndereco" placeholder="Rua, número, complemento..." maxlength="200"/>
+          </div>
+          <div style="margin-top:.5rem;padding:.6rem .85rem;background:rgba(255,61,107,.05);border:1px solid rgba(255,61,107,.15);border-radius:8px;font-size:.75rem;color:rgba(26,10,0,.55)">
+            📌 A localização será usada para sugerir sua empresa quando clientes buscarem locais de festa na sua região.
+          </div>
+        </div>
+
+        <button onclick="saveCompanyProfile()" style="padding:.75rem 1.5rem;background:var(--pink);color:#fff;border:none;border-radius:10px;font-family:var(--font-body);font-size:.9rem;font-weight:800;cursor:pointer;transition:background .2s;align-self:flex-start" onmouseover="this.style.background='var(--pink-dark)'" onmouseout="this.style.background='var(--pink)'">
+          💾 Salvar perfil
+        </button>
+
+        <div id="profileSaveMsg" style="display:none;padding:.65rem 1rem;background:rgba(22,163,74,.1);border:1px solid rgba(22,163,74,.25);border-radius:8px;font-size:.82rem;color:var(--green);font-weight:700">
+          ✅ Perfil salvo com sucesso!
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- GENERATE CODE MODAL -->
+<div class="modal-overlay" id="generateModal" role="dialog" aria-modal="true" aria-label="Gerar código de acesso" onclick="if(event.target===this)closeGenerateModal()">
+  <div class="modal-box">
+    <div class="modal-title">🔑 Gerar código de acesso</div>
+    <div class="field-group">
+      <label>Nome do cliente (opcional)</label>
+      <input type="text" id="genClientName" placeholder="Ex: Ana Silva" maxlength="120"/>
+    </div>
+    <div class="field-group">
+      <label>Validade</label>
+      <input type="date" id="genExpiry" min=""/>
+      <div style="font-size:.7rem;color:rgba(26,10,0,.4);margin-top:.3rem">Padrão: 6 meses a partir de hoje</div>
+    </div>
+    <div class="code-result" id="codeResult">
+      <div class="code-result-lbl">Código gerado</div>
+      <div class="code-result-val" id="codeResultVal"></div>
+      <button class="btn-copy" onclick="copyCode()">📋 Copiar</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeGenerateModal()">Cancelar</button>
+      <button class="btn-primary" onclick="generateCodes()">Gerar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ══════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════
+const SUPA_URL = 'https://wevmgnzmkdecdcnouhjq.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indldm1nbnpta2RlY2Rjbm91aGpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTI5MTYsImV4cCI6MjA5MjI4ODkxNn0.R7IF4vEF_D5fvB18ZRl8mJwXOsEpW-q2hSdsRRs9nM4';
+const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+// Escapa strings dinâmicas (nomes de clientes, códigos etc.) antes de injetar via innerHTML — previne XSS
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+let currentUser = null;
+let company = null;
+let monthlyData = [];
+let clients = [];
+let codes = [];
+let period = 3;
+let chartFestas = null;
+let chartConvidados = null;
+
+// ══════════════════════════════════════════
+//  AUTH
+// ══════════════════════════════════════════
+async function init() {
+  // Tenta até 3x com 500ms de intervalo — sessão pode demorar a propagar após redirect
+  let session = null;
+  for (let i = 0; i < 3; i++) {
+    const { data } = await sb.auth.getSession();
+    if (data?.session?.user) { session = data.session; break; }
+    await new Promise(r => setTimeout(r, 500));
+  }
+  if (!session?.user) {
+    location.href = 'login.html';
+    return;
+  }
+  currentUser = session.user;
+
+  // ── ISOLAMENTO DE DADOS ENTRE USUÁRIOS ──
+  // Se o último usuário guardado é diferente do atual, limpa caches que
+  // possam ter ficado de outra conta.
+  const lastUser = localStorage.getItem('ccm_last_user_id');
+  if (lastUser && lastUser !== currentUser.id) {
+    ['ccm_current_slug','ccm_current_invite','ccm_draft','ccm_edit_invite','ccm_template']
+      .forEach(k => localStorage.removeItem(k));
+  }
+  localStorage.setItem('ccm_last_user_id', currentUser.id);
+
+  await loadCompany(session.access_token);
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  // Limpa caches do usuário que está saindo
+  ['ccm_current_slug','ccm_current_invite','ccm_draft','ccm_edit_invite','ccm_template','ccm_last_user_id']
+    .forEach(k => localStorage.removeItem(k));
+  location.href = 'login.html';
+}
+
+async function loadCompany(accessToken) {
+  const authSb = supabase.createClient(SUPA_URL, SUPA_KEY, {
+    global: { headers: { Authorization: `Bearer ${accessToken}` } }
+  });
+
+  let profile = null;
+  let ownedCompany = null;
+
+  // Busca profile (com try/catch isolado)
+  try {
+    const r = await authSb.from('profiles').select('plan, company_id').eq('id', currentUser.id).maybeSingle();
+    profile = r.data;
+  } catch (e) {
+    console.error('[EMP] erro em profiles:', e);
+  }
+
+  // Busca empresa por owner_id (com try/catch isolado)
+  try {
+    const r = await authSb.from('companies').select('*').eq('owner_id', currentUser.id).eq('active', true).maybeSingle();
+    ownedCompany = r.data;
+  } catch (e) {
+    console.error('[EMP] erro em companies:', e);
+  }
+
+  // Critério unificado: plan='enterprise' OU é owner de empresa ativa
+  const isEnterprise = profile?.plan === 'enterprise' || !!ownedCompany;
+
+  if (!isEnterprise) {
+    location.href = 'dashboard.html';
+    return;
+  }
+
+  let companyData = ownedCompany;
+
+  if (!companyData && profile?.company_id) {
+    try {
+      const { data } = await authSb.from('companies').select('*').eq('id', profile.company_id).eq('active', true).maybeSingle();
+      companyData = data;
+    } catch (e) {
+      console.error('[EMP] erro ao buscar company por id:', e);
+    }
+  }
+
+  if (!companyData) {
+    location.href = 'dashboard.html';
+    return;
+  }
+
+  company = companyData;
+  document.getElementById('authGate').style.display = 'none';
+  document.getElementById('sidenav').style.display = 'flex';
+  document.getElementById('mainLayout').style.display = 'flex';
+  document.getElementById('companyName').textContent = company.name;
+  renderCompanyLogo();
+
+  // Hoje como mínimo de validade dos códigos
+  document.getElementById('genExpiry').min = new Date().toISOString().slice(0,10);
+
+  await loadAll();
+}
+
+// ══════════════════════════════════════════
+//  LOGO DA EMPRESA
+// ══════════════════════════════════════════
+function renderCompanyLogo() {
+  const img = document.getElementById('coLogoImg');
+  const ph  = document.getElementById('coLogoPlaceholder');
+  if (company?.logo_url) {
+    img.src = company.logo_url + '?t=' + Date.now(); // cache buster
+    img.style.display = 'block';
+    ph.style.display  = 'none';
+  } else {
+    img.style.display = 'none';
+    ph.style.display  = 'block';
+  }
+}
+
+async function onLogoSelected(ev) {
+  const file = ev.target.files?.[0];
+  if (!file) return;
+
+  if (!file.type.startsWith('image/')) {
+    showToast('Selecione um arquivo de imagem.');
+    return;
+  }
+  if (file.size > 2 * 1024 * 1024) {
+    showToast('Imagem muito grande. Máximo 2MB.');
+    return;
+  }
+
+  showToast('📤 Enviando logo...');
+
+  // Path: <company_id>/logo.<ext>
+  const ext = (file.name.split('.').pop() || 'png').toLowerCase();
+  const path = `${company.id}/logo.${ext}`;
+
+  const { error: upErr } = await sb.storage
+    .from('company-logos')
+    .upload(path, file, { upsert: true, contentType: file.type });
+
+  if (upErr) {
+    console.error('[EMP] upload erro:', upErr);
+    showToast('Erro ao enviar: ' + upErr.message);
+    return;
+  }
+
+  // URL pública
+  const { data: pub } = sb.storage.from('company-logos').getPublicUrl(path);
+  const url = pub.publicUrl;
+
+  // Salva URL na empresa
+  const { error: updErr } = await sb.from('companies').update({ logo_url: url }).eq('id', company.id);
+  if (updErr) {
+    console.error('[EMP] update logo_url erro:', updErr);
+    showToast('Erro ao salvar logo: ' + updErr.message);
+    return;
+  }
+
+  company.logo_url = url;
+  renderCompanyLogo();
+  showToast('✅ Logo atualizado!');
+
+  // Limpa input pra permitir re-upload do mesmo arquivo
+  ev.target.value = '';
+}
+
+// ══════════════════════════════════════════
+//  LOAD DATA
+// ══════════════════════════════════════════
+async function loadAll() {
+  await Promise.all([
+    loadMetrics(),
+    loadMonthly(),
+    loadClients(),
+    loadCodes(),
+  ]);
+  renderOverview();
+  renderClientsSection();
+  renderCodesSection();
+}
+
+async function loadMetrics() {
+  const { data } = await sb
+    .from('company_metrics')
+    .select('*')
+    .eq('company_id', company.id)
+    .maybeSingle();
+  company.metrics = data || {};
+}
+
+// Decide a granularidade do gráfico com base no período selecionado
+function granularityForPeriod(p) {
+  if (p === 1)  return 'day';    // 1 mês → barras por dia
+  if (p === 3)  return 'week';   // 3 meses → barras por semana
+  return 'month';                // 6 meses / 1 ano → barras por mês
+}
+
+function bucketLabelText(p) {
+  const g = granularityForPeriod(p);
+  return g === 'day' ? 'por dia' : g === 'week' ? 'por semana' : 'por mês';
+}
+
+async function loadMonthly() {
+  const granularity = granularityForPeriod(period);
+  const { data, error } = await sb.rpc('company_period_stats', {
+    p_company_id:  company.id,
+    p_months:      period,
+    p_granularity: granularity
+  });
+  if (error) {
+    console.warn('[EMP] company_period_stats erro:', error.message);
+    // Fallback: tenta a RPC antiga (mensal)
+    const { data: fb } = await sb.rpc('company_monthly_stats', {
+      p_company_id: company.id,
+      p_months: period
+    });
+    monthlyData = (fb || []).map(r => ({ label: r.month, festas: r.festas, convidados: r.convidados }));
+    return;
+  }
+  monthlyData = data || [];
+}
+
+async function loadClients() {
+  // Busca membros via RPC (policy direta de profiles é só id=auth.uid())
+  const { data: profiles, error: profErr } = await sb.rpc('company_members', {
+    p_company_id: company.id
+  });
+  if (profErr) console.warn('[EMP] company_members erro:', profErr.message);
+
+  if (!profiles?.length) { clients = []; return; }
+
+  // Para cada membro, contar convites e convidados (apenas do período selecionado)
+  const ids = profiles.map(p => p.id);
+
+  const cutoff = new Date();
+  cutoff.setMonth(cutoff.getMonth() - period);
+
+  const { data: invites } = await sb
+    .from('invites')
+    .select('id, user_id, title, created_at')
+    .in('user_id', ids)
+    .gte('created_at', cutoff.toISOString());
+
+  const invMap = {};
+  (invites || []).forEach(i => {
+    if (!invMap[i.user_id]) invMap[i.user_id] = [];
+    invMap[i.user_id].push(i);
+  });
+
+  const inviteIds = (invites || []).map(i => i.id);
+  let guestMap = {};
+
+  if (inviteIds.length) {
+    const { data: guests } = await sb
+      .from('guests')
+      .select('invite_id, plus_ones')
+      .in('invite_id', inviteIds);
+
+    (guests || []).forEach(g => {
+      guestMap[g.invite_id] = (guestMap[g.invite_id] || 0) + 1 + (g.plus_ones || 0);
+    });
+  }
+
+  clients = profiles.map(p => {
+    const myInvites = invMap[p.id] || [];
+    const myGuests = myInvites.reduce((acc, i) => acc + (guestMap[i.id] || 0), 0);
+    return { ...p, invites: myInvites.length, guests: myGuests };
+  });
+}
+
+async function loadCodes() {
+  const { data } = await sb
+    .from('company_codes')
+    .select('*')
+    .eq('company_id', company.id)
+    .order('created_at', { ascending: false });
+  codes = data || [];
+}
+
+// ══════════════════════════════════════════
+//  RENDER — OVERVIEW
+// ══════════════════════════════════════════
+function periodLabel(p) {
+  if (p === 1)  return '1 mês';
+  if (p === 12) return '1 ano';
+  return p + ' meses';
+}
+
+function renderOverview() {
+  // Banner de localização faltante
+  const locBanner = document.getElementById('locMissingBanner');
+  if(!company.location_state || !company.location_city){
+    if(!locBanner){
+      const banner = document.createElement('div');
+      banner.id = 'locMissingBanner';
+      banner.style.cssText = 'background:rgba(255,61,107,.06);border:1px solid rgba(255,61,107,.2);border-radius:12px;padding:.85rem 1.1rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem;font-size:.83rem';
+      banner.innerHTML = `
+        <span style="font-size:1.3rem">📍</span>
+        <div style="flex:1">
+          <div style="font-weight:800;color:var(--pink);margin-bottom:.15rem">Localização não cadastrada</div>
+          <div style="color:rgba(26,10,0,.5)">Adicione o estado e cidade da sua empresa para que clientes possam encontrar você.</div>
+        </div>
+        <button onclick="showSection('perfil',document.querySelector('[data-sec=perfil]'))" style="padding:.45rem .9rem;background:var(--pink);color:#fff;border:none;border-radius:8px;font-family:var(--font-body);font-size:.8rem;font-weight:800;cursor:pointer;white-space:nowrap">Adicionar →</button>
+      `;
+      const statsGrid = document.getElementById('statsGrid');
+      statsGrid.parentNode.insertBefore(banner, statsGrid);
+    }
+  } else if(locBanner){
+    locBanner.remove();
+  }
+
+  const m = company.metrics;
+  const totalFestas = monthlyData.reduce((a, r) => a + Number(r.festas), 0);
+  const totalGuests = monthlyData.reduce((a, r) => a + Number(r.convidados), 0);
+  const active = clients.filter(c => c.invites > 0).length;
+  const avgGuests = active ? (totalGuests / active).toFixed(1) : '—';
+  const pctActive = m.clients_total > 0 ? Math.round((active / m.clients_total) * 100) : 0;
+
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon pink">🎉</div>
+        <span class="stat-trend neutral">${periodLabel(period)}</span>
+      </div>
+      <div class="stat-num">${totalFestas}</div>
+      <div class="stat-label">Festas realizadas</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon green">✅</div>
+        <span class="stat-trend up">${pctActive}%</span>
+      </div>
+      <div class="stat-num">${active}<span style="font-size:1rem;font-weight:600;color:rgba(26,10,0,.3)">/${m.clients_total||0}</span></div>
+      <div class="stat-label">Clientes ativos</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon blue">👥</div>
+        <span class="stat-trend neutral">por cliente ativo</span>
+      </div>
+      <div class="stat-num">${avgGuests}</div>
+      <div class="stat-label">Média de convidados</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon yellow">🎫</div>
+        <span class="stat-trend neutral">${codes.filter(c=>!c.used_by).length} disponíveis</span>
+      </div>
+      <div class="stat-num">${totalGuests}</div>
+      <div class="stat-label">Total de convidados</div>
+    </div>
+  `;
+
+  renderCharts();
+
+  // Recent clients
+  const recent = [...clients].sort((a,b) => b.invites - a.invites).slice(0,5);
+  document.getElementById('recentClients').innerHTML = recent.length
+    ? recent.map(c => clientRow(c)).join('')
+    : '<div class="empty-state"><div class="empty-icon">👥</div>Nenhum cliente ativo ainda.</div>';
+}
+
+function renderCharts() {
+  // Aceita registros da RPC nova (label) ou da antiga (month)
+  const labels  = monthlyData.map(r => r.label || r.month || '');
+  const festas  = monthlyData.map(r => Number(r.festas));
+  const guests  = monthlyData.map(r => Number(r.convidados));
+
+  // Atualiza títulos com a granularidade
+  const sufixo = bucketLabelText(period);
+  document.getElementById('chartFestasTitle').textContent     = `🎉 Festas ${sufixo}`;
+  document.getElementById('chartConvidadosTitle').textContent = `👥 Convidados ${sufixo}`;
+
+  const chartDefaults = {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { display: false }, ticks: { font: { size: 11, family: 'Nunito' } } },
+      y: { grid: { color: 'rgba(26,10,0,.05)' }, ticks: { font: { size: 11, family: 'Nunito' }, stepSize: 1 }, beginAtZero: true }
+    }
+  };
+
+  if (chartFestas) chartFestas.destroy();
+  chartFestas = new Chart(document.getElementById('chartFestas'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{ data: festas, backgroundColor: 'rgba(255,61,107,.75)', borderRadius: 6, borderSkipped: false }]
+    },
+    options: { ...chartDefaults }
+  });
+
+  if (chartConvidados) chartConvidados.destroy();
+  chartConvidados = new Chart(document.getElementById('chartConvidados'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        data: guests,
+        borderColor: '#2563EB',
+        backgroundColor: 'rgba(37,99,235,.1)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#2563EB',
+        pointRadius: 4,
+      }]
+    },
+    options: { ...chartDefaults }
+  });
+}
+
+function clientRow(c) {
+  const initials = esc((c.full_name || c.id.slice(0,2)).slice(0,2).toUpperCase());
+  const name = esc(c.full_name || 'Cliente');
+  const since = new Date(c.created_at).toLocaleDateString('pt-BR', { day:'numeric', month:'short', year:'numeric' });
+  return `
+    <div class="client-row">
+      <div class="client-avatar">${initials}</div>
+      <div class="client-info">
+        <div class="client-name">${name}</div>
+        <div class="client-meta">Desde ${since}</div>
+      </div>
+      <div class="client-stats">
+        ${c.invites} festa${c.invites !== 1 ? 's' : ''}
+        <span>${c.guests} convidado${c.guests !== 1 ? 's' : ''}</span>
+      </div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════
+//  RENDER — CLIENTS
+// ══════════════════════════════════════════
+function renderClientsSection() {
+  document.getElementById('clientCount').textContent = `${clients.length} cliente${clients.length !== 1 ? 's' : ''}`;
+  const tbody = document.getElementById('clientsTableBody');
+  if (!clients.length) {
+    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">👥</div>Nenhum cliente ainda.</div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = clients.map(c => {
+    const name  = esc(c.full_name || 'Cliente');
+    const since = new Date(c.created_at).toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric' });
+    const planLabel = c.plan === 'enterprise_member' ? '🏢 Empresarial' : c.plan === 'pro' ? '⭐ PRO' : 'Gratuito';
+    return `
+      <tr>
+        <td>
+          <div style="display:flex;align-items:center;gap:.6rem">
+            <div class="client-avatar" style="width:28px;height:28px;font-size:.72rem">${name.slice(0,2).toUpperCase()}</div>
+            <span style="font-weight:700">${name}</span>
+          </div>
+        </td>
+        <td>${planLabel}</td>
+        <td>${c.invites}</td>
+        <td>${c.guests}</td>
+        <td style="color:rgba(26,10,0,.4)">${since}</td>
+      </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+//  RENDER — CODES
+// ══════════════════════════════════════════
+function renderCodesSection() {
+  const tbody = document.getElementById('codesTableBody');
+  if (!codes.length) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">🔑</div>Nenhum código gerado ainda.</div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = codes.map(c => {
+    const isUsed = !!c.used_by;
+    const isExp  = c.expires_at && new Date(c.expires_at) < new Date() && !isUsed;
+    let badgeHtml;
+    if (isUsed)      badgeHtml = `<span class="badge badge-used">✅ Usado</span>`;
+    else if (isExp)  badgeHtml = `<span class="badge badge-exp">⏰ Expirado</span>`;
+    else             badgeHtml = `<span class="badge badge-avail">🟢 Disponível</span>`;
+
+    const usedAt     = c.used_at ? new Date(c.used_at).toLocaleDateString('pt-BR') : '—';
+    const expAt      = c.expires_at ? new Date(c.expires_at).toLocaleDateString('pt-BR') : '—';
+    const clientCol  = c.client_name ? esc(c.client_name) : (isUsed ? `<span style="color:rgba(26,10,0,.4);font-size:.78rem">${esc(c.used_by?.slice(0,8))+'…'}</span>` : '<span style="color:rgba(26,10,0,.3)">—</span>');
+
+    // Ações: se ainda não foi usado, pode deletar. Não-usados+não-expirados também podem ser revogados.
+    const actions = isUsed
+      ? ''
+      : `<div style="display:flex;gap:.4rem;justify-content:flex-end">
+           ${!isExp ? `<button onclick="revokeCode('${c.id}')" style="padding:.25rem .6rem;border:1px solid rgba(251,146,60,.4);border-radius:6px;background:none;font-size:.72rem;font-weight:700;color:#ea580c;cursor:pointer" title="Revogar (mantém histórico)">Revogar</button>` : ''}
+           <button onclick="deleteCode('${c.id}')" style="padding:.25rem .6rem;border:1px solid rgba(248,113,113,.4);border-radius:6px;background:none;font-size:.72rem;font-weight:700;color:#dc2626;cursor:pointer" title="Apagar definitivamente">Apagar</button>
+         </div>`;
+
+    return `
+      <tr>
+        <td><code style="font-size:.9rem;font-weight:800;letter-spacing:.1em;color:var(--pink)">${esc(c.code)}</code></td>
+        <td style="font-size:.85rem">${clientCol}</td>
+        <td>${badgeHtml}</td>
+        <td style="color:rgba(26,10,0,.4);font-size:.8rem">${usedAt}</td>
+        <td style="color:rgba(26,10,0,.4);font-size:.8rem">${expAt}</td>
+        <td>${actions}</td>
+      </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+//  GERAR CÓDIGO
+// ══════════════════════════════════════════
+function openGenerateModal() {
+  document.getElementById('codeResult').style.display = 'none';
+  document.getElementById('genClientName').value = '';
+  // Pré-preenche expiração com 6 meses a partir de hoje
+  const d = new Date();
+  d.setMonth(d.getMonth() + 6);
+  document.getElementById('genExpiry').value = d.toISOString().slice(0,10);
+  document.getElementById('generateModal').classList.add('open');
+}
+function closeGenerateModal() {
+  document.getElementById('generateModal').classList.remove('open');
+}
+
+function makeCode(len = 8) {
+  // crypto.getRandomValues → códigos imprevisíveis (Math.random não é seguro para códigos de acesso)
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const rnd = new Uint32Array(len);
+  crypto.getRandomValues(rnd);
+  return Array.from(rnd, n => chars[n % chars.length]).join('');
+}
+
+async function generateCodes() {
+  const clientName = document.getElementById('genClientName').value.trim();
+  let expiry       = document.getElementById('genExpiry').value;
+
+  // Se o usuário limpou a data, força 6 meses a partir de hoje
+  if (!expiry) {
+    const d = new Date();
+    d.setMonth(d.getMonth() + 6);
+    expiry = d.toISOString().slice(0,10);
+  }
+
+  const row = {
+    company_id:  company.id,
+    code:        makeCode(),
+    expires_at:  expiry,
+    active:      true,
+    client_name: clientName || null,
+  };
+
+  const { data, error } = await sb.from('company_codes').insert(row).select().single();
+  if (error) { showToast('Erro ao gerar código: ' + error.message); return; }
+
+  await loadCodes();
+  renderCodesSection();
+
+  document.getElementById('codeResultVal').textContent = data.code;
+  document.getElementById('codeResult').style.display = 'block';
+  showToast('✅ Código gerado!');
+}
+
+function copyCode() {
+  const code = document.getElementById('codeResultVal').textContent;
+  navigator.clipboard.writeText(code).then(() => showToast('📋 Código copiado!'));
+}
+
+async function revokeCode(id) {
+  if (!confirm('Revogar este código? Ele não poderá mais ser usado, mas continuará no histórico.')) return;
+  const { error } = await sb.from('company_codes').update({ active: false }).eq('id', id);
+  if (error) { showToast('Erro ao revogar.'); return; }
+  await loadCodes();
+  renderCodesSection();
+  showToast('Código revogado.');
+}
+
+async function deleteCode(id) {
+  if (!confirm('Apagar este código definitivamente? Esta ação não pode ser desfeita.')) return;
+  const { error } = await sb.from('company_codes').delete().eq('id', id);
+  if (error) { showToast('Erro ao apagar: ' + error.message); return; }
+  await loadCodes();
+  renderCodesSection();
+  showToast('Código apagado.');
+}
+
+// ══════════════════════════════════════════
+//  UI HELPERS
+// ══════════════════════════════════════════
+function showSection(name, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  // Sincroniza sidenav (desktop) e mobile-tabs a partir do data-sec
+  document.querySelectorAll('.nav-item, .mobile-tab').forEach(n =>
+    n.classList.toggle('active', n.dataset.sec === name));
+  const titles = { overview: 'Visão Geral', clients: 'Clientes', codes: 'Códigos de Acesso', perfil: 'Perfil & Localização' };
+  document.getElementById('sectionTitle').textContent = titles[name] || name;
+  if (name === 'perfil') fillProfileForm();
+}
+
+// Fecha o modal de gerar código com Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeGenerateModal();
+});
+
+function fillProfileForm() {
+  if (!company) return;
+  const v = (id, val) => { const el=document.getElementById(id); if(el) el.value=val||''; };
+  v('profCompanyName', company.name);
+  v('profPhone',       company.phone);
+  v('profWebsite',     company.website);
+  v('profEstado',      company.location_state);
+  v('profCidade',      company.location_city);
+  v('profBairro',      company.location_neighborhood);
+  v('profEndereco',    company.address);
+}
+
+async function saveCompanyProfile() {
+  const g = id => document.getElementById(id)?.value?.trim() || '';
+  const estado = g('profEstado');
+  const cidade = g('profCidade');
+
+  if (!estado || !cidade) {
+    showToast('❌ Estado e cidade são obrigatórios');
+    return;
+  }
+
+  const updates = {
+    name:                  g('profCompanyName') || company.name,
+    phone:                 g('profPhone'),
+    website:               g('profWebsite'),
+    location_state:        estado,
+    location_city:         cidade,
+    location_neighborhood: g('profBairro'),
+    address:               g('profEndereco'),
+  };
+
+  const { error } = await sb.from('companies').update(updates).eq('id', company.id);
+  if (error) { showToast('❌ Erro ao salvar: ' + error.message); return; }
+
+  // Atualiza objeto local
+  Object.assign(company, updates);
+  document.getElementById('companyName').textContent = company.name;
+
+  const msg = document.getElementById('profileSaveMsg');
+  if(msg){ msg.style.display='block'; setTimeout(()=>msg.style.display='none', 4000); }
+  showToast('✅ Perfil salvo!');
+}
+
+async function setPeriod(months, btn) {
+  period = months;
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  await Promise.all([loadMonthly(), loadClients()]);
+  renderOverview();
+  renderClientsSection();
+}
+
+let toastTimer;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// ══════════════════════════════════════════
+//  START
+// ══════════════════════════════════════════
+init();
+</script>
+</body>
+</html>

@@ -3,10 +3,13 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Convite — ConteComigo</title>
+  <title>Convite — CrieConvites</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,700;1,9..144,900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image-more/3.4.0/dom-to-image-more.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
@@ -278,6 +281,17 @@
       margin-bottom:.5rem;display:inline-block;
     }
 
+    /* rsvp fab (discreto, canto inferior esquerdo — igual aos templates dinâmicos) */
+    .rsvp-fab{
+      display:none;position:fixed;bottom:1.5rem;left:1.5rem;z-index:200;
+      align-items:center;gap:.4rem;
+      background:var(--accent,#FFD93D);color:var(--accent-text,#1A0A00);
+      font-weight:800;font-size:.82rem;padding:.65rem 1.2rem;border-radius:99px;
+      cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.25);
+      transition:transform .2s,box-shadow .2s;white-space:nowrap;
+    }
+    .rsvp-fab:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.35);}
+
     /* share fab */
     .fab{
       position:fixed;bottom:1.5rem;right:1.5rem;z-index:200;
@@ -327,6 +341,29 @@
     .music-wave span:nth-child(4){animation-delay:.45s;}
     @keyframes wave{0%,100%{height:4px}50%{height:14px}}
     .music-wave.paused span{animation:none;height:4px;}
+
+    /* ── MAP (Mapa do local) ── */
+    .map-section{padding:4rem 1.5rem;max-width:760px;margin:0 auto;}
+    .map-card{
+      background:#fff;border:1px solid rgba(26,10,0,.08);border-radius:20px;
+      overflow:hidden;margin-top:2rem;box-shadow:0 8px 32px rgba(26,10,0,.08);
+    }
+    .map-frame{width:100%;height:320px;border:none;display:block;}
+    .map-footer{
+      display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
+      gap:.75rem;padding:1rem 1.25rem;
+    }
+    .map-address{font-size:.85rem;color:rgba(26,10,0,.6);display:flex;align-items:center;gap:.4rem;flex:1;min-width:200px;}
+    .map-actions{display:flex;gap:.5rem;flex-wrap:wrap;}
+    .btn-route{
+      display:inline-flex;align-items:center;gap:.4rem;
+      background:var(--accent,#FFD93D);color:var(--accent-text,#1A0A00);
+      border:none;border-radius:99px;padding:.55rem 1.1rem;
+      font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:800;
+      cursor:pointer;text-decoration:none;transition:transform .2s,filter .2s;
+    }
+    .btn-route:hover{filter:brightness(1.08);transform:translateY(-2px);}
+    .btn-route.alt{background:rgba(26,10,0,.06);color:rgba(26,10,0,.7);}
 
     /* ── GALLERY ── */
     .gallery-section{padding:4rem 1.5rem;max-width:900px;margin:0 auto;}
@@ -416,7 +453,7 @@
 
 <!-- Loading screen -->
 <div class="loading-screen" id="loadingScreen">
-  <div class="loading-logo">ConteComigo</div>
+  <div class="loading-logo">CrieConvites</div>
   <div class="loading-spinner"></div>
   <div class="loading-text">Carregando convite...</div>
 </div>
@@ -437,32 +474,113 @@
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
-<!-- Gift Reserve Modal -->
+<!-- Gift Payment Modal -->
 <div class="modal-overlay" id="giftModal">
-  <div class="modal-box">
+  <div class="modal-box" style="max-width:420px">
     <button class="modal-close" onclick="closeModal()">✕</button>
-    <div class="modal-title">Reservar presente 🎁</div>
-    <div class="modal-sub">Preencha seus dados para avisar os anfitriões.</div>
+    <div class="modal-title">Presentear 🎁</div>
     <div class="modal-item-preview" id="modalItemPreview"></div>
-    <div class="form-group">
-      <label>Seu nome</label>
-      <input type="text" id="giftReserveName" placeholder="Ex: Maria Oliveira"/>
+
+    <!-- Etapa 1: Dados do convidado -->
+    <div id="giftStep1">
+      <div class="modal-sub" style="margin-bottom:1rem">Seus dados para os anfitriões saberem quem está presenteando:</div>
+      <div class="form-group">
+        <label>Seu nome *</label>
+        <input type="text" id="giftReserveName" placeholder="Ex: Maria Oliveira"/>
+      </div>
+      <div class="form-group">
+        <label>Seu WhatsApp *</label>
+        <input type="tel" id="giftReservePhone" placeholder="(11) 99999-9999"/>
+      </div>
+
+      <!-- Opções de pagamento (só aparecem se configuradas) -->
+      <div id="giftPayOptions" style="display:none;margin-top:1rem">
+        <div style="font-size:.72rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:rgba(26,10,0,.35);margin-bottom:.6rem">Como você quer pagar?</div>
+        <div style="display:flex;flex-direction:column;gap:.5rem">
+          <button id="btnPayPix" onclick="choosePayment('pix')"
+            style="display:flex;align-items:center;gap:.75rem;padding:.8rem 1rem;background:rgba(0,189,126,.08);border:1.5px solid rgba(0,189,126,.25);border-radius:12px;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;transition:all .2s;color:#1A0A00;text-align:left"
+            onmouseover="this.style.borderColor='#00BD7E';this.style.background='rgba(0,189,126,.13)'" onmouseout="this.style.borderColor='rgba(0,189,126,.25)';this.style.background='rgba(0,189,126,.08)'">
+            <span style="font-size:1.5rem">💚</span>
+            <div><div>Pagar via PIX</div><div style="font-size:.72rem;font-weight:600;opacity:.6">Rápido e sem taxas</div></div>
+          </button>
+          <button id="btnPayCard" onclick="choosePayment('card')"
+            style="display:flex;align-items:center;gap:.75rem;padding:.8rem 1rem;background:rgba(99,102,241,.07);border:1.5px solid rgba(99,102,241,.2);border-radius:12px;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;transition:all .2s;color:#1A0A00;text-align:left"
+            onmouseover="this.style.borderColor='#6366f1';this.style.background='rgba(99,102,241,.13)'" onmouseout="this.style.borderColor='rgba(99,102,241,.2)';this.style.background='rgba(99,102,241,.07)'">
+            <span style="font-size:1.5rem">💳</span>
+            <div><div>Pagar com cartão</div><div style="font-size:.72rem;font-weight:600;opacity:.6">Crédito ou débito</div></div>
+          </button>
+          <button onclick="choosePayment('reserve')"
+            style="display:flex;align-items:center;gap:.75rem;padding:.8rem 1rem;background:rgba(26,10,0,.04);border:1.5px solid rgba(26,10,0,.09);border-radius:12px;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:all .2s;color:rgba(26,10,0,.55);text-align:left"
+            onmouseover="this.style.borderColor='rgba(26,10,0,.2)'" onmouseout="this.style.borderColor='rgba(26,10,0,.09)'">
+            <span style="font-size:1.5rem">🎁</span>
+            <div><div>Só reservar</div><div style="font-size:.72rem;font-weight:600;opacity:.6">Levarei o presente pessoalmente</div></div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Botão só reservar (sem pagamento) quando não há opções configuradas -->
+      <button class="btn-modal-submit" id="btnModalSubmit" onclick="startGiftFlow()" style="margin-top:1rem">
+        ✅ Continuar
+      </button>
     </div>
-    <div class="form-group">
-      <label>Seu WhatsApp</label>
-      <input type="tel" id="giftReservePhone" placeholder="(11) 99999-9999"/>
+
+    <!-- Etapa 2: PIX -->
+    <div id="giftStep2Pix" style="display:none">
+      <div style="font-size:.82rem;color:rgba(26,10,0,.5);margin-bottom:1rem">
+        Faça o pagamento via PIX e envie o comprovante para os anfitriões.
+      </div>
+      <div style="background:linear-gradient(135deg,rgba(0,189,126,.08),rgba(0,189,126,.04));border:1.5px solid rgba(0,189,126,.2);border-radius:14px;padding:1.25rem;text-align:center;margin-bottom:1rem">
+        <div id="pixQrContainer" style="margin-bottom:.75rem"></div>
+        <div style="font-size:.65rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:rgba(26,10,0,.35);margin-bottom:.4rem">Chave PIX</div>
+        <div style="font-size:.9rem;font-weight:800;color:#1A0A00;word-break:break-all;background:rgba(255,255,255,.7);border-radius:8px;padding:.55rem .75rem;margin-bottom:.6rem" id="pixKeyDisplay"></div>
+        <button onclick="copyPixFromModal()" style="background:rgba(0,189,126,.15);border:1.5px solid rgba(0,189,126,.3);border-radius:8px;padding:.5rem 1.25rem;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;color:#00875a;transition:all .2s">📋 Copiar chave PIX</button>
+      </div>
+      <div style="font-size:.75rem;color:rgba(26,10,0,.4);margin-bottom:1rem;line-height:1.5">
+        💡 Após pagar, clique no botão abaixo para confirmar. Os anfitriões receberão uma notificação de que você presenteou.
+      </div>
+      <button class="btn-modal-submit" id="btnConfirmPix" onclick="confirmGiftPayment('pix')" style="background:#00BD7E">
+        ✅ Já paguei via PIX — confirmar!
+      </button>
+      <button onclick="backToStep1Gift()" style="width:100%;margin-top:.5rem;background:none;border:none;font-family:'Nunito',sans-serif;font-size:.82rem;color:rgba(26,10,0,.4);cursor:pointer;padding:.4rem">← Voltar</button>
     </div>
-    <button class="btn-modal-submit" id="btnModalSubmit" onclick="confirmReservation()">✅ Confirmar reserva</button>
+
+    <!-- Etapa 2: Cartão -->
+    <div id="giftStep2Card" style="display:none">
+      <div style="font-size:.82rem;color:rgba(26,10,0,.5);margin-bottom:1rem">
+        Você será redirecionado para uma página de pagamento segura.
+      </div>
+      <div style="background:rgba(99,102,241,.06);border:1.5px solid rgba(99,102,241,.15);border-radius:14px;padding:1.25rem;text-align:center;margin-bottom:1rem">
+        <div style="font-size:2.5rem;margin-bottom:.5rem">💳</div>
+        <div style="font-size:.88rem;font-weight:700;margin-bottom:.35rem">Pagamento por cartão</div>
+        <div style="font-size:.78rem;color:rgba(26,10,0,.45)">Crédito ou débito — processamento seguro</div>
+      </div>
+      <button id="btnGoToCard" onclick="goToCardPayment()" class="btn-modal-submit" style="background:linear-gradient(135deg,#6366f1,#4f46e5)">
+        💳 Ir para pagamento →
+      </button>
+      <div style="font-size:.72rem;color:rgba(26,10,0,.3);text-align:center;margin-top:.6rem">Após pagar, volte aqui para confirmar.</div>
+      <button onclick="confirmGiftPayment('card')" style="width:100%;margin-top:.75rem;background:rgba(99,102,241,.1);border:1.5px solid rgba(99,102,241,.2);border-radius:12px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;cursor:pointer;color:#4f46e5;transition:all .2s">
+        ✅ Já paguei com cartão — confirmar!
+      </button>
+      <button onclick="backToStep1Gift()" style="width:100%;margin-top:.5rem;background:none;border:none;font-family:'Nunito',sans-serif;font-size:.82rem;color:rgba(26,10,0,.4);cursor:pointer;padding:.4rem">← Voltar</button>
+    </div>
+
+    <!-- Etapa 3: Confirmação -->
+    <div id="giftStep3Confirm" style="display:none;text-align:center;padding:1rem 0">
+      <div style="font-size:3.5rem;margin-bottom:.75rem">🎉</div>
+      <div style="font-family:'Fraunces',Georgia,serif;font-size:1.3rem;font-weight:700;font-style:italic;margin-bottom:.4rem">Presente confirmado!</div>
+      <div style="font-size:.85rem;color:rgba(26,10,0,.5);margin-bottom:1.5rem" id="giftConfirmMsg">Os anfitriões já foram notificados.</div>
+      <button onclick="closeModal()" class="btn-modal-submit">Fechar</button>
+    </div>
   </div>
 </div>
 
 <!-- NAV -->
 <nav class="nav">
-  <div class="nav-logo" onclick="goHome()">ConteComigo</div>
+  <div class="nav-logo" onclick="goHome()">CrieConvites</div>
   <div class="nav-links">
     <div class="nav-link-pill" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar</div>
     <div class="nav-link-pill" onclick="document.getElementById('giftsSection').scrollIntoView({behavior:'smooth'})">🎁 Presentes</div>
-    <div class="nav-link-pill pink" onclick="shareWhatsApp()">💬 Compartilhar</div>
+    <div class="nav-link-pill pink" onclick="openShareModal()">💬 Compartilhar</div>
   </div>
 </nav>
 
@@ -480,6 +598,7 @@
   <div class="rsvp-inner">
     <div class="section-label reveal">✉️ Confirmação de presença</div>
     <div class="section-title reveal">Conto <em>contigo?</em></div>
+    <div id="rsvpDeadlineBadge" style="display:none;margin:.5rem auto 1.25rem;text-align:center"></div>
 
     <div id="alreadyAnswered" class="answered-banner" style="display:none">
       <div class="answered-banner-title" id="answeredTitle">✅ Presença confirmada!</div>
@@ -507,10 +626,10 @@
         </select>
       </div>
       <div class="form-group">
-        <label>Você vai?</label>
+        <label>Conto contigo?</label>
         <div class="attend-grid">
-          <div class="attend-opt"><input type="radio" name="rAttend" id="rYes" value="yes" checked/><label class="attend-lbl" for="rYes">✅ Sim, vou!</label></div>
-          <div class="attend-opt"><input type="radio" name="rAttend" id="rNo" value="no"/><label class="attend-lbl" for="rNo">❌ Não posso</label></div>
+          <div class="attend-opt"><input type="radio" name="rAttend" id="rYes" value="yes" checked/><label class="attend-lbl" for="rYes">SIM!</label></div>
+          <div class="attend-opt"><input type="radio" name="rAttend" id="rNo" value="no"/><label class="attend-lbl" for="rNo">Não posso ir</label></div>
         </div>
       </div>
       <div class="form-group">
@@ -550,6 +669,22 @@
   </div>
 </section>
 
+<!-- MAP (shown only if invite has address) -->
+<section class="map-section reveal" id="mapSection" style="display:none">
+  <div class="section-label" style="text-align:center">📍 Como chegar</div>
+  <div class="section-title" style="text-align:center">O local da<br><em>nossa festa.</em></div>
+  <div class="map-card">
+    <iframe class="map-frame" id="mapFrame" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen title="Mapa do local do evento"></iframe>
+    <div class="map-footer">
+      <div class="map-address" id="mapAddress"></div>
+      <div class="map-actions">
+        <a class="btn-route" id="mapRouteGoogle" target="_blank" rel="noopener">🚗 Traçar rota</a>
+        <a class="btn-route alt" id="mapRouteWaze" target="_blank" rel="noopener">🧭 Waze</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- GALLERY (shown only if invite has gallery_urls) -->
 <section class="gallery-section reveal" id="gallerySection" style="display:none">
   <div class="section-label" style="text-align:center">📸 Galeria de fotos</div>
@@ -584,13 +719,16 @@
 
 <!-- FOOTER -->
 <footer class="invite-footer">
-  <div class="invite-footer-logo" onclick="location.href='convite-online.html'">ConteComigo</div>
-  <div style="margin-bottom:.5rem">Convite criado com ❤️ no <a href="convite-online.html">ConteComigo</a></div>
+  <div class="invite-footer-logo" onclick="location.href='convite-online.html'">CrieConvites</div>
+  <div style="margin-bottom:.5rem">Convite criado com ❤️ no <a href="convite-online.html">CrieConvites</a></div>
   <div>Crie o seu convite grátis em minutos!</div>
 </footer>
 
-<!-- WhatsApp FAB -->
-<button class="fab" onclick="shareWhatsApp()" title="Compartilhar no WhatsApp">💬</button>
+<!-- Share FAB -->
+<button class="fab" onclick="openShareModal()" title="Compartilhar convite">💬</button>
+
+<!-- RSVP FAB (botão flutuante discreto) -->
+<div class="rsvp-fab" id="rsvpFab" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
 
 <!-- Music Player (shown only if invite has music_url) -->
 <div class="music-player" id="musicPlayer" style="display:none">
@@ -677,17 +815,23 @@ function renderTemplateHTML(tplId, s){
       ${g.name}
     </div>`).join('');
 
-  const rsvpBtn = `<div onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})" style="background:${ac};color:${ac==='#FFFFFF'?'#1A0A00':'#1a0a00'};font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;cursor:pointer">✅ Confirmar presença</div>`;
+  const rsvpBtn = ''; // RSVP agora é um botão flutuante discreto no canto (igual aos templates dinâmicos)
   const presentsBtn = giftList.length ? `<div onclick="document.getElementById('giftsSection').scrollIntoView({behavior:'smooth'})" style="display:inline-block;margin-top:.5rem;padding:.55rem 1.25rem;border:1px solid rgba(255,255,255,.3);border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;color:inherit;opacity:.75">🎁 Ver presentes</div>` : '';
 
   const titulo = s.title || s.titulo || 'Você está convidado!';
   const nome = s.event_name || s.nome || '';
   const hora = s.event_time || s.hora || '';
+  const horaFim = s.event_time_end || s.horaFim || '';
   const local = s.location || s.local || '';
   const endereco = s.address || s.endereco || '';
   const dress = s.dress_code || s.dress || '';
   const msg = s.message || s.msg || '';
   const idade = s.idade || s.age || '';
+  // Formata horário: "das 19:00 às 23:00", só "19:00", ou "até 23:00"
+  const horaDisplay = hora
+    ? (horaFim ? `das ${hora} às ${horaFim}` : hora)
+    : (horaFim ? `até ${horaFim}` : '');
+  const horaFimDisplay = horaFim && !hora ? `até ${horaFim}` : '';
 
   if(tplId==='aniv-neon') return `
     <div style="background:#0a0010;min-height:500px;font-family:'Nunito',sans-serif;color:#fff;position:relative;overflow:hidden">
@@ -700,7 +844,7 @@ function renderTemplateHTML(tplId, s){
         <div style="display:inline-flex;flex-direction:column;gap:.4rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:1rem 1.5rem;margin-bottom:1.5rem;min-width:200px">
           ${idade?`<div style="font-size:.85rem;color:rgba(255,255,255,.6)">🎂 ${idade}</div>`:''}
           <div style="font-size:.85rem;color:rgba(255,255,255,.6)">📅 ${dateStr}</div>
-          ${hora?`<div style="font-size:.85rem;color:rgba(255,255,255,.6)">⏰ ${hora}</div>`:''}
+          ${horaDisplay?`<div style="font-size:.85rem;color:rgba(255,255,255,.6)">⏰ ${horaDisplay}</div>`:''}
           ${local?`<div style="font-size:.85rem;color:rgba(255,255,255,.6)">📍 ${local}</div>`:''}
           ${endereco?`<div style="font-size:.85rem;color:rgba(255,255,255,.6)">🗺 ${endereco}</div>`:''}
           ${dress?`<div style="font-size:.85rem;color:rgba(255,255,255,.6)">👗 ${dress}</div>`:''}
@@ -730,7 +874,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;line-height:1.1;margin-bottom:.3rem">${titulo}</div>
         <div style="font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:1.5rem">${nome}</div>
         <div style="background:rgba(255,255,255,.08);border-radius:16px;padding:1rem;margin-bottom:1.5rem;display:flex;flex-direction:column;gap:.4rem">
-          ${[idade?['🎂',idade]:null,['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="display:flex;align-items:center;gap:.5rem;font-size:.82rem"><span>${i}</span><span>${v}</span></div>`).join('')}
+          ${[idade?['🎂',idade]:null,['📅',dateStr],[horaDisplay?'⏰':null,horaDisplay],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="display:flex;align-items:center;gap:.5rem;font-size:.82rem"><span>${i}</span><span>${v}</span></div>`).join('')}
         </div>
         ${msg?`<div style="font-style:italic;font-size:.85rem;color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:.85rem;margin-bottom:1rem;line-height:1.6">"${msg}"</div>`:''}
         ${rsvpBtn}${presentsBtn}
@@ -756,7 +900,7 @@ function renderTemplateHTML(tplId, s){
           </div>
         </div>
         <div style="display:flex;flex-direction:column;gap:.55rem;margin-bottom:1.25rem">
-          ${[idade?['🎂',idade]:null,['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="display:flex;gap:.6rem;font-size:.85rem;align-items:flex-start"><span style="flex-shrink:0">${i}</span><span style="color:rgba(26,10,0,.65)">${v}</span></div>`).join('')}
+          ${[idade?['🎂',idade]:null,['📅',dateStr],[horaDisplay?'⏰':null,horaDisplay],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="display:flex;gap:.6rem;font-size:.85rem;align-items:flex-start"><span style="flex-shrink:0">${i}</span><span style="color:rgba(26,10,0,.65)">${v}</span></div>`).join('')}
         </div>
         ${msg?`<div style="background:rgba(26,10,0,.03);border-left:3px solid ${ac};padding:.8rem 1rem;border-radius:0 8px 8px 0;font-style:italic;font-size:.85rem;color:rgba(26,10,0,.55);margin-bottom:1rem;line-height:1.6">"${msg}"</div>`:''}
         ${rsvpBtn}${presentsBtn}
@@ -778,7 +922,7 @@ function renderTemplateHTML(tplId, s){
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;text-align:left">
               ${idade?`<div style="font-size:.78rem;color:rgba(255,255,255,.7);grid-column:1/-1">🎂 ${idade}</div>`:''}
               <div style="font-size:.78rem;color:rgba(255,255,255,.7)">📅 ${dateShort}</div>
-              <div style="font-size:.78rem;color:rgba(255,255,255,.7)">${hora?'⏰ '+hora:''}</div>
+              <div style="font-size:.78rem;color:rgba(255,255,255,.7)">${horaDisplay?'⏰ '+horaDisplay:''}</div>
               <div style="font-size:.78rem;color:rgba(255,255,255,.7);grid-column:1/-1">${local?'📍 '+local:''}</div>
               <div style="font-size:.78rem;color:rgba(255,255,255,.7);grid-column:1/-1">${endereco?'🗺 '+endereco:''}</div>
               <div style="font-size:.78rem;color:rgba(255,255,255,.7);grid-column:1/-1">${dress?'👗 '+dress:''}</div>
@@ -805,12 +949,11 @@ function renderTemplateHTML(tplId, s){
         <div style="font-weight:700;color:rgba(26,10,0,.5);margin-bottom:${idade?'.3rem':'1.5rem'}">${nome}</div>
         ${idade?`<div style="font-size:.85rem;font-weight:800;color:${ac};margin-bottom:1.25rem">🎂 ${idade}</div>`:''}
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.5rem">
-          ${[['🗓',dateShort,'Data'],['⏰',hora||'—','Hora'],['📍',local?local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:#fff;border-radius:12px;padding:.65rem .35rem;box-shadow:0 2px 8px rgba(0,0,0,.06)"><div style="font-size:1.1rem">${i}</div><div style="font-size:.72rem;font-weight:800;color:#1A0A00">${v}</div><div style="font-size:.58rem;color:rgba(26,10,0,.3);text-transform:uppercase;letter-spacing:.06em">${l}</div></div>`).join('')}
+          ${[['🗓',dateShort,'Data'],['⏰',horaDisplay||hora||'—','Hora'],['📍',local?local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:#fff;border-radius:12px;padding:.65rem .35rem;box-shadow:0 2px 8px rgba(0,0,0,.06)"><div style="font-size:1.1rem">${i}</div><div style="font-size:.72rem;font-weight:800;color:#1A0A00">${v}</div><div style="font-size:.58rem;color:rgba(26,10,0,.3);text-transform:uppercase;letter-spacing:.06em">${l}</div></div>`).join('')}
         </div>
         ${endereco?`<div style="background:#fff;border-radius:10px;padding:.6rem;font-size:.8rem;color:rgba(26,10,0,.6);margin-bottom:.5rem;box-shadow:0 2px 8px rgba(0,0,0,.06)">🗺 ${endereco}</div>`:''}
         ${dress?`<div style="background:#fff;border-radius:10px;padding:.6rem;font-size:.8rem;color:rgba(26,10,0,.6);margin-bottom:1rem;box-shadow:0 2px 8px rgba(0,0,0,.06)">👗 Dress code: <strong>${dress}</strong></div>`:''}
         ${msg?`<div style="background:rgba(255,61,107,.06);border-radius:12px;padding:.85rem;font-style:italic;font-size:.85rem;color:rgba(26,10,0,.6);margin-bottom:1rem;line-height:1.6">"${msg}"</div>`:''}
-        <div onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})" style="background:linear-gradient(135deg,${ac},#FF3D6B);color:#fff;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;margin-bottom:1rem;box-shadow:0 6px 20px rgba(255,61,107,.3);cursor:pointer">✅ Confirmar presença</div>
         ${presentsBtn}
       </div>
     </div>`;
@@ -829,7 +972,7 @@ function renderTemplateHTML(tplId, s){
           <div style="display:flex;flex-direction:column;gap:.4rem">
             ${idade?`<div style="font-size:.82rem;color:rgba(255,255,255,.75)">🎂 ${idade}</div>`:''}
             <div style="font-size:.82rem;color:rgba(255,255,255,.75)">🗓 ${dateStr}</div>
-            ${hora?`<div style="font-size:.82rem;color:rgba(255,255,255,.75)">⏰ ${hora}</div>`:''}
+            ${horaDisplay?`<div style="font-size:.82rem;color:rgba(255,255,255,.75)">⏰ ${horaDisplay}</div>`:''}
             ${local?`<div style="font-size:.82rem;color:rgba(255,255,255,.75)">📍 ${local}</div>`:''}
             ${endereco?`<div style="font-size:.82rem;color:rgba(255,255,255,.75)">🗺 ${endereco}</div>`:''}
             ${dress?`<div style="font-size:.82rem;color:rgba(255,255,255,.75)">👗 ${dress}</div>`:''}
@@ -839,7 +982,6 @@ function renderTemplateHTML(tplId, s){
         <div style="display:flex;justify-content:center;gap:.5rem;margin-bottom:1.5rem">
           <div style="background:rgba(255,255,255,.12);border-radius:12px;padding:.65rem 1.25rem;text-align:center"><div style="font-family:'Fraunces',Georgia,serif;font-size:1.8rem;font-weight:900;color:${ac}">${days}</div><div style="font-size:.6rem;color:rgba(255,255,255,.4);text-transform:uppercase">dias</div></div>
         </div>
-        <div onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})" style="background:${ac};color:#2d0a4a;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;margin-bottom:1rem;cursor:pointer">✅ Confirmar presença</div>
         ${presentsBtn}
       </div>
     </div>`;
@@ -854,7 +996,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;line-height:1.1;color:${ac};margin-bottom:.35rem">${titulo}</div>
         <div style="font-size:1rem;color:rgba(255,255,255,.65);margin-bottom:1.5rem">${nome}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.5rem;text-align:left">
-          ${[idade?['🎂',idade]:null,['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:.55rem .75rem;font-size:.75rem;display:flex;align-items:center;gap:.35rem"><span>${i}</span><span style="color:rgba(255,255,255,.7)">${v}</span></div>`).join('')}
+          ${[idade?['🎂',idade]:null,['📅',dateStr],[horaDisplay?'⏰':null,horaDisplay],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:.55rem .75rem;font-size:.75rem;display:flex;align-items:center;gap:.35rem"><span>${i}</span><span style="color:rgba(255,255,255,.7)">${v}</span></div>`).join('')}
         </div>
         ${msg?`<div style="background:rgba(255,255,255,.05);border-left:3px solid ${ac};border-radius:0 8px 8px 0;padding:.8rem 1rem;font-style:italic;font-size:.82rem;color:rgba(255,255,255,.55);margin-bottom:1rem;line-height:1.5;text-align:left">"${msg}"</div>`:''}
         ${rsvpBtn}${presentsBtn}
@@ -873,7 +1015,7 @@ function renderTemplateHTML(tplId, s){
         <div style="color:rgba(26,10,0,.5);font-weight:700;margin-bottom:${idade?'.3rem':'1.5rem'}">${nome}</div>
         ${idade?`<div style="font-size:.85rem;font-weight:800;color:${ac};margin-bottom:1.25rem">🎂 ${idade}</div>`:''}
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.25rem">
-          ${[['🗓',dateShort,'Data'],['⏰',hora||'—','Hora'],['📍',local?local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:#fff;border-radius:12px;padding:.65rem .35rem;box-shadow:0 2px 8px rgba(0,0,0,.06)"><div style="font-size:1rem">${i}</div><div style="font-size:.7rem;font-weight:800">${v}</div><div style="font-size:.55rem;color:rgba(26,10,0,.3);text-transform:uppercase">${l}</div></div>`).join('')}
+          ${[['🗓',dateShort,'Data'],['⏰',horaDisplay||hora||'—','Hora'],['📍',local?local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:#fff;border-radius:12px;padding:.65rem .35rem;box-shadow:0 2px 8px rgba(0,0,0,.06)"><div style="font-size:1rem">${i}</div><div style="font-size:.7rem;font-weight:800">${v}</div><div style="font-size:.55rem;color:rgba(26,10,0,.3);text-transform:uppercase">${l}</div></div>`).join('')}
         </div>
         ${endereco?`<div style="background:#fff;border-radius:10px;padding:.6rem;font-size:.8rem;color:rgba(26,10,0,.55);margin-bottom:.75rem;box-shadow:0 2px 8px rgba(0,0,0,.05)">🗺 ${endereco}</div>`:''}
 
@@ -893,10 +1035,9 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:1.4rem;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:2rem">${nome}</div>
         <div style="width:60px;height:1px;background:${ac};opacity:.4;margin:0 auto 2rem"></div>
         <div style="display:flex;flex-direction:column;gap:.6rem;margin-bottom:2rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.85rem;color:rgba(255,255,255,.6);letter-spacing:.02em">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[horaDisplay?'⏰':null,horaDisplay],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.85rem;color:rgba(255,255,255,.6);letter-spacing:.02em">${i} ${v}</div>`).join('')}
         </div>
         ${msg?`<div style="border:1px solid rgba(255,215,61,.2);border-radius:16px;padding:1.25rem;font-style:italic;font-size:.88rem;color:rgba(255,255,255,.55);margin-bottom:1.5rem;line-height:1.7">"${msg}"</div>`:''}
-        <div onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})" style="background:transparent;border:1px solid ${ac};color:${ac};font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;letter-spacing:.05em;cursor:pointer">✅ Confirmar Presença</div>
         ${presentsBtn}
       </div>
     </div>`;
@@ -913,7 +1054,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:.95rem;font-style:italic;color:rgba(26,10,0,.4);margin-bottom:.3rem">de</div>
         <div style="font-size:1rem;font-weight:700;color:rgba(26,10,0,.7);margin-bottom:1.5rem">${nome}</div>
         <div style="display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem">
-          ${[['📅',dateShort],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="background:rgba(26,10,0,.04);border:1px solid rgba(26,10,0,.07);border-radius:8px;padding:.4rem .7rem;font-size:.75rem;color:rgba(26,10,0,.6)">${i} ${v}</div>`).join('')}
+          ${[['📅',dateShort],[horaDisplay?'⏰':null,horaDisplay],[local?'📍':null,local],[endereco?'🗺':null,endereco]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="background:rgba(26,10,0,.04);border:1px solid rgba(26,10,0,.07);border-radius:8px;padding:.4rem .7rem;font-size:.75rem;color:rgba(26,10,0,.6)">${i} ${v}</div>`).join('')}
         </div>
         ${dress?`<div style="font-size:.8rem;color:rgba(26,10,0,.4);margin-bottom:1.25rem">👗 ${dress}</div>`:''}
         ${msg?`<div style="font-style:italic;font-size:.85rem;color:rgba(26,10,0,.45);line-height:1.6;margin-bottom:1.25rem;padding:0 .5rem">"${msg}"</div>`:''}
@@ -933,10 +1074,9 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,7vw,2.8rem);font-weight:900;font-style:italic;color:${ac};line-height:1.1;margin-bottom:.3rem">${titulo}</div>
         <div style="font-size:.95rem;color:rgba(255,255,255,.65);margin-bottom:2rem">${nome}</div>
         <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:1.25rem;margin-bottom:1.5rem;display:flex;flex-direction:column;gap:.5rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.6)">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[horaDisplay?'⏰':null,horaDisplay],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.6)">${i} ${v}</div>`).join('')}
         </div>
         ${msg?`<div style="border-left:2px solid ${ac};padding:.75rem 1rem;text-align:left;font-style:italic;font-size:.83rem;color:rgba(255,255,255,.5);margin-bottom:1.25rem;line-height:1.6">"${msg}"</div>`:''}
-        <div onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})" style="border:1px solid ${ac};color:${ac};background:transparent;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;cursor:pointer">✅ Confirmar presença</div>
         ${presentsBtn}
       </div>
     </div>`;
@@ -952,7 +1092,7 @@ function renderTemplateHTML(tplId, s){
         <div style="background:rgba(255,255,255,.1);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:1rem;margin-bottom:1rem">
           <div style="display:flex;flex-direction:column;gap:.4rem;font-size:.82rem;color:rgba(255,255,255,.75)">
             <div>📅 ${dateStr}</div>
-            ${hora?`<div>⏰ ${hora}</div>`:''}
+            ${horaDisplay?`<div>⏰ ${horaDisplay}</div>`:''}
             ${local?`<div>📍 ${local}</div>`:''}
             ${endereco?`<div>🗺 ${endereco}</div>`:''}
             ${dress?`<div>👗 ${dress}</div>`:''}
@@ -977,7 +1117,7 @@ function renderTemplateHTML(tplId, s){
         <div style="background:#fff;border-radius:16px;padding:1rem;margin-bottom:1.25rem;box-shadow:0 4px 16px rgba(200,100,220,.1)">
           <div style="display:flex;flex-direction:column;gap:.4rem">
             <div style="font-size:.82rem;color:rgba(26,10,0,.6)">📅 ${dateStr}</div>
-            ${hora?`<div style="font-size:.82rem;color:rgba(26,10,0,.6)">⏰ ${hora}</div>`:''}
+            ${horaDisplay?`<div style="font-size:.82rem;color:rgba(26,10,0,.6)">⏰ ${horaDisplay}</div>`:''}
             ${local?`<div style="font-size:.82rem;color:rgba(26,10,0,.6)">📍 ${local}</div>`:''}
             ${endereco?`<div style="font-size:.82rem;color:rgba(26,10,0,.6)">🗺 ${endereco}</div>`:''}
             ${dress?`<div style="font-size:.82rem;color:rgba(26,10,0,.6)">👗 ${dress}</div>`:''}
@@ -998,7 +1138,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;color:${ac};line-height:1.1;margin-bottom:.3rem">${titulo}</div>
         <div style="color:rgba(255,255,255,.6);margin-bottom:1.75rem">${nome}</div>
         <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:1.1rem;margin-bottom:1.5rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:.35rem">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[horaDisplay?'⏰':null,horaDisplay],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:.35rem">${i} ${v}</div>`).join('')}
           ${msg?`<div style="border-top:1px solid rgba(255,255,255,.08);margin-top:.7rem;padding-top:.7rem;font-style:italic;font-size:.8rem;color:rgba(255,255,255,.45);line-height:1.5">"${msg}"</div>`:''}
         </div>
         ${rsvpBtn}${presentsBtn}
@@ -1015,7 +1155,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;color:${ac};line-height:1.1;margin-bottom:.3rem">${titulo}</div>
         <div style="color:rgba(255,255,255,.6);margin-bottom:1.75rem">${nome}</div>
         <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:1.1rem;margin-bottom:1.5rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:.35rem">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[horaDisplay?'⏰':null,horaDisplay],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:.35rem">${i} ${v}</div>`).join('')}
           ${msg?`<div style="border-top:1px solid rgba(255,255,255,.08);margin-top:.7rem;padding-top:.7rem;font-style:italic;font-size:.8rem;color:rgba(255,255,255,.45);line-height:1.5">"${msg}"</div>`:''}
         </div>
         ${rsvpBtn}${presentsBtn}
@@ -1032,7 +1172,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:${ac};margin-bottom:.4rem">Você está convidado!</div>
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.7rem,6vw,2.4rem);font-weight:900;font-style:italic;color:#1A0A00;line-height:1.1;margin-bottom:1.25rem">${titulo}</div>
         <div style="background:#fff;border-radius:12px;padding:1rem;margin-bottom:1rem;box-shadow:0 2px 8px rgba(0,0,0,.06);text-align:left">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(26,10,0,.6);margin-bottom:.3rem;display:flex;gap:.4rem"><span>${i}</span><span>${v}</span></div>`).join('')}
+          ${[['📅',dateStr],[horaDisplay?'⏰':null,horaDisplay],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(26,10,0,.6);margin-bottom:.3rem;display:flex;gap:.4rem"><span>${i}</span><span>${v}</span></div>`).join('')}
         </div>
         ${msg?`<div style="background:#fff;border-radius:12px;padding:.85rem;font-style:italic;font-size:.83rem;color:rgba(26,10,0,.5);margin-bottom:1rem;line-height:1.6;box-shadow:0 2px 8px rgba(0,0,0,.05)">"${msg}"</div>`:''}
         ${rsvpBtn}${presentsBtn}
@@ -1051,7 +1191,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,7vw,3rem);font-weight:900;font-style:italic;color:${ac};line-height:1;margin-bottom:.4rem;text-shadow:0 0 20px ${ac}55">${titulo}</div>
         <div style="font-size:1.1rem;color:rgba(255,255,255,.7);font-weight:700;margin-bottom:1.75rem">${nome}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.5rem;text-align:left">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👕':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,165,0,.2);border-radius:10px;padding:.55rem .75rem;font-size:.75rem;display:flex;gap:.35rem;align-items:center"><span>${i}</span><span style="color:rgba(255,255,255,.75)">${v}</span></div>`).join('')}
+          ${[['📅',dateStr],[horaDisplay?'⏰':null,horaDisplay],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👕':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,165,0,.2);border-radius:10px;padding:.55rem .75rem;font-size:.75rem;display:flex;gap:.35rem;align-items:center"><span>${i}</span><span style="color:rgba(255,255,255,.75)">${v}</span></div>`).join('')}
         </div>
         ${msg?`<div style="background:rgba(245,158,11,.08);border-left:3px solid ${ac};padding:.8rem 1rem;font-style:italic;font-size:.85rem;color:rgba(255,255,255,.55);margin-bottom:1rem;line-height:1.5;text-align:left">"${msg}"</div>`:''}
         ${rsvpBtn}${presentsBtn}
@@ -1070,7 +1210,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,7vw,2.8rem);font-weight:900;font-style:italic;color:#fff;line-height:1.1;margin-bottom:.3rem">${titulo}</div>
         <div style="font-size:1rem;color:rgba(255,255,255,.65);margin-bottom:1.5rem">${nome}</div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.5rem">
-          ${[['📅',dateShort,'Data'],['⏰',hora||'—','Hora'],['📍',local?local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:rgba(255,255,255,.08);border:1px solid rgba(52,211,153,.2);border-radius:10px;padding:.6rem .25rem;text-align:center"><div style="font-size:1rem">${i}</div><div style="font-size:.7rem;font-weight:800;color:${ac}">${v}</div><div style="font-size:.55rem;color:rgba(255,255,255,.35);text-transform:uppercase">${l}</div></div>`).join('')}
+          ${[['📅',dateShort,'Data'],['⏰',horaDisplay||hora||'—','Hora'],['📍',local?local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:rgba(255,255,255,.08);border:1px solid rgba(52,211,153,.2);border-radius:10px;padding:.6rem .25rem;text-align:center"><div style="font-size:1rem">${i}</div><div style="font-size:.7rem;font-weight:800;color:${ac}">${v}</div><div style="font-size:.55rem;color:rgba(255,255,255,.35);text-transform:uppercase">${l}</div></div>`).join('')}
         </div>
         ${msg?`<div style="border:1px solid rgba(52,211,153,.15);border-radius:12px;padding:.85rem;font-style:italic;font-size:.83rem;color:rgba(255,255,255,.5);margin-bottom:1rem;line-height:1.5">"${msg}"</div>`:''}
         <div style="background:${ac};color:#052a10;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem">${rsvpBtn}</div>
@@ -1087,7 +1227,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,7vw,3rem);font-weight:900;font-style:italic;color:#fff;line-height:1;margin-bottom:.4rem">${titulo}</div>
         <div style="font-size:1rem;color:rgba(255,255,255,.5);margin-bottom:2.5rem">${nome}</div>
         <div style="display:flex;flex-direction:column;gap:.6rem;margin-bottom:2.5rem">
-          ${[['—',dateStr],[hora?'—':null,hora],[local?'—':null,local],[endereco?'—':null,endereco],[dress?'—':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="display:flex;gap:.75rem;font-size:.88rem;color:rgba(255,255,255,.5)"><span style="color:${ac};font-weight:900">${i}</span><span>${v}</span></div>`).join('')}
+          ${[['—',dateStr],[horaDisplay?'—':null,horaDisplay],[local?'—':null,local],[endereco?'—':null,endereco],[dress?'—':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="display:flex;gap:.75rem;font-size:.88rem;color:rgba(255,255,255,.5)"><span style="color:${ac};font-weight:900">${i}</span><span>${v}</span></div>`).join('')}
         </div>
         ${msg?`<div style="border-top:1px solid rgba(255,255,255,.1);padding-top:1.25rem;font-style:italic;font-size:.85rem;color:rgba(255,255,255,.35);line-height:1.7;margin-bottom:1.5rem">"${msg}"</div>`:''}
         <div style="background:transparent;border:1px solid ${ac};color:${ac};font-weight:800;text-align:center;padding:.85rem;border-radius:4px;font-size:.9rem;letter-spacing:.08em;cursor:pointer" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">CONFIRMAR PRESENÇA →</div>
@@ -1104,7 +1244,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,8vw,3rem);font-weight:900;font-style:italic;color:#fff;line-height:1;margin-bottom:.4rem">${titulo}</div>
         <div style="font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:1.5rem">${nome}</div>
         <div style="background:rgba(255,255,255,.1);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:1rem;margin-bottom:1.25rem;display:flex;flex-direction:column;gap:.4rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.75)">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[horaDisplay?'⏰':null,horaDisplay],[local?'📍':null,local],[endereco?'🗺':null,endereco]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.75)">${i} ${v}</div>`).join('')}
         </div>
         ${rsvpBtn}${presentsBtn}
       </div>
@@ -1123,10 +1263,9 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:1.1rem;font-style:italic;color:rgba(255,255,255,.6);margin-bottom:2rem">${nome}</div>
         <div style="width:50px;height:1px;background:${ac};opacity:.5;margin:0 auto 1.5rem"></div>
         <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.75rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.85rem;color:rgba(255,255,255,.6)">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[horaDisplay?'⏰':null,horaDisplay],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.85rem;color:rgba(255,255,255,.6)">${i} ${v}</div>`).join('')}
         </div>
         ${msg?`<div style="border:1px solid rgba(252,211,77,.15);border-radius:16px;padding:1.1rem;font-style:italic;font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:1.5rem;line-height:1.7">"${msg}"</div>`:''}
-        <div style="background:transparent;border:1px solid ${ac};color:${ac};font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;letter-spacing:.05em;cursor:pointer" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
         ${giftList.length?`<div style="margin-top:1rem;display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center">${giftsChips}</div>`:''}
       </div>
     </div>`;
@@ -1145,11 +1284,10 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;color:#1A0A00;line-height:1.1;margin-bottom:.3rem">${titulo}</div>
         <div style="color:rgba(26,10,0,.5);font-weight:700;margin-bottom:1.5rem">${nome}</div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.25rem">
-          ${[['🗓',dateShort,'Data'],['⏰',hora||'—','Hora'],['📍',local?local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:#fff;border-radius:12px;padding:.65rem .35rem;box-shadow:0 2px 8px rgba(236,72,153,.12)"><div style="font-size:1rem">${i}</div><div style="font-size:.7rem;font-weight:800">${v}</div><div style="font-size:.55rem;color:rgba(26,10,0,.3);text-transform:uppercase">${l}</div></div>`).join('')}
+          ${[['🗓',dateShort,'Data'],['⏰',horaDisplay||hora||'—','Hora'],['📍',local?local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:#fff;border-radius:12px;padding:.65rem .35rem;box-shadow:0 2px 8px rgba(236,72,153,.12)"><div style="font-size:1rem">${i}</div><div style="font-size:.7rem;font-weight:800">${v}</div><div style="font-size:.55rem;color:rgba(26,10,0,.3);text-transform:uppercase">${l}</div></div>`).join('')}
         </div>
         ${dress?`<div style="background:#fff;border-radius:10px;padding:.6rem;font-size:.8rem;color:rgba(26,10,0,.6);margin-bottom:1rem;box-shadow:0 2px 8px rgba(236,72,153,.08)">👗 Dress code: <strong>${dress}</strong></div>`:''}
         ${msg?`<div style="background:rgba(249,168,212,.15);border-radius:12px;padding:.85rem;font-style:italic;font-size:.85rem;color:rgba(26,10,0,.55);margin-bottom:1rem;line-height:1.6">"${msg}"</div>`:''}
-        <div style="background:linear-gradient(135deg,#f472b6,#ec4899);color:#fff;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;box-shadow:0 6px 20px rgba(236,72,153,.3);cursor:pointer" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
         ${giftList.length?`<div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center">${giftsChips}</div>`:''}
       </div>
     </div>`;
@@ -1163,10 +1301,9 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,7vw,2.8rem);font-weight:900;font-style:italic;line-height:1.1;margin-bottom:.3rem">${titulo}</div>
         <div style="font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:1.5rem">${nome}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.5rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👙':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="background:rgba(255,255,255,.1);border:1px solid rgba(96,165,250,.2);border-radius:10px;padding:.55rem .75rem;font-size:.75rem;display:flex;gap:.35rem;align-items:center"><span>${i}</span><span style="color:rgba(255,255,255,.8)">${v}</span></div>`).join('')}
+          ${[['📅',dateStr],[horaDisplay?'⏰':null,horaDisplay],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👙':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="background:rgba(255,255,255,.1);border:1px solid rgba(96,165,250,.2);border-radius:10px;padding:.55rem .75rem;font-size:.75rem;display:flex;gap:.35rem;align-items:center"><span>${i}</span><span style="color:rgba(255,255,255,.8)">${v}</span></div>`).join('')}
         </div>
         ${msg?`<div style="background:rgba(96,165,250,.1);border-radius:12px;padding:.85rem;font-style:italic;font-size:.83rem;color:rgba(255,255,255,.55);margin-bottom:1rem;line-height:1.5">"${msg}"</div>`:''}
-        <div style="background:${ac};color:#0c3a4a;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;cursor:pointer" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
         ${giftList.length?`<div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center">${giftsChips}</div>`:''}
       </div>
     </div>`;
@@ -1182,7 +1319,7 @@ function renderTemplateHTML(tplId, s){
         <div style="background:rgba(255,255,255,.12);backdrop-filter:blur(12px);border:1px solid rgba(244,114,182,.2);border-radius:16px;padding:1rem;margin-bottom:1rem">
           <div style="display:flex;flex-direction:column;gap:.4rem;font-size:.82rem;color:rgba(255,255,255,.75)">
             <div>📅 ${dateStr}</div>
-            ${hora?`<div>⏰ ${hora}</div>`:''}
+            ${horaDisplay?`<div>⏰ ${horaDisplay}</div>`:''}
             ${local?`<div>📍 ${local}</div>`:''}
           </div>
         </div>
@@ -1205,10 +1342,9 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:1.5rem;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:2rem">${nome}</div>
         <div style="width:50px;height:1px;background:${ac};opacity:.45;margin:0 auto 1.5rem"></div>
         <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.75rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.85rem;color:rgba(255,255,255,.55)">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[horaDisplay?'⏰':null,horaDisplay],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.85rem;color:rgba(255,255,255,.55)">${i} ${v}</div>`).join('')}
         </div>
         ${msg?`<div style="border:1px solid rgba(252,211,77,.18);border-radius:16px;padding:1.1rem;font-style:italic;font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:1.5rem;line-height:1.7">"${msg}"</div>`:''}
-        <div style="background:transparent;border:1px solid ${ac};color:${ac};font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;cursor:pointer" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
       </div>
     </div>`;
 
@@ -1226,11 +1362,10 @@ function renderTemplateHTML(tplId, s){
         <div style="font-size:.95rem;color:rgba(26,10,0,.4);font-style:italic;margin-bottom:.3rem">Os 15 anos de</div>
         <div style="font-size:1.15rem;font-weight:800;color:rgba(26,10,0,.8);margin-bottom:1.5rem">${nome}</div>
         <div style="display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.25rem">
-          ${[['📅',dateShort],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="background:rgba(26,10,0,.04);border:1px solid rgba(26,10,0,.07);border-radius:8px;padding:.4rem .75rem;font-size:.77rem;color:rgba(26,10,0,.6)">${i} ${v}</div>`).join('')}
+          ${[['📅',dateShort],[horaDisplay?'⏰':null,horaDisplay],[local?'📍':null,local],[endereco?'🗺':null,endereco]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="background:rgba(26,10,0,.04);border:1px solid rgba(26,10,0,.07);border-radius:8px;padding:.4rem .75rem;font-size:.77rem;color:rgba(26,10,0,.6)">${i} ${v}</div>`).join('')}
         </div>
         ${dress?`<div style="font-size:.82rem;color:rgba(26,10,0,.4);margin-bottom:1.25rem">👗 ${dress}</div>`:''}
         ${msg?`<div style="font-style:italic;font-size:.85rem;color:rgba(26,10,0,.4);line-height:1.6;margin-bottom:1.25rem;padding:0 .5rem">"${msg}"</div>`:''}
-        <div style="background:${ac};color:#fff;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;box-shadow:0 6px 20px ${ac}55;cursor:pointer" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
       </div>
     </div>`;
 
@@ -1245,10 +1380,9 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:.9rem;font-style:italic;color:rgba(255,255,255,.45);margin-bottom:.25rem">Os 15 anos de</div>
         <div style="font-size:1.15rem;font-weight:700;color:rgba(255,255,255,.85);margin-bottom:2rem">${nome}</div>
         <div style="background:rgba(255,255,255,.07);border:1px solid rgba(252,211,77,.2);border-radius:16px;padding:1.1rem;margin-bottom:1.5rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.55);margin-bottom:.35rem">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[horaDisplay?'⏰':null,horaDisplay],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.55);margin-bottom:.35rem">${i} ${v}</div>`).join('')}
         </div>
         ${msg?`<div style="border-left:2px solid ${ac};padding:.75rem 1rem;text-align:left;font-style:italic;font-size:.83rem;color:rgba(255,255,255,.45);margin-bottom:1.25rem;line-height:1.6">"${msg}"</div>`:''}
-        <div style="background:transparent;border:1px solid ${ac};color:${ac};font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;cursor:pointer" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
       </div>
     </div>`;
 
@@ -1261,7 +1395,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,8vw,3rem);font-weight:900;font-style:italic;color:${ac};line-height:1;margin-bottom:.3rem">${titulo}</div>
         <div style="font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:1.25rem">${nome}</div>
         <div style="background:rgba(255,255,255,.1);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:1rem;margin-bottom:1rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.7);margin-bottom:.3rem">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[horaDisplay?'⏰':null,horaDisplay],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.7);margin-bottom:.3rem">${i} ${v}</div>`).join('')}
         </div>
         ${rsvpBtn}${presentsBtn}
       </div>
@@ -1280,10 +1414,9 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,7vw,3rem);font-weight:900;font-style:italic;color:#EF4444;line-height:1;margin-bottom:.4rem;text-shadow:0 0 20px rgba(239,68,68,.5)">${titulo}</div>
         <div style="font-size:1.1rem;color:rgba(255,255,255,.75);margin-bottom:1.5rem">${nome}</div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.5rem">
-          ${[['🗓',dateShort,'Data'],['⏰',hora||'—','Hora'],['📍',local?local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:rgba(255,255,255,.08);border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:.6rem .25rem;text-align:center"><div style="font-size:1rem">${i}</div><div style="font-size:.7rem;font-weight:800;color:#EF4444">${v}</div><div style="font-size:.55rem;color:rgba(255,255,255,.35);text-transform:uppercase">${l}</div></div>`).join('')}
+          ${[['🗓',dateShort,'Data'],['⏰',horaDisplay||hora||'—','Hora'],['📍',local?local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:rgba(255,255,255,.08);border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:.6rem .25rem;text-align:center"><div style="font-size:1rem">${i}</div><div style="font-size:.7rem;font-weight:800;color:#EF4444">${v}</div><div style="font-size:.55rem;color:rgba(255,255,255,.35);text-transform:uppercase">${l}</div></div>`).join('')}
         </div>
         ${msg?`<div style="background:rgba(239,68,68,.08);border-left:3px solid #EF4444;padding:.8rem 1rem;font-style:italic;font-size:.83rem;color:rgba(255,255,255,.5);margin-bottom:1rem;line-height:1.5">"${msg}"</div>`:''}
-        <div style="background:linear-gradient(135deg,#EF4444,#1d4ed8);color:#fff;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;cursor:pointer" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
         ${giftList.length?`<div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center">${giftsChips}</div>`:''}
       </div>
     </div>`;
@@ -1299,10 +1432,9 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,7vw,3rem);font-weight:900;font-style:italic;color:#FBBF24;line-height:1;margin-bottom:.4rem">${titulo}</div>
         <div style="font-size:1.1rem;color:rgba(255,255,255,.7);margin-bottom:1.5rem">${nome}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.5rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👕':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="background:rgba(255,255,255,.07);border:1px solid rgba(251,191,36,.2);border-radius:10px;padding:.55rem .75rem;font-size:.75rem;display:flex;gap:.35rem;align-items:center"><span>${i}</span><span style="color:rgba(255,255,255,.75)">${v}</span></div>`).join('')}
+          ${[['📅',dateStr],[horaDisplay?'⏰':null,horaDisplay],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👕':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="background:rgba(255,255,255,.07);border:1px solid rgba(251,191,36,.2);border-radius:10px;padding:.55rem .75rem;font-size:.75rem;display:flex;gap:.35rem;align-items:center"><span>${i}</span><span style="color:rgba(255,255,255,.75)">${v}</span></div>`).join('')}
         </div>
         ${msg?`<div style="background:rgba(251,191,36,.08);border-left:3px solid #FBBF24;padding:.8rem 1rem;font-style:italic;font-size:.83rem;color:rgba(255,255,255,.5);margin-bottom:1rem;line-height:1.5">"${msg}"</div>`:''}
-        <div style="background:linear-gradient(135deg,#FBBF24,#EF4444);color:#1a1000;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;cursor:pointer" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
         ${giftList.length?`<div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center">${giftsChips}</div>`:''}
       </div>
     </div>`;
@@ -1321,10 +1453,9 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,7vw,3rem);font-weight:900;font-style:italic;color:#EF4444;line-height:1;margin-bottom:.4rem">${titulo}</div>
         <div style="font-size:1.1rem;color:rgba(255,255,255,.7);margin-bottom:1.5rem">${nome}</div>
         <div style="background:rgba(255,255,255,.07);border:1px solid rgba(239,68,68,.2);border-radius:16px;padding:1rem;margin-bottom:1.5rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👕':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:.3rem">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[horaDisplay?'⏰':null,horaDisplay],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👕':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:.3rem">${i} ${v}</div>`).join('')}
         </div>
         ${msg?`<div style="font-style:italic;font-size:.83rem;color:rgba(255,255,255,.5);margin-bottom:1rem;line-height:1.5">"${msg}"</div>`:''}
-        <div style="background:#EF4444;color:#fff;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;cursor:pointer" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
         ${giftList.length?`<div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center">${giftsChips}</div>`:''}
       </div>
     </div>`;
@@ -1339,10 +1470,9 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,7vw,2.8rem);font-weight:900;font-style:italic;color:#FBBF24;line-height:1.1;margin-bottom:.4rem">${titulo}</div>
         <div style="font-size:1.1rem;color:rgba(255,255,255,.7);margin-bottom:1.5rem">${nome}</div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.5rem">
-          ${[['🗓',dateShort,'Data'],['⏰',hora||'—','Hora'],['📍',local?local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:rgba(255,255,255,.08);border:1px solid rgba(251,191,36,.2);border-radius:10px;padding:.6rem .25rem;text-align:center"><div style="font-size:1rem">${i}</div><div style="font-size:.7rem;font-weight:800;color:#FBBF24">${v}</div><div style="font-size:.55rem;color:rgba(255,255,255,.35);text-transform:uppercase">${l}</div></div>`).join('')}
+          ${[['🗓',dateShort,'Data'],['⏰',horaDisplay||hora||'—','Hora'],['📍',local?local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:rgba(255,255,255,.08);border:1px solid rgba(251,191,36,.2);border-radius:10px;padding:.6rem .25rem;text-align:center"><div style="font-size:1rem">${i}</div><div style="font-size:.7rem;font-weight:800;color:#FBBF24">${v}</div><div style="font-size:.55rem;color:rgba(255,255,255,.35);text-transform:uppercase">${l}</div></div>`).join('')}
         </div>
         ${msg?`<div style="background:rgba(251,191,36,.08);border-left:3px solid #FBBF24;padding:.8rem 1rem;font-style:italic;font-size:.83rem;color:rgba(255,255,255,.5);margin-bottom:1rem;line-height:1.5">"${msg}"</div>`:''}
-        <div style="background:linear-gradient(135deg,#FBBF24,#F59E0B);color:#0c3a4a;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;cursor:pointer" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
         ${giftList.length?`<div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center">${giftsChips}</div>`:''}
       </div>
     </div>`;
@@ -1356,7 +1486,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,8vw,3rem);font-weight:900;font-style:italic;color:${ac};line-height:1;margin-bottom:.4rem">${titulo}</div>
         <div style="font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:1.25rem">${nome}</div>
         <div style="background:rgba(255,255,255,.1);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:1rem;margin-bottom:1rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👕':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.7);margin-bottom:.3rem">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[horaDisplay?'⏰':null,horaDisplay],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👕':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.7);margin-bottom:.3rem">${i} ${v}</div>`).join('')}
         </div>
         ${rsvpBtn}${presentsBtn}
       </div>
@@ -1374,10 +1504,9 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,7vw,2.8rem);font-weight:900;font-style:italic;color:#60A5FA;line-height:1.1;margin-bottom:.4rem;text-shadow:0 0 20px rgba(96,165,250,.4)">${titulo}</div>
         <div style="font-size:1.1rem;color:rgba(255,255,255,.7);margin-bottom:1.5rem">${nome}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.5rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="background:rgba(255,255,255,.07);border:1px solid rgba(96,165,250,.2);border-radius:10px;padding:.55rem .75rem;font-size:.75rem;display:flex;gap:.35rem;align-items:center"><span>${i}</span><span style="color:rgba(255,255,255,.75)">${v}</span></div>`).join('')}
+          ${[['📅',dateStr],[horaDisplay?'⏰':null,horaDisplay],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="background:rgba(255,255,255,.07);border:1px solid rgba(96,165,250,.2);border-radius:10px;padding:.55rem .75rem;font-size:.75rem;display:flex;gap:.35rem;align-items:center"><span>${i}</span><span style="color:rgba(255,255,255,.75)">${v}</span></div>`).join('')}
         </div>
         ${msg?`<div style="background:rgba(96,165,250,.08);border-left:3px solid #60A5FA;padding:.8rem 1rem;font-style:italic;font-size:.83rem;color:rgba(255,255,255,.5);margin-bottom:1rem;line-height:1.5">"${msg}"</div>`:''}
-        <div style="background:linear-gradient(135deg,#60A5FA,#06b6d4);color:#021a2e;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;cursor:pointer" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
         ${giftList.length?`<div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center">${giftsChips}</div>`:''}
       </div>
     </div>`;
@@ -1392,10 +1521,9 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,7vw,2.8rem);font-weight:900;font-style:italic;color:#93C5FD;line-height:1.1;margin-bottom:.4rem;text-shadow:0 0 20px rgba(147,197,253,.4)">${titulo}</div>
         <div style="font-size:1rem;color:rgba(255,255,255,.65);margin-bottom:1.75rem">${nome}</div>
         <div style="background:rgba(255,255,255,.07);border:1px solid rgba(147,197,253,.2);border-radius:16px;padding:1.1rem;margin-bottom:1.5rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:.3rem">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[horaDisplay?'⏰':null,horaDisplay],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:.3rem">${i} ${v}</div>`).join('')}
         </div>
         ${msg?`<div style="border:1px solid rgba(147,197,253,.15);border-radius:12px;padding:.85rem;font-style:italic;font-size:.83rem;color:rgba(255,255,255,.5);margin-bottom:1rem;line-height:1.5">"${msg}"</div>`:''}
-        <div style="background:linear-gradient(135deg,#93C5FD,#3b82f6);color:#0a1428;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;cursor:pointer" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
         ${giftList.length?`<div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center">${giftsChips}</div>`:''}
       </div>
     </div>`;
@@ -1414,10 +1542,9 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;color:#1A0A00;line-height:1.1;margin-bottom:.3rem">${titulo}</div>
         <div style="color:rgba(26,10,0,.5);font-weight:700;margin-bottom:1.5rem">${nome}</div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.25rem">
-          ${[['🗓',dateShort,'Data'],['⏰',hora||'—','Hora'],['📍',local?local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:#fff;border-radius:12px;padding:.65rem .35rem;box-shadow:0 2px 8px rgba(236,72,153,.12)"><div style="font-size:1rem">${i}</div><div style="font-size:.7rem;font-weight:800">${v}</div><div style="font-size:.55rem;color:rgba(26,10,0,.3);text-transform:uppercase">${l}</div></div>`).join('')}
+          ${[['🗓',dateShort,'Data'],['⏰',horaDisplay||hora||'—','Hora'],['📍',local?local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:#fff;border-radius:12px;padding:.65rem .35rem;box-shadow:0 2px 8px rgba(236,72,153,.12)"><div style="font-size:1rem">${i}</div><div style="font-size:.7rem;font-weight:800">${v}</div><div style="font-size:.55rem;color:rgba(26,10,0,.3);text-transform:uppercase">${l}</div></div>`).join('')}
         </div>
         ${msg?`<div style="background:rgba(249,168,212,.15);border-radius:12px;padding:.85rem;font-style:italic;font-size:.85rem;color:rgba(26,10,0,.55);margin-bottom:1rem;line-height:1.6">"${msg}"</div>`:''}
-        <div style="background:linear-gradient(135deg,#ec4899,#be185d);color:#fff;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;box-shadow:0 6px 20px rgba(236,72,153,.3);cursor:pointer" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
         ${giftList.length?`<div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center">${giftsChips}</div>`:''}
       </div>
     </div>`;
@@ -1433,11 +1560,10 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;color:#1A0A00;line-height:1.1;margin-bottom:.3rem">${titulo}</div>
         <div style="color:rgba(26,10,0,.5);font-weight:700;margin-bottom:1.5rem">${nome}</div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.25rem">
-          ${[['🗓',dateShort,'Data'],['⏰',hora||'—','Hora'],['📍',local?local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:#fff;border-radius:12px;padding:.65rem .35rem;box-shadow:0 2px 8px rgba(245,158,11,.1)"><div style="font-size:1rem">${i}</div><div style="font-size:.7rem;font-weight:800">${v}</div><div style="font-size:.55rem;color:rgba(26,10,0,.3);text-transform:uppercase">${l}</div></div>`).join('')}
+          ${[['🗓',dateShort,'Data'],['⏰',horaDisplay||hora||'—','Hora'],['📍',local?local.split(',')[0]:'—','Local']].map(([i,v,l])=>`<div style="background:#fff;border-radius:12px;padding:.65rem .35rem;box-shadow:0 2px 8px rgba(245,158,11,.1)"><div style="font-size:1rem">${i}</div><div style="font-size:.7rem;font-weight:800">${v}</div><div style="font-size:.55rem;color:rgba(26,10,0,.3);text-transform:uppercase">${l}</div></div>`).join('')}
         </div>
         ${dress?`<div style="background:#fff;border-radius:10px;padding:.6rem;font-size:.8rem;color:rgba(26,10,0,.6);margin-bottom:1rem;box-shadow:0 2px 8px rgba(245,158,11,.08)">👗 Dress code: <strong>${dress}</strong></div>`:''}
         ${msg?`<div style="background:rgba(252,211,77,.15);border-radius:12px;padding:.85rem;font-style:italic;font-size:.85rem;color:rgba(26,10,0,.55);margin-bottom:1rem;line-height:1.6">"${msg}"</div>`:''}
-        <div style="background:linear-gradient(135deg,#FCD34D,#F59E0B);color:#1A0A00;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;box-shadow:0 6px 20px rgba(245,158,11,.3);cursor:pointer" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar presença</div>
         ${giftList.length?`<div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center">${giftsChips}</div>`:''}
       </div>
     </div>`;
@@ -1451,11 +1577,44 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,8vw,3rem);font-weight:900;font-style:italic;color:${ac};line-height:1;margin-bottom:.4rem">${titulo}</div>
         <div style="font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:1.25rem">${nome}</div>
         <div style="background:rgba(255,255,255,.1);backdrop-filter:blur(12px);border:1px solid rgba(244,114,182,.2);border-radius:16px;padding:1rem;margin-bottom:1rem">
-          ${[['📅',dateStr],[hora?'⏰':null,hora],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.7);margin-bottom:.3rem">${i} ${v}</div>`).join('')}
+          ${[['📅',dateStr],[horaDisplay?'⏰':null,horaDisplay],[local?'📍':null,local],[endereco?'🗺':null,endereco],[dress?'👗':null,dress]].filter(x=>x&&x[0]).map(([i,v])=>`<div style="font-size:.82rem;color:rgba(255,255,255,.7);margin-bottom:.3rem">${i} ${v}</div>`).join('')}
         </div>
         ${rsvpBtn}${presentsBtn}
       </div>
     </div>`;
+
+  // ── CONVITE PRÓPRIO (vertical / horizontal) ──
+  // Imagem 100% intacta, dados e botão abaixo — zero overlay, zero opacity
+  if(tplId==='convite-proprio-v' || tplId==='convite-proprio-h'){
+    const uploadedImg = s.photo_url;
+    const dataItems = [
+      nome          ? { icon:'👤', val: nome + (idade ? ` · ${idade} anos` : '') } : null,
+      dateStr !== '—' ? { icon:'📅', val: dateStr } : null,
+      horaDisplay   ? { icon:'⏰', val: horaDisplay } : null,
+      local         ? { icon:'📍', val: local } : null,
+      endereco      ? { icon:'🗺️', val: endereco } : null,
+      dress         ? { icon:'👗', val: dress } : null,
+    ].filter(Boolean);
+    const hasData = dataItems.length > 0 || msg || titulo;
+    const imgBlock = uploadedImg
+      ? `<div style="width:100%;background:#fff;line-height:0"><img src="${uploadedImg}" style="width:100%;height:auto;display:block;object-fit:contain"/></div>`
+      : `<div style="width:100%;background:#f0f0f0;height:280px;display:flex;align-items:center;justify-content:center;color:#999;font-family:'Nunito',sans-serif;font-size:.9rem">Imagem do convite</div>`;
+    return `<div style="font-family:'Nunito',sans-serif;background:#f8f8f8;min-height:100%">
+      ${imgBlock}
+      ${hasData ? `
+      <div style="padding:1.25rem 1.25rem .5rem;background:#fff;border-top:3px solid ${ac}">
+        ${titulo ? `<div style="font-family:'Fraunces',Georgia,serif;font-size:1.1rem;font-weight:900;font-style:italic;color:#1a0a00;margin-bottom:.75rem;text-align:center">${titulo}</div>` : ''}
+        <div style="display:flex;flex-direction:column;gap:.45rem;margin-bottom:${msg ? '.75rem' : '0'}">
+          ${dataItems.map(item=>`<div style="display:flex;align-items:flex-start;gap:.5rem;font-size:.85rem;color:#1a0a00"><span style="flex-shrink:0">${item.icon}</span><span style="line-height:1.4">${item.val}</span></div>`).join('')}
+        </div>
+        ${msg ? `<div style="font-size:.82rem;color:rgba(26,10,0,.55);font-style:italic;line-height:1.5;border-left:2px solid ${ac};padding-left:.75rem;margin-bottom:.5rem">"${msg}"</div>` : ''}
+      </div>
+      <div style="padding:.75rem 1.25rem 1.25rem;background:#fff">
+        ${rsvpBtn}
+        ${presentsBtn}
+      </div>` : ''}
+    </div>`;
+  }
 
   // ── CUSTOM TEMPLATES — handled async in init() ──
   if(tplId && tplId.startsWith('custom_')) {
@@ -1470,7 +1629,7 @@ function renderTemplateHTML(tplId, s){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,7vw,3rem);font-weight:900;font-style:italic;color:${ac};margin-bottom:.5rem">${titulo}</div>
         <div style="font-size:1.1rem;color:rgba(255,255,255,.75);margin-bottom:1.5rem">${nome}</div>
         <div style="font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:.4rem">📅 ${dateStr}</div>
-        ${hora?`<div style="font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:.4rem">⏰ ${hora}</div>`:''}
+        ${horaDisplay?`<div style="font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:.4rem">⏰ ${horaDisplay}</div>`:''}
         ${local?`<div style="font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:1.5rem">📍 ${local}</div>`:''}
         ${rsvpBtn}
       </div>
@@ -1506,6 +1665,10 @@ async function renderCustomTemplate(tplId, s) {
     const date = s.event_date ? new Date(s.event_date+'T12:00:00') : null;
     const dateStr = date ? date.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}) : '';
     const hora = s.event_time || s.hora || '';
+    const horaFim = s.event_time_end || s.horaFim || '';
+    const horaDisplay = hora
+      ? (horaFim ? `das ${hora} às ${horaFim}` : hora)
+      : (horaFim ? `até ${horaFim}` : '');
     const local = s.location || s.local || '';
     const rsvpBtn = `<div onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})" style="background:${ac};color:#1a0a00;font-weight:800;text-align:center;padding:.85rem 2rem;border-radius:12px;font-size:.9rem;cursor:pointer;display:inline-block;margin-top:1rem">✅ Confirmar presença</div>`;
     heroEl.innerHTML = `
@@ -1513,7 +1676,7 @@ async function renderCustomTemplate(tplId, s) {
         <div>
           <div style="font-family:'Fraunces',Georgia,serif;font-size:2rem;font-weight:900;font-style:italic;color:${ac};margin-bottom:.5rem">${titulo}</div>
           <div style="color:rgba(255,255,255,.7);margin-bottom:1rem">${nome}</div>
-          <div style="font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:1.5rem">${dateStr}${hora?' · '+hora:''}${local?'<br>📍 '+local:''}</div>
+          <div style="font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:1.5rem">${dateStr}${horaDisplay?' · '+horaDisplay:''}${local?'<br>📍 '+local:''}</div>
           ${rsvpBtn}
         </div>
       </div>`;
@@ -1528,11 +1691,18 @@ async function renderCustomTemplate(tplId, s) {
   const diaSemana = date ? date.toLocaleDateString('pt-BR',{weekday:'long'}) : '';
   const dataFormatada = date ? date.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) : '';
   const diasRestantes = date ? Math.max(0, Math.floor((date - new Date()) / 86400000)) : '';
+  const _hora    = s.event_time || s.hora || '';
+  const _horaFim = s.event_time_end || s.horaFim || '';
+  const _horaCompleta = _hora
+    ? (_horaFim ? `das ${_hora} às ${_horaFim}` : _hora)
+    : (_horaFim ? `até ${_horaFim}` : '');
 
   const vars = {
     '{{titulo}}':       s.title || s.titulo || 'Você está convidado!',
     '{{nome}}':         s.event_name || s.nome || '',
-    '{{hora}}':         s.event_time || s.hora || '',
+    '{{hora}}':         _hora,
+    '{{horaFim}}':      _horaFim,
+    '{{horaCompleta}}': _horaCompleta,
     '{{local}}':        s.location || s.local || '',
     '{{endereco}}':     s.address || s.endereco || '',
     '{{dress}}':        s.dress_code || s.dress || '',
@@ -1577,7 +1747,14 @@ async function renderCustomTemplate(tplId, s) {
 async function init() {
   try {
   const params = new URLSearchParams(location.search);
-  const slug = params.get('slug');
+  // slug pode vir de ?slug=... (legado) ou do caminho /<slug> (URL limpa)
+  let slug = params.get('slug');
+  if (!slug) {
+    // remove a barra inicial e qualquer extensão/caminho conhecido
+    const path = decodeURIComponent(location.pathname.replace(/^\/+/, '').replace(/\/+$/, ''));
+    // ignora páginas conhecidas (ex: convite.html, index.html) — só aceita caminho simples
+    if (path && !path.includes('/') && !path.endsWith('.html')) slug = path;
+  }
   const tplPreview = params.get('tpl');   // template preview mode
   const isPreview  = params.get('preview') === '1';
 
@@ -1605,9 +1782,10 @@ async function init() {
     gifts = [];
     document.documentElement.style.setProperty('--accent', '#FFD93D');
     document.documentElement.style.setProperty('--accent-text', '#1A0A00');
-    document.title = 'Preview — ConteComigo';
+    document.title = 'Preview — CrieConvites';
     const tplId = tplPreview;
     document.getElementById('templateHero').innerHTML = renderTemplateHTML(tplId, invite);
+    document.getElementById('rsvpFab').style.display = 'flex';
     hideLoading();
     return;
   }
@@ -1668,6 +1846,25 @@ async function init() {
   invite = inv;
   gifts = giftData;
 
+  // ── Prazo para confirmação ──
+  if (invite.rsvp_deadline) {
+    const deadline = new Date(invite.rsvp_deadline + 'T23:59:59');
+    const now = new Date();
+    const badge = document.getElementById('rsvpDeadlineBadge');
+    const isPast = deadline < now;
+    const dateStr = deadline.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
+    badge.style.display = 'block';
+    if (isPast) {
+      badge.innerHTML = `<span style="display:inline-flex;align-items:center;gap:.4rem;background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.3);color:#f87171;border-radius:99px;padding:.35rem .85rem;font-size:.8rem;font-weight:700">⏰ Prazo encerrado em ${dateStr}</span>`;
+      // Lock the form
+      document.getElementById('rsvpBox').innerHTML = `<div style="text-align:center;padding:2rem 1rem;color:rgba(26,10,0,.4)"><div style="font-size:2.5rem;margin-bottom:.75rem">⏰</div><div style="font-weight:700;margin-bottom:.35rem">Prazo encerrado</div><div style="font-size:.85rem">As confirmações foram encerradas em ${dateStr}.</div></div>`;
+    } else {
+      const diff = Math.ceil((deadline - now) / 86400000);
+      const urgency = diff <= 3;
+      badge.innerHTML = `<span style="display:inline-flex;align-items:center;gap:.4rem;background:${urgency ? 'rgba(251,191,36,.12)' : 'rgba(52,211,153,.08)'};border:1px solid ${urgency ? 'rgba(251,191,36,.3)' : 'rgba(52,211,153,.2)'};color:${urgency ? '#fbbf24' : '#34d399'};border-radius:99px;padding:.35rem .85rem;font-size:.8rem;font-weight:700">${urgency ? '⚠️' : '📅'} Confirme até ${dateStr}${diff <= 7 ? ` · ${diff} dia${diff !== 1 ? 's' : ''}` : ''}</span>`;
+    }
+  }
+
   // Apply accent color as CSS var + compute text color (dark/light) for contrast
   const accentColor = invite.accent || '#FFD93D';
   document.documentElement.style.setProperty('--accent', accentColor);
@@ -1676,7 +1873,7 @@ async function init() {
   const luminance = (0.299*r + 0.587*g + 0.114*b) / 255;
   document.documentElement.style.setProperty('--accent-text', luminance > 0.55 ? '#1A0A00' : '#ffffff');
 
-  document.title = `${invite.title || 'Convite'} — ConteComigo`;
+  document.title = `${invite.title || 'Convite'} — CrieConvites`;
 
   // Render template hero
   const tplId = invite.template || 'aniv-neon';
@@ -1685,6 +1882,8 @@ async function init() {
     renderCustomTemplate(tplId, invite); // async, non-blocking
   } else {
     document.getElementById('templateHero').innerHTML = renderTemplateHTML(tplId, invite);
+    // Botão flutuante de RSVP (nos dinâmicos o botão é injetado dentro do iframe)
+    document.getElementById('rsvpFab').style.display = 'flex';
   }
 
   // Message (separate section below hero)
@@ -1714,6 +1913,11 @@ async function init() {
   if (invite.pix_key) {
     document.getElementById('pixKeyText').textContent = invite.pix_key;
     document.getElementById('pixCard').style.display = 'block';
+  }
+
+  // Mapa do local
+  if ((invite.address || '').trim()) {
+    setupMap(invite.address, invite.location);
   }
 
   // Gallery
@@ -1779,11 +1983,32 @@ function renderGifts() {
     grid.innerHTML = '<div style="text-align:center;color:rgba(26,10,0,.25);padding:2rem;grid-column:1/-1">Nenhum presente cadastrado ainda.</div>';
     return;
   }
+
+  const hasPix = !!(invite && invite.pix_key);
+
   grid.innerHTML = gifts.map(g => {
+    const hasCard = !!(g.pay_link);   // cartão é por item
+    const hasPayment = hasPix || hasCard;
     const photoSrc = g.photo_url || g.imageUrl || '';
     const imgHtml = photoSrc
       ? `<img src="${photoSrc}" alt="${g.name}" style="width:100%;height:100%;object-fit:cover;display:block"/>`
       : `<span style="font-size:3rem">${g.emoji || '🎁'}</span>`;
+
+    // Badge de status com info de pagamento
+    let statusBadge = '';
+    if(g.reserved){
+      const payLabel = g.pay_method === 'pix' ? '💚 Pago via PIX'
+        : g.pay_method === 'card' ? '💳 Pago com cartão'
+        : g.pay_method === 'reserve' ? '🎁 Vai levar pessoalmente'
+        : '🔒 Reservado';
+      statusBadge = `<div class="gift-status-badge gsb-reserved">${payLabel} por ${g.reserved_by || 'alguém'}</div>`;
+    } else {
+      const payHint = hasPayment
+        ? `<div style="font-size:.68rem;color:rgba(26,10,0,.35);margin-top:.2rem">${[hasPix?'PIX':'',hasCard?'Cartão':''].filter(Boolean).join(' · ')} disponível</div>`
+        : '';
+      statusBadge = `<div class="gift-status-badge gsb-avail">✅ Disponível</div>${payHint}`;
+    }
+
     return `
     <div class="gift-card">
       <div class="gift-emoji-box" style="height:140px;overflow:hidden;display:flex;align-items:center;justify-content:center;">${imgHtml}</div>
@@ -1791,11 +2016,9 @@ function renderGifts() {
         <div class="gift-name">${g.name}</div>
         ${g.price ? `<div class="gift-price">${g.price}</div>` : ''}
         ${g.link ? `<a class="gift-link" href="${g.link}" target="_blank" rel="noopener">🛒 Ver na loja</a>` : ''}
-        <div class="gift-status-badge ${g.reserved ? 'gsb-reserved' : 'gsb-avail'}">
-          ${g.reserved ? `🔒 Reservado por ${g.reserved_by || 'alguém'}` : '✅ Disponível'}
-        </div>
+        ${statusBadge}
         <button class="btn-reserve" onclick="openGiftModal('${g.id}')" ${g.reserved ? 'disabled' : ''}>
-          ${g.reserved ? 'Já reservado' : 'Quero dar este presente 🎁'}
+          ${g.reserved ? 'Já presenteado' : (hasPix||hasCard) ? '💳 Presentear agora 🎁' : 'Quero dar este presente 🎁'}
         </button>
       </div>
     </div>`;
@@ -1805,9 +2028,10 @@ function renderGifts() {
 function openGiftModal(id) {
   selectedGiftId = id;
   const g = gifts.find(x => x.id === id);
+  if(!g) return;
   const photoSrc = g.photo_url || g.imageUrl || '';
   document.getElementById('modalItemPreview').innerHTML = `
-    <div class="modal-item-emoji" style="${photoSrc ? 'width:48px;height:48px;border-radius:8px;overflow:hidden;flex-shrink:0' : ''}">
+    <div class="modal-item-emoji" style="${photoSrc ? 'width:52px;height:52px;border-radius:10px;overflow:hidden;flex-shrink:0' : ''}">
       ${photoSrc ? `<img src="${photoSrc}" alt="${g.name}" style="width:100%;height:100%;object-fit:cover"/>` : (g.emoji || '🎁')}
     </div>
     <div>
@@ -1815,11 +2039,151 @@ function openGiftModal(id) {
       ${g.price ? `<div class="modal-item-price">${g.price}</div>` : ''}
     </div>
   `;
-  document.getElementById('giftReserveName').value = '';
-  document.getElementById('giftReservePhone').value = '';
-  document.getElementById('btnModalSubmit').disabled = false;
-  document.getElementById('btnModalSubmit').textContent = '✅ Confirmar reserva';
+
+  // Reset para step 1
+  backToStep1Gift(true);
+
+  // Mostrar opções de pagamento se configuradas (PIX global do invite, cartão por presente)
+  const hasPix = !!(invite && invite.pix_key);
+  const hasCard = !!(g.pay_link);  // cartão é por item
+  const payOpts = document.getElementById('giftPayOptions');
+  const btnSubmit = document.getElementById('btnModalSubmit');
+  if(payOpts && (hasPix || hasCard)){
+    payOpts.style.display = 'block';
+    document.getElementById('btnPayPix').style.display = hasPix ? 'flex' : 'none';
+    document.getElementById('btnPayCard').style.display = hasCard ? 'flex' : 'none';
+    btnSubmit.style.display = 'none';
+  } else {
+    if(payOpts) payOpts.style.display = 'none';
+    if(btnSubmit){ btnSubmit.style.display='block'; btnSubmit.textContent='✅ Reservar presente 🎁'; }
+  }
+
   document.getElementById('giftModal').classList.add('open');
+}
+
+function backToStep1Gift(isInit){
+  ['giftStep2Pix','giftStep2Card','giftStep3Confirm'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.style.display='none';
+  });
+  const s1=document.getElementById('giftStep1'); if(s1) s1.style.display='block';
+  if(!isInit){
+    document.getElementById('giftReserveName').value='';
+    document.getElementById('giftReservePhone').value='';
+  }
+}
+
+function _getGiftUserData(){
+  const name = document.getElementById('giftReserveName').value.trim();
+  const phone = document.getElementById('giftReservePhone').value.trim();
+  return {name,phone};
+}
+
+function choosePayment(method){
+  const {name,phone} = _getGiftUserData();
+  if(!name || !phone){ showToast('😊 Preencha seu nome e WhatsApp primeiro!'); return; }
+
+  document.getElementById('giftStep1').style.display='none';
+
+  if(method==='pix'){
+    // Mostrar QR code e chave PIX
+    const pixKey = invite?.pix_key || '';
+    document.getElementById('pixKeyDisplay').textContent = pixKey;
+
+    // Gerar QR code via API gratuita (sem libs externas)
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(pixKey)}&bgcolor=ffffff&color=007a52`;
+    document.getElementById('pixQrContainer').innerHTML =
+      `<img src="${qrUrl}" alt="QR Code PIX" style="width:140px;height:140px;border-radius:12px;border:3px solid rgba(0,189,126,.25)" onerror="this.style.display='none'"/>`;
+    document.getElementById('giftStep2Pix').style.display='block';
+
+  } else if(method==='card'){
+    // Cartão: usar pay_link do gift específico
+    const g = gifts.find(x => x.id === selectedGiftId);
+    const cardLink = g?.pay_link || invite?.pay_link || '#';
+    document.getElementById('btnGoToCard').onclick = ()=> window.open(cardLink,'_blank');
+    document.getElementById('giftStep2Card').style.display='block';
+
+  } else {
+    // Só reservar, sem pagamento
+    startGiftFlow('reserve');
+  }
+}
+
+async function startGiftFlow(forceMethod){
+  const {name,phone} = _getGiftUserData();
+  if(!name || !phone){ showToast('😊 Preencha seu nome e WhatsApp!'); return; }
+  // Se não há opções de pagamento, reserva direto
+  await _doReserve(name, phone, 'none');
+}
+
+function copyPixFromModal(){
+  const key = document.getElementById('pixKeyDisplay').textContent;
+  navigator.clipboard.writeText(key)
+    .then(()=>showToast('📋 Chave PIX copiada!'))
+    .catch(()=>{ showToast('Copie manualmente: '+key); });
+}
+
+async function goToCardPayment(){
+  const link = invite?.pay_link;
+  if(link) window.open(link,'_blank');
+}
+
+async function confirmGiftPayment(method){
+  const {name,phone} = _getGiftUserData();
+  if(!name || !phone){ showToast('😊 Preencha seus dados antes.'); backToStep1Gift(); return; }
+  await _doReserve(name, phone, method);
+}
+
+async function _doReserve(name, phone, payMethod){
+  // Desabilitar botões ativos
+  ['btnConfirmPix','btnModalSubmit','btnGoToCard'].forEach(id=>{
+    const b=document.getElementById(id); if(b){b.disabled=true;b.style.opacity='.6';}
+  });
+
+  const payload = {
+    reserved: true,
+    reserved_by: name,
+    reserved_phone: phone,
+    pay_method: payMethod || 'none',
+    paid_at: (payMethod && payMethod!=='none' && payMethod!=='reserve') ? new Date().toISOString() : null
+  };
+
+  const { error } = await sb.from('gifts').update(payload).eq('id', selectedGiftId);
+
+  ['btnConfirmPix','btnModalSubmit','btnGoToCard'].forEach(id=>{
+    const b=document.getElementById(id); if(b){b.disabled=false;b.style.opacity='1';}
+  });
+
+  if(error){
+    console.error(error);
+    showToast('❌ Erro ao confirmar. Tente novamente.');
+    return;
+  }
+
+  // Atualizar estado local
+  const g = gifts.find(x => x.id === selectedGiftId);
+  if(g){ Object.assign(g, payload); }
+
+  // Mostrar step de confirmação
+  ['giftStep1','giftStep2Pix','giftStep2Card'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.style.display='none';
+  });
+  const confirmStep = document.getElementById('giftStep3Confirm');
+  const confirmMsg = document.getElementById('giftConfirmMsg');
+  if(confirmStep) confirmStep.style.display='block';
+  if(confirmMsg){
+    const msgs = {
+      pix:'Pagamento via PIX registrado. Os anfitriões foram notificados! 💚',
+      card:'Pagamento com cartão registrado. Os anfitriões foram notificados! 💳',
+      reserve:'Presente reservado! Você vai levar pessoalmente. 🎁',
+      none:'Presente reservado com sucesso! 🎁'
+    };
+    confirmMsg.textContent = msgs[payMethod] || msgs.none;
+  }
+
+  renderGifts();
+  showConfetti();
+  showToast('🎁 Presente confirmado!');
+  setTimeout(()=>closeModal(), 4000);
 }
 
 function closeModal() {
@@ -1830,37 +2194,6 @@ function closeModal() {
 document.getElementById('giftModal').addEventListener('click', e => {
   if (e.target === document.getElementById('giftModal')) closeModal();
 });
-
-async function confirmReservation() {
-  const name = document.getElementById('giftReserveName').value.trim();
-  const phone = document.getElementById('giftReservePhone').value.trim();
-  if (!name || !phone) { showToast('😊 Preencha seu nome e WhatsApp!'); return; }
-
-  const btn = document.getElementById('btnModalSubmit');
-  btn.disabled = true;
-  btn.textContent = 'Reservando...';
-
-  const { error } = await sb
-    .from('gifts')
-    .update({ reserved: true, reserved_by: name, reserved_phone: phone })
-    .eq('id', selectedGiftId);
-
-  if (error) {
-    showToast('❌ Erro ao reservar. Tente novamente.');
-    btn.disabled = false;
-    btn.textContent = '✅ Confirmar reserva';
-    return;
-  }
-
-  // Update local state
-  const g = gifts.find(x => x.id === selectedGiftId);
-  if (g) { g.reserved = true; g.reserved_by = name; g.reserved_phone = phone; }
-
-  closeModal();
-  renderGifts();
-  showToast('🎁 Presente reservado com sucesso!');
-  showConfetti();
-}
 
 // ══════════════════════════════════════════
 //  RSVP
@@ -1946,10 +2279,402 @@ function resetRSVP() {
 //  SHARE
 // ══════════════════════════════════════════
 function shareWhatsApp() {
-  const title = invite ? (invite.title || 'Convite especial') : 'Convite especial';
+  const inv = invite || {};
+  const title = (inv.title || inv.event_name || 'Convite especial').trim();
+  const nome  = (inv.event_name || '').trim();
+  const local = (inv.location || '').trim();
+  const endereco = (inv.address || '').trim();
+
+  // Data por extenso
+  let dateStr = '';
+  if(inv.event_date) {
+    try {
+      const d = new Date(inv.event_date + 'T12:00:00');
+      dateStr = d.toLocaleDateString('pt-BR', { weekday:'long', day:'numeric', month:'long' });
+      dateStr = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+    } catch(_){}
+  }
+
+  // Hora
+  const hora    = (inv.event_time || '').replace(':','h').replace(/h00$/, 'h');
+  const horaFim = (inv.event_time_end || '').replace(':','h').replace(/h00$/, 'h');
+  const horaStr = hora ? (horaFim ? `das ${hora} às ${horaFim}` : `às ${hora}`) : '';
+
   const url = location.href;
-  const text = `🎉 ${title}\n\nVocê está convidado! Confirme sua presença:\n${url}`;
-  window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+
+  // Monta mensagem convidativa — usa *asterisco* para negrito no WhatsApp
+  const L = [];
+  L.push('Você está sendo convidado(a) para uma celebração muito especial! ✨');
+  L.push('');
+  L.push('*' + title + '*');
+  if(nome && nome !== title) L.push('Em homenagem a *' + nome + '*');
+  L.push('');
+  if(dateStr)  L.push('📅 ' + dateStr);
+  if(horaStr)  L.push('⏰ ' + horaStr);
+  if(local)    L.push('📍 ' + local);
+  if(endereco) L.push('       ' + endereco);
+  L.push('');
+  L.push('Sua presença vai tornar esse momento ainda mais especial. 💛');
+  L.push('Confirme sua presença pelo link abaixo:');
+  L.push(url);
+  L.push('');
+  L.push('_Convite criado com CrieConvites_');
+
+  window.open('https://wa.me/?text=' + encodeURIComponent(L.join('\n')), '_blank');
+}
+
+// ══ SALVAR CONVITE COMO IMAGEM ══
+function openShareModal() {
+  const existing = document.getElementById('shareImgModal');
+  if(existing) { existing.style.display='flex'; return; }
+
+  const modal = document.createElement('div');
+  modal.id = 'shareImgModal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(26,10,0,.65);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1.5rem';
+  modal.innerHTML = `
+    <div style="background:#fff;border-radius:24px;padding:1.75rem;width:100%;max-width:400px;position:relative;box-shadow:0 32px 80px rgba(26,10,0,.35)">
+      <button onclick="document.getElementById('shareImgModal').style.display='none'" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:rgba(26,10,0,.35)">✕</button>
+      <div style="font-family:'Fraunces',Georgia,serif;font-size:1.3rem;font-weight:700;font-style:italic;margin-bottom:.4rem">💬 Compartilhar convite</div>
+      <div style="font-size:.83rem;color:rgba(26,10,0,.45);margin-bottom:1.5rem">Escolha como deseja compartilhar</div>
+      <div style="display:flex;flex-direction:column;gap:.65rem">
+        <button onclick="shareWhatsApp();document.getElementById('shareImgModal').style.display='none'" style="display:flex;align-items:center;gap:.75rem;padding:.85rem 1.25rem;background:#25D366;color:#fff;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;transition:background .2s" onmouseover="this.style.background='#1da851'" onmouseout="this.style.background='#25D366'">
+          <span style="font-size:1.25rem">💬</span>
+          <div style="text-align:left"><div>Enviar pelo WhatsApp</div><div style="font-size:.73rem;opacity:.85;font-weight:600">Link + detalhes do evento</div></div>
+        </button>
+        <button onclick="saveInviteImage()" style="display:flex;align-items:center;gap:.75rem;padding:.85rem 1.25rem;background:rgba(26,10,0,.06);color:#1A0A00;border:1px solid rgba(26,10,0,.1);border-radius:12px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;transition:all .2s" onmouseover="this.style.background='rgba(26,10,0,.1)'" onmouseout="this.style.background='rgba(26,10,0,.06)'">
+          <span style="font-size:1.25rem">📸</span>
+          <div style="text-align:left"><div>Salvar como imagem</div><div style="font-size:.73rem;color:rgba(26,10,0,.45);font-weight:600">Salva o card do convite (.png)</div></div>
+        </button>
+        <button onclick="copyInviteLink()" style="display:flex;align-items:center;gap:.75rem;padding:.85rem 1.25rem;background:rgba(26,10,0,.04);color:#1A0A00;border:1px solid rgba(26,10,0,.08);border-radius:12px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;transition:all .2s" onmouseover="this.style.background='rgba(26,10,0,.08)'" onmouseout="this.style.background='rgba(26,10,0,.04)'">
+          <span style="font-size:1.25rem">🔗</span>
+          <div style="text-align:left"><div>Copiar link do convite</div><div style="font-size:.73rem;color:rgba(26,10,0,.45);font-weight:600">Cole em qualquer app</div></div>
+        </button>
+      </div>
+    </div>
+  `;
+  modal.addEventListener('click', e=>{ if(e.target===modal) modal.style.display='none'; });
+  document.body.appendChild(modal);
+}
+
+function copyInviteLink(){
+  navigator.clipboard.writeText(location.href).then(()=>{
+    showToast('✅ Link copiado!');
+    const m = document.getElementById('shareImgModal');
+    if(m) m.style.display='none';
+  });
+}
+
+// Aguarda todas as imagens do elemento carregarem (com timeout)
+function _waitForImages(el, timeoutMs = 5000){
+  const imgs = Array.from(el.querySelectorAll('img'));
+  if(!imgs.length) return Promise.resolve();
+  const promises = imgs.map(img => {
+    if(img.complete && img.naturalHeight !== 0) return Promise.resolve();
+    return new Promise(res => {
+      const done = () => res();
+      img.addEventListener('load', done, { once:true });
+      img.addEventListener('error', done, { once:true });
+    });
+  });
+  return Promise.race([
+    Promise.all(promises),
+    new Promise(res => setTimeout(res, timeoutMs))
+  ]);
+}
+
+// Detecta a cor de fundo de um elemento (para usar como bgcolor de fallback)
+function _detectBg(el){
+  if(!el) return '#0a0010';
+  // Tenta no próprio elemento e nos primeiros filhos
+  const candidates = [el, el.firstElementChild, el.firstElementChild?.firstElementChild].filter(Boolean);
+  for(const c of candidates){
+    try {
+      const cs = c.ownerDocument.defaultView.getComputedStyle(c);
+      if(cs.backgroundColor && cs.backgroundColor !== 'rgba(0, 0, 0, 0)' && cs.backgroundColor !== 'transparent'){
+        return cs.backgroundColor;
+      }
+      // se tem background-image (gradient), pega a primeira cor que conseguir
+      if(cs.backgroundImage && cs.backgroundImage !== 'none'){
+        const m = cs.backgroundImage.match(/rgba?\([^)]+\)|#[0-9a-fA-F]{3,8}/);
+        if(m) return m[0];
+      }
+    } catch(_){}
+  }
+  return '#0a0010';
+}
+
+// Carrega um script dentro de um document (do iframe) e aguarda
+function _injectScript(doc, src){
+  return new Promise((resolve, reject) => {
+    const s = doc.createElement('script');
+    s.src = src;
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error('falha ao carregar ' + src));
+    doc.head.appendChild(s);
+  });
+}
+
+// Captura o conteúdo de um iframe (template customizado animado)
+async function _captureIframe(frame){
+  const doc = frame.contentDocument;
+  const win = frame.contentWindow;
+  if(!doc || !win) throw new Error('iframe sem contentDocument');
+
+  // Aguarda imagens dentro do iframe
+  await _waitForImages(doc.body);
+
+  // Injeta html2canvas dentro do iframe se ainda não estiver lá
+  if(!win.html2canvas){
+    await _injectScript(doc, 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+  }
+
+  const target = doc.body;
+  const w = Math.max(doc.documentElement.scrollWidth, doc.body.scrollWidth, target.offsetWidth);
+  const h = Math.max(doc.documentElement.scrollHeight, doc.body.scrollHeight, target.offsetHeight);
+  const bg = _detectBg(target) || _detectBg(doc.documentElement) || '#ffffff';
+
+  const canvas = await win.html2canvas(target, {
+    scale: 2,
+    backgroundColor: bg,
+    useCORS: true,
+    allowTaint: true,
+    logging: false,
+    imageTimeout: 8000,
+    width: w,
+    height: h,
+    windowWidth: w,
+    windowHeight: h
+  });
+  return canvas;
+}
+
+async function saveInviteImage(){
+  const btn = event?.currentTarget;
+  if(btn){ btn.disabled=true; btn.style.opacity='.6'; }
+  showToast('⏳ Gerando imagem...');
+
+  const hero = document.getElementById('templateHero');
+  const eventName = invite?.event_name || invite?.title || 'convite';
+  const fileName = 'convite-' + eventName.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'') + '.png';
+
+  // Garante que o elemento exista e tenha conteúdo
+  if(!hero || !hero.innerHTML.trim()){
+    showToast('❌ Convite não está pronto ainda. Tente em alguns segundos.');
+    if(btn){ btn.disabled=false; btn.style.opacity='1'; }
+    return;
+  }
+
+  // ── CASO ESPECIAL: template customizado (animado) renderizado em iframe ──
+  const customFrame = document.getElementById('customTplFrame');
+  if(customFrame && customFrame.contentDocument && customFrame.contentDocument.body){
+    try {
+      showToast('⏳ Capturando convite animado...');
+      // Pequena pausa para garantir que animações estejam num frame estável
+      await new Promise(r => setTimeout(r, 250));
+      const canvas = await _captureIframe(customFrame);
+      const dataUrl = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.download = fileName;
+      a.href = dataUrl;
+      a.click();
+      showToast('✅ Imagem do convite salva!');
+      const m = document.getElementById('shareImgModal');
+      if(m) setTimeout(()=>m.style.display='none', 1500);
+      if(btn){ btn.disabled=false; btn.style.opacity='1'; }
+      return;
+    } catch(e){
+      console.warn('Captura do iframe falhou, tentando método padrão:', e);
+      // continua para fluxo normal abaixo
+    }
+  }
+
+  // Aguarda imagens carregarem (cross-origin não fica preto)
+  await _waitForImages(hero);
+  const bgColor = _detectBg(hero);
+
+  const origScroll = window.scrollY;
+  window.scrollTo(0, 0);
+  await new Promise(r => setTimeout(r, 150));
+
+  // ── Tentativa 1: html2canvas (mais confiável para gradientes, sombras e CORS)
+  if(typeof html2canvas !== 'undefined'){
+    try {
+      const canvas = await html2canvas(hero, {
+        scale: 2,
+        backgroundColor: bgColor,
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        imageTimeout: 8000,
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: hero.scrollWidth,
+        windowHeight: hero.scrollHeight
+      });
+      window.scrollTo(0, origScroll);
+
+      const dataUrl = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.download = fileName;
+      a.href = dataUrl;
+      a.click();
+      showToast('✅ Imagem do convite salva!');
+      const m = document.getElementById('shareImgModal');
+      if(m) setTimeout(()=>m.style.display='none', 1500);
+      if(btn){ btn.disabled=false; btn.style.opacity='1'; }
+      return;
+    } catch(e){
+      console.warn('html2canvas falhou, tentando dom-to-image:', e);
+    }
+  }
+
+  // ── Tentativa 2: dom-to-image-more
+  if(typeof domtoimage !== 'undefined'){
+    try {
+      const dataUrl = await domtoimage.toPng(hero, {
+        scale: 2,
+        bgcolor: bgColor,
+        cacheBust: true,
+        style: { 'overflow': 'visible' }
+      });
+      window.scrollTo(0, origScroll);
+
+      const a = document.createElement('a');
+      a.download = fileName;
+      a.href = dataUrl;
+      a.click();
+      showToast('✅ Imagem do convite salva!');
+      const m = document.getElementById('shareImgModal');
+      if(m) setTimeout(()=>m.style.display='none', 1500);
+      if(btn){ btn.disabled=false; btn.style.opacity='1'; }
+      return;
+    } catch(e){
+      console.warn('dom-to-image falhou, usando fallback canvas 2D:', e);
+    }
+  }
+
+  window.scrollTo(0, origScroll);
+
+  // ── Fallback: Card Canvas 2D com dados do convite ──
+  try {
+    const inv = invite || {};
+    const title = (inv.title || inv.event_name || 'Convite especial').trim();
+    const nome  = (inv.event_name || '').trim();
+    const ac    = inv.accent || '#FFD93D';
+
+    let dateStr = '';
+    if(inv.event_date){
+      try {
+        const d = new Date(inv.event_date+'T12:00:00');
+        dateStr = d.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+        dateStr = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+      } catch(_){}
+    }
+    const hora    = inv.event_time || '';
+    const horaFim = inv.event_time_end || '';
+    const local   = inv.location || '';
+    const horaDisplay = hora ? (horaFim ? `das ${hora} às ${horaFim}` : `às ${hora}`) : '';
+
+    // Canvas 800×1050
+    const W = 800, H = 1050;
+    const cv = document.createElement('canvas');
+    cv.width = W; cv.height = H;
+    const ctx = cv.getContext('2d');
+
+    // Fundo gradiente escuro
+    const bg = ctx.createLinearGradient(0,0,0,H);
+    bg.addColorStop(0,'#0a0010'); bg.addColorStop(1,'#2d0a3a');
+    ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+
+    // Barra accent topo
+    const lg = ctx.createLinearGradient(0,0,W,0);
+    lg.addColorStop(0,ac); lg.addColorStop(.5,'#FF3D6B'); lg.addColorStop(1,ac);
+    ctx.fillStyle = lg; ctx.fillRect(0,0,W,8);
+
+    ctx.textAlign = 'center';
+
+    // Logo
+    ctx.font = 'italic 700 28px Georgia,serif';
+    ctx.fillStyle = 'rgba(255,255,255,.4)';
+    ctx.fillText('CrieConvites', W/2, 72);
+
+    // Título
+    ctx.font = 'italic 900 62px Georgia,serif';
+    ctx.fillStyle = ac;
+    const tLines = wrapText(ctx, title, W-100, 62);
+    let y = 160;
+    tLines.forEach(l=>{ ctx.fillText(l, W/2, y); y+=76; });
+
+    // Nome
+    if(nome && nome !== title){
+      y += 8;
+      ctx.font = '700 32px sans-serif';
+      ctx.fillStyle = 'rgba(255,255,255,.85)';
+      ctx.fillText(nome, W/2, y); y += 56;
+    }
+
+    // Detalhes
+    const details = [];
+    if(dateStr)     details.push('📅  ' + dateStr);
+    if(horaDisplay) details.push('⏰  ' + horaDisplay);
+    if(local)       details.push('📍  ' + local);
+
+    if(details.length){
+      y += 16;
+      const cH = 56 + details.length * 58;
+      ctx.fillStyle = 'rgba(255,255,255,.07)';
+      roundRect(ctx, 80, y, W-160, cH, 20); ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,.14)'; ctx.lineWidth = 1.5; ctx.stroke();
+
+      ctx.font = '600 26px sans-serif';
+      ctx.fillStyle = 'rgba(255,255,255,.8)';
+      details.forEach((d,i)=> ctx.fillText(d, W/2, y+48+i*58));
+      y += cH + 32;
+    }
+
+    // URL
+    ctx.font = '600 18px sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,.3)';
+    ctx.fillText(location.host, W/2, H-36);
+
+    // Barra accent base
+    ctx.fillStyle = lg; ctx.fillRect(0,H-8,W,8);
+
+    const a = document.createElement('a');
+    a.download = fileName;
+    a.href = cv.toDataURL('image/png');
+    a.click();
+    showToast('✅ Imagem salva!');
+    const m = document.getElementById('shareImgModal');
+    if(m) setTimeout(()=>m.style.display='none', 1500);
+  } catch(e2){
+    console.error(e2);
+    showToast('❌ Erro ao gerar imagem. Copie o link e envie.');
+  } finally {
+    if(btn){ btn.disabled=false; btn.style.opacity='1'; }
+  }
+}
+
+// Helpers canvas
+function wrapText(ctx, text, maxW, fontSize) {
+  const words = text.split(' ');
+  const lines = []; let line = '';
+  words.forEach(w => {
+    const test = line ? line+' '+w : w;
+    if(ctx.measureText(test).width > maxW && line) { lines.push(line); line=w; }
+    else line=test;
+  });
+  if(line) lines.push(line);
+  return lines;
+}
+
+function roundRect(ctx, x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);
+  ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+  ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);
+  ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);
+  ctx.closePath();
 }
 
 // ══════════════════════════════════════════
@@ -1969,6 +2694,20 @@ function showConfetti() {
 // ══════════════════════════════════════════
 //  GALLERY
 // ══════════════════════════════════════════
+// ══════════════════════════════════════════
+//  MAPA DO LOCAL
+// ══════════════════════════════════════════
+function setupMap(address, locationName) {
+  const query = [locationName, address].filter(Boolean).join(', ').trim();
+  if (!query) return;
+  const enc = encodeURIComponent(query);
+  document.getElementById('mapFrame').src = `https://www.google.com/maps?q=${enc}&output=embed`;
+  document.getElementById('mapAddress').textContent = '📍 ' + query;
+  document.getElementById('mapRouteGoogle').href = `https://www.google.com/maps/dir/?api=1&destination=${enc}`;
+  document.getElementById('mapRouteWaze').href = `https://waze.com/ul?q=${enc}&navigate=yes`;
+  document.getElementById('mapSection').style.display = 'block';
+}
+
 function setupGallery(urls) {
   const section = document.getElementById('gallerySection');
   const grid = document.getElementById('galleryGrid');

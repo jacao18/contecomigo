@@ -3,8 +3,98 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ConteComigo — Convites Online que Celebram de Verdade</title>
-  <meta name="description" content="Crie convites digitais incríveis com confirmação de presença e lista de presentes. Aniversário, casamento, chá de bebê e muito mais." />
+  <title>Convite de Aniversário Online Grátis | CrieConvites</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+  <link rel="canonical" href="https://crieconvites.com.br/" />
+  <meta name="description" content="Crie convite de aniversário online grátis em 5 minutos: confirmação de presença (RSVP), lista de presentes e link único. Festa infantil, adulto, casamento e chá de bebê." />
+  <meta name="keywords" content="convite de aniversário online, convite digital, convite virtual, confirmação de presença, RSVP online, lista de presentes, convite festa infantil, convite online grátis" />
+  <meta name="theme-color" content="#FF3D6B" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Convite de Aniversário Online Grátis | CrieConvites" />
+  <meta property="og:description" content="Crie convites digitais incríveis com confirmação de presença e lista de presentes. Pronto em 5 minutos." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:site_name" content="CrieConvites" />
+  <meta property="og:url" content="https://crieconvites.com.br/" />
+  <meta property="og:image" content="https://crieconvites.com.br/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Convite de Aniversário Online Grátis | CrieConvites" />
+  <meta name="twitter:description" content="Convites digitais com confirmação de presença e lista de presentes. Pronto em 5 minutos." />
+  <meta name="twitter:image" content="https://crieconvites.com.br/og-cover.png" />
+
+  <!-- Dados estruturados (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://crieconvites.com.br/#organization",
+        "name": "CrieConvites",
+        "url": "https://crieconvites.com.br/",
+        "logo": "https://crieconvites.com.br/og-cover.png",
+        "email": "contato@crieconvites.com.br"
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://crieconvites.com.br/#website",
+        "url": "https://crieconvites.com.br/",
+        "name": "CrieConvites",
+        "inLanguage": "pt-BR",
+        "publisher": { "@id": "https://crieconvites.com.br/#organization" }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "name": "CrieConvites",
+        "applicationCategory": "LifestyleApplication",
+        "operatingSystem": "Web",
+        "url": "https://crieconvites.com.br/",
+        "description": "Crie convites de aniversário online com confirmação de presença (RSVP) e lista de presentes.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "BRL"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "O convite é realmente gratuito?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Sim! O plano gratuito permite criar seu convite digital com confirmação de presença, sem precisar de cartão de crédito. Novos planos com mais recursos chegam em breve." }
+          },
+          {
+            "@type": "Question",
+            "name": "Como funciona a confirmação de presença?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Cada convite tem um link único. Quando o convidado abre e clica em Confirmar presença, ele preenche um formulário simples. Você recebe uma notificação e a lista é atualizada em tempo real no seu painel." }
+          },
+          {
+            "@type": "Question",
+            "name": "Posso adicionar links de lojas na lista de presentes?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Com certeza! Você pode adicionar itens com links para qualquer loja online, colocar uma foto, preço estimado e descrição. Os convidados reservam o item direto no convite." }
+          },
+          {
+            "@type": "Question",
+            "name": "O convite funciona em qualquer celular?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Sim! Todos os convites são totalmente responsivos e funcionam em qualquer dispositivo — iPhone, Android, tablet ou computador. Sem precisar instalar nenhum aplicativo." }
+          },
+          {
+            "@type": "Question",
+            "name": "Posso editar o convite depois de publicar?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Sim! Você pode editar qualquer informação do convite a qualquer momento — data, horário, local, imagens. As alterações ficam disponíveis imediatamente para quem acessar o link." }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
 
   <!-- Google Fonts: Fraunces (display) + Nunito (body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -162,7 +252,7 @@
 
     .nav-cta {
       background: var(--pink);
-      color: var(--white) !important;
+      color: #fff !important;
       padding: 0.5rem 1.2rem;
       border-radius: 99px;
       font-weight: 700 !important;
@@ -259,8 +349,44 @@
       line-height: 0.95;
       letter-spacing: -0.03em;
       margin-bottom: 1.5rem;
-      animation: fadeUp 0.8s var(--ease) 0.2s both;
     }
+
+    /* Linhas do título sobem de dentro de uma máscara (reveal editorial) */
+    .hero-title .line {
+      display: block;
+      overflow: hidden;
+      padding-bottom: 0.14em;
+      margin-bottom: -0.14em;
+    }
+    .hero-title .line > span {
+      display: block;
+      transform: translateY(115%);
+      animation: lineRise 0.9s var(--ease) both;
+    }
+    .hero-title .line:nth-child(1) > span { animation-delay: 0.15s; }
+    .hero-title .line:nth-child(2) > span { animation-delay: 0.28s; }
+    .hero-title .line:nth-child(3) > span { animation-delay: 0.41s; }
+    @keyframes lineRise { to { transform: translateY(0); } }
+
+    /* Sublinhado caligráfico que se desenha sozinho sob "celebram" */
+    .accent-wrap { position: relative; display: inline-block; }
+    .swash {
+      position: absolute;
+      left: -2%; bottom: -0.12em;
+      width: 104%; height: 0.3em;
+      overflow: visible;
+      pointer-events: none;
+    }
+    .swash path {
+      fill: none;
+      stroke: url(#swashGrad);
+      stroke-width: 7;
+      stroke-linecap: round;
+      stroke-dasharray: 245;
+      stroke-dashoffset: 245;
+      animation: swashDraw 0.8s var(--ease) 1.05s forwards;
+    }
+    @keyframes swashDraw { to { stroke-dashoffset: 0; } }
 
     .hero-title .accent {
       background: linear-gradient(135deg, var(--pink) 0%, var(--yellow) 100%);
@@ -291,7 +417,7 @@
       align-items: center;
       gap: 0.5rem;
       background: var(--pink);
-      color: var(--white);
+      color: #fff;
       padding: 1rem 2rem;
       border-radius: 99px;
       font-size: 1rem;
@@ -525,7 +651,7 @@
     .tab-btn:hover, .tab-btn.active {
       background: var(--pink);
       border-color: var(--pink);
-      color: var(--white);
+      color: #fff;
     }
 
     .templates-grid {
@@ -539,7 +665,7 @@
       overflow: hidden;
       background: #fff;
       border: 1px solid var(--border);
-      cursor: pointer;
+      cursor: default;
       transition: transform 0.3s var(--ease), box-shadow 0.3s, border-color 0.3s;
       box-shadow: 0 4px 16px rgba(26,10,0,0.06);
     }
@@ -552,8 +678,9 @@
 
     .template-img-wrap {
       position: relative;
-      aspect-ratio: 4/3;
+      aspect-ratio: 3/4; /* convites são verticais — mesma proporção de templates.html */
       overflow: hidden;
+      background: linear-gradient(160deg,#0a0010,#1a0033);
     }
 
     .template-img-wrap img {
@@ -565,48 +692,9 @@
 
     .template-card:hover .template-img-wrap img { transform: scale(1.06); }
 
-    .template-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(26,10,0,0.72) 0%, rgba(26,10,0,0.1) 60%, transparent 100%);
-      opacity: 0;
-      transition: opacity 0.3s;
-      display: flex;
-      align-items: flex-end;
-      padding: 1.25rem;
-    }
-
-    .template-card:hover .template-overlay { opacity: 1; }
-
-    .template-overlay-content {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .template-overlay-emoji {
-      font-size: 2rem;
-      line-height: 1;
-      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
-    }
-
-    .template-use-btn {
-      background: #fff;
-      color: var(--pink);
-      border: none;
-      border-radius: 99px;
-      padding: 0.55rem 1.4rem;
-      font-size: 0.85rem;
-      font-weight: 800;
-      cursor: pointer;
-      width: 100%;
-      transition: background 0.2s, color 0.2s;
-      font-family: var(--font-body);
-    }
-
-    .template-use-btn:hover { background: var(--yellow); color: rgba(26,10,0,0.85); }
+    /* Preview real do convite (renderizado pelo preview-renderer.js, escalado p/ caber no card) */
+    .real-preview-frame { position: absolute; inset: 0; overflow: hidden; background: #1a0a1e; }
+    .real-preview-inner { width: 390px; height: 560px; transform-origin: top left; position: absolute; top: 0; left: 0; pointer-events: none; }
 
     .template-info {
       padding: 0.9rem 1rem;
@@ -653,6 +741,8 @@
       letter-spacing: 0.05em;
       white-space: nowrap;
     }
+
+    iframe.real-preview-inner { border: 0; background: #0b0720; pointer-events: none; }
 
     .tab-count {
       display: inline-flex;
@@ -935,7 +1025,7 @@
       width: 100%;
       padding: 1rem;
       background: var(--pink);
-      color: var(--white);
+      color: #fff;
       border: none;
       border-radius: 12px;
       font-family: var(--font-body);
@@ -1037,17 +1127,19 @@
     .gift-img {
       width: 100%;
       aspect-ratio: 1;
-      background: rgba(26,10,0,0.05);
+      background: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 3rem;
       overflow: hidden;
+      border-bottom: 1px solid var(--border);
     }
     .gift-img img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain; /* contain = produto inteiro visível, sem cortes */
+      padding: 0.75rem;
       display: block;
     }
 
@@ -1062,7 +1154,7 @@
 
     .gift-price {
       font-size: 0.8rem;
-      color: var(--yellow);
+      color: var(--pink-dark);
       font-weight: 700;
       margin-bottom: 0.75rem;
     }
@@ -1095,7 +1187,7 @@
 
     .gift-btn:hover {
       background: var(--pink);
-      color: var(--white);
+      color: #fff;
     }
 
     .gift-btn:disabled {
@@ -1403,7 +1495,7 @@
     }
 
     .faq-item.open .faq-answer {
-      max-height: 300px;
+      max-height: 420px;
       padding: 0 1.5rem 1.25rem;
     }
 
@@ -1718,6 +1810,113 @@
 
     .btn-primary { animation: glowPulse 3s ease-in-out infinite; }
 
+    /* ══════════════════════════════════════════
+       EFEITOS SIGNATURE — textura, parallax,
+       spotlight e micro-interações de marca
+    ══════════════════════════════════════════ */
+
+    /* Grão de filme sutil — tira o aspecto "liso demais" dos gradientes */
+    .grain-overlay {
+      position: fixed;
+      inset: -4%;
+      z-index: 3000;
+      pointer-events: none;
+      opacity: 0.05;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      animation: grainShift 1.4s steps(4) infinite;
+    }
+    @keyframes grainShift {
+      0%, 100% { transform: translate(0, 0); }
+      25%      { transform: translate(-1.5%, 1%); }
+      50%      { transform: translate(1%, -1.5%); }
+      75%      { transform: translate(-1%, -1%); }
+    }
+
+    /* Formas geométricas flutuantes no hero (respondem ao mouse) */
+    .hero-float {
+      position: absolute;
+      z-index: 1;
+      pointer-events: none;
+      will-change: transform;
+    }
+    .hero-float .inner {
+      display: block;
+      animation: floatBob var(--bob, 7s) ease-in-out var(--bob-delay, 0s) infinite;
+    }
+    @keyframes floatBob {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50%      { transform: translateY(-16px) rotate(10deg); }
+    }
+    @media (max-width: 640px) { .hero-float { display: none; } }
+
+    /* Brilho que varre o CTA principal de tempos em tempos */
+    .btn-primary { position: relative; overflow: hidden; }
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      left: -70%;
+      width: 45%;
+      background: linear-gradient(105deg, transparent, rgba(255,255,255,0.55), transparent);
+      transform: skewX(-20deg);
+      animation: shineSweep 4.5s ease-in-out 1.8s infinite;
+      pointer-events: none;
+    }
+    @keyframes shineSweep {
+      0%   { left: -70%; }
+      16%  { left: 135%; }
+      100% { left: 135%; }
+    }
+
+    /* Spotlight que segue o mouse nos cards (JS alimenta --mx/--my) */
+    @media (hover: hover) and (pointer: fine) {
+      .feature-card, .step-card { position: relative; overflow: hidden; }
+      .feature-card::after, .step-card::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%),
+                    rgba(255,61,107,0.10), transparent 65%);
+        opacity: 0;
+        transition: opacity 0.35s;
+        pointer-events: none;
+      }
+      .feature-card:hover::after, .step-card:hover::after { opacity: 1; }
+    }
+
+    /* Marquee: fade nas bordas + pausa ao passar o mouse */
+    .marquee-section {
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+              mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+    }
+    .marquee-section:hover .marquee-track { animation-play-state: paused; }
+    .marquee-item { transition: color 0.25s; }
+    .marquee-item:hover { color: var(--pink); }
+
+    /* Detalhes de marca: seleção de texto e scrollbar */
+    ::selection { background: var(--pink); color: #fff; }
+    ::-webkit-scrollbar { width: 11px; }
+    ::-webkit-scrollbar-track { background: var(--bg2); }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, var(--pink), var(--yellow));
+      border-radius: 99px;
+      border: 3px solid var(--bg2);
+    }
+
+    /* ══════════════════════════════════════════
+       REDUCED MOTION (acessibilidade)
+    ══════════════════════════════════════════ */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      html { scroll-behavior: auto; }
+      .reveal { opacity: 1; transform: none; }
+    }
+
   </style>
 </head>
 
@@ -1725,6 +1924,9 @@
 
   <!-- Scroll Progress -->
   <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- Textura de grão (efeito filme) -->
+  <div class="grain-overlay" aria-hidden="true"></div>
 
   <!-- Mobile Menu -->
   <div class="mobile-menu" id="mobileMenu">
@@ -1741,7 +1943,7 @@
 
   <!-- ══ NAVBAR ══ -->
   <nav class="nav" id="navbar">
-    <div class="nav-logo" onclick="location.href='convite-online.html'" style="cursor:pointer">ConteComigo</div>
+    <div class="nav-logo" onclick="location.href='dashboard.html'" style="cursor:pointer">CrieConvites</div>
     <ul class="nav-links">
       <li><a href="#funcionalidades">Funcionalidades</a></li>
       <li><a href="#templates">Templates</a></li>
@@ -1763,15 +1965,35 @@
     <!-- Confetti -->
     <div class="confetti-container" id="confettiContainer"></div>
 
+    <!-- Formas geométricas decorativas (parallax de mouse) -->
+    <div class="hero-float" data-depth="34" style="top:20%;left:7%;--bob:7s">
+      <svg class="inner" width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true"><circle cx="13" cy="13" r="10" stroke="#FF3D6B" stroke-width="3.5" opacity=".5"/></svg>
+    </div>
+    <div class="hero-float" data-depth="22" style="top:30%;right:9%;--bob:9s;--bob-delay:-3s">
+      <svg class="inner" width="34" height="16" viewBox="0 0 34 16" fill="none" aria-hidden="true"><path d="M2 10 Q 8 2, 14 10 T 26 10 T 32 8" stroke="#FFD93D" stroke-width="3.5" stroke-linecap="round" opacity=".8"/></svg>
+    </div>
+    <div class="hero-float" data-depth="42" style="bottom:24%;left:12%;--bob:6s;--bob-delay:-1.5s">
+      <svg class="inner" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2 V18 M2 10 H18" stroke="#FF3D6B" stroke-width="3.5" stroke-linecap="round" opacity=".4"/></svg>
+    </div>
+    <div class="hero-float" data-depth="16" style="top:15%;right:23%;--bob:8s;--bob-delay:-4s">
+      <svg class="inner" width="24" height="22" viewBox="0 0 24 22" fill="none" aria-hidden="true"><path d="M12 3 L21 19 H3 Z" stroke="#FFD93D" stroke-width="3" stroke-linejoin="round" opacity=".55"/></svg>
+    </div>
+    <div class="hero-float" data-depth="30" style="bottom:30%;right:7%;--bob:7.5s;--bob-delay:-2s">
+      <svg class="inner" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><rect x="4" y="4" width="10" height="10" rx="2" transform="rotate(18 9 9)" fill="#FF3D6B" opacity=".3"/></svg>
+    </div>
+    <div class="hero-float" data-depth="12" style="top:48%;left:16%;--bob:10s;--bob-delay:-5s">
+      <svg class="inner" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><circle cx="5" cy="5" r="4" fill="#FFD93D" opacity=".7"/></svg>
+    </div>
+
     <div class="hero-content">
       <div class="hero-badge">
         🎉 A plataforma de convites mais divertida do Brasil
       </div>
 
       <h1 class="hero-title">
-        Convites que<br>
-        <span class="accent">celebram</span><br>
-        de verdade.
+        <span class="line"><span>Convites que</span></span>
+        <span class="line"><span><span class="accent-wrap"><span class="accent">celebram</span><svg class="swash" viewBox="0 0 220 26" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="swashGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FF3D6B"/><stop offset="1" stop-color="#FFD93D"/></linearGradient></defs><path d="M4 17 C 50 23, 110 5, 150 9 C 175 11.5, 200 10.5, 216 7"/></svg></span></span></span>
+        <span class="line"><span>de verdade.</span></span>
       </h1>
 
       <p class="hero-sub">
@@ -1789,7 +2011,7 @@
 
       <div class="hero-stats">
         <div class="hero-stat">
-          <div class="hero-stat-num" data-count="127000">0</div>
+          <div class="hero-stat-num" data-count="+200">0</div>
           <div class="hero-stat-label">Convites criados</div>
         </div>
         <div class="hero-stat">
@@ -1797,7 +2019,7 @@
           <div class="hero-stat-label">% satisfação</div>
         </div>
         <div class="hero-stat">
-          <div class="hero-stat-num" data-count="35">0</div>
+          <div class="hero-stat-num" data-count="10+">0</div>
           <div class="hero-stat-label">Categorias</div>
         </div>
       </div>
@@ -1842,7 +2064,7 @@
         <div class="feature-card reveal">
           <div class="feature-icon">🎨</div>
           <div class="feature-title">Templates lindos & personalizáveis</div>
-          <div class="feature-desc">Mais de 200 modelos criados por designers profissionais. Personalize cores, fontes e textos em segundos.</div>
+          <div class="feature-desc">Mais de 200 modelos criados por designers profissionais. Personalize cores, fontes e textos em segundos. Além de ter a opção de usar seu próprio convite adicionando nossas funcionalidades todas.</div>
         </div>
         <div class="feature-card reveal">
           <div class="feature-icon yellow">✅</div>
@@ -1852,7 +2074,32 @@
         <div class="feature-card reveal">
           <div class="feature-icon green">🎁</div>
           <div class="feature-title">Lista de presentes integrada</div>
-          <div class="feature-desc">Crie sua lista de presentes com links para lojas ou items personalizados. Convidados reservam sem confusão.</div>
+          <div class="feature-desc">Crie sua lista de presentes super personalizável. Convidados reservam/compram sem confusão.</div>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon green">💸</div>
+          <div class="feature-title">Presentes em dinheiro</div>
+          <div class="feature-desc">Adicione sua chave Pix à lista de presentes e receba presentes em dinheiro direto na sua conta, sem intermediários. É possível adicionar link de cartão de crédito direto no presente.</div>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon purple">🎵</div>
+          <div class="feature-title">Música de fundo</div>
+          <div class="feature-desc">Adicione uma trilha sonora ao seu convite e emocione seus convidados assim que ele abrir.</div>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon yellow">📸</div>
+          <div class="feature-title">Galeria de fotos</div>
+          <div class="feature-desc">Monte uma galeria com as melhores fotos e deixe o convite com a cara da sua festa.</div>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon orange">🔒</div>
+          <div class="feature-title">Lista de convidados fechada</div>
+          <div class="feature-desc">Controle quem pode confirmar presença: só quem está na sua lista consegue responder ao convite.</div>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon blue">🖼️</div>
+          <div class="feature-title">Salve o convite como imagem</div>
+          <div class="feature-desc">Baixe seu convite em imagem pronta para enviar aos convidados pelo WhatsApp, Instagram ou impressa.</div>
         </div>
         <div class="feature-card reveal">
           <div class="feature-icon blue">📱</div>
@@ -1869,6 +2116,11 @@
           <div class="feature-title">Contador regressivo</div>
           <div class="feature-desc">Gere aquela ansiedade boa! Contador animado no convite mostrando o tempo até a festa começar.</div>
         </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon green">📍</div>
+          <div class="feature-title">Mapa do local</div>
+          <div class="feature-desc">Mapa interativo direto no convite. Seus convidados veem onde é a festa e traçam a rota com um toque.</div>
+        </div>
       </div>
     </div>
   </section>
@@ -1882,11 +2134,13 @@
 
       <div class="templates-tabs reveal">
         <button class="tab-btn active" onclick="filterTemplates('todos', this)">Todos <span class="tab-count" id="cnt-todos"></span></button>
-        <button class="tab-btn" onclick="filterTemplates('aniversario', this)">🎂 Aniversário</button>
+        <button class="tab-btn" onclick="filterTemplates('homem', this)">🍺 Masculino</button>
+        <button class="tab-btn" onclick="filterTemplates('mulher', this)">🥂 Feminino</button>
+        <button class="tab-btn" onclick="filterTemplates('quinze', this)">👑 15 Anos</button>
+        <button class="tab-btn" onclick="filterTemplates('infantil', this)">🦸 Infantil</button>
         <button class="tab-btn" onclick="filterTemplates('casamento', this)">💍 Casamento</button>
         <button class="tab-btn" onclick="filterTemplates('cha', this)">👶 Chá de Bebê</button>
-        <button class="tab-btn" onclick="filterTemplates('formatura', this)">🎓 Formatura</button>
-        <button class="tab-btn" onclick="filterTemplates('outros', this)">✨ Outros</button>
+        <button class="tab-btn" onclick="filterTemplates('aniversario-adulto', this)">🎉 Geral</button>
       </div>
 
       <div class="templates-grid" id="templatesGrid">
@@ -1943,7 +2197,7 @@
             <div class="invite-demo-name">Festa de Aniversário da Sofia</div>
             <hr class="invite-demo-divider" />
             <div class="invite-demo-details">
-              <div class="invite-demo-detail"><span>📅</span> <span>Sábado, 14 de junho de 2025</span></div>
+              <div class="invite-demo-detail"><span>📅</span> <span id="demoDate">Sábado, 14 de junho</span></div>
               <div class="invite-demo-detail"><span>⏰</span> <span>A partir das 18h00</span></div>
               <div class="invite-demo-detail"><span>📍</span> <span>Salão Felicidade, São Paulo – SP</span></div>
               <div class="invite-demo-detail"><span>👗</span> <span>Traje: Esporte Fino</span></div>
@@ -1951,7 +2205,7 @@
             <hr class="invite-demo-divider" />
             <div style="text-align:center;margin-top:.5rem">
               <div style="font-size:0.7rem;color:rgba(26,10,0,0.4);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.5rem">Faltam</div>
-              <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:900;font-style:italic;color:var(--yellow);letter-spacing:-.01em">47d 12h 30m</div>
+              <div id="countdown" style="font-family:var(--font-display);font-size:1.5rem;font-weight:900;font-style:italic;color:var(--pink);letter-spacing:-.01em">47d 12h 30m</div>
             </div>
           </div>
         </div>
@@ -1964,8 +2218,8 @@
 
           <!-- Preview estático do form -->
           <div class="rsvp-form-box" style="pointer-events:none;user-select:none;opacity:.85">
-            <div class="rsvp-form-title">Vai comparecer? 🥳</div>
-            <div class="rsvp-form-sub">Responda até 07 de junho para confirmar seu lugar.</div>
+            <div class="rsvp-form-title">Conto Contigo? 🥳</div>
+            <div class="rsvp-form-sub">Responda até 07 de junho e confirme seu lugar.</div>
             <div class="form-group" style="margin-bottom:.75rem">
               <label>Seu nome completo</label>
               <div style="background:rgba(26,10,0,.05);border:1px solid rgba(26,10,0,.1);border-radius:12px;padding:.65rem 1rem;color:rgba(26,10,0,.3);font-size:.9rem">Maria Santos</div>
@@ -1975,8 +2229,8 @@
               <div style="background:rgba(26,10,0,.05);border:1px solid rgba(26,10,0,.1);border-radius:12px;padding:.65rem 1rem;color:rgba(26,10,0,.3);font-size:.9rem">(11) 99999-9999</div>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem">
-              <div style="background:rgba(52,211,153,.1);border:2px solid #34d399;border-radius:12px;padding:.7rem;text-align:center;font-size:.9rem;font-weight:700;color:#34d399">✅ Sim, vou!</div>
-              <div style="background:rgba(26,10,0,.04);border:1px solid rgba(26,10,0,.1);border-radius:12px;padding:.7rem;text-align:center;font-size:.9rem;font-weight:700;color:rgba(26,10,0,.25)">❌ Não posso</div>
+              <div style="background:rgba(52,211,153,.1);border:2px solid #34d399;border-radius:12px;padding:.7rem;text-align:center;font-size:.9rem;font-weight:700;color:#34d399">SIM!</div>
+              <div style="background:rgba(26,10,0,.04);border:1px solid rgba(26,10,0,.1);border-radius:12px;padding:.7rem;text-align:center;font-size:.9rem;font-weight:700;color:rgba(26,10,0,.25)">Não posso ir</div>
             </div>
             <div style="background:rgba(255,61,107,1);color:#fff;border-radius:12px;padding:.85rem;text-align:center;font-weight:800;font-size:.95rem">🎉 Confirmar presença</div>
           </div>
@@ -2004,7 +2258,7 @@
         </div>
         <div class="gifts-grid" style="pointer-events:none;user-select:none">
           <div class="gift-card">
-            <div class="gift-img"><img src="imgs/cha-twinings.jpg" alt="Kit de Chá Twinings" style="width:100%;height:100%;object-fit:cover"/></div>
+            <div class="gift-img"><img src="imgs/cha-twinings.jpg" alt="Kit de Chá Twinings"/></div>
             <div class="gift-info">
               <div class="gift-name">Kit de Chá Gourmet Twinings</div>
               <div class="gift-price">R$ 89,90</div>
@@ -2013,7 +2267,7 @@
             </div>
           </div>
           <div class="gift-card">
-            <div class="gift-img"><img src="imgs/livro-palmirinha.jpg" alt="Livro 50 Receitas Palmirinha" style="width:100%;height:100%;object-fit:cover"/></div>
+            <div class="gift-img"><img src="imgs/livro-palmirinha.jpg" alt="Livro 50 Receitas Palmirinha"/></div>
             <div class="gift-info">
               <div class="gift-name">50 Receitas por Palmirinha</div>
               <div class="gift-price">R$ 65,00</div>
@@ -2022,7 +2276,7 @@
             </div>
           </div>
           <div class="gift-card">
-            <div class="gift-img"><img src="imgs/chocolates-brasil-cacau.jpg" alt="Chocolates Brasil Cacau Experiências" style="width:100%;height:100%;object-fit:cover"/></div>
+            <div class="gift-img"><img src="imgs/chocolates-brasil-cacau.jpg" alt="Chocolates Brasil Cacau Experiências"/></div>
             <div class="gift-info">
               <div class="gift-name">Chocolates Brasil Cacau</div>
               <div class="gift-price">R$ 75,00</div>
@@ -2095,62 +2349,42 @@
 
       <div class="pricing-grid" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr));max-width:1100px;margin:0 auto">
         <!-- Free -->
-        <div class="pricing-card reveal">
+        <div class="pricing-card featured reveal">
+          <div class="pricing-tag">🎉 Disponível agora</div>
           <div class="pricing-name">GRATUITO</div>
           <div class="pricing-price"><sup>R$</sup>0</div>
           <div class="pricing-period">para sempre</div>
           <hr class="pricing-divider" />
           <div class="pricing-features">
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> 1 convite ativo</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Até 50 convidados</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Crie seu convite digital</div>
             <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Confirmação de presença</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> 5 templates gratuitos</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon off">✗</span> Lista de presentes</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon off">✗</span> Música &amp; galeria</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon off">✗</span> Sem marca d'água</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Link único para compartilhar</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Funciona em qualquer celular</div>
+            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Templates prontos para usar</div>
           </div>
-          <a href="login.html" class="pricing-btn pricing-btn-outline" style="display:block;text-align:center;text-decoration:none">Começar grátis</a>
+          <a href="login.html" class="pricing-btn pricing-btn-primary" style="display:block;text-align:center;text-decoration:none">Começar grátis →</a>
         </div>
 
-        <!-- Pro -->
-        <div class="pricing-card featured reveal">
-          <div class="pricing-tag">⭐ Mais popular</div>
+        <!-- Pro (em breve) -->
+        <div class="pricing-card reveal" style="opacity:.85">
+          <div class="pricing-tag" style="background:rgba(26,10,0,.08);color:rgba(26,10,0,.55)">⏳ Em breve</div>
           <div class="pricing-name">PRO</div>
-          <div class="pricing-price"><sup>R$</sup>19</div>
-          <div class="pricing-period">por evento</div>
+          <div class="pricing-price" style="color:rgba(26,10,0,.35)">✦</div>
+          <div class="pricing-period">novidades a caminho</div>
           <hr class="pricing-divider" />
-          <div class="pricing-features">
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Convites ilimitados</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Convidados ilimitados</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Todos os 16 templates</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Upload de fotos</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Lista de presentes com fotos</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Música &amp; galeria de fotos</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Sem marca d'água</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Mural de mensagens</div>
-          </div>
-          <a href="login.html" class="pricing-btn pricing-btn-primary" style="display:block;text-align:center;text-decoration:none">Assinar Pro →</a>
+          <p style="font-size:.9rem;color:rgba(26,10,0,.5);line-height:1.6;margin:.5rem 0 1.5rem">Mais recursos para deixar seus convites ainda mais completos. Em breve por aqui.</p>
+          <span class="pricing-btn pricing-btn-outline" style="display:block;text-align:center;cursor:default;opacity:.6">Em breve</span>
         </div>
 
-        <!-- Profissional -->
-        <div class="pricing-card reveal" style="border:2px solid rgba(255,217,61,.4);background:linear-gradient(135deg,rgba(255,217,61,.06),rgba(255,61,107,.04))">
-          <div class="pricing-tag" style="background:var(--yellow);color:rgba(26,10,0,.85)">🏢 Para empresas</div>
-          <div class="pricing-name">PROFISSIONAL</div>
-          <div class="pricing-price"><sup>R$</sup>149</div>
-          <div class="pricing-period">por mês</div>
+        <!-- Empresarial (em breve) -->
+        <div class="pricing-card reveal" style="opacity:.85">
+          <div class="pricing-tag" style="background:rgba(26,10,0,.08);color:rgba(26,10,0,.55)">⏳ Em breve</div>
+          <div class="pricing-name">EMPRESARIAL</div>
+          <div class="pricing-price" style="color:rgba(26,10,0,.35)">✦</div>
+          <div class="pricing-period">novidades a caminho</div>
           <hr class="pricing-divider" />
-          <div class="pricing-features">
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Tudo do Pro</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> <strong>Convites para seus clientes</strong></div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Clientes criam convites pela sua conta</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Painel multi-eventos</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Marca personalizada (logo própria)</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Relatórios e exportações</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Suporte prioritário</div>
-            <div class="pricing-feature"><span class="pricing-feature-icon">✓</span> Templates exclusivos para sua marca</div>
-          </div>
-          <a href="mailto:contato@contecomigo.com.br" class="pricing-btn pricing-btn-outline" style="display:block;text-align:center;text-decoration:none">Falar com a equipe →</a>
-          <div style="font-size:.72rem;color:rgba(26,10,0,.35);text-align:center;margin-top:.75rem">Ideal para casas de festas, buffets e cerimonialistas</div>
+          <p style="font-size:.9rem;color:rgba(26,10,0,.5);line-height:1.6;margin:.5rem 0 1.5rem">Um plano pensado para empresas e profissionais de eventos. Em breve por aqui.</p>
+          <span class="pricing-btn pricing-btn-outline" style="display:block;text-align:center;cursor:default;opacity:.6">Em breve</span>
         </div>
       </div>
     </div>
@@ -2167,7 +2401,7 @@
           <button class="faq-question" onclick="toggleFAQ(this)">
             O convite é realmente gratuito? <span class="faq-icon">+</span>
           </button>
-          <div class="faq-answer"><p>Sim! O plano gratuito permite criar 1 convite ativo com até 50 convidados e confirmação de presença, sem precisar de cartão de crédito. Quando quiser mais recursos, é só fazer upgrade.</p></div>
+          <div class="faq-answer"><p>Sim! O plano gratuito permite criar seu convite digital com confirmação de presença, sem precisar de cartão de crédito. Novos planos com mais recursos chegam em breve.</p></div>
         </div>
         <div class="faq-item reveal">
           <button class="faq-question" onclick="toggleFAQ(this)">
@@ -2221,7 +2455,7 @@
   <footer class="footer">
     <div class="footer-inner">
       <div class="footer-brand">
-        <div class="footer-logo">ConteComigo</div>
+        <div class="footer-logo">CrieConvites</div>
         <p class="footer-tagline">A plataforma de convites digitais mais divertida e completa do Brasil. 🎉</p>
       </div>
 
@@ -2257,7 +2491,7 @@
     </div>
 
     <div class="footer-bottom">
-      <div class="footer-copy">© 2025 <strong>ConteComigo</strong>. Feito com 🎉 no Brasil.</div>
+      <div class="footer-copy">© <span id="footerYear">2026</span> <strong>CrieConvites</strong>. Feito com 🎉 no Brasil.</div>
       <div class="footer-social">
         <a href="#" class="footer-social-link" title="Instagram">📸</a>
         <a href="#" class="footer-social-link" title="WhatsApp">💬</a>
@@ -2267,6 +2501,8 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="preview-renderer.js"></script>
   <script>
     // ══════════════════════════════
     //  CONFETTI GENERATOR
@@ -2353,77 +2589,186 @@
     document.querySelectorAll('[data-count]').forEach(el => counterObserver.observe(el));
 
     // ══════════════════════════════
-    //  COUNTDOWN TIMER
+    //  COUNTDOWN TIMER (demo — data sempre 47 dias no futuro)
     // ══════════════════════════════
-    const eventDate = new Date('2025-06-14T18:00:00');
+    const eventDate = new Date();
+    eventDate.setDate(eventDate.getDate() + 47);
+    eventDate.setHours(18, 0, 0, 0);
+
+    const demoDateEl = document.getElementById('demoDate');
+    if (demoDateEl) {
+      const txt = eventDate.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      demoDateEl.textContent = txt.charAt(0).toUpperCase() + txt.slice(1);
+    }
+
+    const countdownEl = document.getElementById('countdown');
     function updateCountdown() {
-      const now = new Date();
-      const diff = eventDate - now;
-      if (diff <= 0) { document.getElementById('countdown').textContent = '🎉 Chegou o dia!'; return; }
+      if (!countdownEl) return;
+      const diff = eventDate - new Date();
+      if (diff <= 0) { countdownEl.textContent = '🎉 Chegou o dia!'; return; }
       const d = Math.floor(diff / 86400000);
       const h = Math.floor((diff % 86400000) / 3600000);
       const m = Math.floor((diff % 3600000) / 60000);
-      document.getElementById('countdown').textContent = `${d}d ${h}h ${m}m`;
+      countdownEl.textContent = `${d}d ${h}h ${m}m`;
     }
     updateCountdown();
     setInterval(updateCountdown, 60000);
 
     // ══════════════════════════════
     //  TEMPLATES DATA + GRID
+    //  Catálogo REAL — espelhado de templates.html (built-ins).
+    //  Os cards renderizam o convite de verdade via preview-renderer.js.
     // ══════════════════════════════
+    const CAT_LABELS = {
+      'homem': 'Masculino', 'mulher': 'Feminino', 'quinze': '15 Anos',
+      'menino': 'Infantil', 'menina': 'Infantil', 'casamento': 'Casamento',
+      'cha': 'Chá de Bebê', 'aniversario-adulto': 'Geral'
+    };
+
     const templates = [
-      // ── ANIVERSÁRIO ──
-      { name: 'Festa Tropical',      category: 'aniversario', badge: 'POPULAR', emoji: '🌺', photo: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&q=85' },
-      { name: 'Neon Retrô',          category: 'aniversario', badge: null,       emoji: '🪩', photo: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=85' },
-      { name: 'Mágica & Encantada',  category: 'aniversario', badge: 'NOVO',     emoji: '✨', photo: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=85' },
-      { name: 'Festa na Piscina',    category: 'aniversario', badge: null,       emoji: '🏊', photo: 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=600&q=85' },
-      { name: 'Boteco & Pagode',     category: 'aniversario', badge: 'NOVO',     emoji: '🍺', photo: 'https://images.unsplash.com/photo-1506377585622-bedcbb5a9d56?w=600&q=85' },
-      { name: 'Princesa Encantada',  category: 'aniversario', badge: null,       emoji: '👑', photo: 'https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=600&q=85' },
-      { name: 'Safari Kids',         category: 'aniversario', badge: 'NOVO',     emoji: '🦁', photo: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=600&q=85' },
+      // ── MASCULINO ──
+      { id:'hom-cerveja',        name:'Chope & Futebol',     category:'homem',              emoji:'🍺' },
+      { id:'hom-futebol',        name:'Campo de Futebol',    category:'homem',              emoji:'⚽' },
+      { id:'hom-minimalista',    name:'Minimalista',         category:'homem',              emoji:'🎂' },
+      // ── FEMININO ──
+      { id:'mul-champanhe',      name:'Champanhe & Glamour', category:'mulher',             emoji:'🥂' },
+      { id:'mul-rosa',           name:'Rosa & Fofo',         category:'mulher',             emoji:'🌸' },
+      { id:'mul-pool',           name:'Pool Party',          category:'mulher',             emoji:'🏊' },
+      // ── 15 ANOS ──
+      { id:'deb-valsa',          name:'Valsa Real',          category:'quinze',             emoji:'👑' },
+      { id:'deb-clean',          name:'Clean & Moderno',     category:'quinze',             emoji:'✨' },
+      { id:'deb-vintage',        name:'Vintage Dourado',     category:'quinze',             emoji:'🥇' },
+      // ── INFANTIL MENINO ──
+      { id:'boy-spiderman',      name:'Homem-Aranha',        category:'menino',             emoji:'🕷️' },
+      { id:'boy-pokemon',        name:'Pokémon',             category:'menino',             emoji:'⚡' },
+      { id:'boy-mickey',         name:'Mickey Mouse',        category:'menino',             emoji:'🐭' },
+      { id:'boy-spongebob',      name:'Bob Esponja',         category:'menino',             emoji:'🧽' },
+      // ── INFANTIL MENINA ──
+      { id:'girl-ariel',         name:'Pequena Sereia',      category:'menina',             emoji:'🧜' },
+      { id:'girl-cinderela',     name:'Cinderela',           category:'menina',             emoji:'👠' },
+      { id:'girl-minnie',        name:'Minnie Mouse',        category:'menina',             emoji:'🎀' },
+      { id:'girl-ursinha',       name:'Ursinha Fofa',        category:'menina',             emoji:'🐻' },
       // ── CASAMENTO ──
-      { name: 'Noite Estrelada',     category: 'casamento',   badge: 'POPULAR', emoji: '🌙', photo: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=85' },
-      { name: 'Jardim Romântico',    category: 'casamento',   badge: null,       emoji: '🌸', photo: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&q=85' },
-      { name: 'Boho Chic',           category: 'casamento',   badge: null,       emoji: '🌿', photo: 'https://images.unsplash.com/photo-1537633552985-df8429e8048b?w=600&q=85' },
-      { name: 'Minimalista Luxo',    category: 'casamento',   badge: null,       emoji: '🤍', photo: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=600&q=85' },
-      { name: 'Praia & Pôr do Sol',  category: 'casamento',   badge: 'NOVO',     emoji: '🌅', photo: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=85' },
-      // ── CHÁ ──
-      { name: 'Chuva de Amor',       category: 'cha',         badge: null,       emoji: '💛', photo: 'https://images.unsplash.com/photo-1617957718614-8c23f060b04a?w=600&q=85' },
-      { name: 'É Menina!',           category: 'cha',         badge: 'POPULAR', emoji: '🌷', photo: 'https://images.unsplash.com/photo-1544427920-c49ccfb85579?w=600&q=85' },
-      { name: 'É Menino!',           category: 'cha',         badge: null,       emoji: '🚀', photo: 'https://images.unsplash.com/photo-1489872108820-aff4df83d507?w=600&q=85' },
-      // ── FORMATURA ──
-      { name: 'Conquista',           category: 'formatura',   badge: 'POPULAR', emoji: '🎓', photo: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&q=85' },
-      { name: 'Colação de Grau',     category: 'formatura',   badge: null,       emoji: '📜', photo: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&q=85' },
-      // ── OUTROS ──
-      { name: 'Festa Junina',        category: 'outros',      badge: null,       emoji: '🌽', photo: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&q=85' },
-      { name: 'Réveillon',           category: 'outros',      badge: 'NOVO',     emoji: '🥂', photo: 'https://images.unsplash.com/photo-1467810563316-b5476525c0f9?w=600&q=85' },
-      { name: 'Churrasco & Friends', category: 'outros',      badge: null,       emoji: '🔥', photo: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&q=85' },
-      { name: 'Aventura Outdoor',    category: 'outros',      badge: null,       emoji: '⛺', photo: 'https://images.unsplash.com/photo-1532274402911-5a369e4c4bb5?w=600&q=85' },
+      { id:'wed-estrelada',      name:'Noite Estrelada',     category:'casamento',          emoji:'✨' },
+      { id:'wed-jardim',         name:'Jardim Romântico',    category:'casamento',          emoji:'🌿' },
+      { id:'wed-rosegold',       name:'Rose Gold',           category:'casamento',          emoji:'💍' },
+      // ── CHÁ DE BEBÊ ──
+      { id:'cha-pastel',         name:'Pastel Delicado',     category:'cha',                emoji:'👶' },
+      { id:'cha-revelacao-azul', name:'É Menino!',           category:'cha',                emoji:'🔵' },
+      { id:'cha-revelacao-rosa', name:'É Menina!',           category:'cha',                emoji:'🌸' },
+      // ── GERAL ──
+      { id:'aniv-neon',          name:'Neon Night',          category:'aniversario-adulto', emoji:'🎉' },
+      { id:'aniv-tropical',      name:'Tropical Party',      category:'aniversario-adulto', emoji:'🌴' },
+      { id:'aniv-elegante',      name:'Elegante',            category:'aniversario-adulto', emoji:'🥂' },
     ];
 
-    function renderTemplates(filter = 'todos') {
-      const catLabels = { aniversario: 'Aniversário', casamento: 'Casamento', cha: 'Chá de Bebê', formatura: 'Formatura', outros: 'Outros' };
+    // Fallback visual caso o preview-renderer não carregue (mesma identidade de templates.html)
+    const THUMB_FALLBACK = {
+      'hom-cerveja':{bg:'linear-gradient(160deg,#1a0e00,#3d2200)',accent:'#F59E0B'},        'hom-futebol':{bg:'linear-gradient(160deg,#052a10,#0a4a1a)',accent:'#34D399'},
+      'hom-minimalista':{bg:'linear-gradient(160deg,#111,#222)',accent:'#E5E7EB'},          'mul-champanhe':{bg:'linear-gradient(160deg,#1a0e00,#3a1800)',accent:'#FCD34D'},
+      'mul-rosa':{bg:'linear-gradient(160deg,#2d0020,#6b0030)',accent:'#F472B6'},           'mul-pool':{bg:'linear-gradient(160deg,#0a2550,#0e4f8a)',accent:'#60A5FA'},
+      'deb-valsa':{bg:'linear-gradient(160deg,#1a0a3d,#3b1a6b)',accent:'#FCD34D'},          'deb-clean':{bg:'linear-gradient(160deg,#fff,#f3e6ff)',accent:'#F472B6'},
+      'deb-vintage':{bg:'linear-gradient(160deg,#1c0f00,#3b2000)',accent:'#FCD34D'},        'boy-spiderman':{bg:'linear-gradient(160deg,#1a0000,#5a0000)',accent:'#EF4444'},
+      'boy-pokemon':{bg:'linear-gradient(160deg,#1a1000,#3a2800)',accent:'#FBBF24'},        'boy-mickey':{bg:'linear-gradient(160deg,#0a0000,#2a0000)',accent:'#EF4444'},
+      'boy-spongebob':{bg:'linear-gradient(160deg,#003a8c,#0055cc)',accent:'#FBBF24'},      'girl-ariel':{bg:'linear-gradient(160deg,#001a3d,#003370)',accent:'#60A5FA'},
+      'girl-cinderela':{bg:'linear-gradient(160deg,#0a1040,#1a2070)',accent:'#93C5FD'},     'girl-minnie':{bg:'linear-gradient(160deg,#2d0010,#6b0030)',accent:'#F472B6'},
+      'girl-ursinha':{bg:'linear-gradient(160deg,#1a0a00,#3d2000)',accent:'#FCD34D'},       'wed-estrelada':{bg:'linear-gradient(160deg,#050520,#0a0a3d)',accent:'#FCD34D'},
+      'wed-jardim':{bg:'linear-gradient(160deg,#e8f5e0,#c8e6c0)',accent:'#2d5a1b'},         'wed-rosegold':{bg:'linear-gradient(160deg,#2a0808,#5c1010)',accent:'#F9A8D4'},
+      'cha-pastel':{bg:'linear-gradient(160deg,#fef9f0,#fde8d8)',accent:'#c41f6e'},         'cha-revelacao-azul':{bg:'linear-gradient(160deg,#e0f0ff,#b3d9ff)',accent:'#1d6fb5'},
+      'cha-revelacao-rosa':{bg:'linear-gradient(160deg,#ffe0f0,#ffb3d9)',accent:'#c41f6e'}, 'aniv-neon':{bg:'linear-gradient(160deg,#0a0010,#1a0033)',accent:'#FF3D6B'},
+      'aniv-tropical':{bg:'linear-gradient(160deg,#0d3320,#1a5c3a)',accent:'#34D399'},      'aniv-elegante':{bg:'linear-gradient(160deg,#0a0a0a,#1a1a1a)',accent:'#FCD34D'},
+    };
+
+    // Escapa strings dinâmicas (vindas do banco) antes de injetar via innerHTML — previne XSS
+    const escT = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+    // Preenche os {{parâmetros}} com dados de exemplo (mesmo comportamento de templates.html)
+    function applySampleVars(html, accent) {
+      const vars = {
+        '{{nome}}':         'Sofia',
+        '{{titulo}}':       'Você está convidada!',
+        '{{idade}}':        '5 anos',
+        '{{dia}}':          '15',
+        '{{mes}}':          'Junho',
+        '{{diaSemana}}':    'Sábado',
+        '{{hora}}':         '16:00',
+        '{{horaFim}}':      '20:00',
+        '{{horaCompleta}}': 'das 16:00 às 20:00',
+        '{{local}}':        'Salão Encantado',
+        '{{endereco}}':     'Rua dos Contos, 123 — São Paulo, SP',
+        '{{dress}}':        'Esporte fino',
+        '{{msg}}':          'Será uma noite inesquecível!',
+        '{{heroImg}}':      'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80',
+        '{{accent}}':       accent || '#FFD93D',
+        '{{dataFormatada}}':'sábado, 15 de junho de 2025',
+        '{{diasRestantes}}':'14',
+      };
+      let result = html;
+      for (const [k, v] of Object.entries(vars)) result = result.split(k).join(v);
+      return result;
+    }
+
+    function thumbHTML(t) {
+      // Exemplos dinâmicos (custom_templates do banco): convite REAL em iframe sandbox —
+      // scripts/animações rodam isolados, sem afetar a página
+      if (t.exemplo && t.html) {
+        const doc = applySampleVars(t.html, t.accent);
+        return `<div class="real-preview-frame"><iframe class="real-preview-inner" sandbox="allow-scripts" loading="lazy" tabindex="-1" title="Exemplo: ${escT(t.name)}" srcdoc="${escT(doc)}"></iframe></div>`;
+      }
+      // 1º: convite REAL renderizado (mesmo visual do editor e de templates.html)
+      if (window.renderRealInvitePreview) {
+        const real = window.renderRealInvitePreview(t.id);
+        if (real) return real;
+      }
+      // Fallback: cartão com a paleta do template
+      const th = THUMB_FALLBACK[t.id] || { bg:'linear-gradient(160deg,#0a0010,#1a0033)', accent:'#FF3D6B' };
+      const isLight = th.bg.includes('#fff') || th.bg.includes('#fef') || th.bg.includes('#ffe') || th.bg.includes('#e0f') || th.bg.includes('#e8f');
+      const nameColor = isLight ? th.accent : '#fff';
+      return `<div style="position:absolute;inset:0;background:${th.bg};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.45rem;padding:1rem;text-align:center">
+        <div style="font-size:2.2rem;line-height:1">${t.emoji}</div>
+        <div style="font-size:.55rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:${th.accent}">você está convidado</div>
+        <div style="font-family:var(--font-display);font-size:1rem;font-weight:900;font-style:italic;color:${nameColor};line-height:1.2">${t.name}</div>
+      </div>`;
+    }
+
+    // Escala cada preview real (390px nativo) para preencher o card
+    function fitLandingPreviews() {
+      document.querySelectorAll('#templatesGrid .real-preview-frame').forEach(frame => {
+        const inner = frame.querySelector('.real-preview-inner');
+        if (!inner) return;
+        const w = frame.clientWidth;
+        if (w) inner.style.transform = `scale(${w / 390})`;
+      });
+    }
+    let fitTplTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(fitTplTimer);
+      fitTplTimer = setTimeout(fitLandingPreviews, 120);
+    });
+
+    let currentFilter = 'todos';
+    function renderTemplates(filter = currentFilter) {
+      currentFilter = filter;
       const grid = document.getElementById('templatesGrid');
-      const filtered = filter === 'todos' ? templates : templates.filter(t => t.category === filter);
+      const filtered = filter === 'todos'
+        ? templates
+        : filter === 'infantil'
+          ? templates.filter(t => t.category === 'menino' || t.category === 'menina')
+          : templates.filter(t => t.category === filter);
+
       grid.innerHTML = filtered.map(t => `
         <div class="template-card reveal">
           <div class="template-img-wrap">
-            <img src="${t.photo}" alt="${t.name}" loading="lazy" />
-            <div class="template-overlay">
-              <div class="template-overlay-content">
-                <span class="template-overlay-emoji">${t.emoji || '🎉'}</span>
-                <button class="template-use-btn" onclick="selectTemplate('${t.name}', '${t.photo}')">Usar este template →</button>
-              </div>
-            </div>
+            ${thumbHTML(t)}
           </div>
           <div class="template-info">
             <div class="template-info-left">
               <div class="template-name">
                 <span class="template-emoji-sm">${t.emoji || '🎉'}</span>
-                ${t.name}
+                ${escT(t.name)}
               </div>
-              <div class="template-category">${catLabels[t.category] || t.category}</div>
+              <div class="template-category">${CAT_LABELS[t.category] || t.category}</div>
             </div>
-            ${t.badge ? `<span class="template-badge">${t.badge}</span>` : ''}
           </div>
         </div>
       `).join('');
@@ -2432,11 +2777,53 @@
       const cntEl = document.getElementById('cnt-todos');
       if (cntEl) cntEl.textContent = templates.length;
 
+      fitLandingPreviews();
+
       // Re-observe new elements for scroll reveal
       grid.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
     }
 
     renderTemplates();
+
+    // ── Exemplos dinâmicos REAIS: carrega os custom_templates animados do Supabase
+    //    (mesmos convites de templates.html) e mostra na galeria só como exemplo
+    (async function loadDynamicExamples() {
+      try {
+        if (!window.supabase) return;
+        const SUPA_URL = 'https://wevmgnzmkdecdcnouhjq.supabase.co';
+        const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indldm1nbnpta2RlY2Rjbm91aGpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTI5MTYsImV4cCI6MjA5MjI4ODkxNn0.R7IF4vEF_D5fvB18ZRl8mJwXOsEpW-q2hSdsRRs9nM4';
+        const sbc = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+        const { data, error } = await sbc.from('custom_templates')
+          .select('id,name,html_template,default_accent,is_animated,category,categories')
+          .eq('active', true)
+          .order('created_at');
+        if (error || !data || !data.length) return;
+
+        const withHtml = data.filter(t => t.html_template);
+        const animated = withHtml.filter(t => t.is_animated);
+        const picks = (animated.length ? animated : withHtml).slice(0, 6);
+        if (!picks.length) return;
+
+        const KNOWN = ['homem','mulher','quinze','menino','menina','casamento','cha','aniversario-adulto'];
+        const examples = picks.map(t => {
+          const cats = (Array.isArray(t.categories) && t.categories.length)
+            ? t.categories : (t.category ? [t.category] : []);
+          return {
+            id: 'ex_' + t.id,
+            name: t.name,
+            category: cats.find(c => KNOWN.includes(c)) || 'aniversario-adulto',
+            emoji: '✨',
+            exemplo: true,
+            html: t.html_template,
+            accent: t.default_accent || '#FFD93D',
+          };
+        });
+        templates.unshift(...examples);
+        renderTemplates(currentFilter);
+      } catch (e) {
+        console.warn('[landing] exemplos dinâmicos não carregados:', e);
+      }
+    })();
 
     function filterTemplates(cat, btn) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -2450,9 +2837,16 @@
     function toggleFAQ(btn) {
       const item = btn.parentElement;
       const isOpen = item.classList.contains('open');
-      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-      if (!isOpen) item.classList.add('open');
+      document.querySelectorAll('.faq-item').forEach(i => {
+        i.classList.remove('open');
+        i.querySelector('.faq-question')?.setAttribute('aria-expanded', 'false');
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
     }
+    document.querySelectorAll('.faq-question').forEach(b => b.setAttribute('aria-expanded', 'false'));
 
     // ══════════════════════════════
     //  MOBILE MENU
@@ -2467,6 +2861,9 @@
       document.body.style.overflow = '';
     }
 
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeMobileMenu();
+    });
 
     // ══════════════════════════════
     //  MAGNETIC CURSOR EFFECT
@@ -2484,13 +2881,9 @@
       });
     });
 
-    // ══════════════════════════════
-    //  SELECT TEMPLATE → editor
-    // ══════════════════════════════
-    function selectTemplate(name, photo) {
-      localStorage.setItem('ccm_template', JSON.stringify({ name, photo }));
-      window.location.href = 'editor.html';
-    }
+    // Ano dinâmico no footer
+    const yearEl = document.getElementById('footerYear');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
 
     // ══════════════════════════════
     //  NAVBAR SCROLL STYLE
@@ -2505,6 +2898,80 @@
         nav.style.boxShadow = 'none';
       }
     });
+
+    // ══════════════════════════════
+    //  EFEITOS SIGNATURE
+    //  (parallax de mouse, tilt 3D, spotlight, magnetic)
+    //  Desligados em touch e prefers-reduced-motion
+    // ══════════════════════════════
+    const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (finePointer && !noMotion) {
+      // Parallax de mouse no hero — formas e blobs em profundidades diferentes
+      const heroEl = document.querySelector('.hero');
+      const floats = document.querySelectorAll('.hero-float');
+      const heroBlobs = document.querySelectorAll('.hero-blob');
+      let pmx = 0, pmy = 0, parallaxRaf = null;
+
+      function applyParallax() {
+        parallaxRaf = null;
+        floats.forEach(f => {
+          const d = parseFloat(f.dataset.depth || 20);
+          f.style.transform = `translate3d(${(pmx * d).toFixed(1)}px, ${(pmy * d).toFixed(1)}px, 0)`;
+        });
+        heroBlobs.forEach((b, i) => {
+          const d = i === 0 ? 46 : -30;
+          // usa a propriedade `translate` para não brigar com a animação blobPulse (transform)
+          b.style.translate = `${(pmx * d).toFixed(1)}px ${(pmy * d).toFixed(1)}px`;
+        });
+      }
+
+      if (heroEl) heroEl.addEventListener('pointermove', (e) => {
+        const r = heroEl.getBoundingClientRect();
+        pmx = (e.clientX - r.left) / r.width - 0.5;
+        pmy = (e.clientY - r.top) / r.height - 0.5;
+        if (!parallaxRaf) parallaxRaf = requestAnimationFrame(applyParallax);
+      });
+
+      // Tilt 3D + spotlight que segue o mouse nos cards
+      document.querySelectorAll('.feature-card, .step-card, .invite-card-demo').forEach(card => {
+        card.addEventListener('pointermove', (e) => {
+          const r = card.getBoundingClientRect();
+          const px = (e.clientX - r.left) / r.width;
+          const py = (e.clientY - r.top) / r.height;
+          card.style.setProperty('--mx', (px * 100).toFixed(1) + '%');
+          card.style.setProperty('--my', (py * 100).toFixed(1) + '%');
+          const max = card.classList.contains('invite-card-demo') ? 7 : 4.5;
+          card.style.transform =
+            `perspective(900px) rotateX(${((0.5 - py) * max).toFixed(2)}deg) rotateY(${((px - 0.5) * max).toFixed(2)}deg) translateY(-6px)`;
+        });
+        card.addEventListener('pointerleave', () => { card.style.transform = ''; });
+      });
+
+      // Botões magnéticos (além do .magnetic do hero)
+      document.querySelectorAll('.btn-primary:not(.magnetic), .btn-secondary, .nav-cta').forEach(el => {
+        el.addEventListener('mousemove', (e) => {
+          const rect = el.getBoundingClientRect();
+          const x = e.clientX - rect.left - rect.width / 2;
+          const y = e.clientY - rect.top - rect.height / 2;
+          el.style.transform = `translate(${(x * 0.18).toFixed(1)}px, ${(y * 0.28).toFixed(1)}px)`;
+        });
+        el.addEventListener('mouseleave', () => { el.style.transform = ''; });
+      });
+    }
+
+    if (!noMotion) {
+      // Parallax sutil de scroll: o conteúdo do hero "fica para trás" ao rolar
+      const heroContent = document.querySelector('.hero-content');
+      window.addEventListener('scroll', () => {
+        const y = window.scrollY;
+        if (heroContent && y < window.innerHeight) {
+          heroContent.style.translate = `0 ${(y * 0.16).toFixed(1)}px`;
+          heroContent.style.opacity = Math.max(0, 1 - y / (window.innerHeight * 0.85)).toFixed(3);
+        }
+      }, { passive: true });
+    }
 
   </script>
 </body>

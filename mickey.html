@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,700;1,9..144,900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Nunito', sans-serif; background: #111; }
+
+    .card {
+      max-width: 420px;
+      margin: 0 auto;
+      background: #1a1a1a;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── TOPO VERMELHO ── */
+    .topo {
+      background: #e8151b;
+      position: relative;
+      padding-bottom: 60px;
+      text-align: center;
+    }
+
+    /* Ícones do Mickey espalhados */
+    .mickey-icon {
+      position: absolute;
+      opacity: 0.9;
+    }
+
+    /* Silhueta Mickey (2 orelhas + cabeça) centralizada */
+    .mickey-silhouette {
+      position: relative;
+      display: inline-block;
+      margin-top: 28px;
+    }
+    .ear-left, .ear-right {
+      position: absolute;
+      width: 90px;
+      height: 90px;
+      background: white;
+      border-radius: 50%;
+      top: 0;
+    }
+    .ear-left  { left: 10px; }
+    .ear-right { right: 10px; }
+
+    .head-circle {
+      position: relative;
+      width: 210px;
+      height: 210px;
+      background: white;
+      border-radius: 50%;
+      margin: 50px auto 0;
+      overflow: hidden;
+      border: 5px solid white;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      z-index: 2;
+    }
+    .head-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Ondulação preta que aparece por baixo do círculo */
+    .wave {
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 70px;
+      background: #1a1a1a;
+      border-radius: 50% 50% 0 0 / 40px 40px 0 0;
+    }
+
+    /* ── PARTE INFERIOR PRETA ── */
+    .corpo {
+      background: #1a1a1a;
+      padding: 0 1.5rem 2rem;
+      text-align: center;
+    }
+
+    .nome {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: clamp(2.4rem, 10vw, 3.2rem);
+      font-weight: 900;
+      color: #e8151b;
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 0.15rem;
+      letter-spacing: .04em;
+    }
+
+    .subtitulo {
+      font-size: clamp(1rem, 4vw, 1.3rem);
+      font-weight: 800;
+      color: #f5c800;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      margin-bottom: 1.4rem;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: rgba(255,255,255,0.15);
+      font-size: .7rem;
+      margin-bottom: 1.2rem;
+    }
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.12);
+    }
+
+    /* Data em destaque */
+    .data-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: .6rem;
+    }
+    .data-label {
+      font-size: .72rem;
+      font-weight: 800;
+      color: #f5c800;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      padding: 0 12px;
+    }
+    .data-dia {
+      font-size: clamp(2.2rem, 9vw, 3rem);
+      font-weight: 900;
+      color: #ffffff;
+      font-family: 'Fraunces', Georgia, serif;
+      padding: 0 12px;
+      border-left: 2px solid rgba(255,255,255,0.25);
+      border-right: 2px solid rgba(255,255,255,0.25);
+      line-height: 1;
+    }
+
+    .hora {
+      font-size: .85rem;
+      font-weight: 800;
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      margin-bottom: 1rem;
+    }
+
+    .local-box {
+      background: rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: .65rem 1rem;
+      font-size: .82rem;
+      color: rgba(255,255,255,0.75);
+      line-height: 1.5;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .local-label {
+      font-weight: 800;
+      color: #f5c800;
+      text-transform: uppercase;
+      font-size: .7rem;
+      letter-spacing: .08em;
+      display: block;
+      margin-bottom: .15rem;
+    }
+
+    .chamada {
+      font-size: .85rem;
+      font-weight: 800;
+      color: #e8151b;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      margin-bottom: 1.4rem;
+    }
+
+    .btn-confirmar {
+      background: #e8151b;
+      color: #fff;
+      font-weight: 800;
+      text-align: center;
+      padding: .85rem;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: .95rem;
+      letter-spacing: .04em;
+      box-shadow: 0 4px 16px rgba(232,21,27,0.4);
+    }
+
+    /* Ícone SVG do Mickey (mini silhueta) */
+    .mickey-svg {
+      display: inline-block;
+      width: 28px;
+      height: 22px;
+      vertical-align: middle;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+
+    <!-- TOPO VERMELHO -->
+    <div class="topo">
+
+      <!-- Ícones Mickey espalhados -->
+      <span class="mickey-icon" style="top:8px; left:10px; font-size:1.8rem; color:#f5c800;">
+        <!-- Mickey silhouette: left top -->
+        <svg viewBox="0 0 40 32" width="38" height="30" fill="#f5c800" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="8" cy="8" r="8"/>
+          <circle cx="32" cy="8" r="8"/>
+          <ellipse cx="20" cy="22" rx="16" ry="12"/>
+        </svg>
+      </span>
+      <span class="mickey-icon" style="top:8px; right:10px; font-size:1.8rem;">
+        <svg viewBox="0 0 40 32" width="30" height="24" fill="white" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="8" cy="8" r="8"/>
+          <circle cx="32" cy="8" r="8"/>
+          <ellipse cx="20" cy="22" rx="16" ry="12"/>
+        </svg>
+      </span>
+      <span class="mickey-icon" style="top:38%; left:6px; font-size:1.8rem;">
+        <svg viewBox="0 0 40 32" width="32" height="26" fill="#f5c800" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="8" cy="8" r="8"/>
+          <circle cx="32" cy="8" r="8"/>
+          <ellipse cx="20" cy="22" rx="16" ry="12"/>
+        </svg>
+      </span>
+      <span class="mickey-icon" style="top:38%; right:6px;">
+        <svg viewBox="0 0 40 32" width="32" height="26" fill="#f5c800" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="8" cy="8" r="8"/>
+          <circle cx="32" cy="8" r="8"/>
+          <ellipse cx="20" cy="22" rx="16" ry="12"/>
+        </svg>
+      </span>
+      <span class="mickey-icon" style="top:8px; left:50%; transform:translateX(-50%);">
+        <svg viewBox="0 0 40 32" width="26" height="20" fill="white" opacity="0.5" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="8" cy="8" r="8"/>
+          <circle cx="32" cy="8" r="8"/>
+          <ellipse cx="20" cy="22" rx="16" ry="12"/>
+        </svg>
+      </span>
+
+      <!-- Silhueta Mickey com foto -->
+      <div class="mickey-silhouette">
+        <div class="ear-left"></div>
+        <div class="ear-right"></div>
+        <div class="head-circle">
+          <img src="{{heroImg}}" alt="Foto">
+        </div>
+      </div>
+
+      <!-- Onda preta -->
+      <div class="wave"></div>
+    </div>
+
+    <!-- CORPO PRETO -->
+    <div class="corpo">
+
+      <!-- Nome e subtítulo -->
+      <div class="nome">{{nome}}</div>
+      <div class="subtitulo">{{subtitulo}}</div>
+
+      <div class="divider">
+        <div class="divider-line"></div>
+        <svg viewBox="0 0 40 32" width="22" height="18" fill="rgba(255,255,255,0.2)" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="8" cy="8" r="8"/><circle cx="32" cy="8" r="8"/><ellipse cx="20" cy="22" rx="16" ry="12"/>
+        </svg>
+        <div class="divider-line"></div>
+      </div>
+
+      <!-- Data -->
+      <div class="data-row">
+        <div class="data-label">{{diaSemana}}</div>
+        <div class="data-dia">{{dia}}</div>
+        <div class="data-label">{{mes}}</div>
+      </div>
+
+      <!-- Hora -->
+      <div class="hora">{{horaCompleta}}</div>
+
+      <!-- Local -->
+      <div class="local-box">
+        <span class="local-label">📍 Local</span>
+        {{local}}
+      </div>
+
+      <!-- Chamada -->
+      <div class="chamada">{{chamada}}</div>
+
+      <!-- Botão -->
+      <div class="btn-confirmar" onclick="{{acaoConfirmar}}">
+        ✅ Confirmar presença
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

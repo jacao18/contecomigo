@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Escolher Template — CrieConvites</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+  <meta name="description" content="Escolha entre dezenas de templates de convite digital personalizáveis — aniversário, casamento, chá de bebê e muito mais."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,700;1,9..144,900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#FFF8F0;
+      --bg2:#FFF0E6;
+      --panel:#FFFFFF;
+      --pink:#FF3D6B;
+      --pink-dark:#CC1F4E;
+      --pink-light:rgba(255,61,107,.08);
+      --yellow:#FFD93D;
+      --yellow-dk:#E6B800;
+      --ink:#1A0A00;
+      --ink40:rgba(26,10,0,0.4);
+      --ink20:rgba(26,10,0,0.2);
+      --ink08:rgba(26,10,0,0.08);
+      --border:rgba(26,10,0,0.09);
+      --font-display:'Fraunces',Georgia,serif;
+      --font-body:'Nunito',system-ui,sans-serif;
+      --ease:cubic-bezier(0.16,1,0.3,1);
+      --radius:14px;
+      --shadow-card:0 2px 12px rgba(26,10,0,.07),0 0 0 1px rgba(26,10,0,.06);
+      --shadow-card-hover:0 12px 40px rgba(26,10,0,.14),0 0 0 1px rgba(26,10,0,.08);
+    }
+    body{font-family:var(--font-body);background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
+
+    /* ── TOPBAR ── */
+    .topbar{height:58px;background:rgba(255,248,240,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;position:sticky;top:0;z-index:100;}
+    .topbar-left{display:flex;align-items:center;gap:1rem;}
+    .logo{font-family:var(--font-display);font-size:1.25rem;font-weight:900;font-style:italic;background:linear-gradient(135deg,var(--pink),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:pointer;text-decoration:none;}
+    .topbar-sep{width:1px;height:20px;background:var(--border);}
+    .topbar-page{font-size:.8rem;font-weight:700;color:var(--ink40);}
+    .topbar-right{display:flex;align-items:center;gap:.75rem;}
+    .btn-sm{padding:.45rem 1rem;border-radius:8px;font-family:var(--font-body);font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;border:none;}
+    .btn-outline{background:transparent;border:1px solid var(--border);color:var(--ink40);}
+    .btn-outline:hover{border-color:var(--ink20);color:var(--ink);}
+    .btn-pink{background:var(--pink);color:#fff;box-shadow:0 4px 16px rgba(255,61,107,.25);}
+    .btn-pink:hover{background:var(--pink-dark);transform:translateY(-1px);}
+
+    /* ── HERO ── */
+    .hero{padding:3rem 1.5rem 2rem;text-align:center;max-width:640px;margin:0 auto;}
+    .hero-eyebrow{font-size:.7rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--pink);margin-bottom:.75rem;display:flex;align-items:center;justify-content:center;gap:.5rem;}
+    .hero-eyebrow::before,.hero-eyebrow::after{content:'';width:24px;height:1px;background:var(--pink);opacity:.4;}
+    .hero-title{font-family:var(--font-display);font-size:clamp(1.75rem,4vw,2.5rem);font-weight:900;font-style:italic;line-height:1.1;margin-bottom:.75rem;}
+    .hero-title span{background:linear-gradient(135deg,var(--pink),#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .hero-sub{font-size:.95rem;color:var(--ink40);line-height:1.65;}
+
+    /* ── FILTERS BAR ── */
+    .filters-bar{position:sticky;top:58px;z-index:90;background:rgba(255,248,240,.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.75rem 1.5rem;}
+    .filters-inner{display:flex;align-items:center;gap:.65rem;max-width:1280px;margin:0 auto;flex-wrap:wrap;}
+
+    .search-wrap{position:relative;flex:1;min-width:200px;max-width:340px;}
+    .search-wrap svg{position:absolute;left:.8rem;top:50%;transform:translateY(-50%);color:var(--ink40);pointer-events:none;}
+    .search-input{width:100%;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:.6rem .9rem .6rem 2.4rem;font-family:var(--font-body);font-size:.88rem;color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s;}
+    .search-input::placeholder{color:var(--ink20);}
+    .search-input:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,61,107,.1);}
+    .search-clear{position:absolute;right:.7rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--ink40);font-size:1rem;display:none;line-height:1;padding:.1rem;}
+    .search-clear.visible{display:block;}
+
+    .filter-select{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:.6rem .9rem;font-family:var(--font-body);font-size:.85rem;font-weight:700;color:var(--ink);outline:none;cursor:pointer;transition:border-color .2s;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%231A0A00' stroke-opacity='.4' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .8rem center;padding-right:2.2rem;}
+    .filter-select:focus{border-color:var(--pink);}
+    .filter-select.has-value{border-color:var(--pink);color:var(--pink);}
+
+    .filter-chip{padding:.5rem .9rem;border-radius:8px;font-size:.78rem;font-weight:800;border:1px solid var(--border);color:var(--ink40);cursor:pointer;transition:all .2s;white-space:nowrap;background:var(--panel);}
+    .filter-chip.active{background:var(--pink);border-color:var(--pink);color:#fff;box-shadow:0 4px 12px rgba(255,61,107,.2);}
+    .filter-chip:hover:not(.active){border-color:var(--ink20);color:var(--ink);}
+
+    .results-count{margin-left:auto;font-size:.78rem;color:var(--ink40);font-weight:700;white-space:nowrap;}
+
+    /* ── GRID ── */
+    .grid-section{max-width:1280px;margin:0 auto;padding:1.5rem 1.5rem 4rem;}
+    .category-heading{display:none;}
+    .templates-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.1rem;}
+
+    /* ── CARD ── */
+    .tpl-card{background:var(--panel);border-radius:var(--radius);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-card);transition:transform .22s var(--ease),box-shadow .22s var(--ease);position:relative;}
+    .tpl-card:hover{transform:translateY(-4px) scale(1.01);box-shadow:var(--shadow-card-hover);}
+    .tpl-card:hover .card-cta{opacity:1;transform:translateY(0);}
+
+    .card-img-wrap{position:relative;aspect-ratio:3/4;overflow:hidden;background:linear-gradient(135deg,#f5e6d3,#ffe4e1);}
+    .card-img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s var(--ease);}
+    .tpl-card:hover .card-img{transform:scale(1.04);}
+    .card-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;}
+    /* Preview real do convite (renderizado de verdade, escalado p/ caber no card) */
+    .real-preview-frame{position:absolute;inset:0;overflow:hidden;background:#1a0a1e;}
+    .real-preview-inner{width:390px;height:560px;transform-origin:top left;position:absolute;top:0;left:0;pointer-events:none;}
+    iframe.real-preview-inner{border:0;background:#0b0720;}
+    .modal-img-col .real-preview-frame{position:relative;width:100%;height:100%;}
+
+    .card-badges{position:absolute;top:.6rem;left:.6rem;display:flex;flex-direction:column;gap:.3rem;}
+    .badge{font-size:.58rem;font-weight:800;padding:.2rem .45rem;border-radius:5px;letter-spacing:.04em;text-transform:uppercase;}
+    .badge-new{background:var(--pink);color:#fff;}
+    .badge-animated{background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;}
+    .badge-pro{background:var(--yellow);color:rgba(26,10,0,.8);}
+    .badge-free{background:rgba(52,211,153,.9);color:#fff;}
+    .badge-upload{background:rgba(26,10,0,.7);color:#fff;}
+
+    .card-cta{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(26,10,0,.85),transparent);padding:1.5rem .9rem .8rem;opacity:0;transform:translateY(8px);transition:opacity .22s,transform .22s var(--ease);}
+    .card-cta-btn{width:100%;padding:.55rem;background:var(--pink);color:#fff;border:none;border-radius:8px;font-family:var(--font-body);font-size:.82rem;font-weight:800;cursor:pointer;transition:background .15s;}
+    .card-cta-btn:hover{background:var(--pink-dark);}
+
+    .card-body{padding:.75rem .9rem .9rem;}
+    .card-name{font-size:.88rem;font-weight:800;line-height:1.3;margin-bottom:.25rem;}
+    .card-meta{display:flex;align-items:center;gap:.4rem;font-size:.72rem;color:var(--ink40);}
+    .card-dot{width:3px;height:3px;border-radius:50%;background:var(--ink20);}
+
+    /* ── EMPTY ── */
+    .empty-state{text-align:center;padding:4rem 1.5rem;color:var(--ink40);}
+    .empty-state-icon{font-size:3rem;margin-bottom:1rem;}
+    .empty-state-title{font-size:1.05rem;font-weight:800;color:var(--ink);margin-bottom:.5rem;}
+    .empty-state-sub{font-size:.88rem;line-height:1.6;}
+
+    /* ── MODAL ── */
+    .modal-overlay{position:fixed;inset:0;background:rgba(26,10,0,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem;opacity:0;pointer-events:none;transition:opacity .25s;}
+    .modal-overlay.open{opacity:1;pointer-events:all;}
+    .modal{background:var(--panel);border-radius:20px;width:100%;max-width:820px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 40px 100px rgba(26,10,0,.3);transform:scale(.96) translateY(12px);transition:transform .3s var(--ease);}
+    .modal-overlay.open .modal{transform:scale(1) translateY(0);}
+    .modal-body{display:grid;grid-template-columns:1fr 1fr;flex:1;overflow:hidden;}
+    .modal-img-col{position:relative;background:linear-gradient(135deg,#f5e6d3,#ffe4e1);overflow:hidden;}
+    .modal-img{width:100%;height:100%;object-fit:cover;}
+    .modal-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:5rem;min-height:400px;}
+    .modal-info-col{padding:2rem;overflow-y:auto;display:flex;flex-direction:column;gap:1.1rem;}
+    .modal-close{position:absolute;top:.75rem;right:.75rem;width:32px;height:32px;border-radius:50%;background:rgba(26,10,0,.7);border:none;cursor:pointer;color:#fff;font-size:1.1rem;display:flex;align-items:center;justify-content:center;z-index:10;transition:background .2s;}
+    .modal-close:hover{background:rgba(26,10,0,.9);}
+    .modal-category{font-size:.68rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--pink);}
+    .modal-name{font-family:var(--font-display);font-size:1.5rem;font-weight:900;font-style:italic;line-height:1.2;}
+    .modal-desc{font-size:.88rem;color:var(--ink40);line-height:1.65;}
+    .modal-tags{display:flex;flex-wrap:wrap;gap:.4rem;}
+    .modal-tag{font-size:.72rem;font-weight:700;padding:.25rem .6rem;background:var(--ink08);border-radius:6px;color:var(--ink40);}
+    .modal-divider{height:1px;background:var(--border);}
+    .modal-features{display:flex;flex-direction:column;gap:.5rem;}
+    .modal-feature{display:flex;align-items:center;gap:.55rem;font-size:.82rem;color:var(--ink);}
+    .modal-feature-icon{width:22px;height:22px;border-radius:6px;background:var(--pink-light);display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;}
+    .modal-cta-row{display:flex;gap:.6rem;margin-top:auto;padding-top:.5rem;}
+    .modal-btn-primary{flex:1;padding:.75rem;background:var(--pink);color:#fff;border:none;border-radius:10px;font-family:var(--font-body);font-size:.9rem;font-weight:800;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(255,61,107,.25);}
+    .modal-btn-primary:hover{background:var(--pink-dark);transform:translateY(-1px);}
+    .modal-btn-secondary{padding:.75rem 1.1rem;background:transparent;color:var(--ink40);border:1px solid var(--border);border-radius:10px;font-family:var(--font-body);font-size:.85rem;font-weight:700;cursor:pointer;transition:all .2s;}
+    .modal-btn-secondary:hover{border-color:var(--ink20);color:var(--ink);}
+
+    /* ── NO RESULTS ── */
+    .no-results{display:none;text-align:center;padding:3rem;grid-column:1/-1;}
+
+    /* ── SKELETON ── */
+    @keyframes shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
+    .skeleton{background:linear-gradient(90deg,var(--ink08) 25%,rgba(26,10,0,.04) 50%,var(--ink08) 75%);background-size:800px 100%;animation:shimmer 1.4s infinite linear;border-radius:6px;}
+
+    /* scrollbar */
+    ::-webkit-scrollbar{width:5px;height:5px;}
+    ::-webkit-scrollbar-thumb{background:rgba(26,10,0,.12);border-radius:99px;}
+
+    @media(max-width:640px){
+      .modal-body{grid-template-columns:1fr;max-height:90vh;}
+      .modal-img-col{max-height:220px;}
+      .templates-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.75rem;}
+      .hero{padding:2rem 1rem 1.25rem;}
+      .filters-inner{gap:.4rem;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <a class="logo" href="dashboard.html">CrieConvites</a>
+    <div class="topbar-sep"></div>
+    <span class="topbar-page">Escolher template</span>
+  </div>
+  <div class="topbar-right">
+    <button class="btn-sm btn-outline" onclick="location.href='dashboard.html'">← Meus convites</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Mais de 30 templates</div>
+  <h1 class="hero-title">Escolha o template <span>perfeito</span> para o seu convite</h1>
+  <p class="hero-sub">Cada modelo é totalmente personalizável — cores, fotos, mensagens e muito mais.</p>
+</div>
+
+<!-- FILTERS BAR -->
+<div class="filters-bar">
+  <div class="filters-inner">
+    <div class="search-wrap">
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 6.5C10 8.433 8.433 10 6.5 10C4.567 10 3 8.433 3 6.5C3 4.567 4.567 3 6.5 3C8.433 3 10 4.567 10 6.5ZM9.32 10.38C8.6 10.88 7.7 11.2 6.75 11.2C4.26 11.2 2.25 9.19 2.25 6.7C2.25 4.21 4.26 2.2 6.75 2.2C9.24 2.2 11.25 4.21 11.25 6.7C11.25 7.65 10.93 8.55 10.43 9.27L12.5 11.34L11.39 12.45L9.32 10.38Z" fill="currentColor"/></svg>
+      <input class="search-input" id="searchInput" type="text" placeholder="Buscar template... (ex: rosa, futebol, princesa)" aria-label="Buscar template" oninput="onSearch(this)"/>
+      <button class="search-clear" id="searchClear" onclick="clearSearch()" aria-label="Limpar busca">✕</button>
+    </div>
+
+    <select class="filter-select" id="catSelect" onchange="onCatChange(this)">
+      <option value="">Todas as categorias</option>
+      <option value="homem">🍺 Masculino</option>
+      <option value="mulher">🥂 Feminino</option>
+      <option value="quinze">👑 15 Anos</option>
+      <option value="menino">🦸 Menino</option>
+      <option value="menina">🧚 Menina</option>
+      <option value="casamento">💍 Casamento</option>
+      <option value="cha">👶 Chá de Bebê</option>
+      <option value="aniversario-adulto">🎉 Geral</option>
+      <option value="custom">⭐ Personalizados</option>
+    </select>
+
+    <button class="filter-chip active" id="chipAll" onclick="setSort('all',this)">Todos</button>
+    <button class="filter-chip" id="chipNew" onclick="setSort('new',this)">✨ Novos</button>
+    <button class="filter-chip" id="chipAnimated" onclick="setSort('animated',this)">🎬 Animados</button>
+
+    <span class="results-count" id="resultsCount"></span>
+  </div>
+</div>
+
+<!-- GRID -->
+<div class="grid-section" id="gridSection"></div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="onOverlayClick(event)" role="dialog" aria-modal="true" aria-label="Detalhes do template">
+  <div class="modal" id="modal">
+    <div class="modal-body">
+      <div class="modal-img-col" id="modalImgCol">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-info-col" id="modalInfoCol"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="preview-renderer.js"></script>
+<script>
+const SUPA_URL = 'https://wevmgnzmkdecdcnouhjq.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indldm1nbnpta2RlY2Rjbm91aGpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTI5MTYsImV4cCI6MjA5MjI4ODkxNn0.R7IF4vEF_D5fvB18ZRl8mJwXOsEpW-q2hSdsRRs9nM4';
+const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+// ── TEMPLATES DATA ──
+// Synced from editor.html — add new templates here too
+const CATEGORIES = {
+  'homem':             { label: 'Aniversário Masculino', emoji: '🍺' },
+  'mulher':            { label: 'Aniversário Feminino',  emoji: '🥂' },
+  'quinze':            { label: '15 Anos',               emoji: '👑' },
+  'menino':            { label: 'Infantil Menino',       emoji: '🦸' },
+  'menina':            { label: 'Infantil Menina',       emoji: '🧚' },
+  'casamento':         { label: 'Casamento',             emoji: '💍' },
+  'cha':               { label: 'Chá de Bebê',           emoji: '👶' },
+  'aniversario-adulto':{ label: 'Geral / Adulto',        emoji: '🎉' },
+  'custom':            { label: 'Personalizados',        emoji: '⭐' },
+};
+
+const TEMPLATES_MAP = {
+  'homem': [
+    { id:'hom-cerveja',     name:'Chope & Futebol',     img:'https://images.unsplash.com/photo-1555658636-6e4a36218be7?w=600&q=80',  tags:['dark','cerveja','futebol','masculino'],         plan:'free', isNew:false, isAnimated:false, desc:'Tema escuro com tons âmbar, perfeito para celebrar com aquela gelada.' },
+    { id:'hom-futebol',     name:'Campo de Futebol',    img:'https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?w=600&q=80', tags:['futebol','esporte','verde','masculino'],        plan:'free', isNew:false, isAnimated:false, desc:'Visual de gramado com opções para as cores do seu time favorito.' },
+    { id:'hom-minimalista', name:'Minimalista',         img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80', tags:['minimalista','clean','masculino'],              plan:'free', isNew:false, isAnimated:false, desc:'Elegante e discreto. Cor de destaque totalmente personalizável.' },
+  ],
+  'mulher': [
+    { id:'mul-champanhe',   name:'Champanhe & Glamour', img:'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=600&q=80', tags:['dourado','glamour','feminino','champanhe'],     plan:'free', isNew:false, isAnimated:false, desc:'Sofisticação em tons dourados e rose gold. Ideal para festas elegantes.' },
+    { id:'mul-rosa',        name:'Rosa & Fofo',         img:'https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=600&q=80',    tags:['rosa','fofo','feminino','pink'],                plan:'free', isNew:false, isAnimated:false, desc:'Delicado e alegre, com paleta rosa que encanta qualquer convidada.' },
+    { id:'mul-pool',        name:'Pool Party',          img:'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600&q=80',  tags:['pool','piscina','feminino','verao'],            plan:'free', isNew:false, isAnimated:false, desc:'Verão, piscina e muita diversão. Paleta aquática vibrante.' },
+  ],
+  'quinze': [
+    { id:'deb-valsa',       name:'Valsa Real',          img:'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&q=80',  tags:['princesa','dourado','15anos','coroa'],          plan:'free', isNew:false, isAnimated:false, desc:'O clássico das debutantes: dourado, elegância e vibe de conto de fadas.' },
+    { id:'deb-clean',       name:'Clean & Moderno',     img:'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&q=80',  tags:['moderna','15anos','clean','elegante'],          plan:'free', isNew:false, isAnimated:false, desc:'Para a debutante que quer inovar. Layout moderno com paletas ousadas.' },
+    { id:'deb-vintage',     name:'Vintage Dourado',     img:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80',  tags:['vintage','15anos','dourado','retro'],           plan:'free', isNew:true,  isAnimated:false, desc:'Estética vintage com tons dourados e tipografia refinada.' },
+  ],
+  'menino': [
+    { id:'boy-spiderman',   name:'Homem-Aranha',        img:'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&q=80',  tags:['spiderman','homem-aranha','super-heroi','infantil'], plan:'free', isNew:false, isAnimated:false, desc:'Friendly neighborhood Spider-Man no convite do seu pequeno herói.' },
+    { id:'boy-pokemon',     name:'Pokémon',             img:'https://images.unsplash.com/photo-1542779867-5b23e9e44cbf?w=600&q=80',     tags:['pokemon','infantil','menino','aventura'],       plan:'free', isNew:false, isAnimated:false, desc:'Gotta catch \'em all! Tema Pokémon com design vibrante e divertido.' },
+    { id:'boy-mickey',      name:'Mickey Mouse',        img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80',     tags:['mickey','disney','infantil','menino'],          plan:'free', isNew:false, isAnimated:false, desc:'O eterno Mickey Mouse em um convite divertido e colorido.' },
+    { id:'boy-spongebob',   name:'Bob Esponja',         img:'https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=600&q=80',  tags:['bob esponja','infantil','menino','humor'],      plan:'free', isNew:true,  isAnimated:false, desc:'Fundo do mar com Bob Esponja, Patrick e toda a turma.' },
+  ],
+  'menina': [
+    { id:'girl-ariel',      name:'Pequena Sereia',      img:'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600&q=80',  tags:['sereia','ariel','infantil','menina','azul'],   plan:'free', isNew:false, isAnimated:false, desc:'Mergulhe nesse tema aquático com tons de azul e turquesa encantadores.' },
+    { id:'girl-cinderela',  name:'Cinderela',           img:'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&q=80',  tags:['cinderela','princesa','disney','infantil'],    plan:'free', isNew:false, isAnimated:false, desc:'A magia do baile e do castelo em tons de azul real.' },
+    { id:'girl-minnie',     name:'Minnie Mouse',        img:'https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=600&q=80',     tags:['minnie','disney','infantil','menina','rosa'],  plan:'free', isNew:false, isAnimated:false, desc:'Toda criança merece um laço da Minnie. Rosa e fofíssimo.' },
+    { id:'girl-ursinha',    name:'Ursinha Fofa',        img:'https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=600&q=80',     tags:['ursinha','infantil','menina','fofo'],          plan:'free', isNew:true,  isAnimated:false, desc:'Tons mel e rosa para a festinha mais fofa do ano.' },
+  ],
+  'casamento': [
+    { id:'wed-estrelada',   name:'Noite Estrelada',     img:'https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80',  tags:['casamento','estrelada','romantico','noite'],   plan:'free', isNew:false, isAnimated:false, desc:'Céu estrelado e romance para o grande dia.' },
+    { id:'wed-jardim',      name:'Jardim Romântico',    img:'https://images.unsplash.com/photo-1464349153735-7db50ed83c84?w=600&q=80',  tags:['casamento','jardim','floral','natureza'],      plan:'free', isNew:false, isAnimated:false, desc:'Casamento ao ar livre? Florais e verde para você.' },
+    { id:'wed-rosegold',    name:'Rose Gold',           img:'https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=600&q=80',  tags:['casamento','rosegold','moderno','elegante'],   plan:'pro',  isNew:false, isAnimated:false, desc:'Rose gold e elegância para um casamento sofisticado.' },
+  ],
+  'cha': [
+    { id:'cha-pastel',      name:'Pastel Delicado',     img:'https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=600&q=80',    tags:['cha','bebe','pastel','neutro'],                plan:'free', isNew:false, isAnimated:false, desc:'Tons pastel para revelar ou celebrar a chegada do bebê.' },
+    { id:'cha-revelacao-azul', name:'É Menino! 🔵',     img:'https://images.unsplash.com/photo-1544126592-807ade215a0b?w=600&q=80',    tags:['cha','menino','azul','bebe'],                  plan:'free', isNew:false, isAnimated:false, desc:'Tons de azul e elementos fofos para o chá do seu príncipe.' },
+    { id:'cha-revelacao-rosa', name:'É Menina! 🌸',     img:'https://images.unsplash.com/photo-1522771930-78848d9293e8?w=600&q=80',    tags:['cha','menina','rosa','bebe'],                  plan:'free', isNew:false, isAnimated:false, desc:'Um rosado delicado para a chegada da sua princesa.' },
+  ],
+  'aniversario-adulto': [
+    { id:'aniv-neon',       name:'Neon Night',          img:'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&q=80',  tags:['neon','balada','festivo','moderno'],           plan:'free', isNew:false, isAnimated:false, desc:'Fundo escuro com brilho neon. Perfeito para festa à noite.' },
+    { id:'aniv-tropical',   name:'Tropical Party',      img:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=600&q=80',  tags:['tropical','verao','colorido','geral'],         plan:'free', isNew:true,  isAnimated:false, desc:'Cores quentes e tropical para festa de piscina ou praia.' },
+    { id:'aniv-elegante',   name:'Elegante',            img:'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&q=80',  tags:['sofisticado','geral','adulto','preto'],        plan:'free', isNew:false, isAnimated:false, desc:'Preto e dourado para festas onde o dress code é impecável.' },
+  ],
+  '_upload': [
+    { id:'convite-proprio-v', name:'Convite pronto — Vertical',   img:null, tags:['upload','personalizado','vertical'],   plan:'free', isNew:false, isAnimated:false, isUpload:true, uploadOrientation:'vertical',   desc:'Convite vertical criado em outra plataforma. Faça upload da imagem — os dados ficam abaixo, sem cobrir o design.' },
+    { id:'convite-proprio-h', name:'Convite pronto — Horizontal', img:null, tags:['upload','personalizado','horizontal'], plan:'free', isNew:false, isAnimated:false, isUpload:true, uploadOrientation:'horizontal', desc:'Convite horizontal criado em outra plataforma. Faça upload da imagem — os dados ficam abaixo, sem cobrir o design.' },
+  ],
+};
+
+// ── HELPERS ──
+// Escapa strings dinâmicas (vindas do banco) antes de injetar via innerHTML — previne XSS
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+// ── STATE ──
+let searchQuery = '';
+let activeCat = '';
+let activeSort = 'all';
+let customTemplates = [];
+let currentUser = null;
+let userPlan = 'free';
+
+// ── INIT ──
+async function init() {
+  try {
+    const { data: { user } } = await sb.auth.getUser();
+    currentUser = user;
+    if (user) {
+      const { data: profile } = await sb.from('profiles').select('plan').eq('id', user.id).single();
+      if (profile) userPlan = profile.plan || 'free';
+
+      // Load custom templates (admin templates active for all users)
+      const { data: ctpls } = await sb.from('custom_templates').select('*').eq('active', true).order('created_at');
+      if (ctpls && ctpls.length > 0) {
+        const knownCats = Object.keys(TEMPLATES_MAP);
+
+        // 1. Descobrir quais categorias têm customs
+        const catsWithCustoms = new Set();
+        ctpls.forEach(t => {
+          const cats = (Array.isArray(t.categories) && t.categories.length)
+            ? t.categories : (t.category ? [t.category] : ['custom']);
+          cats.forEach(c => catsWithCustoms.add(knownCats.includes(c) ? c : 'custom'));
+        });
+
+        // 2. Limpar built-ins das categorias que têm customs (custom substitui built-in na categoria)
+        catsWithCustoms.forEach(cat => {
+          if (TEMPLATES_MAP[cat]) {
+            TEMPLATES_MAP[cat] = TEMPLATES_MAP[cat].filter(e => e.isCustom);
+          }
+        });
+
+        // 3. Adicionar customs ao TEMPLATES_MAP
+        ctpls.forEach(t => {
+          const tplCats = (Array.isArray(t.categories) && t.categories.length)
+            ? t.categories : (t.category ? [t.category] : ['custom']);
+          const tplObj = {
+            id: t.builtin_id || ('custom_' + t.id),
+            name: t.name,
+            img: t.thumbnail_url || t.preview_img || null,
+            html: t.html_template || null,
+            accent: t.default_accent || '#FFD93D',
+            tags: ['personalizado'],
+            plan: 'free',
+            isNew: false,
+            isAnimated: !!t.is_animated,
+            desc: t.description || 'Template personalizado.',
+            isCustom: true,
+          };
+          tplCats.forEach(cat => {
+            const resolvedCat = knownCats.includes(cat) ? cat : 'custom';
+            if (!TEMPLATES_MAP[resolvedCat]) TEMPLATES_MAP[resolvedCat] = [];
+            if (!TEMPLATES_MAP[resolvedCat].find(e => e.id === tplObj.id)) {
+              TEMPLATES_MAP[resolvedCat].push({...tplObj, category: resolvedCat});
+            }
+          });
+          // Também no bucket 'custom' para o filtro "Personalizados"
+          if (!TEMPLATES_MAP['custom']) TEMPLATES_MAP['custom'] = [];
+          if (!TEMPLATES_MAP['custom'].find(e => e.id === tplObj.id)) {
+            TEMPLATES_MAP['custom'].push({...tplObj, category: 'custom'});
+          }
+        });
+      }
+    }
+  } catch(e) {
+    console.warn('[templates] init falhou (renderizando built-ins):', e);
+  }
+  renderGrid();
+}
+
+// ── SEARCH ──
+function onSearch(el) {
+  searchQuery = el.value.trim().toLowerCase();
+  document.getElementById('searchClear').classList.toggle('visible', searchQuery.length > 0);
+  renderGrid();
+}
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  searchQuery = '';
+  document.getElementById('searchClear').classList.remove('visible');
+  renderGrid();
+}
+
+// ── CATEGORY ──
+function onCatChange(el) {
+  activeCat = el.value;
+  el.classList.toggle('has-value', activeCat !== '');
+  renderGrid();
+}
+
+// ── SORT/FILTER CHIPS ──
+function setSort(sort, el) {
+  activeSort = sort;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderGrid();
+}
+
+// ── GATHER FLAT LIST ──
+function getAllTemplates() {
+  const seen = new Set();
+  const all = [];
+  for (const [cat, tpls] of Object.entries(TEMPLATES_MAP)) {
+    tpls.forEach(t => {
+      if (!seen.has(t.id)) {
+        seen.add(t.id);
+        all.push({ ...t, category: t.category || cat });
+      }
+    });
+  }
+  return all;
+}
+
+// ── FILTER ──
+function filterTemplates() {
+  let list = getAllTemplates();
+
+  if (activeCat) list = list.filter(t => t.category === activeCat);
+
+  if (activeSort === 'new')      list = list.filter(t => t.isNew);
+  if (activeSort === 'animated') list = list.filter(t => t.isAnimated);
+
+  if (searchQuery) {
+    list = list.filter(t => {
+      const haystack = [t.name, t.desc, ...(t.tags || [])].join(' ').toLowerCase();
+      return searchQuery.split(' ').every(word => haystack.includes(word));
+    });
+  }
+
+  return list;
+}
+
+// ── RENDER ──
+function renderGrid() {
+  const section = document.getElementById('gridSection');
+  const filtered = filterTemplates();
+
+  document.getElementById('resultsCount').textContent = `${filtered.length} template${filtered.length !== 1 ? 's' : ''}`;
+
+  if (filtered.length === 0) {
+    section.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">🔍</div>
+        <div class="empty-state-title">Nenhum template encontrado</div>
+        <div class="empty-state-sub">Tente outro termo de busca ou escolha uma categoria diferente.</div>
+      </div>`;
+    return;
+  }
+
+  section.innerHTML = `<div class="templates-grid">${filtered.map(t => cardHTML(t)).join('')}</div>`;
+  fitRealPreviews(section);
+}
+
+// Escala cada preview real (390px nativo) para preencher a largura do seu frame
+function fitRealPreviews(root){
+  (root || document).querySelectorAll('.real-preview-frame').forEach(frame=>{
+    const inner = frame.querySelector('.real-preview-inner');
+    if(!inner) return;
+    const w = frame.clientWidth;
+    if(!w) return;
+    const scale = w / 390;
+    inner.style.transform = `scale(${scale})`;
+  });
+}
+let fitTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(fitTimer);
+  fitTimer = setTimeout(() => fitRealPreviews(document), 120);
+});
+
+// Substitui os parâmetros {{...}} por dados de exemplo (mesmos do admin-templates.html)
+function applySampleVars(html, accent) {
+  const vars = {
+    '{{nome}}':         'Sofia',
+    '{{titulo}}':       'Você está convidada!',
+    '{{idade}}':        '5 anos',
+    '{{dia}}':          '15',
+    '{{mes}}':          'Junho',
+    '{{diaSemana}}':    'Sábado',
+    '{{hora}}':         '16:00',
+    '{{horaFim}}':      '20:00',
+    '{{horaCompleta}}': 'das 16:00 às 20:00',
+    '{{local}}':        'Salão Encantado',
+    '{{endereco}}':     'Rua dos Contos, 123 — São Paulo, SP',
+    '{{dress}}':        'Esporte fino',
+    '{{msg}}':          'Será uma noite inesquecível!',
+    '{{heroImg}}':      'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80',
+    '{{accent}}':       accent || '#FFD93D',
+    '{{dataFormatada}}':'sábado, 15 de junho de 2025',
+    '{{diasRestantes}}':'14',
+  };
+  let result = html;
+  for (const [k, v] of Object.entries(vars)) result = result.split(k).join(v);
+  return result;
+}
+
+// ── THUMBNAILS VISUAIS ──
+// Cada thumbnail é um SVG inline que representa o visual real do template
+const THUMBNAILS = {
+  // HOMEM
+  'hom-cerveja': {bg:'linear-gradient(160deg,#1a0e00,#3d2200)', accent:'#F59E0B', icon:'🍺', title:'Chope & Futebol', style:'dark'},
+  'hom-futebol': {bg:'linear-gradient(160deg,#052a10,#0a4a1a)', accent:'#34D399', icon:'⚽', title:'Campo de Futebol', style:'dark'},
+  'hom-minimalista': {bg:'linear-gradient(160deg,#111,#222)', accent:'#E5E7EB', icon:'🎂', title:'Minimalista', style:'dark'},
+  // MULHER
+  'mul-champanhe': {bg:'linear-gradient(160deg,#1a0e00,#3a1800)', accent:'#FCD34D', icon:'🥂', title:'Champanhe', style:'dark'},
+  'mul-rosa': {bg:'linear-gradient(160deg,#2d0020,#6b0030)', accent:'#F472B6', icon:'🌸', title:'Rosa & Fofo', style:'dark'},
+  'mul-pool': {bg:'linear-gradient(160deg,#0a2550,#0e4f8a)', accent:'#60A5FA', icon:'🏊', title:'Pool Party', style:'dark'},
+  // 15 ANOS
+  'deb-valsa': {bg:'linear-gradient(160deg,#1a0a3d,#3b1a6b)', accent:'#FCD34D', icon:'👑', title:'Valsa Real', style:'dark'},
+  'deb-clean': {bg:'linear-gradient(160deg,#fff,#f3e6ff)', accent:'#F472B6', icon:'✨', title:'Clean & Moderno', style:'light'},
+  'deb-vintage': {bg:'linear-gradient(160deg,#1c0f00,#3b2000)', accent:'#FCD34D', icon:'🥇', title:'Vintage Dourado', style:'dark'},
+  // MENINO
+  'boy-spiderman': {bg:'linear-gradient(160deg,#1a0000,#5a0000)', accent:'#EF4444', icon:'🕷️', title:'Homem-Aranha', style:'dark'},
+  'boy-pokemon': {bg:'linear-gradient(160deg,#1a1000,#3a2800)', accent:'#FBBF24', icon:'⚡', title:'Pokémon', style:'dark'},
+  'boy-mickey': {bg:'linear-gradient(160deg,#0a0000,#2a0000)', accent:'#EF4444', icon:'🐭', title:'Mickey Mouse', style:'dark'},
+  'boy-spongebob': {bg:'linear-gradient(160deg,#003a8c,#0055cc)', accent:'#FBBF24', icon:'🧽', title:'Bob Esponja', style:'dark'},
+  // MENINA
+  'girl-ariel': {bg:'linear-gradient(160deg,#001a3d,#003370)', accent:'#60A5FA', icon:'🧜', title:'Pequena Sereia', style:'dark'},
+  'girl-cinderela': {bg:'linear-gradient(160deg,#0a1040,#1a2070)', accent:'#93C5FD', icon:'👠', title:'Cinderela', style:'dark'},
+  'girl-minnie': {bg:'linear-gradient(160deg,#2d0010,#6b0030)', accent:'#F472B6', icon:'🎀', title:'Minnie Mouse', style:'dark'},
+  'girl-ursinha': {bg:'linear-gradient(160deg,#1a0a00,#3d2000)', accent:'#FCD34D', icon:'🐻', title:'Ursinha Fofa', style:'dark'},
+  // CASAMENTO
+  'wed-estrelada': {bg:'linear-gradient(160deg,#050520,#0a0a3d)', accent:'#FCD34D', icon:'✨', title:'Noite Estrelada', style:'dark'},
+  'wed-jardim': {bg:'linear-gradient(160deg,#e8f5e0,#c8e6c0)', accent:'#2d5a1b', icon:'🌿', title:'Jardim Romântico', style:'light'},
+  'wed-rosegold': {bg:'linear-gradient(160deg,#2a0808,#5c1010)', accent:'#F9A8D4', icon:'💍', title:'Rose Gold', style:'dark'},
+  // CHÁ
+  'cha-pastel': {bg:'linear-gradient(160deg,#fef9f0,#fde8d8)', accent:'#F472B6', icon:'👶', title:'Pastel Delicado', style:'light'},
+  'cha-revelacao-azul': {bg:'linear-gradient(160deg,#e0f0ff,#b3d9ff)', accent:'#1d6fb5', icon:'🔵', title:'É Menino!', style:'light'},
+  'cha-revelacao-rosa': {bg:'linear-gradient(160deg,#ffe0f0,#ffb3d9)', accent:'#c41f6e', icon:'🌸', title:'É Menina!', style:'light'},
+  // GERAL
+  'aniv-neon': {bg:'linear-gradient(160deg,#0a0010,#1a0033)', accent:'#FF3D6B', icon:'🎉', title:'Neon Night', style:'dark'},
+  'aniv-tropical': {bg:'linear-gradient(160deg,#0d3320,#1a5c3a)', accent:'#34D399', icon:'🌴', title:'Tropical Party', style:'dark'},
+  'aniv-elegante': {bg:'linear-gradient(160deg,#0a0a0a,#1a1a1a)', accent:'#FCD34D', icon:'🥂', title:'Elegante', style:'dark'},
+};
+
+function getThumbnailHTML(t) {
+  // Templates "Convite pronto" — vertical e horizontal
+  if (t.isUpload) {
+    const isH = t.uploadOrientation === 'horizontal';
+    // Simula a orientação com um retângulo pontilhado proporcional
+    const rectW = isH ? '80%' : '52%';
+    const rectH = isH ? '42%' : '68%';
+    const label = isH ? 'HORIZONTAL' : 'VERTICAL';
+    return `<div style="width:100%;height:100%;background:linear-gradient(160deg,#0f0f1a,#1a1a2e);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem;position:relative;overflow:hidden">
+      <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,.012) 0,rgba(255,255,255,.012) 1px,transparent 1px,transparent 14px)"></div>
+      <div style="position:relative;display:flex;flex-direction:column;align-items:center;gap:.5rem;width:100%">
+        <div style="width:${rectW};height:${rectH};min-height:52px;border:2px dashed rgba(255,255,255,.2);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3rem;background:rgba(255,255,255,.03)">
+          <div style="font-size:1.2rem;opacity:.5">📤</div>
+          <div style="font-size:.38rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35)">${label}</div>
+        </div>
+        <div style="font-size:.52rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:#fff;line-height:1.4;text-align:center;text-shadow:0 0 16px rgba(255,255,255,.25)">SEU CONVITE<br>PRONTO AQUI</div>
+        <div style="font-size:.4rem;color:rgba(255,255,255,.28);letter-spacing:.04em">dados ficam fora da imagem</div>
+      </div>
+    </div>`;
+  }
+  // Templates built-in: renderiza o CONVITE REAL como thumbnail
+  if (!t.isCustom && window.renderRealInvitePreview) {
+    const real = window.renderRealInvitePreview(t.id);
+    if (real) return real;
+  }
+  // Custom template com HTML salvo (inclui os ANIMADOS): renderiza o convite real
+  // num iframe sandbox — scripts/animações rodam isolados, sem afetar a página
+  if (t.isCustom && t.html) {
+    const doc = applySampleVars(t.html, t.accent);
+    return `<div class="real-preview-frame"><iframe class="real-preview-inner" sandbox="allow-scripts" loading="lazy" tabindex="-1" title="Preview de ${esc(t.name)}" srcdoc="${esc(doc)}"></iframe></div>`;
+  }
+  // Custom template com thumbnail_url real: usa a imagem
+  if (t.img) {
+    return `<img class="card-img" src="${esc(t.img)}" alt="${esc(t.name)}" loading="lazy"/>`;
+  }
+  // Se não tiver thumbnail, tenta usar o mapa de thumbnails built-in
+  const th = THUMBNAILS[t.id];
+  if (!th) {
+    // Fallback para custom templates: usa gradiente baseado no nome
+    const colors = ['#FF3D6B','#FFD93D','#34D399','#60A5FA','#A78BFA','#F472B6','#FB923C'];
+    const hash = (t.name||'').split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+    const accent = colors[hash % colors.length];
+    // Animados: thumbnail especial com indicação de animação
+    if (t.isAnimated) {
+      return `<div style="width:100%;height:100%;background:linear-gradient(160deg,#0a0010,#1a0033);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,${accent},#a855f7,${accent})"></div>
+        <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,${accent}18 0%,transparent 70%)"></div>
+        <div style="font-size:2rem;margin-bottom:.4rem;filter:drop-shadow(0 0 8px ${accent})">✨</div>
+        <div style="font-size:.5rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:${accent};margin-bottom:.25rem;text-align:center">convite animado</div>
+        <div style="width:30px;height:1px;background:${accent}88;margin-bottom:.4rem"></div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-size:.8rem;font-weight:900;font-style:italic;color:#fff;text-align:center;line-height:1.2">${esc(t.name)||'Template'}</div>
+        <div style="font-size:.45rem;color:rgba(255,255,255,.35);margin-top:.4rem;text-align:center">animações ao abrir</div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,${accent},#a855f7,${accent})"></div>
+      </div>`;
+    }
+    const bg = `linear-gradient(160deg,#0a0010,#1a0033)`;
+    return `<div style="width:100%;height:100%;background:${bg};display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem;position:relative;overflow:hidden">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:${accent}"></div>
+      <div style="font-size:2rem;margin-bottom:.5rem">🎉</div>
+      <div style="font-size:.55rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:${accent};margin-bottom:.3rem;text-align:center">você está convidado</div>
+      <div style="width:30px;height:1px;background:${accent}88;margin-bottom:.4rem"></div>
+      <div style="font-family:'Fraunces',Georgia,serif;font-size:.85rem;font-weight:900;font-style:italic;color:#fff;text-align:center;line-height:1.2">${esc(t.name)||'Template'}</div>
+      <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:${accent}"></div>
+    </div>`;
+  }
+  const textColor = th.style === 'light' ? th.accent : '#fff';
+  const subColor  = th.style === 'light' ? 'rgba(0,0,0,0.45)' : 'rgba(255,255,255,0.55)';
+  const lineColor = th.accent + '88';
+  return `<div style="width:100%;height:100%;background:${th.bg};display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem;position:relative;overflow:hidden">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:${th.accent}"></div>
+    <div style="font-size:2rem;margin-bottom:.5rem;line-height:1">${th.icon}</div>
+    <div style="font-size:.55rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:${th.accent};margin-bottom:.3rem;text-align:center">você está convidado</div>
+    <div style="width:30px;height:1px;background:${lineColor};margin-bottom:.4rem"></div>
+    <div style="font-family:'Fraunces',Georgia,serif;font-size:.85rem;font-weight:900;font-style:italic;color:${textColor};text-align:center;line-height:1.2;margin-bottom:.3rem">Nome do<br>Homenageado</div>
+    <div style="width:30px;height:1px;background:${lineColor};margin:0.3rem 0"></div>
+    <div style="font-size:.48rem;color:${subColor};text-align:center;line-height:1.6">📅 00 de mês de 2025<br>⏰ 19:00 · 📍 Local do Evento</div>
+    <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:${th.accent}"></div>
+  </div>`;
+}
+
+function cardHTML(t) {
+  const imgHtml = getThumbnailHTML(t);
+  const id = esc(t.id);
+
+  return `
+    <div class="tpl-card" role="button" tabindex="0" aria-label="Ver template ${esc(t.name)}"
+         onclick="openModal('${id}')"
+         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openModal('${id}')}">
+      <div class="card-img-wrap">
+        ${imgHtml}
+        <div class="card-cta">
+          <button class="card-cta-btn" onclick="event.stopPropagation();selectTemplate('${id}')">
+            Usar este template →
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">${esc(t.name)}</div>
+      </div>
+    </div>`;
+}
+
+// ── MODAL ──
+function findTemplate(id) {
+  return getAllTemplates().find(t => t.id === id);
+}
+
+function openModal(id) {
+  const t = findTemplate(id);
+  if (!t) return;
+
+  const catInfo = CATEGORIES[t.category] || { label: t.category, emoji: '🎉' };
+  const overlay = document.getElementById('modalOverlay');
+
+  // Image col
+  const imgCol = document.getElementById('modalImgCol');
+  imgCol.innerHTML = `
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div style="width:100%;height:100%;min-height:340px">${getThumbnailHTML(t)}</div>`;
+
+  // Info col
+  const tagChips = (t.tags || []).map(tag => `<span class="modal-tag">${esc(tag)}</span>`).join('');
+  const ctaLabel = 'Usar este template →';
+
+  document.getElementById('modalInfoCol').innerHTML = `
+    <div>
+      <div class="modal-category">${catInfo.emoji} ${esc(catInfo.label)}</div>
+      <div class="modal-name">${esc(t.name)}</div>
+    </div>
+    <div class="modal-desc">${esc(t.desc) || 'Template personalizável para o seu evento especial.'}</div>
+    <div class="modal-divider"></div>
+    <div class="modal-features">
+      <div class="modal-feature"><div class="modal-feature-icon">✏️</div>Totalmente personalizável</div>
+      <div class="modal-feature"><div class="modal-feature-icon">📱</div>Otimizado para mobile</div>
+      <div class="modal-feature"><div class="modal-feature-icon">💌</div>Confirmação de presença (RSVP)</div>
+      ${t.isAnimated ? '<div class="modal-feature"><div class="modal-feature-icon">🎬</div>Animações incluídas</div>' : ''}
+      ${t.supportsHeroUpload ? '<div class="modal-feature"><div class="modal-feature-icon">📸</div>Upload de foto personalizada</div>' : ''}
+    </div>
+    <div class="modal-divider"></div>
+    <div class="modal-tags">${tagChips}</div>
+    <div class="modal-cta-row">
+      <button class="modal-btn-primary" onclick="selectTemplate('${esc(t.id)}')">${ctaLabel}</button>
+      <button class="modal-btn-secondary" onclick="closeModal()">Voltar</button>
+    </div>
+  `;
+
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  requestAnimationFrame(() => fitRealPreviews(imgCol));
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function onOverlayClick(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+// ── SELECT & GO ──
+function selectTemplate(id) {
+  const t = findTemplate(id);
+  if (!t) return;
+  location.href = 'editor.html?template=' + encodeURIComponent(id);
+}
+
+// ── KEYBOARD ──
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+init();
+</script>
+</body>
+</html>

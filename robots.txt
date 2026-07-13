@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Áreas privadas / de aplicação — não indexar
+Disallow: /dashboard
+Disallow: /dashboard-empresa
+Disallow: /editor
+Disallow: /login
+Disallow: /admin-templates
+Disallow: /preview
+Disallow: /api/
+
+Sitemap: https://crieconvites.com.br/sitemap.xml
