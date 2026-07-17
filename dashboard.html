@@ -133,11 +133,106 @@
 
     .loading{display:flex;align-items:center;justify-content:center;padding:4rem;gap:.75rem;color:rgba(26,10,0,.4);font-weight:600;}
 
+    /* ── MODAL ── */
+    .modal-overlay{position:fixed;inset:0;background:rgba(26,10,0,.5);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);z-index:200;display:none;align-items:center;justify-content:center;padding:1.5rem;}
+    .modal-overlay.open{display:flex;}
+    .modal-box{background:var(--panel);border-radius:16px;padding:1.75rem;width:100%;max-width:400px;box-shadow:0 30px 80px rgba(26,10,0,.3);}
+    .modal-title{font-family:var(--font-display);font-size:1.2rem;font-weight:900;font-style:italic;margin-bottom:1.25rem;}
+    .form-label{display:block;font-size:.72rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:rgba(26,10,0,.4);margin-bottom:.35rem;}
+    .form-input{width:100%;background:rgba(26,10,0,.04);border:1px solid var(--border);border-radius:10px;padding:.65rem .9rem;font-family:var(--font-body);font-size:.9rem;color:var(--white);outline:none;margin-bottom:1rem;transition:border-color .2s;}
+    .form-input:focus{border-color:var(--pink);}
+
+    /* ── SWITCH (notificações) ── */
+    .switch-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.85rem 0;border-bottom:1px solid var(--border);}
+    .switch-label{font-size:.88rem;font-weight:700;}
+    .switch-sub{font-size:.72rem;color:rgba(26,10,0,.4);font-weight:600;}
+    .switch{position:relative;width:44px;height:24px;flex-shrink:0;}
+    .switch input{opacity:0;width:0;height:0;}
+    .switch .slider{position:absolute;inset:0;background:rgba(26,10,0,.15);border-radius:99px;cursor:pointer;transition:background .2s;}
+    .switch .slider::before{content:'';position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(26,10,0,.2);}
+    .switch input:checked + .slider{background:var(--green);}
+    .switch input:checked + .slider::before{transform:translateX(20px);}
+
     .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:#1e1e1e;color:#fff;border-radius:12px;padding:.75rem 1.5rem;font-size:.85rem;font-weight:700;display:flex;align-items:center;gap:.5rem;box-shadow:0 16px 40px rgba(26,10,0,0.25);transition:transform .3s var(--ease);z-index:100;}
     .toast.show{transform:translateX(-50%) translateY(0);}
 
-    @media(max-width:900px){body{grid-template-columns:1fr;}.sidenav{display:none;}.stats-grid{grid-template-columns:repeat(2,1fr);}}
-    @media(max-width:600px){.stats-grid{grid-template-columns:1fr 1fr;}.content{padding:1rem;}}
+    /* ── SELETOR DE CONVITES ── */
+    .invite-switcher{display:flex;align-items:center;gap:.5rem;background:rgba(26,10,0,.04);border:1px solid var(--border);border-radius:10px;padding:.35rem .5rem .35rem .75rem;max-width:280px;}
+    .invite-switcher select{background:none;border:none;outline:none;font-family:var(--font-body);font-size:.82rem;font-weight:700;color:var(--white);cursor:pointer;max-width:200px;text-overflow:ellipsis;}
+    .invite-switcher select:focus-visible{outline:2px solid var(--pink);border-radius:6px;}
+
+    /* ── COUNTDOWN ── */
+    .countdown-box{background:linear-gradient(135deg,var(--pink),#FF6B8F);border-radius:16px;padding:1.5rem;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:2rem;box-shadow:0 14px 40px rgba(255,61,107,.3);animation:fadeUp .5s var(--ease) both;position:relative;overflow:hidden;}
+    .countdown-box::after{content:'🎉';position:absolute;right:-10px;bottom:-18px;font-size:6rem;opacity:.14;transform:rotate(-15deg);}
+    .countdown-title{font-family:var(--font-display);font-size:1.15rem;font-weight:900;font-style:italic;margin-bottom:.2rem;}
+    .countdown-sub{font-size:.8rem;opacity:.85;font-weight:600;}
+    .countdown-units{display:flex;gap:.6rem;position:relative;z-index:1;}
+    .cd-unit{background:rgba(255,255,255,.16);backdrop-filter:blur(4px);border-radius:12px;padding:.6rem .85rem;text-align:center;min-width:64px;}
+    .cd-num{font-family:var(--font-display);font-size:1.6rem;font-weight:900;font-style:italic;line-height:1;}
+    .cd-lbl{font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.85;margin-top:.25rem;}
+
+    /* ── CHECKLIST DE PROGRESSO ── */
+    .checklist-panel{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:1.5rem;margin-bottom:2rem;animation:fadeUp .5s var(--ease) both;}
+    .checklist-bar{height:8px;background:rgba(26,10,0,.06);border-radius:99px;overflow:hidden;margin:.85rem 0 1.1rem;}
+    .checklist-bar-fill{height:100%;background:linear-gradient(90deg,var(--pink),var(--yellow));border-radius:99px;transition:width .8s var(--ease);}
+    .checklist-items{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.5rem;}
+    .check-item{display:flex;align-items:center;gap:.55rem;font-size:.82rem;font-weight:700;padding:.55rem .7rem;border-radius:10px;color:rgba(26,10,0,.45);cursor:pointer;transition:background .2s;border:1px dashed var(--border);}
+    .check-item:hover{background:rgba(26,10,0,.03);}
+    .check-item.done{color:var(--green);border:1px solid rgba(52,211,153,.25);background:rgba(52,211,153,.06);cursor:default;}
+    .check-dot{width:20px;height:20px;border-radius:50%;border:2px solid rgba(26,10,0,.15);display:flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0;}
+    .check-item.done .check-dot{background:var(--green);border-color:var(--green);color:#fff;}
+
+    /* ── GRÁFICO DE CONFIRMAÇÕES ── */
+    .chart-bars{display:flex;align-items:flex-end;gap:6px;height:110px;padding-top:.5rem;}
+    .chart-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:.3rem;height:100%;justify-content:flex-end;}
+    .chart-bar{width:100%;max-width:26px;background:linear-gradient(180deg,var(--pink),#FF6B8F);border-radius:6px 6px 3px 3px;min-height:3px;transition:height .6s var(--ease);position:relative;}
+    .chart-bar.zero{background:rgba(26,10,0,.06);}
+    .chart-bar:hover::after{content:attr(data-v);position:absolute;top:-1.4rem;left:50%;transform:translateX(-50%);background:#1e1e1e;color:#fff;font-size:.62rem;font-weight:800;padding:.1rem .4rem;border-radius:6px;white-space:nowrap;}
+    .chart-day{font-size:.58rem;font-weight:800;color:rgba(26,10,0,.3);text-transform:uppercase;}
+
+    /* ── QR CODE ── */
+    .qr-wrap{display:flex;align-items:center;gap:1.25rem;margin-top:1.25rem;padding-top:1.25rem;border-top:1px dashed rgba(255,61,107,.2);flex-wrap:wrap;}
+    .qr-box{background:#fff;border:1px solid var(--border);border-radius:12px;padding:.6rem;box-shadow:0 6px 20px rgba(26,10,0,.08);}
+    .qr-box img{display:block;width:120px;height:120px;}
+
+    /* ── MURAL DE RECADOS ── */
+    .mural-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem;}
+    .mural-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:1.1rem;position:relative;animation:fadeUp .5s var(--ease) both;transition:transform .3s var(--ease),box-shadow .3s;}
+    .mural-card:hover{transform:translateY(-3px) rotate(-.5deg);box-shadow:0 14px 36px rgba(26,10,0,.1);}
+    .mural-card::before{content:'❝';position:absolute;top:.35rem;right:.75rem;font-size:1.6rem;color:rgba(255,61,107,.18);font-family:var(--font-display);}
+    .mural-msg{font-size:.88rem;line-height:1.5;margin-bottom:.8rem;color:rgba(26,10,0,.75);font-style:italic;}
+    .mural-author{display:flex;align-items:center;gap:.5rem;font-size:.78rem;font-weight:800;}
+    .mural-ava{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--yellow));color:#fff;display:flex;align-items:center;justify-content:center;font-size:.72rem;flex-shrink:0;}
+    .mural-when{font-size:.68rem;color:rgba(26,10,0,.3);font-weight:600;margin-left:auto;}
+
+    /* ── AÇÕES POR CONVIDADO ── */
+    .guest-wpp-btn{display:inline-flex;align-items:center;gap:.25rem;background:rgba(37,211,102,.12);color:#128C4B;border:1px solid rgba(37,211,102,.25);border-radius:8px;padding:.25rem .55rem;font-size:.7rem;font-weight:800;cursor:pointer;font-family:var(--font-body);transition:all .2s;}
+    .guest-wpp-btn:hover{background:#25D366;color:#fff;}
+    th.sortable{cursor:pointer;user-select:none;}
+    th.sortable:hover{color:var(--pink);}
+
+    /* ── NAVEGAÇÃO MOBILE ── */
+    .mobile-tabs{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(255,248,240,.96);backdrop-filter:blur(12px);border-top:1px solid var(--border);z-index:90;padding:.35rem .25rem calc(.35rem + env(safe-area-inset-bottom));grid-template-columns:repeat(5,1fr);}
+    .mtab{display:flex;flex-direction:column;align-items:center;gap:.15rem;padding:.4rem .25rem;font-size:.58rem;font-weight:800;color:rgba(26,10,0,.4);cursor:pointer;border:none;background:none;font-family:var(--font-body);border-radius:10px;transition:color .2s;}
+    .mtab .mtab-ico{font-size:1.15rem;}
+    .mtab.active{color:var(--pink);}
+    .fab-new{display:none;position:fixed;right:1rem;bottom:calc(4.4rem + env(safe-area-inset-bottom));width:52px;height:52px;border-radius:50%;background:var(--pink);color:#fff;border:none;font-size:1.5rem;cursor:pointer;box-shadow:0 10px 30px rgba(255,61,107,.45);z-index:91;transition:transform .2s;}
+    .fab-new:active{transform:scale(.92);}
+
+    /* ── CONFETE ── */
+    #confettiCanvas{position:fixed;inset:0;pointer-events:none;z-index:300;}
+
+    @media(max-width:900px){
+      body{grid-template-columns:1fr;}
+      .sidenav{display:none;}
+      .stats-grid{grid-template-columns:repeat(2,1fr);}
+      .mobile-tabs{display:grid;}
+      .fab-new{display:block;}
+      .content{padding-bottom:5.5rem;}
+      .countdown-box{flex-direction:column;align-items:flex-start;}
+    }
+    @media(max-width:600px){.stats-grid{grid-template-columns:1fr 1fr;}.content{padding:1rem 1rem 5.5rem;}.invite-switcher select{max-width:130px;}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
     @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
   </style>
 </head>
@@ -152,16 +247,18 @@
       <div class="sidenav-email" id="userEmail">—</div>
     </div>
   </div>
+  <div class="sidenav-item" onclick="openUserModal()" style="margin-top:.35rem"><span class="sidenav-icon">👤</span>Editar usuário</div>
 
   <div class="sidenav-section">Principal</div>
   <div class="sidenav-item active" onclick="showSection('overview',this)"><span class="sidenav-icon">🏠</span>Visão Geral</div>
   <div class="sidenav-item" onclick="showSection('guests',this)"><span class="sidenav-icon">👥</span>Convidados<span class="sidenav-badge" id="guestBadge">0</span></div>
   <div class="sidenav-item" onclick="showSection('gifts',this)"><span class="sidenav-icon">🎁</span>Presentes</div>
+  <div class="sidenav-item" onclick="showSection('mural',this)"><span class="sidenav-icon">💌</span>Recados<span class="sidenav-badge" id="muralBadge" style="display:none">0</span></div>
 
   <div class="sidenav-section">Convite</div>
-  <div class="sidenav-item" onclick="goEditor()"><span class="sidenav-icon">✏️</span>Editar convite</div>
   <div class="sidenav-item" onclick="openPublicInvite()"><span class="sidenav-icon">👁</span>Ver como convidado</div>
   <div class="sidenav-item" onclick="showSection('share',this)"><span class="sidenav-icon">🔗</span>Compartilhar</div>
+  <div class="sidenav-item" onclick="showSection('notifications',this)"><span class="sidenav-icon">🔔</span>Notificações</div>
 
   <div class="sidenav-section">Conta</div>
   <div class="sidenav-item" onclick="showSection('upgrade',this)"><span class="sidenav-icon">⭐</span>Fazer upgrade</div>
@@ -177,7 +274,9 @@
   <div class="topbar">
     <div class="topbar-title" id="pageTitle">Visão Geral</div>
     <div class="topbar-right">
-      <div class="icon-btn" onclick="goEditor()" title="Editar convite">✏️</div>
+      <div class="invite-switcher" id="inviteSwitcher" style="display:none" title="Trocar de convite">
+        🎪 <select id="inviteSelect" onchange="switchInvite(this.value)" aria-label="Selecionar convite"></select>
+      </div>
       <div class="icon-btn" onclick="openPublicInvite()" title="Ver convite">👁</div>
       <div class="icon-btn" onclick="doLogout()" title="Sair">🚪</div>
     </div>
@@ -187,13 +286,73 @@
   </div>
 </div>
 
+<!-- MODAL: EDITAR USUÁRIO -->
+<div class="modal-overlay" id="userModal" onclick="if(event.target===this)closeUserModal()" role="dialog" aria-modal="true" aria-label="Editar usuário">
+  <div class="modal-box">
+    <div class="modal-title">👤 Editar usuário</div>
+    <label class="form-label" for="editUserName">Nome</label>
+    <input class="form-input" id="editUserName" type="text" placeholder="Seu nome" maxlength="60"/>
+    <label class="form-label" for="editUserEmail">E-mail</label>
+    <input class="form-input" id="editUserEmail" type="email" disabled style="opacity:.55;cursor:not-allowed"/>
+    <div style="display:flex;gap:.5rem;justify-content:flex-end;margin-top:.25rem">
+      <button class="btn-xs btn-xs-outline" style="padding:.55rem 1rem" onclick="closeUserModal()">Cancelar</button>
+      <button class="btn-xs btn-xs-pink" style="padding:.55rem 1.25rem" onclick="saveUserProfile()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ADICIONAR CONVIDADO -->
+<div class="modal-overlay" id="guestModal" onclick="if(event.target===this)closeGuestModal()" role="dialog" aria-modal="true" aria-label="Adicionar convidado">
+  <div class="modal-box">
+    <div class="modal-title">➕ Adicionar convidado</div>
+    <label class="form-label" for="newGuestName">Nome *</label>
+    <input class="form-input" id="newGuestName" type="text" placeholder="Nome do convidado" maxlength="80"/>
+    <label class="form-label" for="newGuestPhone">WhatsApp (opcional)</label>
+    <input class="form-input" id="newGuestPhone" type="tel" placeholder="(11) 99999-9999"/>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+      <div>
+        <label class="form-label" for="newGuestPlus">Acompanhantes</label>
+        <input class="form-input" id="newGuestPlus" type="number" min="0" max="20" value="0"/>
+      </div>
+      <div>
+        <label class="form-label" for="newGuestStatus">Status</label>
+        <select class="form-input" id="newGuestStatus" style="cursor:pointer">
+          <option value="yes">✅ Confirmado</option>
+          <option value="maybe" selected>⏳ Pendente</option>
+          <option value="no">❌ Não vai</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:.5rem;justify-content:flex-end;margin-top:.5rem">
+      <button class="btn-xs btn-xs-outline" style="padding:.55rem 1rem" onclick="closeGuestModal()">Cancelar</button>
+      <button class="btn-xs btn-xs-pink" style="padding:.55rem 1.25rem" onclick="saveNewGuest()">💾 Adicionar</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAVEGAÇÃO MOBILE -->
+<nav class="mobile-tabs" aria-label="Navegação">
+  <button class="mtab active" data-mtab="overview" onclick="showSection('overview',null,this)"><span class="mtab-ico">🏠</span>Início</button>
+  <button class="mtab" data-mtab="guests" onclick="showSection('guests',null,this)"><span class="mtab-ico">👥</span>Convidados</button>
+  <button class="mtab" data-mtab="gifts" onclick="showSection('gifts',null,this)"><span class="mtab-ico">🎁</span>Presentes</button>
+  <button class="mtab" data-mtab="mural" onclick="showSection('mural',null,this)"><span class="mtab-ico">💌</span>Recados</button>
+  <button class="mtab" data-mtab="share" onclick="showSection('share',null,this)"><span class="mtab-ico">🔗</span>Divulgar</button>
+</nav>
+<button class="fab-new" onclick="newInvite()" title="Novo convite" aria-label="Novo convite">✨</button>
+
+<canvas id="confettiCanvas"></canvas>
+
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 const SUPA_URL = 'https://wevmgnzmkdecdcnouhjq.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indldm1nbnpta2RlY2Rjbm91aGpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTI5MTYsImV4cCI6MjA5MjI4ODkxNn0.R7IF4vEF_D5fvB18ZRl8mJwXOsEpW-q2hSdsRRs9nM4';
 const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+// Escapa strings dinâmicas antes de injetar via innerHTML — previne XSS
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 let currentUser = null;
 let invites = [];
@@ -239,15 +398,68 @@ async function init(){
   document.getElementById('userEmail').textContent = session.user.email;
 
   await loadData();
+  populateInviteSwitcher();
+  updateMuralBadge();
   render();
+  subscribeRealtime();
+}
 
-  // Subscribe to realtime guest updates
-  if(activeInvite){
-    sb.channel('guests-'+activeInvite.id)
-      .on('postgres_changes',{event:'INSERT',schema:'public',table:'guests',filter:'invite_id=eq.'+activeInvite.id},
-        payload=>{ guests.unshift(payload.new); document.getElementById('guestBadge').textContent=guests.length; if(activeSection==='overview'||activeSection==='guests') render(); showToast('🎉 Novo convidado: '+payload.new.name); })
-      .subscribe();
-  }
+// ── REALTIME (re-assinável ao trocar de convite) ──
+let rtChannel = null;
+function subscribeRealtime(){
+  if(rtChannel){ try{ sb.removeChannel(rtChannel); }catch(_){} rtChannel = null; }
+  if(!activeInvite) return;
+  rtChannel = sb.channel('guests-'+activeInvite.id)
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'guests',filter:'invite_id=eq.'+activeInvite.id},
+      payload=>{
+        if(guests.some(g=>g.id===payload.new.id)) return; // já inserido localmente
+        guests.unshift(payload.new);
+        document.getElementById('guestBadge').textContent = guests.length;
+        updateMuralBadge();
+        if(['overview','guests','mural'].includes(activeSection)) render();
+        if(payload.new.attending==='yes') fireConfetti();
+        showToast('🎉 Novo convidado: '+(payload.new.name||''));
+      })
+    .subscribe();
+}
+
+// ── SELETOR DE CONVITES ──
+function populateInviteSwitcher(){
+  const wrap = document.getElementById('inviteSwitcher');
+  const sel = document.getElementById('inviteSelect');
+  if(invites.length < 2){ wrap.style.display = 'none'; return; }
+  wrap.style.display = 'flex';
+  sel.innerHTML = invites.map(i=>
+    `<option value="${esc(i.id)}" ${i.id===activeInvite?.id?'selected':''}>${i.published?'✅':'📝'} ${esc(i.title||i.event_name||i.slug||'Sem título')}</option>`
+  ).join('');
+}
+
+async function switchInvite(id){
+  const inv = invites.find(i=>i.id===id);
+  if(!inv || inv.id===activeInvite?.id) return;
+  activeInvite = inv;
+  if(inv.slug) localStorage.setItem('ccm_current_slug', inv.slug);
+  else localStorage.removeItem('ccm_current_slug');
+  document.getElementById('mainContent').innerHTML = '<div class="loading">⏳ Carregando convite...</div>';
+  const [gRes, gfRes] = await Promise.all([
+    sb.from('guests').select('*').eq('invite_id', inv.id).order('created_at',{ascending:false}),
+    sb.from('gifts').select('*').eq('invite_id', inv.id).order('created_at',{ascending:true})
+  ]);
+  guests = gRes.data || [];
+  gifts = gfRes.data || [];
+  document.getElementById('guestBadge').textContent = guests.length;
+  updateMuralBadge();
+  subscribeRealtime();
+  render();
+  showToast('🎪 Agora exibindo: '+(inv.title||inv.event_name||inv.slug||'convite'));
+}
+
+function updateMuralBadge(){
+  const n = guests.filter(g=>(g.message||'').trim()).length;
+  const b = document.getElementById('muralBadge');
+  if(!b) return;
+  b.textContent = n;
+  b.style.display = n ? '' : 'none';
 }
 
 async function loadData(){
@@ -299,12 +511,13 @@ async function loadData(){
   }
 }
 
-function showSection(s, el){
+function showSection(s, el, mtabEl){
   activeSection = s;
-  const titles={overview:'Visão Geral',guests:'Convidados',gifts:'Presentes',share:'Compartilhar',upgrade:'Fazer Upgrade'};
+  const titles={overview:'Visão Geral',guests:'Convidados',gifts:'Presentes',mural:'Mural de recados',share:'Compartilhar',notifications:'Notificações',upgrade:'Fazer Upgrade'};
   document.getElementById('pageTitle').textContent = titles[s]||s;
   document.querySelectorAll('.sidenav-item').forEach(i=>i.classList.remove('active'));
   if(el) el.classList.add('active');
+  document.querySelectorAll('.mtab').forEach(t=>t.classList.toggle('active', t.dataset.mtab===s));
   render();
 }
 
@@ -313,8 +526,12 @@ function render(){
   if(activeSection==='overview') c.innerHTML = renderOverview();
   else if(activeSection==='guests') c.innerHTML = renderGuestsSection();
   else if(activeSection==='gifts') c.innerHTML = renderGiftsSection();
+  else if(activeSection==='mural') c.innerHTML = renderMural();
   else if(activeSection==='share') c.innerHTML = renderShare();
+  else if(activeSection==='notifications') c.innerHTML = renderNotifications();
   else if(activeSection==='upgrade') c.innerHTML = renderUpgrade();
+  mountQR();
+  mountCountdown();
 }
 
 // ── OVERVIEW ──
@@ -328,10 +545,26 @@ function renderOverview(){
   const r=54,circ=2*Math.PI*r,dash=circ*(pct/100);
 
   const invTitle = activeInvite?.title || activeInvite?.event_name || activeInvite?.slug || 'Convite sem título';
-  const invImg = activeInvite?.photo_url || 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400&q=70';
+  const invImg = String(activeInvite?.photo_url || 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400&q=70').replace(/["'<>\\]/g,'');
   const invDate = activeInvite?.event_date ? new Date(activeInvite.event_date+'T12:00').toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'}) : 'Data não definida';
 
+  const h=new Date().getHours();
+  const saud=h<5?'Boa madrugada':h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';
+  const uname=(currentUser?.user_metadata?.name||currentUser?.email?.split('@')[0]||'').split(' ')[0];
+  const sub = !activeInvite ? 'Que tal criar seu primeiro convite hoje?'
+    : pending.length ? `Você tem ${pending.length} resposta(s) pendente(s) — um lembrete pode ajudar. 😉`
+    : guests.length ? 'Tudo em dia por aqui. Sua festa está tomando forma! 🎈'
+    : 'Compartilhe seu convite para começar a receber confirmações.';
+
   return `
+    <div style="margin-bottom:1.5rem;animation:fadeUp .5s var(--ease) both">
+      <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:900;font-style:italic">${saud}, ${esc(uname)}! 👋</div>
+      <div style="font-size:.85rem;color:rgba(26,10,0,.45);font-weight:600;margin-top:.2rem">${sub}</div>
+    </div>
+
+    ${countdownHTML(invTitle)}
+    ${checklistHTML()}
+
     <div class="stats-grid">
       <div class="stat-card"><div class="stat-top"><div class="stat-icon pink">📨</div><div class="stat-trend neutral">${invites.length} convite(s)</div></div><div class="stat-num">${guests.length}</div><div class="stat-label">Confirmações recebidas</div></div>
       <div class="stat-card"><div class="stat-top"><div class="stat-icon green">✅</div><div class="stat-trend up">+${yes.length}</div></div><div class="stat-num">${yes.length}</div><div class="stat-label">Confirmados</div></div>
@@ -363,10 +596,9 @@ function renderOverview(){
           <span style="position:absolute;top:.6rem;right:.6rem" class="badge badge-${activeInvite.published?'yes':'pending'}">${activeInvite.published?'✅ Publicado':'📝 Rascunho'}</span>
         </div>
         <div style="padding:1rem">
-          <div style="font-weight:800;margin-bottom:.25rem">${invTitle}</div>
+          <div style="font-weight:800;margin-bottom:.25rem">${esc(invTitle)}</div>
           <div style="font-size:.75rem;color:rgba(26,10,0,.4);margin-bottom:1rem">${invDate}</div>
           <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-            ${activeInvite.published ? '' : '<button class="btn-xs btn-xs-pink" onclick="goEditor()">✏️ Editar</button>'}
             <button class="btn-xs btn-xs-outline" onclick="openPublicInvite()">👁 Ver</button>
             <button class="btn-xs btn-xs-outline" style="color:#f87171;border-color:rgba(248,113,113,.3)" onclick="confirmDeleteInvite('${activeInvite?.id}')">🗑 Deletar</button>
           </div>
@@ -374,10 +606,109 @@ function renderOverview(){
       </div>
     </div>` : `<div class="empty-state"><div class="empty-state-emoji">🎉</div><div style="font-weight:700;margin-bottom:.5rem">Nenhum convite publicado ainda</div><button class="btn-xs btn-xs-pink" onclick="location.href='templates.html'" style="margin-top:1rem;padding:.5rem 1.25rem">✨ Criar meu primeiro convite</button></div>`}
 
+    ${chartHTML()}
+
     <div class="section-hdr"><h2>📋 Últimas confirmações</h2><button class="btn-xs btn-xs-outline" onclick="showSection('guests')">Ver todos →</button></div>
     ${renderGuestsTable(guests.slice(0,5))}
     ${renderShare()}
   `;
+}
+
+// ── COUNTDOWN ──
+function countdownHTML(invTitle){
+  if(!activeInvite?.event_date) return '';
+  const dt = new Date(activeInvite.event_date+'T'+(activeInvite.event_time||'12:00'));
+  if(isNaN(dt)) return '';
+  const diff = dt - Date.now();
+  if(diff <= 0){
+    const passed = (Date.now() - dt) > 86400000;
+    return `<div class="countdown-box">
+      <div>
+        <div class="countdown-title">${passed?'🎊 Como foi a festa?':'🎉 É hoje! Chegou o grande dia!'}</div>
+        <div class="countdown-sub">${passed?'Esperamos que tenha sido incrível. Que tal já criar o próximo convite?':'Aproveite cada momento — seus convidados estão a caminho.'}</div>
+      </div>
+      ${passed?`<button onclick="newInvite()" style="background:#fff;color:var(--pink);border:none;border-radius:10px;padding:.6rem 1.25rem;font-family:var(--font-body);font-size:.82rem;font-weight:800;cursor:pointer;position:relative;z-index:1">✨ Criar próximo evento</button>`:''}
+    </div>`;
+  }
+  return `<div class="countdown-box">
+    <div style="position:relative;z-index:1">
+      <div class="countdown-title">Contagem regressiva 🎈</div>
+      <div class="countdown-sub">${esc(invTitle)} — falta pouco!</div>
+    </div>
+    <div class="countdown-units">
+      <div class="cd-unit"><div class="cd-num" id="cdD">--</div><div class="cd-lbl">dias</div></div>
+      <div class="cd-unit"><div class="cd-num" id="cdH">--</div><div class="cd-lbl">horas</div></div>
+      <div class="cd-unit"><div class="cd-num" id="cdM">--</div><div class="cd-lbl">min</div></div>
+      <div class="cd-unit"><div class="cd-num" id="cdS">--</div><div class="cd-lbl">seg</div></div>
+    </div>
+  </div>`;
+}
+
+let cdTimer = null;
+function mountCountdown(){
+  clearInterval(cdTimer);
+  if(!document.getElementById('cdD') || !activeInvite?.event_date) return;
+  const dt = new Date(activeInvite.event_date+'T'+(activeInvite.event_time||'12:00'));
+  if(isNaN(dt)) return;
+  const set=(id,v)=>{ const el=document.getElementById(id); if(el) el.textContent=String(v).padStart(2,'0'); };
+  const tick=()=>{
+    let d = dt - Date.now();
+    if(d < 0){ clearInterval(cdTimer); render(); return; }
+    set('cdD', Math.floor(d/86400000));
+    set('cdH', Math.floor(d%86400000/3600000));
+    set('cdM', Math.floor(d%3600000/60000));
+    set('cdS', Math.floor(d%60000/1000));
+  };
+  tick();
+  cdTimer = setInterval(tick, 1000);
+}
+
+// ── CHECKLIST DE PROGRESSO ──
+function checklistHTML(){
+  const shared = activeInvite ? localStorage.getItem('ccm_shared_'+activeInvite.id)==='1' : false;
+  const items = [
+    {done: invites.length>0,                      ico:'🎨', label:'Criar o convite',       act:"location.href='templates.html'"},
+    {done: !!(activeInvite&&activeInvite.published), ico:'🚀', label:'Publicar o convite',  act:'goEditor()'},
+    {done: gifts.length>0,                        ico:'🎁', label:'Adicionar presentes',   act:'goEditor()'},
+    {done: shared,                                ico:'🔗', label:'Compartilhar o link',   act:"showSection('share')"},
+    {done: guests.length>0,                       ico:'🎉', label:'Primeira confirmação',  act:"showSection('share')"}
+  ];
+  const doneCount = items.filter(i=>i.done).length;
+  if(doneCount === items.length) return '';
+  const pctBar = Math.round(doneCount/items.length*100);
+  return `<div class="checklist-panel">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:.9rem;font-weight:800">🚀 Prepare sua festa</div>
+      <div style="font-size:.78rem;font-weight:800;color:var(--pink)">${doneCount}/${items.length}</div>
+    </div>
+    <div class="checklist-bar"><div class="checklist-bar-fill" style="width:${pctBar}%"></div></div>
+    <div class="checklist-items">${items.map(i=>
+      `<div class="check-item ${i.done?'done':''}"${i.done?'':` onclick="${i.act}" role="button" tabindex="0" onkeydown="if(event.key==='Enter')this.click()"`}><div class="check-dot">${i.done?'✓':''}</div>${i.ico} ${i.label}</div>`
+    ).join('')}</div>
+  </div>`;
+}
+
+// ── GRÁFICO: CONFIRMAÇÕES POR DIA ──
+function chartHTML(){
+  if(!activeInvite || !guests.length) return '';
+  const days=[];
+  for(let i=13;i>=0;i--){ const d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-i); days.push(d); }
+  const counts = days.map(d=>{
+    const end = d.getTime()+86400000;
+    return guests.filter(g=>{ const t=new Date(g.created_at).getTime(); return t>=d.getTime() && t<end; }).length;
+  });
+  const total = counts.reduce((a,b)=>a+b,0);
+  if(!total) return '';
+  const max = Math.max(...counts,1);
+  return `<div style="background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:1.5rem;margin-bottom:2rem;animation:fadeUp .5s var(--ease) both">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:.5rem">
+      <div style="font-size:.9rem;font-weight:800">📈 Confirmações — últimos 14 dias</div>
+      <div style="font-size:.75rem;color:rgba(26,10,0,.4);font-weight:700">${total} no período</div>
+    </div>
+    <div class="chart-bars">${days.map((d,i)=>
+      `<div class="chart-col"><div class="chart-bar ${counts[i]?'':'zero'}" data-v="${counts[i]} em ${d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})}" style="height:${counts[i]?Math.max(10,Math.round(counts[i]/max*100)):4}%"></div><div class="chart-day">${d.getDate()}</div></div>`
+    ).join('')}</div>
+  </div>`;
 }
 
 // ── GUESTS ──
@@ -388,7 +719,8 @@ function renderGuestsSection(){
   return `
     <div class="section-hdr">
       <h2>👥 Lista de convidados</h2>
-      <div style="display:flex;gap:.5rem">
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+        <button class="btn-xs btn-xs-pink" onclick="openGuestModal()">➕ Adicionar</button>
         <button class="btn-xs btn-xs-outline" onclick="exportCSV()">⬇️ Exportar CSV</button>
         <button class="btn-xs btn-xs-outline" onclick="loadData().then(render)">🔄 Atualizar</button>
       </div>
@@ -408,16 +740,72 @@ function renderGuestsSection(){
 }
 
 function renderGuestsTable(list){
-  if(!list.length) return `<div class="empty-state"><div class="empty-state-emoji">👀</div><div>Nenhum convidado confirmou ainda</div><div style="font-size:.8rem;margin-top:.4rem">Compartilhe o convite para receber confirmações</div></div>`;
+  if(!list.length) return `<div class="empty-state"><div class="empty-state-emoji">👀</div><div>Nenhum convidado confirmou ainda</div><div style="font-size:.8rem;margin-top:.4rem">Compartilhe o convite para receber confirmações — ou <span style="color:var(--pink);font-weight:800;cursor:pointer" onclick="openGuestModal()">adicione manualmente</span></div></div>`;
   return `<table><thead><tr><th>Nome</th><th>WhatsApp</th><th>Acomp.</th><th>Status</th><th>Mensagem</th><th>Quando</th></tr></thead>
-    <tbody>${list.map(g=>`<tr>
-      <td><div class="guest-name">${g.name}</div></td>
-      <td><div class="guest-phone">${g.phone||'—'}</div></td>
-      <td style="text-align:center">${(g.plus_ones||0)+1}</td>
+    <tbody>${list.map(g=>{
+      const digits = String(g.phone||'').replace(/\D/g,'');
+      const safeName = esc(String(g.name||'').replace(/['"\\<>`]/g,''));
+      return `<tr>
+      <td><div class="guest-name">${esc(g.name)}</div></td>
+      <td>${digits?`<button class="guest-wpp-btn" onclick="guestWhatsApp('${digits}','${safeName}')" title="Chamar no WhatsApp">💬 ${esc(g.phone)}</button>`:'<div class="guest-phone">—</div>'}</td>
+      <td style="text-align:center">${(parseInt(g.plus_ones)||0)+1}</td>
       <td><span class="badge badge-${g.attending==='yes'?'yes':g.attending==='no'?'no':'pending'}">${g.attending==='yes'?'✅ Sim':g.attending==='no'?'❌ Não':'⏳ Pendente'}</span></td>
-      <td style="font-size:.78rem;color:rgba(26,10,0,.45);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.message||'—'}</td>
+      <td style="font-size:.78rem;color:rgba(26,10,0,.45);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc(g.message||'')}">${esc(g.message)||'—'}</td>
       <td style="font-size:.75rem;color:rgba(26,10,0,.3)">${timeAgo(g.created_at)}</td>
-    </tr>`).join('')}</tbody></table>`;
+    </tr>`;}).join('')}</tbody></table>`;
+}
+
+// ── MURAL DE RECADOS ──
+function renderMural(){
+  const msgs = guests.filter(g=>(g.message||'').trim());
+  if(!msgs.length) return `<div class="empty-state"><div class="empty-state-emoji">💌</div><div style="font-weight:700;margin-bottom:.5rem">Nenhum recado ainda</div><div style="font-size:.8rem">Quando os convidados deixarem mensagens carinhosas ao confirmar presença, elas aparecem aqui.</div></div>`;
+  return `
+    <div class="section-hdr"><h2>💌 Mural de recados <span style="color:rgba(26,10,0,.35);font-weight:700">(${msgs.length})</span></h2></div>
+    <div class="mural-grid">${msgs.map((g,i)=>`
+      <div class="mural-card" style="animation-delay:${Math.min(i*0.06,0.6)}s">
+        <div class="mural-msg">${esc(g.message)}</div>
+        <div class="mural-author"><div class="mural-ava">${esc(String(g.name||'?').trim().charAt(0).toUpperCase())}</div>${esc(g.name)}<span class="mural-when">${timeAgo(g.created_at)}</span></div>
+      </div>`).join('')}</div>`;
+}
+
+// ── ADICIONAR CONVIDADO MANUAL ──
+function openGuestModal(){
+  if(!activeInvite){ showToast('✨ Crie um convite primeiro'); return; }
+  document.getElementById('newGuestName').value='';
+  document.getElementById('newGuestPhone').value='';
+  document.getElementById('newGuestPlus').value='0';
+  document.getElementById('newGuestStatus').value='maybe';
+  document.getElementById('guestModal').classList.add('open');
+  setTimeout(()=>document.getElementById('newGuestName').focus(),60);
+}
+function closeGuestModal(){ document.getElementById('guestModal').classList.remove('open'); }
+async function saveNewGuest(){
+  const name = document.getElementById('newGuestName').value.trim();
+  if(!name){ showToast('Digite o nome do convidado'); return; }
+  const phone = document.getElementById('newGuestPhone').value.trim();
+  const plus = Math.min(20, Math.max(0, parseInt(document.getElementById('newGuestPlus').value)||0));
+  const attending = document.getElementById('newGuestStatus').value;
+  const {data, error} = await sb.from('guests')
+    .insert({invite_id:activeInvite.id, name, phone:phone||null, plus_ones:plus, attending})
+    .select().single();
+  if(error){ showToast('❌ Erro ao adicionar: '+error.message); return; }
+  if(data && !guests.some(g=>g.id===data.id)) guests.unshift(data);
+  document.getElementById('guestBadge').textContent = guests.length;
+  closeGuestModal();
+  render();
+  showToast('✅ '+name+' entrou na lista!');
+}
+
+// ── WHATSAPP DIRETO PARA O CONVIDADO ──
+function guestWhatsApp(digits, name){
+  let p = String(digits).replace(/\D/g,'');
+  if(p.length<=11 && !p.startsWith('55')) p = '55'+p;
+  const inv = activeInvite||{};
+  const link = inv.slug ? `${location.origin}/${inv.slug}` : '';
+  const first = (name||'').split(' ')[0];
+  const L = [`Oi${first?' '+first:''}! 👋`, `Passando para lembrar do evento: ${(inv.title||inv.event_name||'nossa festa')} 🎉`];
+  if(link){ L.push(''); L.push('Detalhes e confirmação de presença:'); L.push(link); }
+  window.open('https://wa.me/'+p+'?text='+encodeURIComponent(L.join('\n')),'_blank');
 }
 
 // ── GIFTS ──
@@ -432,11 +820,11 @@ function renderGiftsSection(){
     </div>
     ${gifts.length ? `<div class="gifts-grid-dash">${gifts.map(g=>`
       <div class="gift-card-dash">
-        <div class="gift-emoji-dash">${g.emoji||'🎁'}</div>
-        <div class="gift-name-dash">${g.name}</div>
-        <div class="gift-price-dash">${g.price||'—'}</div>
+        <div class="gift-emoji-dash">${esc(g.emoji)||'🎁'}</div>
+        <div class="gift-name-dash">${esc(g.name)}</div>
+        <div class="gift-price-dash">${esc(g.price)||'—'}</div>
         <span class="badge ${g.reserved?'badge-yes':'badge-pending'}" style="margin-bottom:.4rem">${g.reserved?'✅ Reservado':'⏳ Disponível'}</span>
-        ${g.reserved&&g.reserved_by?`<div class="gift-reserver">por ${g.reserved_by}</div>`:''}
+        ${g.reserved&&g.reserved_by?`<div class="gift-reserver">por ${esc(g.reserved_by)}</div>`:''}
       </div>`).join('')}</div>` : `<div class="empty-state"><div class="empty-state-emoji">🎁</div><div>Nenhum presente adicionado</div><button class="btn-xs btn-xs-pink" onclick="goEditor()" style="margin-top:1rem;padding:.5rem 1.25rem">Adicionar presentes</button></div>`}`;
 }
 
@@ -475,7 +863,117 @@ function renderShare(){
         <button class="share-btn share-copy" onclick="copyLink('${shareLink}')">📋 Copiar link</button>
         <button class="share-btn share-view" onclick="openPublicInvite()">👁 Ver convite</button>
       </div>
+      <div class="qr-wrap">
+        <div class="qr-box"><div id="qrCode" aria-label="QR code do convite"></div></div>
+        <div>
+          <div style="font-weight:800;font-size:.88rem;margin-bottom:.25rem">📱 QR Code do convite</div>
+          <div style="font-size:.78rem;color:rgba(26,10,0,.5);max-width:280px">Imprima ou mostre na tela — o convidado escaneia e cai direto no convite.</div>
+          <button class="btn-xs btn-xs-outline" style="margin-top:.6rem" onclick="downloadQR()">⬇️ Baixar QR</button>
+        </div>
+      </div>
     </div>`;
+}
+
+// ── QR CODE ──
+function mountQR(){
+  const el = document.getElementById('qrCode');
+  if(!el || !activeInvite?.slug) return;
+  const link = `${location.origin}/${activeInvite.slug}`;
+  el.innerHTML = '';
+  if(typeof QRCode !== 'undefined'){
+    new QRCode(el, {text:link, width:120, height:120, colorDark:'#1A0A00', colorLight:'#ffffff'});
+  } else {
+    el.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(link)}" alt="QR code do convite" width="120" height="120"/>`;
+  }
+}
+function downloadQR(){
+  const el = document.getElementById('qrCode');
+  if(!el) return;
+  const cv = el.querySelector('canvas');
+  const img = el.querySelector('img');
+  const url = cv ? cv.toDataURL('image/png') : (img ? img.src : null);
+  if(!url){ showToast('QR ainda não carregou'); return; }
+  const a = document.createElement('a');
+  a.href = url; a.download = 'qr-convite.png'; a.click();
+  showToast('⬇️ QR Code baixado!');
+}
+
+// ── NOTIFICAÇÕES ──
+function renderNotifications(){
+  if(!activeInvite){
+    return `<div class="empty-state"><div class="empty-state-emoji">🔔</div><div style="font-weight:700;margin-bottom:.5rem">Crie um convite para configurar notificações</div><button class="btn-xs btn-xs-pink" onclick="location.href='templates.html'" style="margin-top:1rem;padding:.5rem 1.25rem">✨ Criar convite</button></div>`;
+  }
+  const ne = !!activeInvite.notify_email;
+  const nw = !!activeInvite.notify_whatsapp;
+  return `
+    <div style="max-width:560px">
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:1.5rem">
+        <div style="font-weight:800;margin-bottom:.25rem">🔔 Notificações de confirmação</div>
+        <div style="font-size:.82rem;color:rgba(26,10,0,.45);margin-bottom:.75rem">Receba um aviso sempre que um convidado responder ao seu convite. Por padrão, nenhuma notificação é enviada.</div>
+
+        <div class="switch-row">
+          <div><div class="switch-label">📧 Notificar por e-mail</div><div class="switch-sub">Um e-mail a cada nova confirmação</div></div>
+          <label class="switch"><input type="checkbox" id="notifEmail" ${ne?'checked':''} onchange="toggleNotifInputs()"/><span class="slider"></span></label>
+        </div>
+        <div id="notifEmailWrap" style="padding:.75rem 0 .25rem;border-bottom:1px solid var(--border);display:${ne?'block':'none'}">
+          <label class="form-label" for="notifEmailTo">E-mail para receber os avisos</label>
+          <input class="form-input" id="notifEmailTo" type="email" style="margin-bottom:.5rem" value="${esc(activeInvite.notify_email_to || currentUser?.email || '')}" placeholder="voce@email.com"/>
+        </div>
+
+        <div class="switch-row">
+          <div><div class="switch-label">💬 Notificar por WhatsApp</div><div class="switch-sub">Uma mensagem a cada nova confirmação</div></div>
+          <label class="switch"><input type="checkbox" id="notifWhats" ${nw?'checked':''} onchange="toggleNotifInputs()"/><span class="slider"></span></label>
+        </div>
+        <div id="notifWhatsWrap" style="padding:.75rem 0 .25rem;display:${nw?'block':'none'}">
+          <label class="form-label" for="notifWhatsTo">WhatsApp (com DDD)</label>
+          <input class="form-input" id="notifWhatsTo" type="tel" style="margin-bottom:.5rem" value="${esc(activeInvite.notify_whatsapp_to || '')}" placeholder="(11) 99999-9999"/>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;margin-top:1.25rem">
+          <button class="btn-xs btn-xs-pink" style="padding:.55rem 1.5rem" onclick="saveNotifPrefs()">💾 Salvar preferências</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function toggleNotifInputs(){
+  document.getElementById('notifEmailWrap').style.display = document.getElementById('notifEmail').checked ? 'block' : 'none';
+  document.getElementById('notifWhatsWrap').style.display = document.getElementById('notifWhats').checked ? 'block' : 'none';
+}
+
+async function saveNotifPrefs(){
+  if(!activeInvite) return;
+  const ne = document.getElementById('notifEmail').checked;
+  const nw = document.getElementById('notifWhats').checked;
+  const emailTo = document.getElementById('notifEmailTo').value.trim();
+  const whatsTo = document.getElementById('notifWhatsTo').value.trim().replace(/[^\d+]/g,'');
+  if(ne && !emailTo){ showToast('📧 Informe o e-mail para receber os avisos'); return; }
+  if(nw && !whatsTo){ showToast('💬 Informe o número de WhatsApp'); return; }
+  const patch = { notify_email:ne, notify_whatsapp:nw, notify_email_to:emailTo||null, notify_whatsapp_to:whatsTo||null };
+  const {error} = await sb.from('invites').update(patch).eq('id',activeInvite.id).eq('user_id',currentUser.id);
+  if(error){ showToast('❌ Erro ao salvar: '+error.message); return; }
+  Object.assign(activeInvite, patch);
+  showToast('🔔 Preferências de notificação salvas!');
+}
+
+// ── EDITAR USUÁRIO ──
+function openUserModal(){
+  document.getElementById('editUserName').value = currentUser?.user_metadata?.name || '';
+  document.getElementById('editUserEmail').value = currentUser?.email || '';
+  document.getElementById('userModal').classList.add('open');
+}
+function closeUserModal(){ document.getElementById('userModal').classList.remove('open'); }
+async function saveUserProfile(){
+  const name = document.getElementById('editUserName').value.trim();
+  if(!name){ showToast('Digite um nome'); return; }
+  const {error} = await sb.auth.updateUser({ data:{ name } });
+  if(error){ showToast('❌ Erro ao salvar: '+error.message); return; }
+  try{ await sb.from('profiles').update({name}).eq('id',currentUser.id); }catch(_){}
+  currentUser.user_metadata = { ...(currentUser.user_metadata||{}), name };
+  document.getElementById('userName').textContent = name;
+  document.getElementById('userAvatar').textContent = name[0].toUpperCase();
+  closeUserModal();
+  showToast('✅ Perfil atualizado!');
 }
 
 // ── UPGRADE ──
@@ -570,8 +1068,10 @@ function filterGuests(q){
 }
 
 // ── ACTIONS ──
-function copyLink(link){navigator.clipboard.writeText(link).then(()=>showToast('✅ Link copiado!'));}
+function markShared(){ if(activeInvite) localStorage.setItem('ccm_shared_'+activeInvite.id,'1'); }
+function copyLink(link){navigator.clipboard.writeText(link).then(()=>{ markShared(); showToast('✅ Link copiado!'); });}
 function shareWhatsApp(link, titleArg){
+  markShared();
   const inv = activeInvite || {};
   const displayTitle = (inv.title || inv.event_name || titleArg || 'Convite especial').trim();
   const nome  = (inv.event_name || '').trim();
@@ -654,6 +1154,45 @@ function timeAgo(iso){
   if(s<60)return'agora mesmo';if(s<3600)return Math.floor(s/60)+'min atrás';
   if(s<86400)return Math.floor(s/3600)+'h atrás';return Math.floor(s/86400)+'d atrás';
 }
+
+// ── CONFETE (celebra novas confirmações) ──
+function fireConfetti(){
+  if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const cv = document.getElementById('confettiCanvas');
+  if(!cv) return;
+  const ctx = cv.getContext('2d');
+  cv.width = innerWidth; cv.height = innerHeight;
+  const colors = ['#FF3D6B','#FFD93D','#34D399','#60A5FA','#F472B6'];
+  const parts = Array.from({length:130},()=>({
+    x: Math.random()*cv.width,
+    y: -20 - Math.random()*cv.height*0.35,
+    r: 4 + Math.random()*5,
+    c: colors[Math.floor(Math.random()*colors.length)],
+    vy: 2.2 + Math.random()*3.4,
+    vx: -1.5 + Math.random()*3,
+    rot: Math.random()*Math.PI,
+    vr: -0.1 + Math.random()*0.2
+  }));
+  let frames = 0;
+  cancelAnimationFrame(window._cfRaf);
+  (function loop(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    for(const p of parts){
+      p.y += p.vy; p.x += p.vx + Math.sin((frames+p.r)*0.06); p.rot += p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+      ctx.fillStyle = p.c; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.6);
+      ctx.restore();
+    }
+    frames++;
+    if(frames < 260 && parts.some(p=>p.y < cv.height+20)) window._cfRaf = requestAnimationFrame(loop);
+    else ctx.clearRect(0,0,cv.width,cv.height);
+  })();
+}
+
+// ── ATALHOS DE TECLADO ──
+document.addEventListener('keydown', e=>{
+  if(e.key === 'Escape'){ closeUserModal(); closeGuestModal(); }
+});
 
 init();
 </script>
