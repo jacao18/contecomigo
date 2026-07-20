@@ -99,6 +99,11 @@
     .badge-yes{background:rgba(52,211,153,.12);color:var(--green);border:1px solid rgba(52,211,153,.2);}
     .badge-no{background:rgba(248,113,113,.12);color:#f87171;border:1px solid rgba(248,113,113,.2);}
     .badge-pending{background:rgba(26,10,0,.06);color:rgba(26,10,0,.4);border:1px solid rgba(26,10,0,.08);}
+    .status-sel{appearance:none;-webkit-appearance:none;cursor:pointer;padding:.2rem 1.4rem .2rem .6rem;border-radius:99px;font-size:.7rem;font-weight:700;background-repeat:no-repeat;background-position:right .5rem center;background-size:.65rem;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' fill='none' stroke='%23999' stroke-width='1.6'/%3E%3C/svg%3E");}
+    .status-sel.st-yes{background-color:rgba(52,211,153,.12);color:var(--green);border:1px solid rgba(52,211,153,.2);}
+    .status-sel.st-no{background-color:rgba(248,113,113,.12);color:#f87171;border:1px solid rgba(248,113,113,.2);}
+    .status-sel.st-pending{background-color:rgba(26,10,0,.06);color:rgba(26,10,0,.5);border:1px solid rgba(26,10,0,.08);}
+    .status-sel option{color:#1a0a00;background:#fff;}
     .empty-state{padding:3rem;text-align:center;color:rgba(26,10,0,.25);}
     .empty-state-emoji{font-size:2.5rem;margin-bottom:.75rem;}
 
@@ -109,6 +114,12 @@
     .gift-name-dash{font-size:.85rem;font-weight:700;margin-bottom:.2rem;}
     .gift-price-dash{font-size:.75rem;color:var(--yellow-dk);font-weight:700;margin-bottom:.6rem;}
     .gift-reserver{font-size:.72rem;color:rgba(26,10,0,.4);}
+    .gift-photo-dash{width:100%;height:96px;border-radius:8px;background-size:cover;background-position:center;background-repeat:no-repeat;margin-bottom:.5rem;background-color:rgba(26,10,0,.05);}
+    .gift-actions-dash{display:flex;gap:.4rem;margin-top:.6rem;}
+    .gift-act-btn{flex:1;padding:.35rem .5rem;border:1px solid var(--border);border-radius:8px;background:transparent;font-size:.72rem;font-weight:700;color:rgba(26,10,0,.6);cursor:pointer;transition:all .15s;}
+    .gift-act-btn:hover{border-color:rgba(26,10,0,.3);background:rgba(26,10,0,.03);}
+    .gift-act-btn.danger{flex:0 0 auto;color:#f87171;border-color:rgba(248,113,113,.25);}
+    .gift-act-btn.danger:hover{background:rgba(248,113,113,.08);}
 
     .share-box{background:linear-gradient(135deg,rgba(255,61,107,.08),rgba(255,217,61,.06));border:1px solid rgba(255,61,107,.15);border-radius:16px;padding:1.5rem;margin-bottom:2rem;}
     .share-box-title{font-family:var(--font-display);font-size:1.2rem;font-weight:700;font-style:italic;margin-bottom:.35rem;}
@@ -330,6 +341,35 @@
   </div>
 </div>
 
+<!-- MODAL: ADICIONAR/EDITAR PRESENTE -->
+<div class="modal-overlay" id="giftModal" onclick="if(event.target===this)closeGiftModal()" role="dialog" aria-modal="true" aria-label="Presente">
+  <div class="modal-box">
+    <div class="modal-title" id="giftModalTitle">🎁 Adicionar presente</div>
+    <label class="form-label" for="giftName">Nome *</label>
+    <input class="form-input" id="giftName" type="text" placeholder="Ex: Jogo de panelas" maxlength="80"/>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+      <div>
+        <label class="form-label" for="giftPrice">Preço</label>
+        <input class="form-input" id="giftPrice" type="text" placeholder="Ex: R$ 150" maxlength="40"/>
+      </div>
+      <div>
+        <label class="form-label" for="giftEmoji">Emoji</label>
+        <input class="form-input" id="giftEmoji" type="text" placeholder="🎁" maxlength="4"/>
+      </div>
+    </div>
+    <label class="form-label" for="giftLink">Link da loja (opcional)</label>
+    <input class="form-input" id="giftLink" type="url" placeholder="https://loja.com/produto"/>
+    <label class="form-label" for="giftPay">Link de pagamento / Pix (opcional)</label>
+    <input class="form-input" id="giftPay" type="url" placeholder="https://mpago.li/..."/>
+    <label class="form-label" for="giftPhoto">URL da imagem (opcional)</label>
+    <input class="form-input" id="giftPhoto" type="url" placeholder="https://.../foto.jpg"/>
+    <div style="display:flex;gap:.5rem;justify-content:flex-end;margin-top:.75rem">
+      <button class="btn-xs btn-xs-outline" style="padding:.55rem 1rem" onclick="closeGiftModal()">Cancelar</button>
+      <button class="btn-xs btn-xs-pink" style="padding:.55rem 1.25rem" onclick="saveGift()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
 <!-- NAVEGAÇÃO MOBILE -->
 <nav class="mobile-tabs" aria-label="Navegação">
   <button class="mtab active" data-mtab="overview" onclick="showSection('overview',null,this)"><span class="mtab-ico">🏠</span>Início</button>
@@ -419,6 +459,20 @@ function subscribeRealtime(){
         if(['overview','guests','mural'].includes(activeSection)) render();
         if(payload.new.attending==='yes') fireConfetti();
         showToast('🎉 Novo convidado: '+(payload.new.name||''));
+      })
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'guests',filter:'invite_id=eq.'+activeInvite.id},
+      payload=>{
+        const i = guests.findIndex(g=>g.id===payload.new.id);
+        if(i>=0) guests[i] = payload.new; else guests.unshift(payload.new);
+        updateMuralBadge();
+        if(['overview','guests','mural'].includes(activeSection)) render();
+      })
+    .on('postgres_changes',{event:'DELETE',schema:'public',table:'guests',filter:'invite_id=eq.'+activeInvite.id},
+      payload=>{
+        guests = guests.filter(g=>g.id!==payload.old.id);
+        document.getElementById('guestBadge').textContent = guests.length;
+        updateMuralBadge();
+        if(['overview','guests','mural'].includes(activeSection)) render();
       })
     .subscribe();
 }
@@ -749,7 +803,7 @@ function renderGuestsTable(list){
       <td><div class="guest-name">${esc(g.name)}</div></td>
       <td>${digits?`<button class="guest-wpp-btn" onclick="guestWhatsApp('${digits}','${safeName}')" title="Chamar no WhatsApp">💬 ${esc(g.phone)}</button>`:'<div class="guest-phone">—</div>'}</td>
       <td style="text-align:center">${(parseInt(g.plus_ones)||0)+1}</td>
-      <td><span class="badge badge-${g.attending==='yes'?'yes':g.attending==='no'?'no':'pending'}">${g.attending==='yes'?'✅ Sim':g.attending==='no'?'❌ Não':'⏳ Pendente'}</span></td>
+      <td>${(()=>{const st=g.attending==='yes'?'yes':g.attending==='no'?'no':'pending';return `<select class="status-sel st-${st}" title="Alterar status" onchange="updateGuestStatus('${g.id}',this.value)"><option value="yes"${g.attending==='yes'?' selected':''}>✅ Sim</option><option value="no"${g.attending==='no'?' selected':''}>❌ Não</option><option value="maybe"${(g.attending==='maybe'||!g.attending)?' selected':''}>⏳ Pendente</option></select>`;})()}</td>
       <td style="font-size:.78rem;color:rgba(26,10,0,.45);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc(g.message||'')}">${esc(g.message)||'—'}</td>
       <td style="font-size:.75rem;color:rgba(26,10,0,.3)">${timeAgo(g.created_at)}</td>
     </tr>`;}).join('')}</tbody></table>`;
@@ -796,6 +850,26 @@ async function saveNewGuest(){
   showToast('✅ '+name+' entrou na lista!');
 }
 
+// ── EDITAR STATUS DE UM CONVIDADO (dono do painel) ──
+async function updateGuestStatus(id, attending){
+  const g = guests.find(x=>x.id===id);
+  if(!g) return;
+  const prev = g.attending;
+  if(prev===attending) return;
+  g.attending = attending; // otimista
+  render();
+  const {data, error} = await sb.from('guests')
+    .update({attending}).eq('id',id).select();
+  if(error || !data || !data.length){
+    g.attending = prev; // reverte
+    render();
+    showToast('❌ Não foi possível atualizar'+(error?': '+error.message:''));
+    return;
+  }
+  const label = attending==='yes'?'confirmado ✅':attending==='no'?'marcado como não vai ❌':'marcado como pendente ⏳';
+  showToast(`🔄 ${g.name} ${label}`);
+}
+
 // ── WHATSAPP DIRETO PARA O CONVIDADO ──
 function guestWhatsApp(digits, name){
   let p = String(digits).replace(/\D/g,'');
@@ -809,23 +883,89 @@ function guestWhatsApp(digits, name){
 }
 
 // ── GIFTS ──
+// ── CRUD DE PRESENTES (funciona mesmo com convite publicado) ──
+let editingGiftId = null;
+function openGiftModal(id){
+  if(!activeInvite){ showToast('✨ Crie um convite primeiro'); return; }
+  editingGiftId = id || null;
+  const g = id ? gifts.find(x=>x.id===id) : null;
+  document.getElementById('giftModalTitle').textContent = g ? '✏️ Editar presente' : '🎁 Adicionar presente';
+  document.getElementById('giftName').value  = g?.name || '';
+  document.getElementById('giftPrice').value = g?.price || '';
+  document.getElementById('giftEmoji').value = g?.emoji || '';
+  document.getElementById('giftLink').value  = g?.link || '';
+  document.getElementById('giftPay').value   = g?.pay_link || '';
+  document.getElementById('giftPhoto').value = g?.photo_url || '';
+  document.getElementById('giftModal').classList.add('open');
+  setTimeout(()=>document.getElementById('giftName').focus(),60);
+}
+function closeGiftModal(){ document.getElementById('giftModal').classList.remove('open'); editingGiftId=null; }
+
+async function saveGift(){
+  if(!activeInvite) return;
+  const name = document.getElementById('giftName').value.trim();
+  if(!name){ showToast('Digite o nome do presente'); return; }
+  const patch = {
+    name,
+    price:    document.getElementById('giftPrice').value.trim() || null,
+    emoji:    document.getElementById('giftEmoji').value.trim() || '🎁',
+    link:     document.getElementById('giftLink').value.trim() || null,
+    pay_link: document.getElementById('giftPay').value.trim() || null,
+    photo_url:document.getElementById('giftPhoto').value.trim() || null,
+  };
+  if(editingGiftId){
+    const {data, error} = await sb.from('gifts').update(patch).eq('id',editingGiftId).select();
+    if(error || !data || !data.length){ showToast('❌ Não foi possível salvar'+(error?': '+error.message:'')); return; }
+    const i = gifts.findIndex(x=>x.id===editingGiftId);
+    if(i>=0) gifts[i] = {...gifts[i], ...data[0]};
+    showToast('✅ Presente atualizado!');
+  } else {
+    const {data, error} = await sb.from('gifts')
+      .insert({invite_id:activeInvite.id, reserved:false, ...patch})
+      .select().single();
+    if(error){ showToast('❌ Erro ao adicionar: '+error.message); return; }
+    if(data && !gifts.some(g=>g.id===data.id)) gifts.push(data);
+    showToast('✅ '+name+' adicionado à lista!');
+  }
+  closeGiftModal();
+  render();
+}
+
+async function deleteGift(id){
+  const g = gifts.find(x=>x.id===id);
+  if(!g) return;
+  const warn = g.reserved ? `"${g.name}" já foi reservado${g.reserved_by?' por '+g.reserved_by:''}. Excluir mesmo assim?` : `Excluir "${g.name}" da lista de presentes?`;
+  if(!confirm(warn)) return;
+  const {error} = await sb.from('gifts').delete().eq('id',id);
+  if(error){ showToast('❌ Não foi possível excluir: '+error.message); return; }
+  gifts = gifts.filter(x=>x.id!==id);
+  render();
+  showToast('🗑️ Presente removido');
+}
+
 function renderGiftsSection(){
   const reservedGifts=gifts.filter(g=>g.reserved).length;
   return `
-    <div class="section-hdr"><h2>🎁 Lista de presentes</h2><button class="btn-xs btn-xs-pink" onclick="goEditor()">+ Gerenciar</button></div>
+    <div class="section-hdr"><h2>🎁 Lista de presentes</h2><button class="btn-xs btn-xs-pink" onclick="openGiftModal()">+ Adicionar presente</button></div>
     <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
       <div class="stat-card"><div class="stat-top"><div class="stat-icon green">✅</div></div><div class="stat-num">${reservedGifts}</div><div class="stat-label">Reservados</div></div>
       <div class="stat-card"><div class="stat-top"><div class="stat-icon blue">🎁</div></div><div class="stat-num">${gifts.length-reservedGifts}</div><div class="stat-label">Disponíveis</div></div>
       <div class="stat-card"><div class="stat-top"><div class="stat-icon yellow">💰</div></div><div class="stat-num">${gifts.length}</div><div class="stat-label">Total de itens</div></div>
     </div>
-    ${gifts.length ? `<div class="gifts-grid-dash">${gifts.map(g=>`
+    ${gifts.length ? `<div class="gifts-grid-dash">${gifts.map(g=>{
+      const photo = String(g.photo_url||'').replace(/["'<>\\]/g,'');
+      return `
       <div class="gift-card-dash">
-        <div class="gift-emoji-dash">${esc(g.emoji)||'🎁'}</div>
+        ${photo?`<div class="gift-photo-dash" style="background-image:url('${photo}')"></div>`:`<div class="gift-emoji-dash">${esc(g.emoji)||'🎁'}</div>`}
         <div class="gift-name-dash">${esc(g.name)}</div>
         <div class="gift-price-dash">${esc(g.price)||'—'}</div>
         <span class="badge ${g.reserved?'badge-yes':'badge-pending'}" style="margin-bottom:.4rem">${g.reserved?'✅ Reservado':'⏳ Disponível'}</span>
         ${g.reserved&&g.reserved_by?`<div class="gift-reserver">por ${esc(g.reserved_by)}</div>`:''}
-      </div>`).join('')}</div>` : `<div class="empty-state"><div class="empty-state-emoji">🎁</div><div>Nenhum presente adicionado</div><button class="btn-xs btn-xs-pink" onclick="goEditor()" style="margin-top:1rem;padding:.5rem 1.25rem">Adicionar presentes</button></div>`}`;
+        <div class="gift-actions-dash">
+          <button class="gift-act-btn" title="Editar" onclick="openGiftModal('${g.id}')">✏️ Editar</button>
+          <button class="gift-act-btn danger" title="Excluir" onclick="deleteGift('${g.id}')">🗑️</button>
+        </div>
+      </div>`;}).join('')}</div>` : `<div class="empty-state"><div class="empty-state-emoji">🎁</div><div>Nenhum presente adicionado</div><button class="btn-xs btn-xs-pink" onclick="openGiftModal()" style="margin-top:1rem;padding:.5rem 1.25rem">Adicionar presentes</button></div>`}`;
 }
 
 // ── SHARE ──

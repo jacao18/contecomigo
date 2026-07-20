@@ -441,6 +441,10 @@
     .btn-wish-submit:disabled{opacity:.6;cursor:not-allowed;}
 
     @media(max-width:600px){
+      .nav{padding:.7rem 1rem;}
+      .nav-links{gap:.4rem;}
+      .nav-link-pill{padding:.4rem .6rem;font-size:.95rem;line-height:1;}
+      .nav-txt{display:none;}
       .countdown-bar{gap:1rem;}
       .cd-num{font-size:2.2rem;min-width:50px;}
       .gifts-grid{grid-template-columns:1fr 1fr;}
@@ -578,9 +582,9 @@
 <nav class="nav">
   <div class="nav-logo" onclick="goHome()">CrieConvites</div>
   <div class="nav-links">
-    <div class="nav-link-pill" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ Confirmar</div>
-    <div class="nav-link-pill" onclick="document.getElementById('giftsSection').scrollIntoView({behavior:'smooth'})">🎁 Presentes</div>
-    <div class="nav-link-pill pink" onclick="openShareModal()">💬 Compartilhar</div>
+    <div class="nav-link-pill" title="Confirmar presença" onclick="document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'})">✅ <span class="nav-txt">Confirmar</span></div>
+    <div class="nav-link-pill" title="Ver presentes" onclick="document.getElementById('giftsSection').scrollIntoView({behavior:'smooth'})">🎁 <span class="nav-txt">Presentes</span></div>
+    <div class="nav-link-pill pink" title="Compartilhar convite" onclick="openShareModal()">💬 <span class="nav-txt">Compartilhar</span></div>
   </div>
 </nav>
 
@@ -2221,11 +2225,13 @@ async function submitRSVP() {
 
   let error;
   if (existing) {
-    // Update existing
-    ({ error } = await sb
+    // Update existing — .select() para detectar bloqueio de RLS (0 linhas sem erro)
+    const { data: upd, error: uerr } = await sb
       .from('guests')
       .update({ name, attending, plus_ones, message })
-      .eq('id', existing.id));
+      .eq('id', existing.id)
+      .select();
+    error = uerr || ((!upd || !upd.length) ? new Error('Não foi possível salvar a alteração.') : null);
   } else {
     // Insert new
     ({ error } = await sb
