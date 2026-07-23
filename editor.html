@@ -189,7 +189,10 @@
     .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:#1e1e1e;color:#fff;border-radius:12px;padding:.75rem 1.5rem;font-size:.85rem;font-weight:700;display:flex;align-items:center;gap:.5rem;box-shadow:0 16px 40px rgba(26,10,0,0.25);transition:transform .3s var(--ease);z-index:1000;}
     .toast.show{transform:translateX(-50%) translateY(0);}
 
-    @media(max-width:900px){body{overflow:auto;}.editor-layout{grid-template-columns:1fr;height:auto;}.preview-area{display:none;}.sidebar{overflow:visible;border-right:none;}}
+    @media(max-width:900px){body{overflow:auto;}.editor-layout{grid-template-columns:1fr;height:auto;}.preview-area{display:none;}.sidebar{overflow:visible;border-right:none;}
+      /* Navegação de passos sempre visível no celular */
+      .step-nav{position:sticky;bottom:0;z-index:20;background:var(--panel);margin:1.25rem -1.25rem 0;padding:.85rem 1.25rem calc(.85rem + env(safe-area-inset-bottom));border-top:1px solid var(--border);box-shadow:0 -6px 18px rgba(26,10,0,.06);}
+    }
   </style>
 </head>
 <body>
@@ -225,12 +228,13 @@
       <!-- Template ativo -->
       <div id="activeTplBadge" style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,61,107,.06);border:1px solid rgba(255,61,107,.15);border-radius:10px;padding:.6rem .85rem;margin-bottom:1rem;">
         <span style="font-size:.8rem;font-weight:700;color:rgba(26,10,0,.6)">🎨 Template: <span id="activeTplName" style="color:var(--pink)">—</span></span>
-        <a href="templates.html" style="font-size:.75rem;font-weight:800;color:var(--pink);text-decoration:none;opacity:.75;transition:opacity .2s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.75">Trocar →</a>
+        <a href="templates.html" id="trocarTplLink" style="font-size:.75rem;font-weight:800;color:var(--pink);text-decoration:none;opacity:.75;transition:opacity .2s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.75">Trocar →</a>
+        <span id="lockTplNote" style="display:none;font-size:.72rem;font-weight:700;color:rgba(26,10,0,.4)">🔒 Não editável</span>
       </div>
 
       <!-- Upload de foto personalizada (aparece quando template suporta) -->
       <div class="field" id="heroUploadField" style="display:none">
-        <label>📸 Foto de fundo personalizada</label>
+        <label id="heroUploadLabel">📸 Foto de fundo personalizada</label>
         <div class="upload-zone" onclick="document.getElementById('heroFileInput').click()">
           <input type="file" id="heroFileInput" accept="image/*" onchange="handleHeroUpload(this)"/>
           <div class="upload-zone-label">Clique para escolher uma foto</div>
@@ -242,6 +246,19 @@
         </div>
       </div>
 
+      <!-- Opção de ocultar detalhes (apenas convite pronto) -->
+      <div class="field" id="hideDetailsField" style="display:none">
+        <label style="display:flex;align-items:center;gap:.5rem;text-transform:none;letter-spacing:0;font-weight:700;cursor:pointer">
+          <input type="checkbox" id="fHideDetails" onchange="collectState();updatePreview()" style="width:auto;margin:0"/>
+          Não exibir os detalhes da festa abaixo da imagem
+        </label>
+        <div class="field-hint">Marque se a sua imagem já contém todas as informações (data, local, etc.).</div>
+      </div>
+
+      <!-- Aviso para subir a imagem antes dos dados (convite pronto) -->
+      <div id="uploadFirstNotice" style="display:none;background:rgba(255,61,107,.06);border:1px dashed rgba(255,61,107,.3);border-radius:10px;padding:.85rem;text-align:center;font-size:.8rem;color:rgba(26,10,0,.5);margin-bottom:1rem">⬆️ Envie a imagem do seu convite acima para liberar os dados da festa.</div>
+
+      <div id="eventDataFields">
       <div class="field">
         <label>Título do convite</label>
         <input type="text" id="fTitulo" placeholder="Ex: Festa de 30 anos da Camila" oninput="updatePreview()"/>
@@ -297,6 +314,7 @@
         <label>Prazo para confirmar</label>
         <input type="date" id="fPrazo" oninput="updatePreview()"/>
       </div>
+      </div><!-- /#eventDataFields -->
       <div class="step-nav">
         <button class="btn-sm btn-pink-sm" onclick="goStep(2)">Próximo: Estilo →</button>
       </div>
@@ -445,12 +463,13 @@
       <div class="publish-summary" id="step4summary"></div>
 
       <div class="field">
-        <label>Slug do link (URL personalizada)</label>
+        <label>URL personalizada</label>
         <div style="display:flex;align-items:center;gap:.4rem">
           <span style="font-size:.75rem;color:rgba(26,10,0,.3);white-space:nowrap;flex-shrink:0">crieconvites.com.br/</span>
           <input type="text" id="fSlug" placeholder="festa-camila-30" oninput="updateSlugPreview()" style="min-width:0"/>
         </div>
         <div style="margin-top:.35rem;font-size:.72rem;color:rgba(26,10,0,.3)" id="slugPreview"></div>
+        <div style="margin-top:.25rem;font-size:.72rem;font-weight:700" id="slugStatus"></div>
       </div>
 
       <div class="field">
@@ -502,6 +521,7 @@ const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
 
 let currentUser = null;
 let editingInviteId = null;
+let lockedTemplate = false;
 
 // ══ TEMPLATES ══
 // tweaks: array de controles que aparecem no Step 2 para este template.
@@ -1040,7 +1060,7 @@ const state = {
   heroPhotoUrl:'', heroPhotoBlob:null,  // foto de fundo personalizada
   gifts:[], slug:'', visib:'public',
   music_url:'', gallery_files:[], gallery_urls:[], pix_key:'', pay_link:'',
-  wishes_enabled:true, closed_list:false
+  wishes_enabled:true, closed_list:false, hideDetails:false
 };
 
 // Foto temporária de presente sendo adicionado
@@ -1278,6 +1298,8 @@ function selectTemplate(tplId, cat, el){
 
 // ══ SHOW/HIDE FIELDS BASED ON editable_fields ══
 function updateEditableFields(tpl){
+  // Layout do "convite pronto" (upload primeiro + opção de ocultar detalhes)
+  applyProprioLayout(tpl);
   // For built-in templates, all base fields are shown
   // For custom templates, only show fields listed in editableFields
   const ef = tpl.editableFields;
@@ -1463,6 +1485,7 @@ function handleHeroUpload(input){
   // Re-render tweak controls to show thumbnail preview
   const tpl = getCurrentTemplate();
   if(tpl) renderTweakControls(tpl);
+  updateProprioGate();
   updatePreview();
 }
 
@@ -1476,7 +1499,47 @@ function removeHeroPhoto(){
   // Re-render tweak controls to remove thumbnail
   const tpl = getCurrentTemplate();
   if(tpl) renderTweakControls(tpl);
+  updateProprioGate();
   updatePreview();
+}
+
+// ══ CONVITE PRONTO (upload-primeiro + ocultar detalhes) ══
+function isProprioTpl(tpl){
+  return !!(tpl && (tpl.id==='convite-proprio-v' || tpl.id==='convite-proprio-h'));
+}
+function applyProprioLayout(tpl){
+  const proprio = isProprioTpl(tpl);
+  const heroField = document.getElementById('heroUploadField');
+  const heroLabel = document.getElementById('heroUploadLabel');
+  const hideField = document.getElementById('hideDetailsField');
+  if(proprio){
+    if(heroField) heroField.style.display='block';
+    if(heroLabel) heroLabel.textContent = (tpl.id==='convite-proprio-h')
+      ? '📤 Passo 1 — Envie a imagem do convite (horizontal)'
+      : '📤 Passo 1 — Envie a imagem do convite (vertical)';
+    if(hideField) hideField.style.display='block';
+    // Mostra a miniatura ao editar um convite já com imagem
+    if(state.heroPhotoUrl){
+      const t=document.getElementById('heroThumb'), tw=document.getElementById('heroThumbWrap');
+      if(t) t.src=state.heroPhotoUrl; if(tw) tw.style.display='block';
+    }
+  } else {
+    if(heroField) heroField.style.display='none';
+    if(hideField) hideField.style.display='none';
+  }
+  updateProprioGate();
+}
+function updateProprioGate(){
+  const proprio = isProprioTpl(getCurrentTemplate());
+  const dataFields = document.getElementById('eventDataFields');
+  const notice = document.getElementById('uploadFirstNotice');
+  if(proprio && !state.heroPhotoUrl){
+    if(dataFields) dataFields.style.display='none';
+    if(notice) notice.style.display='block';
+  } else {
+    if(dataFields) dataFields.style.display='';
+    if(notice) notice.style.display='none';
+  }
 }
 
 // ══ GALLERY UPLOAD ══
@@ -1648,12 +1711,14 @@ function collectState(){
   const pl=document.getElementById('fPayLink'); if(pl) state.pay_link=pl.value.trim();
   const wish=document.getElementById('fWishes'); if(wish) state.wishes_enabled=wish.checked;
   const closed=document.getElementById('fClosed'); if(closed) state.closed_list=closed.checked;
+  const hd=document.getElementById('fHideDetails'); if(hd) state.hideDetails=hd.checked;
 }
 
 // ══ FILL FORM ══
 function fillForm(){
   const map={fTitulo:'titulo',fNome:'nome',fData:'data',fHora:'hora',fHoraFim:'horaFim',fLocal:'local',fEndereco:'endereco',fIdade:'idade',fDress:'dress',fMsg:'msg',fPrazo:'prazo',fSlug:'slug',fVisib:'visib'};
   Object.entries(map).forEach(([id,k])=>{const el=document.getElementById(id);if(el&&state[k]!==undefined)el.value=state[k];});
+  const hd=document.getElementById('fHideDetails'); if(hd) hd.checked=!!state.hideDetails;
 }
 
 function fillExtras(){
@@ -2622,7 +2687,7 @@ function renderTemplateHTML(tplId, s){
       s.endereco      ? { icon:'🗺️', val: s.endereco } : null,
       s.dress         ? { icon:'👗', val: s.dress } : null,
     ].filter(Boolean);
-    const hasData = dataItems.length > 0 || s.msg || s.titulo;
+    const hasData = !s.hideDetails && (dataItems.length > 0 || s.msg || s.titulo);
     return `<div style="font-family:'Nunito',sans-serif;background:#f8f8f8;min-height:100%">
       <!-- Imagem original — sem nenhum overlay ou filtro -->
       <div style="width:100%;background:#fff;line-height:0">
@@ -2701,10 +2766,31 @@ function renderPublishSummary(){
 }
 
 // ══ SLUG ══
+let slugCheckTimer=null;
 function updateSlugPreview(){
-  const v=document.getElementById('fSlug').value;
+  const el=document.getElementById('fSlug');
+  const v=el.value.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+  if(v!==el.value) el.value=v;
   document.getElementById('slugPreview').textContent=v?`Link: crieconvites.com.br/${v}`:'';
   state.slug=v;
+  const st=document.getElementById('slugStatus');
+  clearTimeout(slugCheckTimer);
+  if(!v){ if(st) st.textContent=''; return; }
+  if(st){ st.textContent='⏳ Verificando disponibilidade...'; st.style.color='rgba(26,10,0,.4)'; }
+  slugCheckTimer=setTimeout(()=>checkSlugAvailability(v),450);
+}
+async function checkSlugAvailability(v){
+  const st=document.getElementById('slugStatus');
+  if(!st) return;
+  try{
+    let q=sb.from('invites').select('id',{count:'exact',head:true}).eq('slug',v);
+    if(editingInviteId) q=q.neq('id',editingInviteId);
+    const {count,error}=await q;
+    if(document.getElementById('fSlug').value!==v) return; // resultado obsoleto
+    if(error){ st.textContent=''; return; }
+    if(count && count>0){ st.textContent='❌ Esta URL já está em uso. Escolha outra.'; st.style.color='#e11d2a'; }
+    else { st.textContent='✅ URL disponível!'; st.style.color='#16a34a'; }
+  }catch(_){ st.textContent=''; }
 }
 
 // ══ SAVE DRAFT ══
@@ -2732,12 +2818,13 @@ async function loadInvite(id){
     showToast('❌ Convite não encontrado ou não pertence a você.');
     return;
   }
-  if(inv.published){
-    showToast('🔒 Convite publicado não pode ser editado. Exclua e crie um novo.');
-    setTimeout(()=>location.href='dashboard.html', 2000);
-    return;
-  }
   editingInviteId=inv.id;
+  // Convite já publicado: pode ser editado, mas o template fica travado
+  if(inv.published){
+    lockedTemplate=true;
+    const tl=document.getElementById('trocarTplLink'); if(tl) tl.style.display='none';
+    const ln=document.getElementById('lockTplNote'); if(ln) ln.style.display='inline';
+  }
   Object.assign(state,{
     tplId:inv.template||'aniv-neon',
     titulo:inv.title||'',nome:inv.event_name||'',data:inv.event_date||'',
@@ -2748,6 +2835,7 @@ async function loadInvite(id){
     music_url:inv.music_url||'',pix_key:inv.pix_key||'',pay_link:inv.pay_link||'',
     gallery_urls:inv.gallery_urls||[],
     wishes_enabled:inv.wishes_enabled!==false,closed_list:inv.closed_list||false,
+    hideDetails:inv.hide_details||false,
     heroPhotoUrl:inv.photo_url||''
   });
   const {data:gifts}=await sb.from('gifts').select('*').eq('invite_id',id);
@@ -2815,6 +2903,19 @@ async function publishInvite(){
 
   const slug=state.slug||state.nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'')+'-'+Date.now();
 
+  // Impede publicar com uma URL personalizada j\u00e1 usada por outro convite
+  {
+    let sq=sb.from('invites').select('id',{count:'exact',head:true}).eq('slug',slug);
+    if(editingInviteId) sq=sq.neq('id',editingInviteId);
+    const {count:slugTaken}=await sq;
+    if(slugTaken && slugTaken>0){
+      showToast('\u274c Esta URL personalizada j\u00e1 est\u00e1 em uso. Escolha outra.');
+      goStep(5);
+      btns.forEach(b=>{if(b){b.disabled=false;b.textContent='\ud83d\ude80 Publicar convite agora!';}});
+      return;
+    }
+  }
+
   const inviteData={
     user_id:currentUser.id,slug,
     title:state.titulo,event_name:state.nome,
@@ -2833,6 +2934,7 @@ async function publishInvite(){
     pay_link:state.pay_link||null,
     wishes_enabled:state.wishes_enabled,
     closed_list:state.closed_list,
+    hide_details:state.hideDetails,
   };
 
   let inviteId=editingInviteId;

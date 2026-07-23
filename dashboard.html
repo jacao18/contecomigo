@@ -23,7 +23,7 @@
     body{font-family:var(--font-body);background:var(--bg);color:var(--white);min-height:100vh;display:grid;grid-template-columns:240px 1fr;-webkit-font-smoothing:antialiased;}
     a{text-decoration:none;color:inherit;}
 
-    .sidenav{background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;min-height:100vh;position:sticky;top:0;}
+    .sidenav{background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;overflow-y:auto;position:sticky;top:0;}
     .sidenav-logo{padding:1.5rem;border-bottom:1px solid var(--border);font-family:var(--font-display);font-size:1.3rem;font-weight:700;font-style:italic;background:linear-gradient(135deg,var(--pink),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:pointer;}
     .sidenav-user{padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem;}
     .sidenav-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--yellow));display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:800;flex-shrink:0;color:#fff;}
@@ -35,7 +35,7 @@
     .sidenav-item.active{color:var(--white);background:rgba(255,61,107,.08);border-left-color:var(--pink);}
     .sidenav-icon{font-size:1rem;width:20px;text-align:center;}
     .sidenav-badge{margin-left:auto;background:var(--pink);color:#fff;font-size:.65rem;font-weight:800;padding:.1rem .4rem;border-radius:99px;}
-    .sidenav-bottom{margin-top:auto;padding:1.25rem;border-top:1px solid var(--border);}
+    .sidenav-bottom{margin-top:auto;padding:1.25rem;border-top:1px solid var(--border);position:sticky;bottom:0;background:var(--bg2);}
     .btn-new-invite{width:100%;padding:.75rem;background:var(--pink);color:#fff;border:none;border-radius:10px;font-family:var(--font-body);font-size:.85rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;transition:background .2s,transform .2s;box-shadow:0 6px 20px rgba(255,61,107,.3);}
     .btn-new-invite:hover{background:var(--pink-dark);transform:translateY(-1px);}
 
@@ -267,13 +267,14 @@
   <div class="sidenav-item" onclick="showSection('mural',this)"><span class="sidenav-icon">💌</span>Recados<span class="sidenav-badge" id="muralBadge" style="display:none">0</span></div>
 
   <div class="sidenav-section">Convite</div>
+  <div class="sidenav-item" onclick="goEditor()"><span class="sidenav-icon">✏️</span>Editar convite</div>
   <div class="sidenav-item" onclick="openPublicInvite()"><span class="sidenav-icon">👁</span>Ver como convidado</div>
   <div class="sidenav-item" onclick="showSection('share',this)"><span class="sidenav-icon">🔗</span>Compartilhar</div>
   <div class="sidenav-item" onclick="showSection('notifications',this)"><span class="sidenav-icon">🔔</span>Notificações</div>
 
   <div class="sidenav-section">Conta</div>
   <div class="sidenav-item" onclick="showSection('upgrade',this)"><span class="sidenav-icon">⭐</span>Fazer upgrade</div>
-  <div class="sidenav-item" onclick="location.href='convite-online.html'"><span class="sidenav-icon">🏡</span>Página inicial</div>
+  <div class="sidenav-item" onclick="location.href='dashboard.html'"><span class="sidenav-icon">📊</span>Dashboard</div>
   <div class="sidenav-item" onclick="doLogout()"><span class="sidenav-icon">🚪</span>Sair</div>
 
   <div class="sidenav-bottom">
@@ -361,8 +362,11 @@
     <input class="form-input" id="giftLink" type="url" placeholder="https://loja.com/produto"/>
     <label class="form-label" for="giftPay">Link de pagamento / Pix (opcional)</label>
     <input class="form-input" id="giftPay" type="url" placeholder="https://mpago.li/..."/>
-    <label class="form-label" for="giftPhoto">URL da imagem (opcional)</label>
-    <input class="form-input" id="giftPhoto" type="url" placeholder="https://.../foto.jpg"/>
+    <label class="form-label" for="giftPhotoFile">Imagem do presente (opcional)</label>
+    <input class="form-input" id="giftPhotoFile" type="file" accept="image/*" onchange="previewGiftPhoto(event)"/>
+    <div id="giftPhotoPreview" style="margin-top:.5rem;display:none">
+      <img id="giftPhotoPreviewImg" alt="Prévia da imagem" style="max-width:100%;max-height:140px;border-radius:10px;display:block"/>
+    </div>
     <div style="display:flex;gap:.5rem;justify-content:flex-end;margin-top:.75rem">
       <button class="btn-xs btn-xs-outline" style="padding:.55rem 1rem" onclick="closeGiftModal()">Cancelar</button>
       <button class="btn-xs btn-xs-pink" style="padding:.55rem 1.25rem" onclick="saveGift()">💾 Salvar</button>
@@ -568,7 +572,9 @@ async function loadData(){
 function showSection(s, el, mtabEl){
   activeSection = s;
   const titles={overview:'Visão Geral',guests:'Convidados',gifts:'Presentes',mural:'Mural de recados',share:'Compartilhar',notifications:'Notificações',upgrade:'Fazer Upgrade'};
-  document.getElementById('pageTitle').textContent = titles[s]||s;
+  const devSections={notifications:1,upgrade:1};
+  const devBadge = devSections[s] ? ' <span style="color:#e11d2a;font-weight:700;font-size:.72em">(em desenvolvimento)</span>' : '';
+  document.getElementById('pageTitle').innerHTML = esc(titles[s]||s) + devBadge;
   document.querySelectorAll('.sidenav-item').forEach(i=>i.classList.remove('active'));
   if(el) el.classList.add('active');
   document.querySelectorAll('.mtab').forEach(t=>t.classList.toggle('active', t.dataset.mtab===s));
@@ -654,6 +660,7 @@ function renderOverview(){
           <div style="font-size:.75rem;color:rgba(26,10,0,.4);margin-bottom:1rem">${invDate}</div>
           <div style="display:flex;gap:.5rem;flex-wrap:wrap">
             <button class="btn-xs btn-xs-outline" onclick="openPublicInvite()">👁 Ver</button>
+            <button class="btn-xs btn-xs-outline" onclick="goEditor()">✏️ Editar</button>
             <button class="btn-xs btn-xs-outline" style="color:#f87171;border-color:rgba(248,113,113,.3)" onclick="confirmDeleteInvite('${activeInvite?.id}')">🗑 Deletar</button>
           </div>
         </div>
@@ -795,7 +802,7 @@ function renderGuestsSection(){
 
 function renderGuestsTable(list){
   if(!list.length) return `<div class="empty-state"><div class="empty-state-emoji">👀</div><div>Nenhum convidado confirmou ainda</div><div style="font-size:.8rem;margin-top:.4rem">Compartilhe o convite para receber confirmações — ou <span style="color:var(--pink);font-weight:800;cursor:pointer" onclick="openGuestModal()">adicione manualmente</span></div></div>`;
-  return `<table><thead><tr><th>Nome</th><th>WhatsApp</th><th>Acomp.</th><th>Status</th><th>Mensagem</th><th>Quando</th></tr></thead>
+  return `<table><thead><tr><th>Nome</th><th>WhatsApp</th><th>Total</th><th>Status</th><th>Mensagem</th><th>Quando</th></tr></thead>
     <tbody>${list.map(g=>{
       const digits = String(g.phone||'').replace(/\D/g,'');
       const safeName = esc(String(g.name||'').replace(/['"\\<>`]/g,''));
@@ -885,6 +892,16 @@ function guestWhatsApp(digits, name){
 // ── GIFTS ──
 // ── CRUD DE PRESENTES (funciona mesmo com convite publicado) ──
 let editingGiftId = null;
+let giftPhotoBlob = null;
+let giftPhotoExistingUrl = null;
+function previewGiftPhoto(e){
+  const f = e.target.files && e.target.files[0];
+  if(!f){ giftPhotoBlob = null; return; }
+  giftPhotoBlob = f;
+  const img = document.getElementById('giftPhotoPreviewImg');
+  img.src = URL.createObjectURL(f);
+  document.getElementById('giftPhotoPreview').style.display = 'block';
+}
 function openGiftModal(id){
   if(!activeInvite){ showToast('✨ Crie um convite primeiro'); return; }
   editingGiftId = id || null;
@@ -895,7 +912,12 @@ function openGiftModal(id){
   document.getElementById('giftEmoji').value = g?.emoji || '';
   document.getElementById('giftLink').value  = g?.link || '';
   document.getElementById('giftPay').value   = g?.pay_link || '';
-  document.getElementById('giftPhoto').value = g?.photo_url || '';
+  giftPhotoBlob = null;
+  giftPhotoExistingUrl = g?.photo_url || null;
+  document.getElementById('giftPhotoFile').value = '';
+  const gp = document.getElementById('giftPhotoPreview'), gpi = document.getElementById('giftPhotoPreviewImg');
+  if(giftPhotoExistingUrl){ gpi.src = giftPhotoExistingUrl; gp.style.display = 'block'; }
+  else { gpi.removeAttribute('src'); gp.style.display = 'none'; }
   document.getElementById('giftModal').classList.add('open');
   setTimeout(()=>document.getElementById('giftName').focus(),60);
 }
@@ -905,13 +927,21 @@ async function saveGift(){
   if(!activeInvite) return;
   const name = document.getElementById('giftName').value.trim();
   if(!name){ showToast('Digite o nome do presente'); return; }
+  let photoUrl = giftPhotoExistingUrl;
+  if(giftPhotoBlob){
+    const ext = (giftPhotoBlob.name.split('.').pop() || 'jpg').toLowerCase();
+    const path = `gifts/${activeInvite.id}/${Date.now()}.${ext}`;
+    const {error:upErr} = await sb.storage.from('invite-images').upload(path, giftPhotoBlob, {upsert:true});
+    if(upErr){ showToast('❌ Erro ao enviar imagem: '+upErr.message); return; }
+    photoUrl = sb.storage.from('invite-images').getPublicUrl(path).data.publicUrl;
+  }
   const patch = {
     name,
     price:    document.getElementById('giftPrice').value.trim() || null,
     emoji:    document.getElementById('giftEmoji').value.trim() || '🎁',
     link:     document.getElementById('giftLink').value.trim() || null,
     pay_link: document.getElementById('giftPay').value.trim() || null,
-    photo_url:document.getElementById('giftPhoto').value.trim() || null,
+    photo_url:photoUrl || null,
   };
   if(editingGiftId){
     const {data, error} = await sb.from('gifts').update(patch).eq('id',editingGiftId).select();
@@ -1248,12 +1278,7 @@ function openPublicInvite(){
 }
 function goEditor(){
   if(activeInvite){
-    // Convite publicado não pode ser editado — é preciso deletar e criar um novo
-    if(activeInvite.published){
-      showToast('🔒 Convite publicado não pode ser editado. Exclua e crie um novo.');
-      return;
-    }
-    // Editing existing invite — go straight to editor with the invite loaded
+    // Editing existing invite (publicado ou rascunho) — abre o editor com o convite carregado
     localStorage.setItem('ccm_edit_invite', activeInvite.id);
     location.href='editor.html';
   } else {

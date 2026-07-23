@@ -1599,7 +1599,7 @@ function renderTemplateHTML(tplId, s){
       endereco      ? { icon:'🗺️', val: endereco } : null,
       dress         ? { icon:'👗', val: dress } : null,
     ].filter(Boolean);
-    const hasData = dataItems.length > 0 || msg || titulo;
+    const hasData = !s.hide_details && (dataItems.length > 0 || msg || titulo);
     const imgBlock = uploadedImg
       ? `<div style="width:100%;background:#fff;line-height:0"><img src="${uploadedImg}" style="width:100%;height:auto;display:block;object-fit:contain"/></div>`
       : `<div style="width:100%;background:#f0f0f0;height:280px;display:flex;align-items:center;justify-content:center;color:#999;font-family:'Nunito',sans-serif;font-size:.9rem">Imagem do convite</div>`;
@@ -1820,6 +1820,7 @@ async function init() {
         template: local.tplId || local.template || 'aniv-neon',
         photo_url: local.heroPhotoUrl || local.photo_url || '',
         gallery_urls: local.gallery_urls || [],
+        hide_details: local.hideDetails || local.hide_details || false,
         published: true
       };
       giftData = (local.gifts || []).map(g => ({...g, photo_url: g.imageUrl || g.photo_url || ''}));
