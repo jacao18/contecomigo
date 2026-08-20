@@ -204,7 +204,6 @@
     <div class="topbar-title" id="topbarTitle">Criar convite</div>
   </div>
   <div class="topbar-right">
-    <button class="btn-sm btn-outline-sm" onclick="saveDraft()">💾 Rascunho</button>
     <button class="btn-sm btn-outline-sm" onclick="openPreviewTab()">👁 Ver convite</button>
     <button class="btn-sm btn-pink-sm" id="btnPublish" onclick="publishInvite()">🚀 Publicar</button>
   </div>
@@ -367,17 +366,6 @@
         </div>
       </div>
 
-      <div class="field">
-        <label>🔒 Lista de convidados fechada</label>
-        <div style="display:flex;align-items:center;gap:.75rem;background:rgba(26,10,0,.04);border:1px solid var(--border);border-radius:10px;padding:.7rem 1rem">
-          <input type="checkbox" id="fClosed" style="width:18px;height:18px;accent-color:var(--pink);cursor:pointer;flex-shrink:0" onchange="collectState()"/>
-          <div>
-            <div style="font-size:.85rem;font-weight:700">Lista fechada</div>
-            <div style="font-size:.72rem;color:rgba(26,10,0,.4)">Somente convidados com WhatsApp cadastrado podem confirmar presença.</div>
-          </div>
-        </div>
-      </div>
-
       <div class="step-nav">
         <button class="btn-sm btn-outline-sm" onclick="goStep(2)">← Voltar</button>
         <button class="btn-sm btn-pink-sm" onclick="goStep(4)">Próximo: Presentes →</button>
@@ -472,17 +460,8 @@
         <div style="margin-top:.25rem;font-size:.72rem;font-weight:700" id="slugStatus"></div>
       </div>
 
-      <div class="field">
-        <label>Visibilidade</label>
-        <select id="fVisib">
-          <option value="public">🌍 Público — qualquer pessoa com o link</option>
-          <option value="private">🔒 Privado — só quem receber o link</option>
-        </select>
-      </div>
-
       <div class="publish-actions" style="margin-top:1rem">
         <button class="btn-sm btn-pink-sm" id="btnPublish2" onclick="publishInvite()">🚀 Publicar convite agora!</button>
-        <button class="btn-sm btn-outline-sm" onclick="saveDraft()">💾 Salvar como rascunho</button>
         <button class="btn-sm btn-yellow-sm" onclick="openPreviewTab()">👁 Ver como o convidado vê</button>
       </div>
 
@@ -716,7 +695,7 @@ const TEMPLATES = {
     },
     {
       id:'boy-pokemon',name:'Pokémon',
-      img:'https://images.unsplash.com/photo-1542779867-5b23e9e44cbf?w=600&q=80',
+      img:'https://imgs.search.brave.com/e8MyuuM1jg7i1PfZi0swrO9yjHvfzCQsPBVQROg_3YI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzI5LzIw/LzRhLzI5MjA0YTU2/YTIzMjRlYWFjM2M4/MzFhMWYwNzk1MWFh/LmpwZw',
       supportsHeroUpload:false,
       defaultAccent:'#FBBF24',defaultBg:'dark-blue',
       heroStyle:'color:#FBBF24',overlayStyle:'',
@@ -731,7 +710,7 @@ const TEMPLATES = {
     },
     {
       id:'boy-mickey',name:'Mickey Mouse',
-      img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80',
+        img:'https://imgs.search.brave.com/e8MyuuM1jg7i1PfZi0swrO9yjHvfzCQsPBVQROg_3YI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzI5LzIw/LzRhLzI5MjA0YTU2/YTIzMjRlYWFjM2M4/MzFhMWYwNzk1MWFh/LmpwZw',
       supportsHeroUpload:false,
       defaultAccent:'#EF4444',defaultBg:'dark-brown',
       heroStyle:'color:#EF4444',overlayStyle:'',
@@ -745,7 +724,7 @@ const TEMPLATES = {
     },
     {
       id:'boy-spongebob',name:'Bob Esponja',
-      img:'https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=600&q=80',
+        img:'https://imgs.search.brave.com/e8MyuuM1jg7i1PfZi0swrO9yjHvfzCQsPBVQROg_3YI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzI5LzIw/LzRhLzI5MjA0YTU2/YTIzMjRlYWFjM2M4/MzFhMWYwNzk1MWFh/LmpwZw',
       supportsHeroUpload:false,
       defaultAccent:'#FBBF24',defaultBg:'dark-blue',
       heroStyle:'color:#FBBF24',overlayStyle:'',
@@ -759,7 +738,7 @@ const TEMPLATES = {
     },
     {
       id:'boy-fotos',name:'Com suas fotos 📷',
-      img:'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=600&q=80',
+        img:'https://imgs.search.brave.com/e8MyuuM1jg7i1PfZi0swrO9yjHvfzCQsPBVQROg_3YI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzI5LzIw/LzRhLzI5MjA0YTU2/YTIzMjRlYWFjM2M4/MzFhMWYwNzk1MWFh/LmpwZw',
       supportsHeroUpload:true,
       defaultAccent:'#60A5FA',defaultBg:'dark-blue',
       heroStyle:'color:#60A5FA',overlayStyle:'',
@@ -773,7 +752,7 @@ const TEMPLATES = {
   'menina': [
     {
       id:'girl-ariel',name:'Pequena Sereia',
-      img:'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600&q=80',
+          img:'https://imgs.search.brave.com/e8MyuuM1jg7i1PfZi0swrO9yjHvfzCQsPBVQROg_3YI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzI5LzIw/LzRhLzI5MjA0YTU2/YTIzMjRlYWFjM2M4/MzFhMWYwNzk1MWFh/LmpwZw',
       supportsHeroUpload:false,
       defaultAccent:'#60A5FA',defaultBg:'mint',
       heroStyle:'color:#60A5FA',overlayStyle:'',
@@ -1200,7 +1179,7 @@ async function loadCustomTemplates(){
         const entry = {
           id: 'custom_'+t.id,
           name: t.name,
-          img: t.preview_img || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80',
+            img: t.preview_img || 'https://imgs.search.brave.com/e8MyuuM1jg7i1PfZi0swrO9yjHvfzCQsPBVQROg_3YI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzI5LzIw/LzRhLzI5MjA0YTU2/YTIzMjRlYWFjM2M4/MzFhMWYwNzk1MWFh/LmpwZw',
           supportsHeroUpload: t.supports_hero_upload || false,
           animated: !!t.is_animated,
           defaultAccent: t.default_accent || '#FFD93D',
@@ -1760,7 +1739,7 @@ function updateCustomPreview(tplId, s) {
 
   // Build variable substitution
   const ac = s.accent || tplDef.defaultAccent || '#FFD93D';
-  const heroImg = s.heroPhotoUrl || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80';
+  const heroImg = s.heroPhotoUrl || 'https://imgs.search.brave.com/e8MyuuM1jg7i1PfZi0swrO9yjHvfzCQsPBVQROg_3YI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzI5LzIw/LzRhLzI5MjA0YTU2/YTIzMjRlYWFjM2M4/MzFhMWYwNzk1MWFh/LmpwZw';
   const date = s.data ? new Date(s.data+'T12:00:00') : null;
   const dia = date ? String(date.getDate()).padStart(2,'0') : '';
   const mes = date ? date.toLocaleDateString('pt-BR',{month:'long'}) : '';

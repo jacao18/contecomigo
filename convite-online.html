@@ -10,7 +10,7 @@
   <meta name="keywords" content="convite de aniversário online, convite digital, convite virtual, confirmação de presença, RSVP online, lista de presentes, convite festa infantil, convite online grátis" />
   <meta name="theme-color" content="#FF3D6B" />
   <meta name="robots" content="index, follow, max-image-preview:large" />
-
+<meta name="lomadee" content="2324685" />
   <!-- Open Graph -->
   <meta property="og:title" content="Convite de Aniversário Online Grátis | CrieConvites" />
   <meta property="og:description" content="Crie convites digitais incríveis com confirmação de presença e lista de presentes. Pronto em 5 minutos." />
@@ -1651,7 +1651,13 @@
       align-items: center;
       justify-content: center;
       font-size: 0.9rem;
-      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+      color: var(--ink, #1A0A00);
+      transition: background 0.2s, border-color 0.2s, transform 0.2s, color 0.2s;
+    }
+
+    .footer-social-link svg {
+      width: 18px; height: 18px;
+      display: block;
     }
 
     .footer-social-link:hover {
@@ -2493,10 +2499,14 @@
     <div class="footer-bottom">
       <div class="footer-copy">© <span id="footerYear">2026</span> <strong>CrieConvites</strong>. Feito com 🎉 no Brasil.</div>
       <div class="footer-social">
-        <a href="#" class="footer-social-link" title="Instagram">📸</a>
+        <a href="https://www.instagram.com/crieconvites.com.br/" target="_blank" rel="noopener" class="footer-social-link" title="Instagram" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+        </a>
         <a href="#" class="footer-social-link" title="WhatsApp">💬</a>
         <a href="#" class="footer-social-link" title="TikTok">🎵</a>
-        <a href="#" class="footer-social-link" title="YouTube">▶️</a>
+        <a href="https://www.youtube.com/@CrieConvites" target="_blank" rel="noopener" class="footer-social-link" title="YouTube" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.2 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 5.8 3.02 3.02 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-5.8zM9.6 15.57V8.43L15.82 12 9.6 15.57z"></path></svg>
+        </a>
       </div>
     </div>
   </footer>
@@ -2616,8 +2626,8 @@
 
     // ══════════════════════════════
     //  TEMPLATES DATA + GRID
-    //  Catálogo REAL — espelhado de templates.html (built-ins).
-    //  Os cards renderizam o convite de verdade via preview-renderer.js.
+    //  A galeria usa as imagens de preview salvas pelo admin (loadAdminPreviews).
+    //  O array abaixo é só fallback enquanto elas carregam / se o Supabase falhar.
     // ══════════════════════════════
     const CAT_LABELS = {
       'homem': 'Masculino', 'mulher': 'Feminino', 'quinze': '15 Anos',
@@ -2625,42 +2635,10 @@
       'cha': 'Chá de Bebê', 'aniversario-adulto': 'Geral'
     };
 
-    const templates = [
-      // ── MASCULINO ──
-      { id:'hom-cerveja',        name:'Chope & Futebol',     category:'homem',              emoji:'🍺' },
-      { id:'hom-futebol',        name:'Campo de Futebol',    category:'homem',              emoji:'⚽' },
-      { id:'hom-minimalista',    name:'Minimalista',         category:'homem',              emoji:'🎂' },
-      // ── FEMININO ──
-      { id:'mul-champanhe',      name:'Champanhe & Glamour', category:'mulher',             emoji:'🥂' },
-      { id:'mul-rosa',           name:'Rosa & Fofo',         category:'mulher',             emoji:'🌸' },
-      { id:'mul-pool',           name:'Pool Party',          category:'mulher',             emoji:'🏊' },
-      // ── 15 ANOS ──
-      { id:'deb-valsa',          name:'Valsa Real',          category:'quinze',             emoji:'👑' },
-      { id:'deb-clean',          name:'Clean & Moderno',     category:'quinze',             emoji:'✨' },
-      { id:'deb-vintage',        name:'Vintage Dourado',     category:'quinze',             emoji:'🥇' },
-      // ── INFANTIL MENINO ──
-      { id:'boy-spiderman',      name:'Homem-Aranha',        category:'menino',             emoji:'🕷️' },
-      { id:'boy-pokemon',        name:'Pokémon',             category:'menino',             emoji:'⚡' },
-      { id:'boy-mickey',         name:'Mickey Mouse',        category:'menino',             emoji:'🐭' },
-      { id:'boy-spongebob',      name:'Bob Esponja',         category:'menino',             emoji:'🧽' },
-      // ── INFANTIL MENINA ──
-      { id:'girl-ariel',         name:'Pequena Sereia',      category:'menina',             emoji:'🧜' },
-      { id:'girl-cinderela',     name:'Cinderela',           category:'menina',             emoji:'👠' },
-      { id:'girl-minnie',        name:'Minnie Mouse',        category:'menina',             emoji:'🎀' },
-      { id:'girl-ursinha',       name:'Ursinha Fofa',        category:'menina',             emoji:'🐻' },
-      // ── CASAMENTO ──
-      { id:'wed-estrelada',      name:'Noite Estrelada',     category:'casamento',          emoji:'✨' },
-      { id:'wed-jardim',         name:'Jardim Romântico',    category:'casamento',          emoji:'🌿' },
-      { id:'wed-rosegold',       name:'Rose Gold',           category:'casamento',          emoji:'💍' },
-      // ── CHÁ DE BEBÊ ──
-      { id:'cha-pastel',         name:'Pastel Delicado',     category:'cha',                emoji:'👶' },
-      { id:'cha-revelacao-azul', name:'É Menino!',           category:'cha',                emoji:'🔵' },
-      { id:'cha-revelacao-rosa', name:'É Menina!',           category:'cha',                emoji:'🌸' },
-      // ── GERAL ──
-      { id:'aniv-neon',          name:'Neon Night',          category:'aniversario-adulto', emoji:'🎉' },
-      { id:'aniv-tropical',      name:'Tropical Party',      category:'aniversario-adulto', emoji:'🌴' },
-      { id:'aniv-elegante',      name:'Elegante',            category:'aniversario-adulto', emoji:'🥂' },
-    ];
+    // A galeria é montada dinamicamente a partir dos MESMOS templates da página
+    // de templates (custom_templates do admin) — ver loadAdminPreviews().
+    // Os antigos built-ins foram removidos por estarem obsoletos.
+    let templates = [];
 
     // Fallback visual caso o preview-renderer não carregue (mesma identidade de templates.html)
     const THUMB_FALLBACK = {
@@ -2682,33 +2660,56 @@
     // Escapa strings dinâmicas (vindas do banco) antes de injetar via innerHTML — previne XSS
     const escT = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
+   function applySampleVars(html, accent) {
+    const nomes = [
+    'Sofia', 'Miguel', 'Helena', 'Arthur', 'Alice', 'Heitor', 'Laura', 'Theo',
+    'Valentina', 'Davi', 'Maria', 'Gabriel', 'Lívia', 'Bernardo', 'Júlia', 'Lucas',
+    'Heloísa', 'Matheus', 'Cecília', 'Rafael', 'Isabella', 'Benjamin', 'Manuela', 'Nicolas',
+    'Marina', 'Pedro', 'Melissa', 'Samuel', 'Yasmin', 'João', 'Aurora', 'Enzo',
+    'Clara', 'Guilherme', 'Beatriz', 'Levi', 'Mariana', 'Murilo', 'Emanuelly', 'Henrique',
+    'Ana', 'Isaac', 'Eloá', 'Lucca', 'Agatha', 'Felipe', 'Esther', 'Daniel',
+    'Bianca', 'Caio', 'Maitê', 'Vinícius', 'Elisa', 'Bruno', 'Luna', 'Joaquim',
+    'Rebeca', 'Otávio', 'Sarah', 'Antônio', 'Liz', 'Eduardo', 'Olívia', 'André',
+    'Mirella', 'Ian', 'Alícia', 'Noah', 'Vitória', 'Leonardo', 'Isis', 'Gael',
+    'Pietra', 'Ryan', 'Nicole', 'Tomás', 'Maria Eduarda', 'Pietro', 'Lavínia', 'Lorenzo',
+    'Ana Clara', 'Augusto', 'Maria Clara', 'Alexandre', 'Joana', 'Fernando', 'Antonella', 'Vitor',
+    'Amanda', 'Cristóvão', 'Camila', 'Marcos', 'Lua', 'Rodrigo', 'Isadora', 'Diego',
+    'Luiza', 'Jacques', 'Andressa', 'Erick'
+  ];
+
+    const nomeAleatorio = nomes[Math.floor(Math.random() * nomes.length)];
+
+
     // Preenche os {{parâmetros}} com dados de exemplo (mesmo comportamento de templates.html)
-    function applySampleVars(html, accent) {
-      const vars = {
-        '{{nome}}':         'Sofia',
-        '{{titulo}}':       'Você está convidada!',
-        '{{idade}}':        '5 anos',
-        '{{dia}}':          '15',
-        '{{mes}}':          'Junho',
-        '{{diaSemana}}':    'Sábado',
-        '{{hora}}':         '16:00',
-        '{{horaFim}}':      '20:00',
-        '{{horaCompleta}}': 'das 16:00 às 20:00',
-        '{{local}}':        'Salão Encantado',
-        '{{endereco}}':     'Rua dos Contos, 123 — São Paulo, SP',
-        '{{dress}}':        'Esporte fino',
-        '{{msg}}':          'Será uma noite inesquecível!',
-        '{{heroImg}}':      'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80',
-        '{{accent}}':       accent || '#FFD93D',
-        '{{dataFormatada}}':'sábado, 15 de junho de 2025',
-        '{{diasRestantes}}':'14',
-      };
+           const vars = {
+               '{{nome}}': nomeAleatorio,
+               '{{titulo}}': 'Titulo do evento',
+               '{{idade}}': '5 anos',
+               '{{dia}}': '15',
+               '{{mes}}': 'Junho',
+               '{{diaSemana}}': 'Sábado',
+               '{{hora}}': '16:00',
+               '{{horaFim}}': '20:00',
+               '{{horaCompleta}}': 'das 16:00 às 20:00',
+               '{{local}}': 'Salão Encantado',
+               '{{endereco}}': 'Rua dos Contos, 123 — São Paulo, SP',
+               '{{dress}}': 'Esporte fino',
+               '{{msg}}': 'Mensagem editável aqui!',
+               '{{heroImg}}': 'https://imgs.search.brave.com/e8MyuuM1jg7i1PfZi0swrO9yjHvfzCQsPBVQROg_3YI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzI5LzIw/LzRhLzI5MjA0YTU2/YTIzMjRlYWFjM2M4/MzFhMWYwNzk1MWFh/LmpwZw',
+               '{{accent}}': accent || '#FFD93D',
+               '{{dataFormatada}}': 'sábado, 15 de junho de 2026',
+               '{{diasRestantes}}': '14',
+           };
       let result = html;
       for (const [k, v] of Object.entries(vars)) result = result.split(k).join(v);
       return result;
     }
 
     function thumbHTML(t) {
+      // Imagem de preview salva pelo admin (custom_templates.preview_img)
+      if (t.img) {
+        return `<img src="${escT(t.img)}" alt="${escT(t.name)}" loading="lazy" onerror="this.style.display='none'"/>`;
+      }
       // Exemplos dinâmicos (custom_templates do banco): convite REAL em iframe sandbox —
       // scripts/animações rodam isolados, sem afetar a página
       if (t.exemplo && t.html) {
@@ -2756,6 +2757,13 @@
           ? templates.filter(t => t.category === 'menino' || t.category === 'menina')
           : templates.filter(t => t.category === filter);
 
+      if (!filtered.length) {
+        grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:2.5rem 1rem;color:rgba(255,248,240,.5);font-size:.9rem">Carregando templates…</div>`;
+        const cntEl0 = document.getElementById('cnt-todos');
+        if (cntEl0) cntEl0.textContent = templates.length;
+        return;
+      }
+
       grid.innerHTML = filtered.map(t => `
         <div class="template-card reveal">
           <div class="template-img-wrap">
@@ -2767,7 +2775,6 @@
                 <span class="template-emoji-sm">${t.emoji || '🎉'}</span>
                 ${escT(t.name)}
               </div>
-              <div class="template-category">${CAT_LABELS[t.category] || t.category}</div>
             </div>
           </div>
         </div>
@@ -2785,43 +2792,56 @@
 
     renderTemplates();
 
-    // ── Exemplos dinâmicos REAIS: carrega os custom_templates animados do Supabase
-    //    (mesmos convites de templates.html) e mostra na galeria só como exemplo
-    (async function loadDynamicExamples() {
+    // ── Galeria REAL: os MESMOS convites da página de templates (custom_templates
+    //    do admin). Prefere a imagem de preview salva (bucket template-previews);
+    //    se não houver, renderiza o convite ao vivo (html_template), como na
+    //    página de templates. Mostra até 20. Se falhar, a galeria fica vazia.
+    (async function loadAdminPreviews() {
       try {
         if (!window.supabase) return;
         const SUPA_URL = 'https://wevmgnzmkdecdcnouhjq.supabase.co';
         const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indldm1nbnpta2RlY2Rjbm91aGpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTI5MTYsImV4cCI6MjA5MjI4ODkxNn0.R7IF4vEF_D5fvB18ZRl8mJwXOsEpW-q2hSdsRRs9nM4';
         const sbc = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+        // select('*') igual à página de templates — evita erro se alguma coluna não existir
         const { data, error } = await sbc.from('custom_templates')
-          .select('id,name,html_template,default_accent,is_animated,category,categories')
+          .select('*')
           .eq('active', true)
           .order('created_at');
-        if (error || !data || !data.length) return;
-
-        const withHtml = data.filter(t => t.html_template);
-        const animated = withHtml.filter(t => t.is_animated);
-        const picks = (animated.length ? animated : withHtml).slice(0, 6);
-        if (!picks.length) return;
+        if (error) { console.warn('[landing] erro Supabase:', error); return; }
+        if (!data || !data.length) return;
 
         const KNOWN = ['homem','mulher','quinze','menino','menina','casamento','cha','aniversario-adulto'];
-        const examples = picks.map(t => {
-          const cats = (Array.isArray(t.categories) && t.categories.length)
-            ? t.categories : (t.category ? [t.category] : []);
-          return {
-            id: 'ex_' + t.id,
-            name: t.name,
-            category: cats.find(c => KNOWN.includes(c)) || 'aniversario-adulto',
-            emoji: '✨',
-            exemplo: true,
-            html: t.html_template,
-            accent: t.default_accent || '#FFD93D',
-          };
-        });
-        templates.unshift(...examples);
+        const mapped = data
+          .map(t => {
+            const img = t.thumbnail_url || t.preview_img || null;
+            const html = t.html_template || null;
+            if (!img && !html) return null; // sem nada para exibir
+            const animated = !!t.is_animated;
+            const cats = (Array.isArray(t.categories) && t.categories.length)
+              ? t.categories : (t.category ? [t.category] : []);
+            return {
+              id: 'tpl_' + t.id,
+              name: t.name || 'Template',
+              category: cats.find(c => KNOWN.includes(c)) || 'aniversario-adulto',
+              emoji: animated ? '✨' : '🎉',
+              animated,
+              // Renderiza o convite ao vivo (nome de exemplo aleatório, igual aos
+              // animados). A imagem salva pelo admin só é usada se não houver HTML.
+              img: html ? null : img,
+              exemplo: !!html,
+              html,
+              accent: t.default_accent || '#FFD93D',
+            };
+          })
+          .filter(Boolean);
+
+        // 20 no total, garantindo TODOS os animados primeiro
+        const animatedList = mapped.filter(t => t.animated);
+        const others = mapped.filter(t => !t.animated);
+        templates = [...animatedList, ...others].slice(0, 20);
         renderTemplates(currentFilter);
       } catch (e) {
-        console.warn('[landing] exemplos dinâmicos não carregados:', e);
+        console.warn('[landing] templates do admin não carregados:', e);
       }
     })();
 

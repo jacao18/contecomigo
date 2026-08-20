@@ -909,19 +909,19 @@ async function deleteTemplate(id) {
 function applyVars(html) {
   const accent = document.getElementById('tplAccentHex').value || '#FFD93D';
   const vars = {
-    '{{nome}}':         'Sofia',
-    '{{titulo}}':       'Você está convidada!',
+    '{{nome}}':         'Yasmin',
+    '{{titulo}}':       'Título do evento aqui',
     '{{idade}}':        '5 anos',
-    '{{dia}}':          '15',
-    '{{mes}}':          'Junho',
+    '{{dia}}':          '11',
+    '{{mes}}':          'Novembro',
     '{{diaSemana}}':    'Sábado',
     '{{hora}}':         '16:00',
     '{{horaFim}}':      '20:00',
     '{{horaCompleta}}': 'das 16:00 às 20:00',
-    '{{local}}':        'Salão Encantado',
-    '{{endereco}}':     'Rua dos Contos, 123 — São Paulo, SP',
+    '{{local}}':        'Salão Oval',
+    '{{endereco}}':     'Rua dos Contos, 123 — Porto Alegre, RS',
     '{{dress}}':        'Esporte fino',
-    '{{msg}}':          'Será uma noite inesquecível!',
+    '{{msg}}':          'Mensagem personalizada aqui',
     '{{heroImg}}':      'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80',
     '{{accent}}':       accent,
     '{{dataFormatada}}':'sábado, 15 de junho de 2025',
@@ -1048,51 +1048,51 @@ function showToast(msg, type = '') {
 
 const BUILTIN_TEMPLATES = [
   // ── HOMEM ──
-  { id:'hom-cerveja',      cat:'homem',   name:'Chope & Futebol',   accent:'#F59E0B', img:'https://images.unsplash.com/photo-1555658636-6e4a36218be7?w=120&q=70' },
-  { id:'hom-futebol',      cat:'homem',   name:'Campo de Futebol',  accent:'#34D399', img:'https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?w=120&q=70' },
-  { id:'hom-minimalista',  cat:'homem',   name:'Minimalista Dark',  accent:'#E5E7EB', img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&q=70' },
-  { id:'hom-fotos',        cat:'homem',   name:'Com suas fotos',    accent:'#F59E0B', img:'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=120&q=70' },
+ // { id:'hom-cerveja',      cat:'homem',   name:'Chope & Futebol',   accent:'#F59E0B', img:'https://images.unsplash.com/photo-1555658636-6e4a36218be7?w=120&q=70' },
+  //{ id:'hom-futebol',      cat:'homem',   name:'Campo de Futebol',  accent:'#34D399', img:'https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?w=120&q=70' },
+ // { id:'hom-minimalista',  cat:'homem',   name:'Minimalista Dark',  accent:'#E5E7EB', img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&q=70' },
+  //{ id:'hom-fotos',        cat:'homem',   name:'Com suas fotos',    accent:'#F59E0B', img:'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=120&q=70' },
   // ── MULHER ──
-  { id:'mul-champanhe',    cat:'mulher',  name:'Champanhe & Glamour', accent:'#FCD34D', img:'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=120&q=70' },
-  { id:'mul-rosa',         cat:'mulher',  name:'Rosa & Fofo',       accent:'#F472B6', img:'https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=120&q=70' },
-  { id:'mul-pool',         cat:'mulher',  name:'Pool Party',        accent:'#60A5FA', img:'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=120&q=70' },
-  { id:'mul-fotos',        cat:'mulher',  name:'Com suas fotos',    accent:'#F472B6', img:'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=120&q=70' },
+ // { id:'mul-champanhe',    cat:'mulher',  name:'Champanhe & Glamour', accent:'#FCD34D', img:'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=120&q=70' },
+  //{ id:'mul-rosa',         cat:'mulher',  name:'Rosa & Fofo',       accent:'#F472B6', img:'https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=120&q=70' },
+ // { id:'mul-pool',         cat:'mulher',  name:'Pool Party',        accent:'#60A5FA', img:'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=120&q=70' },
+ // { id:'mul-fotos',        cat:'mulher',  name:'Com suas fotos',    accent:'#F472B6', img:'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=120&q=70' },
   // ── 15 ANOS ──
-  { id:'deb-valsa',        cat:'quinze',  name:'Valsa Real',        accent:'#FCD34D', img:'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=120&q=70' },
-  { id:'deb-clean',        cat:'quinze',  name:'Clean & Moderno',   accent:'#F472B6', img:'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=120&q=70' },
-  { id:'deb-vintage',      cat:'quinze',  name:'Vintage Dourado',   accent:'#FCD34D', img:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=120&q=70' },
-  { id:'deb-fotos',        cat:'quinze',  name:'Com suas fotos',    accent:'#F472B6', img:'https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=120&q=70' },
+ // { id:'deb-valsa',        cat:'quinze',  name:'Valsa Real',        accent:'#FCD34D', img:'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=120&q=70' },
+  //{ id:'deb-clean',        cat:'quinze',  name:'Clean & Moderno',   accent:'#F472B6', img:'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=120&q=70' },
+  //{ id:'deb-vintage',      cat:'quinze',  name:'Vintage Dourado',   accent:'#FCD34D', img:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=120&q=70' },
+  //{ id:'deb-fotos',        cat:'quinze',  name:'Com suas fotos',    accent:'#F472B6', img:'https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=120&q=70' },
   // ── MENINO ──
-  { id:'boy-spiderman',    cat:'menino',  name:'Homem-Aranha',      accent:'#EF4444', img:'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=120&q=70' },
-  { id:'boy-pokemon',      cat:'menino',  name:'Pokémon',           accent:'#FBBF24', img:'https://images.unsplash.com/photo-1542779867-5b23e9e44cbf?w=120&q=70' },
-  { id:'boy-mickey',       cat:'menino',  name:'Mickey Mouse',      accent:'#EF4444', img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=120&q=70' },
-  { id:'boy-spongebob',    cat:'menino',  name:'Bob Esponja',       accent:'#FBBF24', img:'https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=120&q=70' },
-  { id:'boy-fotos',        cat:'menino',  name:'Com suas fotos',    accent:'#60A5FA', img:'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=120&q=70' },
+ // { id:'boy-spiderman',    cat:'menino',  name:'Homem-Aranha',      accent:'#EF4444', img:'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=120&q=70' },
+ // { id:'boy-pokemon',      cat:'menino',  name:'Pokémon',           accent:'#FBBF24', img:'https://images.unsplash.com/photo-1542779867-5b23e9e44cbf?w=120&q=70' },
+ // { id:'boy-mickey',       cat:'menino',  name:'Mickey Mouse',      accent:'#EF4444', img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=120&q=70' },
+ // { id:'boy-spongebob',    cat:'menino',  name:'Bob Esponja',       accent:'#FBBF24', img:'https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=120&q=70' },
+ // { id:'boy-fotos',        cat:'menino',  name:'Com suas fotos',    accent:'#60A5FA', img:'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=120&q=70' },
   // ── MENINA ──
-  { id:'girl-ariel',       cat:'menina',  name:'Pequena Sereia',    accent:'#60A5FA', img:'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=120&q=70' },
-  { id:'girl-cinderela',   cat:'menina',  name:'Cinderela',         accent:'#93C5FD', img:'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=120&q=70' },
-  { id:'girl-minnie',      cat:'menina',  name:'Minnie Mouse',      accent:'#F472B6', img:'https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=120&q=70' },
-  { id:'girl-ursinha',     cat:'menina',  name:'Ursinha Fofa',      accent:'#FCD34D', img:'https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=120&q=70' },
-  { id:'girl-fotos',       cat:'menina',  name:'Com suas fotos',    accent:'#F472B6', img:'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=120&q=70' },
+ // { id:'girl-ariel',       cat:'menina',  name:'Pequena Sereia',    accent:'#60A5FA', img:'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=120&q=70' },
+ // { id:'girl-cinderela',   cat:'menina',  name:'Cinderela',         accent:'#93C5FD', img:'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=120&q=70' },
+ // { id:'girl-minnie',      cat:'menina',  name:'Minnie Mouse',      accent:'#F472B6', img:'https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=120&q=70' },
+  //{ id:'girl-ursinha',     cat:'menina',  name:'Ursinha Fofa',      accent:'#FCD34D', img:'https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=120&q=70' },
+ // { id:'girl-fotos',       cat:'menina',  name:'Com suas fotos',    accent:'#F472B6', img:'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=120&q=70' },
   // ── CASAMENTO ──
-  { id:'wed-estrelada',    cat:'casamento', name:'Noite Estrelada', accent:'#FFD93D', img:'https://images.unsplash.com/photo-1519741497674-611481863552?w=120&q=70' },
-  { id:'wed-jardim',       cat:'casamento', name:'Jardim Romântico',accent:'#FFFFFF', img:'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=120&q=70' },
-  { id:'wed-rosegold',     cat:'casamento', name:'Rose Gold',       accent:'#FFD93D', img:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=120&q=70' },
-  { id:'wed-fotos',        cat:'casamento', name:'Com suas fotos',  accent:'#FFFFFF', img:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=120&q=70' },
+ // { id:'wed-estrelada',    cat:'casamento', name:'Noite Estrelada', accent:'#FFD93D', img:'https://images.unsplash.com/photo-1519741497674-611481863552?w=120&q=70' },
+ // { id:'wed-jardim',       cat:'casamento', name:'Jardim Romântico',accent:'#FFFFFF', img:'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=120&q=70' },
+ // { id:'wed-rosegold',     cat:'casamento', name:'Rose Gold',       accent:'#FFD93D', img:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=120&q=70' },
+//  { id:'wed-fotos',        cat:'casamento', name:'Com suas fotos',  accent:'#FFFFFF', img:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=120&q=70' },
   // ── CHÁ ──
-  { id:'cha-pastel',           cat:'cha', name:'Pastel Delicado',   accent:'#F472B6', img:'https://images.unsplash.com/photo-1544427920-c49ccfb85579?w=120&q=70' },
-  { id:'cha-revelacao-azul',   cat:'cha', name:'Revelação — Menino',accent:'#60A5FA', img:'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=120&q=70' },
-  { id:'cha-revelacao-rosa',   cat:'cha', name:'Revelação — Menina',accent:'#F472B6', img:'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=120&q=70' },
-  { id:'cha-fotos',            cat:'cha', name:'Com suas fotos',    accent:'#F472B6', img:'https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=120&q=70' },
+ // { id:'cha-pastel',           cat:'cha', name:'Pastel Delicado',   accent:'#F472B6', img:'https://images.unsplash.com/photo-1544427920-c49ccfb85579?w=120&q=70' },
+  //{ id:'cha-revelacao-azul',   cat:'cha', name:'Revelação — Menino',accent:'#60A5FA', img:'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=120&q=70' },
+ // { id:'cha-revelacao-rosa',   cat:'cha', name:'Revelação — Menina',accent:'#F472B6', img:'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=120&q=70' },
+ // { id:'cha-fotos',            cat:'cha', name:'Com suas fotos',    accent:'#F472B6', img:'https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=120&q=70' },
   // ── GERAL ──
-  { id:'aniv-neon',        cat:'aniversario-adulto', name:'Neon Night',    accent:'#FFD93D', img:'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=120&q=70' },
-  { id:'aniv-tropical',    cat:'aniversario-adulto', name:'Tropical Party',accent:'#34D399', img:'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=120&q=70' },
-  { id:'aniv-elegante',    cat:'aniversario-adulto', name:'Elegante',      accent:'#FFD93D', img:'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=120&q=70' },
-  { id:'aniv-fotos',       cat:'aniversario-adulto', name:'Com suas fotos',accent:'#F472B6', img:'https://images.unsplash.com/photo-1543269865-cbf427effbad?w=120&q=70' },
-  { id:'kids-baloes',      cat:'aniversario-adulto', name:'Balões Coloridos',accent:'#FFD93D',img:'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=120&q=70' },
-  { id:'kids-unicorn',     cat:'menina',  name:'Unicórnio Mágico',  accent:'#C084FC', img:'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=120&q=70' },
-  { id:'kids-dinossauro',  cat:'menino',  name:'Dinossauro',        accent:'#34D399', img:'https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=120&q=70' },
-  { id:'kids-fotos',       cat:'aniversario-adulto', name:'Kids com fotos',accent:'#F472B6',img:'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=120&q=70' },
+ // { id:'aniv-neon',        cat:'aniversario-adulto', name:'Neon Night',    accent:'#FFD93D', img:'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=120&q=70' },
+  //{ id:'aniv-tropical',    cat:'aniversario-adulto', name:'Tropical Party',accent:'#34D399', img:'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=120&q=70' },
+  //{ id:'aniv-elegante',    cat:'aniversario-adulto', name:'Elegante',      accent:'#FFD93D', img:'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=120&q=70' },
+ // { id:'aniv-fotos',       cat:'aniversario-adulto', name:'Com suas fotos',accent:'#F472B6', img:'https://images.unsplash.com/photo-1543269865-cbf427effbad?w=120&q=70' },
+  //{ id:'kids-baloes',      cat:'aniversario-adulto', name:'Balões Coloridos',accent:'#FFD93D',img:'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=120&q=70' },
+  //{ id:'kids-unicorn',     cat:'menina',  name:'Unicórnio Mágico',  accent:'#C084FC', img:'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=120&q=70' },
+  //{ id:'kids-dinossauro',  cat:'menino',  name:'Dinossauro',        accent:'#34D399', img:'https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=120&q=70' },
+  //{ id:'kids-fotos',       cat:'aniversario-adulto', name:'Kids com fotos',accent:'#F472B6',img:'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=120&q=70' },
 ];
 
 const CAT_LABELS_FULL = {
@@ -1156,7 +1156,7 @@ function selectBuiltin(id) {
 
 function buildBuiltinPreviewHtml(t) {
   const ac = t.accent || '#FFD93D';
-  const heroImg = 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80';
+  const heroImg = 'https://imgs.search.brave.com/e8MyuuM1jg7i1PfZi0swrO9yjHvfzCQsPBVQROg_3YI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzI5LzIw/LzRhLzI5MjA0YTU2/YTIzMjRlYWFjM2M4/MzFhMWYwNzk1MWFh/LmpwZw';
   const dateStr = 'sábado, 15 de junho de 2025';
   const dateShort = '15/06/2025';
   const days = '14';
@@ -1213,7 +1213,7 @@ function openBuiltinInEditor(id) {
 function getBuiltinHtml(id, { ac, heroImg, dateStr, dateShort, days, titulo, nome, hora, local, dress, msg }) {
   const rsvp = `<div style="background:${ac};color:#1a0a00;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;font-size:.9rem;cursor:pointer;margin-top:.5rem">✅ Confirmar presença</div>`;
 
-  const templates = {
+  /*const templates = {
     'aniv-neon': `<div style="background:#0a0010;min-height:500px;font-family:'Nunito',sans-serif;color:#fff;position:relative;overflow:hidden"><div style="position:absolute;inset:0;background-image:url('${heroImg}');background-size:cover;background-position:center;opacity:.15"></div><div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,${ac},#ff3d6b,${ac})"></div><div style="position:relative;padding:2.5rem 1.5rem 1.5rem;text-align:center"><div style="display:inline-block;border:1px solid ${ac};border-radius:99px;padding:.25rem .9rem;font-size:.65rem;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:${ac};margin-bottom:1rem">✦ Você está convidado ✦</div><div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,8vw,3rem);font-weight:900;font-style:italic;line-height:1;color:${ac};margin-bottom:.5rem">${titulo}</div><div style="font-size:1.1rem;font-weight:700;color:rgba(255,255,255,.7);margin-bottom:1.5rem">${nome}</div><div style="display:inline-flex;flex-direction:column;gap:.4rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:1rem 1.5rem;margin-bottom:1.5rem"><div style="font-size:.85rem;color:rgba(255,255,255,.6)">📅 ${dateStr}</div><div style="font-size:.85rem;color:rgba(255,255,255,.6)">⏰ ${hora}</div><div style="font-size:.85rem;color:rgba(255,255,255,.6)">📍 ${local}</div></div>${rsvp}</div><div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,${ac},#ff3d6b,${ac})"></div></div>`,
 
     'aniv-tropical': `<div style="background:linear-gradient(160deg,#0d3320,#1a5c3a);min-height:500px;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative"><div style="position:relative;padding:2rem 1.5rem;text-align:center"><div style="width:110px;height:110px;border-radius:50%;overflow:hidden;margin:0 auto 1rem;border:4px solid ${ac}"><img src="${heroImg}" style="width:100%;height:100%;object-fit:cover"/></div><div style="font-size:.65rem;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:${ac};margin-bottom:.4rem">🌺 Você está convidado!</div><div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;line-height:1.1;margin-bottom:.3rem">${titulo}</div><div style="font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:1.5rem">${nome}</div><div style="background:rgba(255,255,255,.08);border-radius:16px;padding:1rem;margin-bottom:1.5rem"><div style="font-size:.82rem;margin-bottom:.3rem">📅 ${dateStr}</div><div style="font-size:.82rem;margin-bottom:.3rem">⏰ ${hora}</div><div style="font-size:.82rem">📍 ${local}</div></div>${rsvp}</div></div>`,
@@ -1289,7 +1289,7 @@ function getBuiltinHtml(id, { ac, heroImg, dateStr, dateShort, days, titulo, nom
     'cha-revelacao-rosa': `<div style="background:linear-gradient(160deg,#2d0020,#6b0a35);min-height:500px;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;position:relative"><div style="position:relative;padding:2.5rem 1.5rem 2rem;text-align:center"><div style="font-size:3rem;margin-bottom:.5rem">👶💗</div><div style="background:${ac};color:#2d0020;display:inline-block;padding:.25rem 1rem;border-radius:99px;font-size:.65rem;font-weight:800;margin-bottom:.75rem">É MENINA!</div><div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;font-style:italic;color:${ac};line-height:1.1;margin-bottom:.3rem">${titulo}</div><div style="color:rgba(255,255,255,.6);margin-bottom:1.75rem">${nome}</div><div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:1.1rem;margin-bottom:1.5rem"><div style="font-size:.82rem;margin-bottom:.35rem">📅 ${dateStr}</div><div style="font-size:.82rem">⏰ ${hora} · 📍 ${local}</div></div><div style="background:${ac};color:#2d0020;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;cursor:pointer">✅ Confirmar presença</div></div></div>`,
 
     'cha-fotos': `<div style="background:linear-gradient(160deg,#fff8f0,#fff0f5);min-height:500px;font-family:'Nunito',sans-serif;color:#1A0A00;overflow:hidden"><div style="padding:1.5rem;text-align:center"><div style="background:#fff;border-radius:4px;padding:.75rem;box-shadow:0 8px 24px rgba(0,0,0,.12);transform:rotate(-1.5deg);margin-bottom:1.25rem;max-width:240px;margin-left:auto;margin-right:auto"><img src="${heroImg}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;border-radius:2px;margin-bottom:.5rem"/><div style="font-size:.72rem;color:rgba(26,10,0,.4);font-style:italic">${nome} 💕</div></div><div style="font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:${ac};margin-bottom:.4rem">Você está convidado!</div><div style="font-family:'Fraunces',Georgia,serif;font-size:clamp(1.7rem,6vw,2.4rem);font-weight:900;font-style:italic;line-height:1.1;margin-bottom:1.25rem">${titulo}</div><div style="background:#fff;border-radius:12px;padding:1rem;margin-bottom:1rem;box-shadow:0 2px 8px rgba(0,0,0,.06)"><div style="font-size:.82rem;color:rgba(26,10,0,.6);margin-bottom:.3rem">📅 ${dateStr}</div><div style="font-size:.82rem;color:rgba(26,10,0,.6)">⏰ ${hora} · 📍 ${local}</div></div><div onclick="" style="background:${ac};color:#1a0a00;font-weight:800;text-align:center;padding:.85rem;border-radius:12px;cursor:pointer">✅ Confirmar presença</div></div></div>`,
-  };
+  }; */ 
 
   return templates[id] || `<div style="background:#111;color:#fff;padding:2rem;text-align:center;min-height:300px;display:flex;align-items:center;justify-content:center;font-family:sans-serif">${id}</div>`;
 }

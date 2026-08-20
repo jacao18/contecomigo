@@ -1,8 +1,15 @@
 {
+  "redirects": [
+    { "source": "/demo", "destination": "/convite-demo", "permanent": false },
+    { "source": "/demo.html", "destination": "/convite-demo", "permanent": false }
+  ],
   "rewrites": [
     { "source": "/", "destination": "/convite-online.html" },
-    { "source": "/demo", "destination": "/demo.html" },
     { "source": "/templates", "destination": "/templates.html" },
+    { "source": "/blog", "destination": "/blog.html" },
+    { "source": "/blog/frases-para-convite-de-aniversario", "destination": "/blog-frases-convite-aniversario.html" },
+    { "source": "/blog/convite-de-casamento-digital-gratis", "destination": "/blog-casamento-digital-gratis.html" },
+    { "source": "/blog/convites-de-time-de-futebol", "destination": "/blog-convites-time-futebol.html" },
     {
       "source": "/((?!.*\\.[a-zA-Z0-9]+$)(?!convite$|convite-online$|index$|login$|templates$|dashboard$|dashboard-empresa$|editor$|preview$|demo$|admin-templates$|api/).+)",
       "destination": "/convite.html?slug=$1"

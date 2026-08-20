@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{titulo}} — {{nome}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#1B62B4;
+  --dark:#0E3E75;
+  --pop:#E4022B;
+  --hero-text:#ffffff;
+  --paper:#f6f7f9;
+  --ink:#14161a;
+  --display:'Anton',sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{display:grid;place-items:center;padding:18px;background:var(--dark);font-family:'Oswald',sans-serif;color:var(--ink)}
+.card{position:relative;width:min(100%,450px);min-height:740px;overflow:hidden;background:var(--paper);box-shadow:0 28px 75px rgba(0,0,0,.45);border-radius:4px}
+.hero{position:relative;min-height:360px;padding:44px 26px 96px;text-align:center;color:var(--hero-text);
+  background:radial-gradient(120% 90% at 50% -10%,rgba(255,255,255,.16),transparent 60%),linear-gradient(160deg,var(--primary) 0%,var(--dark) 100%);
+  overflow:hidden}
+.wm{position:absolute;z-index:0;left:4%;right:4%;bottom:50px;width:92%;height:auto;pointer-events:none;overflow:visible}
+.stripes{position:absolute;inset:0;z-index:0;background:repeating-linear-gradient(90deg,transparent 0 11%,rgba(0,0,0,.10) 11% 12%);opacity:.6}
+.eyebrow{position:relative;z-index:2;margin:0 0 14px;font:700 12px/1.3 'Oswald',sans-serif;letter-spacing:.28em;text-transform:uppercase;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+.title{position:relative;z-index:2;margin:0 auto;max-width:380px;font-family:var(--display);font-size:clamp(38px,11vw,60px);line-height:.92;text-transform:uppercase;letter-spacing:.01em;text-shadow:0 4px 0 rgba(0,0,0,.18);overflow-wrap:anywhere}
+.name{position:relative;z-index:2;margin:12px 0 0;font:italic 700 clamp(28px,8vw,42px)/1 'Oswald',sans-serif;text-shadow:0 2px 0 rgba(0,0,0,.28);overflow-wrap:anywhere}
+.crest{position:absolute;z-index:5;left:50%;top:-62px;width:124px;height:124px;transform:translateX(-50%);
+  border-radius:50%;overflow:hidden;background:var(--paper);
+  border:6px solid var(--hero-text);box-shadow:0 0 0 4px var(--primary),0 12px 26px rgba(0,0,0,.35);
+  display:grid;place-items:center}
+.crest img{width:100%;height:100%;object-fit:contain;padding:12px;display:block}
+.crest .ph{padding:0 12px;text-align:center;font:700 10px/1.3 'Oswald',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--dark)}
+.crest.empty img{display:none}
+.crest:not(.empty) .ph{display:none}
+.info{position:relative;padding:82px 30px 32px;text-align:center;background:var(--paper);border-top:6px solid var(--dark)}
+.tag{margin:0 0 18px;font:22px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--dark)}
+.date{display:grid;grid-template-columns:1fr 1.4fr 1fr;align-items:center;margin:0 auto 18px;border-top:1px solid rgba(0,0,0,.16);border-bottom:1px solid rgba(0,0,0,.16)}
+.date>div{padding:13px 6px}
+.date>div+div{border-left:1px solid rgba(0,0,0,.14)}
+.date strong{display:block;color:var(--primary);font:30px/1 var(--display);overflow-wrap:anywhere}
+.date small{display:block;margin-bottom:5px;font:700 9px 'Oswald',sans-serif;letter-spacing:.20em;text-transform:uppercase;color:var(--ink)}
+.location{padding:16px;border-radius:6px;color:#fff;background:var(--dark);box-shadow:5px 5px 0 var(--pop)}
+.location .label{display:block;margin-bottom:6px;font:700 9px 'Oswald',sans-serif;letter-spacing:.20em;text-transform:uppercase;opacity:.85}
+.location strong{display:block;font:24px/1.05 var(--display);letter-spacing:.02em;overflow-wrap:anywhere}
+.location span{display:block;margin-top:6px;font-size:14px;line-height:1.2}
+.footer-mark{margin:20px 0 0;color:var(--primary);font:20px var(--display);letter-spacing:.3em}
+@media(max-width:420px){body{padding:0}.card{min-height:100vh;border-radius:0}.info{padding-inline:22px}}
+@media(prefers-reduced-motion:no-preference){.hero>*{animation:enter .7s both}.name{animation-delay:.12s}@keyframes enter{from{opacity:0;transform:translateY(12px)}}}
+</style></head>
+<body>
+<main class="card" aria-label="Convite tema Bahia">
+  <section class="hero">
+    <span class="stripes" aria-hidden="true"></span>
+    <svg class="wm" viewBox="0 0 1000 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><text x="500" y="182" text-anchor="middle" textLength="960" lengthAdjust="spacingAndGlyphs" font-family="Anton,sans-serif" font-weight="400" font-size="220" fill="rgba(255,255,255,0.09)">ESQUADRÃO</text></svg>
+    <p class="eyebrow">O ESQUADRÃO DE AÇO CONVIDA</p>
+    <h1 class="title">{{titulo}}</h1>
+    <div class="name">{{nome}}</div>
+  </section>
+  <section class="info">
+    <div class="crest empty">
+      <img src="assets/convites-tematicos/bahia-escudo.png" alt="Escudo do Bahia"
+           onload="this.closest('.crest').classList.remove('empty')"
+           onerror="this.closest('.crest').classList.add('empty')">
+      <span class="ph">Adicione o escudo</span>
+    </div>
+    <p class="tag">★ Bahia ★</p>
+    <div class="date">
+      <div><small>Dia</small><strong>{{dia}}</strong></div>
+      <div><small>Mês</small><strong>{{mes}}</strong></div>
+      <div><small>Hora</small><strong>{{horaCompleta}}</strong></div>
+    </div>
+    <div class="location">
+      <span class="label">O grande encontro será em</span>
+      <strong>{{local}}</strong>
+      <span>{{endereco}}</span>
+    </div>
+    <p class="footer-mark" aria-hidden="true">★ ★ ★</p>
+  </section>
+</main>
+</body></html>

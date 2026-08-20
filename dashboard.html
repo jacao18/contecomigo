@@ -121,6 +121,21 @@
     .gift-act-btn.danger{flex:0 0 auto;color:#f87171;border-color:rgba(248,113,113,.25);}
     .gift-act-btn.danger:hover{background:rgba(248,113,113,.08);}
 
+    /* ── Painel "Quem presenteou" ── */
+    .givers-panel{background:var(--panel);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-top:2rem;}
+    .givers-head{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;}
+    .givers-head h3{font-family:var(--font-display);font-size:1.1rem;font-weight:700;font-style:italic;margin:0;display:flex;align-items:center;gap:.5rem;}
+    .givers-controls{padding:1rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;}
+    .givers-search{display:flex;align-items:center;gap:.5rem;background:rgba(26,10,0,.05);border:1px solid var(--border);border-radius:8px;padding:.4rem .75rem;flex:1;min-width:180px;}
+    .givers-search input{border:none;background:transparent;outline:none;font-family:inherit;font-size:.82rem;width:100%;color:var(--white);}
+    .gm-badge{display:inline-flex;align-items:center;gap:.25rem;padding:.15rem .55rem;border-radius:99px;font-size:.7rem;font-weight:700;white-space:nowrap;}
+    .gm-pix{background:rgba(52,211,153,.12);color:#0f9d6b;border:1px solid rgba(52,211,153,.25);}
+    .gm-card{background:rgba(96,165,250,.14);color:#2563eb;border:1px solid rgba(96,165,250,.28);}
+    .gm-reserve{background:rgba(255,217,61,.16);color:var(--yellow-dk);border:1px solid rgba(230,184,0,.3);}
+    .gm-none{background:rgba(26,10,0,.05);color:rgba(26,10,0,.5);border:1px solid var(--border);}
+    .giver-wpp{background:none;border:none;color:var(--pink);font-weight:700;font-size:.8rem;cursor:pointer;padding:0;}
+    .giver-wpp:hover{text-decoration:underline;}
+
     .share-box{background:linear-gradient(135deg,rgba(255,61,107,.08),rgba(255,217,61,.06));border:1px solid rgba(255,61,107,.15);border-radius:16px;padding:1.5rem;margin-bottom:2rem;}
     .share-box-title{font-family:var(--font-display);font-size:1.2rem;font-weight:700;font-style:italic;margin-bottom:.35rem;}
     .share-box-sub{font-size:.85rem;color:rgba(26,10,0,.5);margin-bottom:1rem;}
@@ -219,6 +234,8 @@
     /* ── AÇÕES POR CONVIDADO ── */
     .guest-wpp-btn{display:inline-flex;align-items:center;gap:.25rem;background:rgba(37,211,102,.12);color:#128C4B;border:1px solid rgba(37,211,102,.25);border-radius:8px;padding:.25rem .55rem;font-size:.7rem;font-weight:800;cursor:pointer;font-family:var(--font-body);transition:all .2s;}
     .guest-wpp-btn:hover{background:#25D366;color:#fff;}
+    .guest-del-btn{display:inline-flex;align-items:center;justify-content:center;background:rgba(255,61,107,.1);color:#c81e45;border:1px solid rgba(255,61,107,.22);border-radius:8px;padding:.28rem .5rem;font-size:.8rem;cursor:pointer;font-family:var(--font-body);transition:all .2s;}
+    .guest-del-btn:hover{background:#ff3d6b;color:#fff;}
     th.sortable{cursor:pointer;user-select:none;}
     th.sortable:hover{color:var(--pink);}
 
@@ -278,7 +295,7 @@
   <div class="sidenav-item" onclick="doLogout()"><span class="sidenav-icon">🚪</span>Sair</div>
 
   <div class="sidenav-bottom">
-    <button class="btn-new-invite" onclick="newInvite()">✨ Novo convite</button>
+    <button class="btn-new-invite" onclick="newInvite()">+ Novo convite</button>
   </div>
 </nav>
 
@@ -348,16 +365,8 @@
     <div class="modal-title" id="giftModalTitle">🎁 Adicionar presente</div>
     <label class="form-label" for="giftName">Nome *</label>
     <input class="form-input" id="giftName" type="text" placeholder="Ex: Jogo de panelas" maxlength="80"/>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
-      <div>
-        <label class="form-label" for="giftPrice">Preço</label>
-        <input class="form-input" id="giftPrice" type="text" placeholder="Ex: R$ 150" maxlength="40"/>
-      </div>
-      <div>
-        <label class="form-label" for="giftEmoji">Emoji</label>
-        <input class="form-input" id="giftEmoji" type="text" placeholder="🎁" maxlength="4"/>
-      </div>
-    </div>
+    <label class="form-label" for="giftPrice">Preço</label>
+    <input class="form-input" id="giftPrice" type="text" placeholder="Ex: R$ 150" maxlength="40"/>
     <label class="form-label" for="giftLink">Link da loja (opcional)</label>
     <input class="form-input" id="giftLink" type="url" placeholder="https://loja.com/produto"/>
     <label class="form-label" for="giftPay">Link de pagamento / Pix (opcional)</label>
@@ -382,7 +391,7 @@
   <button class="mtab" data-mtab="mural" onclick="showSection('mural',null,this)"><span class="mtab-ico">💌</span>Recados</button>
   <button class="mtab" data-mtab="share" onclick="showSection('share',null,this)"><span class="mtab-ico">🔗</span>Divulgar</button>
 </nav>
-<button class="fab-new" onclick="newInvite()" title="Novo convite" aria-label="Novo convite">✨</button>
+<button class="fab-new" onclick="newInvite()" title="Novo convite" aria-label="Novo convite">+</button>
 
 <canvas id="confettiCanvas"></canvas>
 
@@ -802,7 +811,7 @@ function renderGuestsSection(){
 
 function renderGuestsTable(list){
   if(!list.length) return `<div class="empty-state"><div class="empty-state-emoji">👀</div><div>Nenhum convidado confirmou ainda</div><div style="font-size:.8rem;margin-top:.4rem">Compartilhe o convite para receber confirmações — ou <span style="color:var(--pink);font-weight:800;cursor:pointer" onclick="openGuestModal()">adicione manualmente</span></div></div>`;
-  return `<table><thead><tr><th>Nome</th><th>WhatsApp</th><th>Total</th><th>Status</th><th>Mensagem</th><th>Quando</th></tr></thead>
+  return `<table><thead><tr><th>Nome</th><th>WhatsApp</th><th>Total</th><th>Status</th><th>Mensagem</th><th>Quando</th><th></th></tr></thead>
     <tbody>${list.map(g=>{
       const digits = String(g.phone||'').replace(/\D/g,'');
       const safeName = esc(String(g.name||'').replace(/['"\\<>`]/g,''));
@@ -813,6 +822,7 @@ function renderGuestsTable(list){
       <td>${(()=>{const st=g.attending==='yes'?'yes':g.attending==='no'?'no':'pending';return `<select class="status-sel st-${st}" title="Alterar status" onchange="updateGuestStatus('${g.id}',this.value)"><option value="yes"${g.attending==='yes'?' selected':''}>✅ Sim</option><option value="no"${g.attending==='no'?' selected':''}>❌ Não</option><option value="maybe"${(g.attending==='maybe'||!g.attending)?' selected':''}>⏳ Pendente</option></select>`;})()}</td>
       <td style="font-size:.78rem;color:rgba(26,10,0,.45);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc(g.message||'')}">${esc(g.message)||'—'}</td>
       <td style="font-size:.75rem;color:rgba(26,10,0,.3)">${timeAgo(g.created_at)}</td>
+      <td style="text-align:center"><button class="guest-del-btn" title="Remover convidado" aria-label="Remover convidado" onclick="deleteGuest('${g.id}','${safeName}')">🗑️</button></td>
     </tr>`;}).join('')}</tbody></table>`;
 }
 
@@ -877,6 +887,20 @@ async function updateGuestStatus(id, attending){
   showToast(`🔄 ${g.name} ${label}`);
 }
 
+// ── REMOVER UM CONVIDADO (dono do painel) ──
+async function deleteGuest(id, name){
+  const g = guests.find(x=>x.id===id);
+  if(!g) return;
+  if(!confirm(`Remover "${g.name}" da lista de convidados? Esta ação não pode ser desfeita.`)) return;
+  const {error} = await sb.from('guests').delete().eq('id',id);
+  if(error){ showToast('❌ Não foi possível remover: '+error.message); return; }
+  guests = guests.filter(x=>x.id!==id);
+  const badge = document.getElementById('guestBadge');
+  if(badge) badge.textContent = guests.length;
+  render();
+  showToast('🗑️ Convidado removido');
+}
+
 // ── WHATSAPP DIRETO PARA O CONVIDADO ──
 function guestWhatsApp(digits, name){
   let p = String(digits).replace(/\D/g,'');
@@ -909,7 +933,6 @@ function openGiftModal(id){
   document.getElementById('giftModalTitle').textContent = g ? '✏️ Editar presente' : '🎁 Adicionar presente';
   document.getElementById('giftName').value  = g?.name || '';
   document.getElementById('giftPrice').value = g?.price || '';
-  document.getElementById('giftEmoji').value = g?.emoji || '';
   document.getElementById('giftLink').value  = g?.link || '';
   document.getElementById('giftPay').value   = g?.pay_link || '';
   giftPhotoBlob = null;
@@ -930,7 +953,7 @@ async function saveGift(){
   let photoUrl = giftPhotoExistingUrl;
   if(giftPhotoBlob){
     const ext = (giftPhotoBlob.name.split('.').pop() || 'jpg').toLowerCase();
-    const path = `gifts/${activeInvite.id}/${Date.now()}.${ext}`;
+    const path = `${currentUser.id}/gift_${activeInvite.id}_${Date.now()}.${ext}`;
     const {error:upErr} = await sb.storage.from('invite-images').upload(path, giftPhotoBlob, {upsert:true});
     if(upErr){ showToast('❌ Erro ao enviar imagem: '+upErr.message); return; }
     photoUrl = sb.storage.from('invite-images').getPublicUrl(path).data.publicUrl;
@@ -938,7 +961,6 @@ async function saveGift(){
   const patch = {
     name,
     price:    document.getElementById('giftPrice').value.trim() || null,
-    emoji:    document.getElementById('giftEmoji').value.trim() || '🎁',
     link:     document.getElementById('giftLink').value.trim() || null,
     pay_link: document.getElementById('giftPay').value.trim() || null,
     photo_url:photoUrl || null,
@@ -986,7 +1008,7 @@ function renderGiftsSection(){
       const photo = String(g.photo_url||'').replace(/["'<>\\]/g,'');
       return `
       <div class="gift-card-dash">
-        ${photo?`<div class="gift-photo-dash" style="background-image:url('${photo}')"></div>`:`<div class="gift-emoji-dash">${esc(g.emoji)||'🎁'}</div>`}
+        ${photo?`<div class="gift-photo-dash" style="background-image:url('${photo}')"></div>`:`<div class="gift-emoji-dash">🎁</div>`}
         <div class="gift-name-dash">${esc(g.name)}</div>
         <div class="gift-price-dash">${esc(g.price)||'—'}</div>
         <span class="badge ${g.reserved?'badge-yes':'badge-pending'}" style="margin-bottom:.4rem">${g.reserved?'✅ Reservado':'⏳ Disponível'}</span>
@@ -995,7 +1017,123 @@ function renderGiftsSection(){
           <button class="gift-act-btn" title="Editar" onclick="openGiftModal('${g.id}')">✏️ Editar</button>
           <button class="gift-act-btn danger" title="Excluir" onclick="deleteGift('${g.id}')">🗑️</button>
         </div>
-      </div>`;}).join('')}</div>` : `<div class="empty-state"><div class="empty-state-emoji">🎁</div><div>Nenhum presente adicionado</div><button class="btn-xs btn-xs-pink" onclick="openGiftModal()" style="margin-top:1rem;padding:.5rem 1.25rem">Adicionar presentes</button></div>`}`;
+      </div>`;}).join('')}</div>` : `<div class="empty-state"><div class="empty-state-emoji">🎁</div><div>Nenhum presente adicionado</div><button class="btn-xs btn-xs-pink" onclick="openGiftModal()" style="margin-top:1rem;padding:.5rem 1.25rem">Adicionar presentes</button></div>`}
+    ${renderGiversPanel()}`;
+}
+
+// ── QUEM PRESENTEOU (só o dono vê) ──
+const giversFilter = { q:'', method:'all' };
+
+function _payMeta(m){
+  return m==='pix'    ? {cls:'gm-pix',    label:'💚 PIX'}
+       : m==='card'   ? {cls:'gm-card',   label:'💳 Cartão'}
+       : m==='reserve'? {cls:'gm-reserve',label:'🎁 Pessoalmente'}
+       :                {cls:'gm-none',   label:'🔒 Reservado'};
+}
+// Converte "R$ 1.250,90" → 1250.90 (retorna 0 se não der pra ler)
+function _parseBRL(p){
+  const s=String(p||'').replace(/[^\d.,]/g,'').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.');
+  const n=parseFloat(s); return isNaN(n)?0:n;
+}
+function _giverWhen(g){ return g.reserved_at || g.paid_at || g.created_at; }
+
+function renderGiversPanel(){
+  const reserved = gifts.filter(g=>g.reserved);
+  if(!gifts.length) return '';
+
+  // Estatísticas
+  const byMethod = {pix:0,card:0,reserve:0,none:0};
+  let total=0; const givers=new Set();
+  reserved.forEach(g=>{
+    const m=(g.pay_method||'none'); byMethod[m===''?'none':m]=(byMethod[m]||0)+1;
+    total+=_parseBRL(g.price);
+    const key=String(g.reserved_by||'').trim().toLowerCase(); if(key) givers.add(key);
+  });
+  const totalStr = total>0 ? total.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}) : '—';
+
+  return `
+    <div class="givers-panel">
+      <div class="givers-head">
+        <h3>🎁 Quem presenteou</h3>
+        <button class="btn-xs btn-xs-outline" onclick="exportGiversCSV()">⬇️ Exportar CSV</button>
+      </div>
+      <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);padding:1.25rem 1.5rem;margin:0;gap:1rem;border-bottom:1px solid var(--border)">
+        <div class="stat-card"><div class="stat-num">${reserved.length}</div><div class="stat-label">Presentes dados</div></div>
+        <div class="stat-card"><div class="stat-num">${givers.size}</div><div class="stat-label">Pessoas diferentes</div></div>
+        <div class="stat-card"><div class="stat-num" style="font-size:1.2rem">${totalStr}</div><div class="stat-label">Valor estimado</div></div>
+        <div class="stat-card"><div class="stat-label" style="margin-bottom:.3rem">Por forma</div><div style="display:flex;gap:.3rem;flex-wrap:wrap">
+          ${byMethod.pix?`<span class="gm-badge gm-pix">💚 ${byMethod.pix}</span>`:''}
+          ${byMethod.card?`<span class="gm-badge gm-card">💳 ${byMethod.card}</span>`:''}
+          ${byMethod.reserve?`<span class="gm-badge gm-reserve">🎁 ${byMethod.reserve}</span>`:''}
+          ${byMethod.none?`<span class="gm-badge gm-none">🔒 ${byMethod.none}</span>`:''}
+          ${!reserved.length?'<span style="font-size:.8rem;color:rgba(26,10,0,.35)">—</span>':''}
+        </div></div>
+      </div>
+      <div class="givers-controls">
+        <div class="givers-search">🔍 <input type="text" id="giversSearch" placeholder="Buscar por presente ou pessoa..." oninput="applyGiversFilter()"/></div>
+        <div class="filter-pills">
+          <button class="filter-pill active" data-gm="all" onclick="setGiverMethod('all',this)">Todos (${reserved.length})</button>
+          <button class="filter-pill" data-gm="pix" onclick="setGiverMethod('pix',this)">💚 PIX (${byMethod.pix})</button>
+          <button class="filter-pill" data-gm="card" onclick="setGiverMethod('card',this)">💳 Cartão (${byMethod.card})</button>
+          <button class="filter-pill" data-gm="reserve" onclick="setGiverMethod('reserve',this)">🎁 Pessoalmente (${byMethod.reserve})</button>
+          <button class="filter-pill" data-gm="none" onclick="setGiverMethod('none',this)">🔒 Reservado (${byMethod.none})</button>
+        </div>
+      </div>
+      <div id="giversTableWrap">${renderGiversTable()}</div>
+    </div>`;
+}
+
+function _giversList(){
+  const q=giversFilter.q, m=giversFilter.method;
+  return gifts.filter(g=>g.reserved).filter(g=>{
+    const method=(g.pay_method||'none')||'none';
+    if(m!=='all' && method!==m) return false;
+    if(!q) return true;
+    return (String(g.name||'').toLowerCase().includes(q)) || (String(g.reserved_by||'').toLowerCase().includes(q));
+  }).sort((a,b)=> new Date(_giverWhen(b)) - new Date(_giverWhen(a)));
+}
+
+function renderGiversTable(){
+  const list=_giversList();
+  if(!list.length) return `<div class="empty-state"><div class="empty-state-emoji">🎁</div><div>Nenhum presente ${giversFilter.q||giversFilter.method!=='all'?'encontrado com esse filtro':'reservado ainda'}</div><div style="font-size:.8rem;margin-top:.4rem;color:rgba(26,10,0,.4)">Quando alguém escolher um presente, o nome de quem deu aparece aqui — visível só para você.</div></div>`;
+  return `<table><thead><tr><th>Presente</th><th>Quem deu</th><th>Contato</th><th>Forma</th><th>Quando</th></tr></thead>
+    <tbody>${list.map(g=>{
+      const meta=_payMeta(g.pay_method||'none');
+      const digits=String(g.reserved_phone||'').replace(/\D/g,'');
+      const safeName=esc(String(g.reserved_by||'').replace(/['"\\<>\`]/g,''));
+      return `<tr>
+        <td><div class="guest-name">${esc(g.name)}</div>${g.price?`<div style="font-size:.72rem;color:var(--yellow-dk);font-weight:700">${esc(g.price)}</div>`:''}</td>
+        <td>${g.reserved_by?esc(g.reserved_by):'<span style="color:rgba(26,10,0,.3)">—</span>'}</td>
+        <td>${digits?`<button class="giver-wpp" onclick="guestWhatsApp('${digits}','${safeName}')" title="Agradecer no WhatsApp">💬 ${esc(g.reserved_phone)}</button>`:'<span style="color:rgba(26,10,0,.3)">—</span>'}</td>
+        <td><span class="gm-badge ${meta.cls}">${meta.label}</span></td>
+        <td style="font-size:.75rem;color:rgba(26,10,0,.4)">${_giverWhen(g)?timeAgo(_giverWhen(g)):'—'}</td>
+      </tr>`;}).join('')}</tbody></table>`;
+}
+
+function applyGiversFilter(){
+  giversFilter.q=(document.getElementById('giversSearch')?.value||'').trim().toLowerCase();
+  const wrap=document.getElementById('giversTableWrap'); if(wrap) wrap.innerHTML=renderGiversTable();
+}
+function setGiverMethod(m,btn){
+  giversFilter.method=m;
+  document.querySelectorAll('.givers-controls .filter-pill').forEach(p=>p.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const wrap=document.getElementById('giversTableWrap'); if(wrap) wrap.innerHTML=renderGiversTable();
+}
+function exportGiversCSV(){
+  const list=_giversList();
+  if(!list.length){ showToast('Nada para exportar'); return; }
+  const rows=[['Presente','Preço','Quem deu','Contato','Forma','Quando']];
+  list.forEach(g=>{
+    const meta=_payMeta(g.pay_method||'none');
+    const when=_giverWhen(g)?new Date(_giverWhen(g)).toLocaleString('pt-BR'):'';
+    rows.push([g.name||'', g.price||'', g.reserved_by||'', g.reserved_phone||'', meta.label.replace(/^[^ ]+ /,''), when]);
+  });
+  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob); const a=document.createElement('a');
+  a.href=url; a.download=`quem-presenteou-${(activeInvite?.slug||'convite')}.csv`; a.click();
+  URL.revokeObjectURL(url);
 }
 
 // ── SHARE ──
@@ -1260,15 +1398,15 @@ function shareWhatsApp(link, titleArg){
   const horaStr = hora ? (horaFim ? `das ${hora} às ${horaFim}` : `às ${hora}`) : '';
 
   const L = [];
-  L.push('🎉 ' + displayTitle);
+  L.push('*' + displayTitle + '*');
   if(nome && nome !== displayTitle) L.push('Para: ' + nome);
-  if(dateStr) L.push('📅 ' + dateStr + (horaStr ? ' ' + horaStr : ''));
-  if(local)   L.push('📍 ' + local);
+  if(dateStr) L.push('Data: ' + dateStr + (horaStr ? ' ' + horaStr : ''));
+  if(local)   L.push('Local: ' + local);
   L.push('');
   L.push('Confirme sua presença:');
   L.push(link);
   L.push('');
-  L.push('Feito com CrieConvites 🎊');
+  L.push('Feito com CrieConvites');
 
   window.open('https://wa.me/?text=' + encodeURIComponent(L.join('\n')), '_blank');
 }

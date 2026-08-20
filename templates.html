@@ -3,9 +3,41 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Escolher Template — CrieConvites</title>
+  <title>Templates de Convite Digital Grátis para Personalizar | CrieConvites</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
-  <meta name="description" content="Escolha entre dezenas de templates de convite digital personalizáveis — aniversário, casamento, chá de bebê e muito mais."/>
+  <link rel="canonical" href="https://crieconvites.com.br/templates" />
+  <meta name="description" content="Escolha entre dezenas de templates de convite digital grátis e personalize online: aniversário infantil, adulto, casamento e chá de bebê. Pronto em minutos, com confirmação de presença."/>
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta property="og:title" content="Templates de Convite Digital Grátis para Personalizar | CrieConvites" />
+  <meta property="og:description" content="Dezenas de templates de convite digital para personalizar online, com confirmação de presença e lista de presentes." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:site_name" content="CrieConvites" />
+  <meta property="og:url" content="https://crieconvites.com.br/templates" />
+  <meta property="og:image" content="https://crieconvites.com.br/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Templates de Convite Digital Grátis | CrieConvites" />
+  <meta name="twitter:description" content="Dezenas de templates de convite digital para personalizar online, com confirmação de presença." />
+  <meta name="twitter:image" content="https://crieconvites.com.br/og-cover.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Templates de Convite Digital",
+    "description": "Dezenas de templates de convite digital grátis para personalizar online.",
+    "url": "https://crieconvites.com.br/templates",
+    "isPartOf": { "@type": "WebSite", "name": "CrieConvites", "url": "https://crieconvites.com.br/" },
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://crieconvites.com.br/" },
+        { "@type": "ListItem", "position": 2, "name": "Templates", "item": "https://crieconvites.com.br/templates" }
+      ]
+    }
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,700;1,9..144,900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
@@ -186,7 +218,7 @@
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-eyebrow">Mais de 30 templates</div>
+  <div class="hero-eyebrow">Templates</div>
   <h1 class="hero-title">Escolha o template <span>perfeito</span> para o seu convite</h1>
   <p class="hero-sub">Cada modelo é totalmente personalizável — cores, fotos, mensagens e muito mais.</p>
 </div>
@@ -359,7 +391,7 @@ async function init() {
             accent: t.default_accent || '#FFD93D',
             tags: ['personalizado'],
             plan: 'free',
-            isNew: false,
+            isNew: t.created_at ? (Date.now() - new Date(t.created_at).getTime()) < 7*24*60*60*1000 : false,
             isAnimated: !!t.is_animated,
             desc: t.description || 'Template personalizado.',
             isCustom: true,
@@ -415,24 +447,28 @@ function setSort(sort, el) {
 
 // ── GATHER FLAT LIST ──
 function getAllTemplates() {
-  const seen = new Set();
-  const all = [];
+  const byId = new Map();
   for (const [cat, tpls] of Object.entries(TEMPLATES_MAP)) {
     tpls.forEach(t => {
-      if (!seen.has(t.id)) {
-        seen.add(t.id);
-        all.push({ ...t, category: t.category || cat });
+      const c = t.category || cat;
+      if (byId.has(t.id)) {
+        byId.get(t.id)._cats.add(c);
+      } else {
+        byId.set(t.id, { ...t, category: c, _cats: new Set([c]) });
       }
     });
   }
-  return all;
+  return [...byId.values()].map(o => {
+    const { _cats, ...rest } = o;
+    return { ...rest, categories: [..._cats] };
+  });
 }
 
 // ── FILTER ──
 function filterTemplates() {
   let list = getAllTemplates();
 
-  if (activeCat) list = list.filter(t => t.category === activeCat);
+  if (activeCat) list = list.filter(t => (t.categories || [t.category]).includes(activeCat));
 
   if (activeSort === 'new')      list = list.filter(t => t.isNew);
   if (activeSort === 'animated') list = list.filter(t => t.isAnimated);
@@ -490,9 +526,27 @@ window.addEventListener('resize', () => {
 
 // Substitui os parâmetros {{...}} por dados de exemplo (mesmos do admin-templates.html)
 function applySampleVars(html, accent) {
+  const nomes = [
+    'Sofia', 'Miguel', 'Helena', 'Arthur', 'Alice', 'Heitor', 'Laura', 'Theo',
+    'Valentina', 'Davi', 'Maria', 'Gabriel', 'Lívia', 'Bernardo', 'Júlia', 'Lucas',
+    'Heloísa', 'Matheus', 'Cecília', 'Rafael', 'Isabella', 'Benjamin', 'Manuela', 'Nicolas',
+    'Marina', 'Pedro', 'Melissa', 'Samuel', 'Yasmin', 'João', 'Aurora', 'Enzo',
+    'Clara', 'Guilherme', 'Beatriz', 'Levi', 'Mariana', 'Murilo', 'Emanuelly', 'Henrique',
+    'Ana', 'Isaac', 'Eloá', 'Lucca', 'Agatha', 'Felipe', 'Esther', 'Daniel',
+    'Bianca', 'Caio', 'Maitê', 'Vinícius', 'Elisa', 'Bruno', 'Luna', 'Joaquim',
+    'Rebeca', 'Otávio', 'Sarah', 'Antônio', 'Liz', 'Eduardo', 'Olívia', 'André',
+    'Mirella', 'Ian', 'Alícia', 'Noah', 'Vitória', 'Leonardo', 'Isis', 'Gael',
+    'Pietra', 'Ryan', 'Nicole', 'Tomás', 'Maria Eduarda', 'Pietro', 'Lavínia', 'Lorenzo',
+    'Ana Clara', 'Augusto', 'Maria Clara', 'Alexandre', 'Joana', 'Fernando', 'Antonella', 'Vitor',
+    'Amanda', 'Cristóvão', 'Camila', 'Marcos', 'Lua', 'Rodrigo', 'Isadora', 'Diego',
+    'Luiza', 'Jacques', 'Andressa', 'Erick'
+  ];
+
+  const nomeAleatorio = nomes[Math.floor(Math.random() * nomes.length)];
+
   const vars = {
-    '{{nome}}':         'Sofia',
-    '{{titulo}}':       'Você está convidada!',
+    '{{nome}}':         nomeAleatorio,
+    '{{titulo}}':       'Titulo do evento',
     '{{idade}}':        '5 anos',
     '{{dia}}':          '15',
     '{{mes}}':          'Junho',
@@ -503,17 +557,20 @@ function applySampleVars(html, accent) {
     '{{local}}':        'Salão Encantado',
     '{{endereco}}':     'Rua dos Contos, 123 — São Paulo, SP',
     '{{dress}}':        'Esporte fino',
-    '{{msg}}':          'Será uma noite inesquecível!',
-    '{{heroImg}}':      'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80',
+    '{{msg}}':          'Mensagem editável aqui!',
+      '{{heroImg}}':      'https://imgs.search.brave.com/e8MyuuM1jg7i1PfZi0swrO9yjHvfzCQsPBVQROg_3YI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzI5LzIw/LzRhLzI5MjA0YTU2/YTIzMjRlYWFjM2M4/MzFhMWYwNzk1MWFh/LmpwZw',
     '{{accent}}':       accent || '#FFD93D',
-    '{{dataFormatada}}':'sábado, 15 de junho de 2025',
+    '{{dataFormatada}}':'sábado, 15 de junho de 2026',
     '{{diasRestantes}}':'14',
   };
+
   let result = html;
-  for (const [k, v] of Object.entries(vars)) result = result.split(k).join(v);
+  for (const [k, v] of Object.entries(vars)) {
+    result = result.split(k).join(v);
+  }
+
   return result;
 }
-
 // ── THUMBNAILS VISUAIS ──
 // Cada thumbnail é um SVG inline que representa o visual real do template
 const THUMBNAILS = {
@@ -637,13 +694,19 @@ function cardHTML(t) {
   const imgHtml = getThumbnailHTML(t);
   const id = esc(t.id);
 
+  const badges = [];
+  if (t.isNew) badges.push('<span class="badge badge-new">✨ Novo</span>');
+  if (t.isAnimated) badges.push('<span class="badge badge-animated">🎬 Animado</span>');
+  if (t.isUpload) badges.push('<span class="badge" style="background:var(--yellow);color:rgba(26,10,0,.85);box-shadow:0 2px 8px rgba(255,217,61,.5)">⚡ Convite pronto</span>');
+  const badgesHtml = badges.length ? `<div class="card-badges">${badges.join('')}</div>` : '';
+
   return `
     <div class="tpl-card${t.isUpload ? ' tpl-upload' : ''}" role="button" tabindex="0" aria-label="Ver template ${esc(t.name)}"
          onclick="openModal('${id}')"
          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openModal('${id}')}">
       <div class="card-img-wrap">
         ${imgHtml}
-        ${t.isUpload ? '<div class="card-badges"><span class="badge" style="background:var(--yellow);color:rgba(26,10,0,.85);box-shadow:0 2px 8px rgba(255,217,61,.5)">⚡ Convite pronto</span></div>' : ''}
+        ${badgesHtml}
         <div class="card-cta">
           <button class="card-cta-btn" onclick="event.stopPropagation();selectTemplate('${id}')">
             Usar este template →

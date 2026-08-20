@@ -291,6 +291,9 @@
       transition:transform .2s,box-shadow .2s;white-space:nowrap;
     }
     .rsvp-fab:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.35);}
+    /* Esconde o botão flutuante quando a seção de RSVP/mapa está visível
+       (evita cobrir o local da festa no celular) */
+    .rsvp-fab.fab-hidden{opacity:0;pointer-events:none;transform:translateY(24px);}
 
     /* share fab */
     .fab{
@@ -710,11 +713,7 @@
       </div>
       <div class="form-group">
         <label>Sua mensagem</label>
-        <textarea id="wishMsg" placeholder="Uma mensagem cheia de carinho para o aniversariante... 💕" style="min-height:80px"></textarea>
-      </div>
-      <div class="form-group">
-        <label>Emoji (opcional)</label>
-        <input type="text" id="wishEmoji" placeholder="💕" style="max-width:80px"/>
+        <textarea id="wishMsg" placeholder="Deixe sua mensagem cheia de carinho... 💕" style="min-height:80px"></textarea>
       </div>
       <button class="btn-wish-submit" id="btnWish" onclick="submitWish()">💌 Enviar mensagem</button>
     </div>
@@ -745,7 +744,7 @@
     <span></span><span></span><span></span><span></span>
   </div>
 </div>
-<iframe id="ytPlayer" style="display:none" width="0" height="0" frameborder="0" allow="autoplay"></iframe>
+<div style="position:absolute;left:-9999px;bottom:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none" aria-hidden="true"><div id="ytPlayer"></div></div>
 
 <!-- Lightbox for gallery -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
@@ -1727,11 +1726,10 @@ async function renderCustomTemplate(tplId, s) {
     html = html.split(k).join(v);
   }
 
-  // Inject RSVP button at end of body if placeholder present
-  const rsvpHtml = `<div id="ccm-rsvp-inject" onclick="window.parent.document.getElementById('rsvpSection')?.scrollIntoView({behavior:'smooth'})" style="position:fixed;bottom:1.5rem;right:1.5rem;background:${ac};color:#1a0a00;font-weight:800;padding:.75rem 1.5rem;border-radius:99px;font-size:.9rem;cursor:pointer;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.3)">✅ Confirmar presença</div>`;
-  if (html.includes('</body>')) {
-    html = html.replace('</body>', rsvpHtml + '</body>');
-  }
+  // O botão flutuante de RSVP fica na página (fora do iframe), controlado por
+  // fabAutohide() — assim não cobre o card do convite. Mostra o botão do convite.
+  const fabEl = document.getElementById('rsvpFab');
+  if (fabEl) fabEl.style.display = 'flex';
 
   // Render in iframe
   heroEl.innerHTML = `<iframe id="customTplFrame" sandbox="allow-scripts allow-same-origin allow-popups" style="width:100%;border:none;display:block;min-height:600px;transition:height .3s ease"></iframe>`;
@@ -1839,9 +1837,11 @@ async function init() {
     if (invErr || !fetchedInv) { showError(); return; }
     inv = fetchedInv;
 
+    // Privacidade: lê pela VIEW pública `gifts_public`, que NÃO expõe
+    // reserved_by / reserved_phone. Só o dono acessa esses dados (dashboard).
     const { data: fetchedGifts } = await sb
-      .from('gifts')
-      .select('*')
+      .from('gifts_public')
+      .select('id, invite_id, name, price, emoji, link, photo_url, reserved, pay_method, pay_link, created_at')
       .eq('invite_id', inv.id)
       .order('created_at');
 
@@ -2006,7 +2006,9 @@ function renderGifts() {
         : g.pay_method === 'card' ? '💳 Pago com cartão'
         : g.pay_method === 'reserve' ? '🎁 Vai levar pessoalmente'
         : '🔒 Reservado';
-      statusBadge = `<div class="gift-status-badge gsb-reserved">${payLabel} por ${g.reserved_by || 'alguém'}</div>`;
+      // Privacidade: NUNCA expor quem presenteou no convite público —
+      // apenas o dono vê essa informação no painel. Mostramos só o status.
+      statusBadge = `<div class="gift-status-badge gsb-reserved">${payLabel}</div>`;
     } else {
       const payHint = hasPayment
         ? `<div style="font-size:.68rem;color:rgba(26,10,0,.35);margin-top:.2rem">${[hasPix?'PIX':'',hasCard?'Cartão':''].filter(Boolean).join(' · ')} disponível</div>`
@@ -2149,6 +2151,7 @@ async function _doReserve(name, phone, payMethod){
     reserved_by: name,
     reserved_phone: phone,
     pay_method: payMethod || 'none',
+    reserved_at: new Date().toISOString(),
     paid_at: (payMethod && payMethod!=='none' && payMethod!=='reserve') ? new Date().toISOString() : null
   };
 
@@ -2286,6 +2289,10 @@ function resetRSVP() {
 //  SHARE
 // ══════════════════════════════════════════
 function shareWhatsApp() {
+  window.open('https://wa.me/?text=' + encodeURIComponent(buildShareText()), '_blank');
+}
+
+function buildShareText() {
   const inv = invite || {};
   const title = (inv.title || inv.event_name || 'Convite especial').trim();
   const nome  = (inv.event_name || '').trim();
@@ -2309,26 +2316,55 @@ function shareWhatsApp() {
 
   const url = location.href;
 
-  // Monta mensagem convidativa — usa *asterisco* para negrito no WhatsApp
+  // Monta mensagem convidativa — usa *asterisco* para negrito no WhatsApp.
+  // Sem emojis: alguns aparelhos os exibem como caracteres estranhos (losangos).
   const L = [];
-  L.push('Você está sendo convidado(a) para uma celebração muito especial! ✨');
+  L.push('Você está sendo convidado(a) para uma celebração muito especial!');
   L.push('');
   L.push('*' + title + '*');
   if(nome && nome !== title) L.push('Em homenagem a *' + nome + '*');
   L.push('');
-  if(dateStr)  L.push('📅 ' + dateStr);
-  if(horaStr)  L.push('⏰ ' + horaStr);
-  if(local)    L.push('📍 ' + local);
-  if(endereco) L.push('       ' + endereco);
+  if(dateStr)  L.push('Data: ' + dateStr);
+  if(horaStr)  L.push('Horário: ' + horaStr);
+  if(local)    L.push('Local: ' + local);
+  if(endereco) L.push('Endereço: ' + endereco);
   L.push('');
-  L.push('Sua presença vai tornar esse momento ainda mais especial. 💛');
+  L.push('Sua presença vai tornar esse momento ainda mais especial.');
   L.push('Confirme sua presença pelo link abaixo:');
   L.push(url);
   L.push('');
   L.push('_Convite criado com CrieConvites_');
 
-  window.open('https://wa.me/?text=' + encodeURIComponent(L.join('\n')), '_blank');
+  return L.join('\n');
 }
+
+// ── Esconde o botão flutuante de "Confirmar presença" quando a seção de RSVP
+//    ou o mapa aparecem na tela, para não cobrir o local da festa (mobile) ──
+(function fabAutohide(){
+  const fab = document.getElementById('rsvpFab');
+  if(!fab) return;
+  const ids = ['rsvpSection','mapSection'];
+  function update(){
+    if(getComputedStyle(fab).display === 'none'){ return; }
+    const vh = window.innerHeight;
+    // 1) Esconde enquanto o topo/hero está em foco, para não cobrir o card do
+    //    convite (nome, data e LOCAL ficam nessa área).
+    let hide = window.scrollY < vh * 0.55;
+    // 2) Esconde quando a seção de confirmação/mapa aparece embaixo na tela.
+    if(!hide){
+      for(const id of ids){
+        const el = document.getElementById(id);
+        if(!el || el.offsetParent === null) continue; // seção oculta
+        const r = el.getBoundingClientRect();
+        if(r.top < vh && r.bottom > vh * 0.55){ hide = true; break; }
+      }
+    }
+    fab.classList.toggle('fab-hidden', hide);
+  }
+  window.addEventListener('scroll', update, { passive:true });
+  window.addEventListener('resize', update);
+  [400, 1200, 2500].forEach(ms => setTimeout(update, ms));
+})();
 
 // ══ SALVAR CONVITE COMO IMAGEM ══
 function openShareModal() {
@@ -2344,9 +2380,13 @@ function openShareModal() {
       <div style="font-family:'Fraunces',Georgia,serif;font-size:1.3rem;font-weight:700;font-style:italic;margin-bottom:.4rem">💬 Compartilhar convite</div>
       <div style="font-size:.83rem;color:rgba(26,10,0,.45);margin-bottom:1.5rem">Escolha como deseja compartilhar</div>
       <div style="display:flex;flex-direction:column;gap:.65rem">
-        <button onclick="shareWhatsApp();document.getElementById('shareImgModal').style.display='none'" style="display:flex;align-items:center;gap:.75rem;padding:.85rem 1.25rem;background:#25D366;color:#fff;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;transition:background .2s" onmouseover="this.style.background='#1da851'" onmouseout="this.style.background='#25D366'">
+        <button onclick="shareWhatsAppWithImage(this)" style="display:flex;align-items:center;gap:.75rem;padding:.85rem 1.25rem;background:#25D366;color:#fff;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;transition:background .2s" onmouseover="this.style.background='#1da851'" onmouseout="this.style.background='#25D366'">
+          <span style="font-size:1.25rem">🖼️</span>
+          <div style="text-align:left"><div>WhatsApp com imagem</div><div style="font-size:.73rem;opacity:.85;font-weight:600">Envia a imagem do convite + detalhes</div></div>
+        </button>
+        <button onclick="shareWhatsApp();document.getElementById('shareImgModal').style.display='none'" style="display:flex;align-items:center;gap:.75rem;padding:.85rem 1.25rem;background:rgba(37,211,102,.12);color:#128C7E;border:1px solid rgba(37,211,102,.35);border-radius:12px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;transition:background .2s" onmouseover="this.style.background='rgba(37,211,102,.2)'" onmouseout="this.style.background='rgba(37,211,102,.12)'">
           <span style="font-size:1.25rem">💬</span>
-          <div style="text-align:left"><div>Enviar pelo WhatsApp</div><div style="font-size:.73rem;opacity:.85;font-weight:600">Link + detalhes do evento</div></div>
+          <div style="text-align:left"><div>Enviar pelo WhatsApp</div><div style="font-size:.73rem;opacity:.85;font-weight:600">Só link + detalhes do evento</div></div>
         </button>
         <button onclick="saveInviteImage()" style="display:flex;align-items:center;gap:.75rem;padding:.85rem 1.25rem;background:rgba(26,10,0,.06);color:#1A0A00;border:1px solid rgba(26,10,0,.1);border-radius:12px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;transition:all .2s" onmouseover="this.style.background='rgba(26,10,0,.1)'" onmouseout="this.style.background='rgba(26,10,0,.06)'">
           <span style="font-size:1.25rem">📸</span>
@@ -2369,6 +2409,71 @@ function copyInviteLink(){
     const m = document.getElementById('shareImgModal');
     if(m) m.style.display='none';
   });
+}
+
+// Gera a imagem do convite como Blob (reaproveita a captura do "Salvar imagem")
+async function getInviteImageBlob(){
+  const toBlob = (canvas) => new Promise(res => canvas.toBlob(res, 'image/png'));
+  // Template customizado (animado) em iframe
+  const customFrame = document.getElementById('customTplFrame');
+  if(customFrame && customFrame.contentDocument && customFrame.contentDocument.body){
+    try { return await toBlob(await _captureIframe(customFrame)); }
+    catch(e){ console.warn('captura iframe falhou:', e); }
+  }
+  // Template padrão (hero)
+  const hero = document.getElementById('templateHero');
+  if(hero && typeof html2canvas !== 'undefined'){
+    try {
+      await _waitForImages(hero);
+      const canvas = await html2canvas(hero, {
+        scale: 2, backgroundColor: _detectBg(hero),
+        useCORS: true, allowTaint: true, logging: false, imageTimeout: 8000
+      });
+      return await toBlob(canvas);
+    } catch(e){ console.warn('html2canvas falhou:', e); }
+  }
+  return null;
+}
+
+// Compartilhar por WhatsApp anexando a imagem do convite
+async function shareWhatsAppWithImage(btn){
+  if(btn){ btn.disabled = true; btn.style.opacity = '.6'; }
+  showToast('⏳ Preparando imagem do convite...');
+  const text = buildShareText();
+  let blob = null;
+  try { blob = await getInviteImageBlob(); } catch(e){ console.warn(e); }
+
+  const closeModal = () => { const m = document.getElementById('shareImgModal'); if(m) m.style.display='none'; };
+  const reenable  = () => { if(btn){ btn.disabled=false; btn.style.opacity='1'; } };
+
+  if(blob){
+    const file = new File([blob], 'convite.png', { type: 'image/png' });
+    // Web Share API com arquivo → abre a folha de compartilhamento (WhatsApp anexa a imagem)
+    if(navigator.canShare && navigator.canShare({ files: [file] })){
+      try {
+        await navigator.share({ files: [file], text });
+        closeModal(); reenable();
+        return;
+      } catch(e){
+        if(e && e.name === 'AbortError'){ reenable(); return; } // usuário cancelou
+        console.warn('navigator.share falhou:', e);
+      }
+    }
+    // Fallback: baixa a imagem e abre o WhatsApp com o texto (usuário anexa a imagem salva)
+    try {
+      const a = document.createElement('a');
+      a.download = 'convite.png';
+      a.href = URL.createObjectURL(blob);
+      a.click();
+      setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+      showToast('📸 Imagem salva! Anexe-a na conversa do WhatsApp.');
+    } catch(e){ console.warn(e); }
+  } else {
+    showToast('⚠️ Não consegui gerar a imagem — enviando só o texto.');
+  }
+
+  window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+  closeModal(); reenable();
 }
 
 // Aguarda todas as imagens do elemento carregarem (com timeout)
@@ -2753,44 +2858,84 @@ function copyPix() {
 //  MUSIC PLAYER
 // ══════════════════════════════════════════
 let musicPlaying = false;
-let ytReady = false;
+let ytPlayerObj = null;
 
 function getYouTubeId(url) {
   const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^&?/\s]{11})/);
   return match ? match[1] : null;
 }
 
+// Atualiza o visual do player (botão e ondas)
+function setMusicUI(playing) {
+  musicPlaying = playing;
+  const btn = document.getElementById('musicPlayBtn');
+  const wave = document.getElementById('musicWave');
+  if (btn)  btn.textContent = playing ? '⏸' : '▶';
+  if (wave) wave.classList.toggle('paused', !playing);
+}
+
 function setupMusic(url) {
   const ytId = getYouTubeId(url);
   if (!ytId) return;
 
-  const player = document.getElementById('musicPlayer');
-  const iframe = document.getElementById('ytPlayer');
-
-  // Set up autoplay iframe (muted initially to respect browser policies)
-  iframe.src = `https://www.youtube.com/embed/${ytId}?autoplay=0&controls=0&loop=1&playlist=${ytId}&enablejsapi=1`;
-  player.style.display = 'flex';
+  document.getElementById('musicPlayer').style.display = 'flex';
   document.getElementById('musicTitle').textContent = 'Música do evento';
+  window._musicYtId = ytId;
+
+  // Carrega a YouTube IFrame API (se ainda não estiver carregada)
+  if (window.YT && window.YT.Player) {
+    createYtPlayer();
+  } else if (!window._ytApiLoading) {
+    window._ytApiLoading = true;
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = function(){ if (typeof prev === 'function') prev(); createYtPlayer(); };
+    const tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(tag);
+  }
+}
+
+function createYtPlayer() {
+  if (ytPlayerObj || !window._musicYtId) return;
+  const id = window._musicYtId;
+  ytPlayerObj = new YT.Player('ytPlayer', {
+    videoId: id,
+    // mute:1 permite o autoplay já ao abrir; o som é ativado na 1ª interação.
+    playerVars: { autoplay: 1, mute: 1, controls: 0, loop: 1, playlist: id, playsinline: 1, rel: 0 },
+    events: {
+      onReady: (e) => {
+        try { e.target.playVideo(); } catch(_) {} // começa tocando (mudo)
+        armFirstGesture();
+      },
+      onStateChange: (e) => {
+        if (e.data === YT.PlayerState.PLAYING) setMusicUI(true);
+        else if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) setMusicUI(false);
+      }
+    }
+  });
+}
+
+// Navegadores só liberam áudio com som após uma interação do usuário.
+// Na primeira interação, tiramos o mudo (a música já está tocando).
+let _musicUnmuted = false;
+function armFirstGesture() {
+  const kick = () => {
+    if (ytPlayerObj && !_musicUnmuted) {
+      try { ytPlayerObj.unMute(); ytPlayerObj.setVolume(100); ytPlayerObj.playVideo(); _musicUnmuted = true; } catch(_) {}
+    }
+    ['pointerdown','touchstart','keydown','click'].forEach(ev =>
+      window.removeEventListener(ev, kick));
+  };
+  ['pointerdown','touchstart','keydown','click'].forEach(ev =>
+    window.addEventListener(ev, kick, { once: true }));
 }
 
 function toggleMusic() {
-  const iframe = document.getElementById('ytPlayer');
-  const btn = document.getElementById('musicPlayBtn');
-  const wave = document.getElementById('musicWave');
-  const src = iframe.src;
-
-  if (!musicPlaying) {
-    // Enable autoplay
-    iframe.src = src.replace('autoplay=0', 'autoplay=1');
-    btn.textContent = '⏸';
-    wave.classList.remove('paused');
-    musicPlaying = true;
+  if (!ytPlayerObj) return;
+  if (musicPlaying) {
+    try { ytPlayerObj.pauseVideo(); } catch(_) {}
   } else {
-    // Stop by reloading without autoplay
-    iframe.src = src.replace('autoplay=1', 'autoplay=0');
-    btn.textContent = '▶';
-    wave.classList.add('paused');
-    musicPlaying = false;
+    try { ytPlayerObj.unMute(); ytPlayerObj.setVolume(100); ytPlayerObj.playVideo(); _musicUnmuted = true; } catch(_) {}
   }
 }
 
@@ -2838,7 +2983,7 @@ function renderWishes(wishes) {
 async function submitWish() {
   const name = document.getElementById('wishName').value.trim();
   const message = document.getElementById('wishMsg').value.trim();
-  const emoji = document.getElementById('wishEmoji').value.trim() || '💕';
+  const emoji = '💕';
   if (!name || !message) { showToast('😊 Preencha nome e mensagem!'); return; }
 
   const btn = document.getElementById('btnWish');
@@ -2859,7 +3004,6 @@ async function submitWish() {
 
   document.getElementById('wishName').value = '';
   document.getElementById('wishMsg').value = '';
-  document.getElementById('wishEmoji').value = '';
   btn.disabled = false;
   btn.textContent = '💌 Enviar mensagem';
   showToast('💌 Mensagem enviada!');
